@@ -542,6 +542,264 @@
   /* hidden while audio is actually playing */
   .wave-overlay.hidden { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.85); }
 
+  /* ==== FELT SECTION (real product moments) ==== */
+  .felt-section {
+    margin-top: 100px;
+    padding: 0 48px 40px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .felt-head { text-align: center; margin-bottom: 56px; }
+  .felt-head .section-title { margin: 0 auto; }
+  .felt-head .section-intro { margin: 20px auto 0; }
+  .felt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .felt-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 22px;
+    padding: 28px 28px 32px;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s ease,
+                box-shadow 0.4s ease;
+  }
+  .felt-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 24px 60px rgba(0, 0, 0, 0.4);
+  }
+  .felt-stage {
+    height: 320px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #0a0d1e 0%, #06090F 100%);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .felt-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--blue-bright);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .felt-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .felt-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-3);
+  }
+
+  /* --- LEADERBOARD card stage --- */
+  .lb-stage { padding: 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.5s ease, border-color 0.5s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lb-row.me { background: rgba(7, 81, 251, 0.12); border-color: rgba(7, 81, 251, 0.35); }
+  .lb-rank {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    width: 18px;
+    text-align: center;
+    transition: color 0.4s ease;
+  }
+  .lb-row.me .lb-rank { color: var(--blue-bright); }
+  .lb-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a8cff, #0751FB);
+    display: grid; place-items: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(255,255,255,0.1);
+  }
+  .lb-row.me .lb-avatar { background: linear-gradient(135deg, #3B7BFF, #0751FB); border-color: rgba(255,255,255,0.4); box-shadow: 0 0 12px rgba(59,123,255,0.5); }
+  .lb-meta { flex: 1; min-width: 0; }
+  .lb-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lb-status {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    margin-top: 2px;
+  }
+  .lb-row.up .lb-status { color: #2ECC71; }
+  .lb-row.down .lb-status { color: #FF3B5C; }
+  .lb-stats { text-align: right; }
+  .lb-laps {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .lb-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-4);
+    margin-top: 2px;
+  }
+  .lb-arrow {
+    width: 12px; height: 12px;
+    border-radius: 4px;
+    margin-left: 4px;
+    display: inline-grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .lb-row.up .lb-arrow { color: #2ECC71; opacity: 1; }
+  .lb-row.down .lb-arrow { color: #FF3B5C; opacity: 1; }
+
+  /* --- RECORD card stage (route replay) --- */
+  .rec-stage { position: relative; }
+  .rec-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rec-stage .map-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+  .rec-route { fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke: url(#recGrad); stroke-dasharray: 1500; stroke-dashoffset: 1500; animation: recDraw 5s ease-out infinite; filter: drop-shadow(0 0 6px rgba(59,123,255,0.5)); }
+  .rec-route-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes recDraw {
+    0% { stroke-dashoffset: 1500; }
+    70%, 100% { stroke-dashoffset: 0; }
+  }
+  .rec-pin { fill: var(--blue-bright); filter: drop-shadow(0 0 10px var(--blue-bright)); }
+  .rec-stats {
+    position: absolute;
+    bottom: 14px; left: 14px; right: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 2;
+  }
+  .rec-stat-block { display: flex; flex-direction: column; }
+  .rec-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: var(--text-4);
+    text-transform: uppercase;
+  }
+  .rec-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 2px;
+  }
+  .rec-value .u { font-size: 11px; color: var(--text-3); margin-left: 3px; font-weight: 500; }
+  .rec-pace-chip {
+    background: rgba(7, 81, 251, 0.15);
+    border: 1px solid rgba(7, 81, 251, 0.4);
+    color: var(--blue-bright);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  /* --- VIRTUAL TRACK card stage (oval stadium) --- */
+  .vt-stage { position: relative; }
+  .vt-stage svg { width: 100%; height: 100%; display: block; }
+  .vt-stage .runner {
+    fill: #fff;
+    stroke-width: 2;
+  }
+  .vt-stage .runner.r1 { stroke: #3B7BFF; fill: #3B7BFF; }
+  .vt-stage .runner.r2 { stroke: #FFB100; fill: #FFB100; }
+  .vt-stage .runner.r3 { stroke: #FF3B5C; fill: #FF3B5C; }
+  .vt-stage .me-runner { fill: #fff; stroke: #3B7BFF; stroke-width: 2.5; filter: drop-shadow(0 0 8px #3B7BFF); }
+  .vt-overlay {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-2);
+    text-transform: uppercase;
+  }
+  .vt-overlay::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #FF3B5C;
+    box-shadow: 0 0 8px #FF3B5C;
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
+
+  @media (max-width: 900px) {
+    .felt-grid { grid-template-columns: 1fr; gap: 18px; }
+    .felt-section { padding: 0 20px 30px; margin-top: 70px; }
+  }
+
+
   /* Anim 3: Movement Index data flow (Movement Index) */
   .anim-mi { padding: 16px; }
   .anim-mi svg { width: 100%; height: 100%; }
@@ -1993,6 +2251,202 @@
   </div>
 </section>
 
+<!-- FELT · REAL PRODUCT MOMENTS -->
+<section class="felt-section" id="felt">
+  <div class="felt-head">
+    <div class="section-kicker reveal">Inside the Product</div>
+    <h2 class="section-title reveal" style="--rd:0.1s;">Not just tracked. <span class="gradient">Felt.</span></h2>
+    <p class="section-intro reveal" style="--rd:0.2s;">SportIn does more than measure movement. It turns effort into something people can see, feel, and come back to. Because when the experience feels alive, movement stops being a metric and starts becoming meaning.</p>
+  </div>
+
+  <div class="felt-grid">
+    <!-- 1. LEADERBOARD -->
+    <div class="felt-card reveal" style="--rd:0.05s;">
+      <div class="felt-stage lb-stage" id="lbStage">
+        <div class="lb-row" data-lb="0">
+          <span class="lb-rank">1</span>
+          <span class="lb-avatar" style="background: linear-gradient(135deg, #C9A24B, #F5E4A8); color: #1a1a1e;">NP</span>
+          <span class="lb-meta">
+            <div class="lb-name">Nicolae Parpala</div>
+            <div class="lb-status">Finished</div>
+          </span>
+          <span class="lb-stats">
+            <div class="lb-laps">12 laps</div>
+            <div class="lb-time">04:21</div>
+          </span>
+        </div>
+        <div class="lb-row up" data-lb="1">
+          <span class="lb-rank">2</span>
+          <span class="lb-avatar">LI</span>
+          <span class="lb-meta">
+            <div class="lb-name">Laura Iacob <span class="lb-arrow">&#x25B2;</span></div>
+            <div class="lb-status">+2 places</div>
+          </span>
+          <span class="lb-stats">
+            <div class="lb-laps">11 laps</div>
+            <div class="lb-time">04:38</div>
+          </span>
+        </div>
+        <div class="lb-row me" data-lb="2">
+          <span class="lb-rank">3</span>
+          <span class="lb-avatar">AP</span>
+          <span class="lb-meta">
+            <div class="lb-name">You</div>
+            <div class="lb-status">Pace: 5:12 / km</div>
+          </span>
+          <span class="lb-stats">
+            <div class="lb-laps">11 laps</div>
+            <div class="lb-time">04:42</div>
+          </span>
+        </div>
+        <div class="lb-row down" data-lb="3">
+          <span class="lb-rank">4</span>
+          <span class="lb-avatar" style="background: linear-gradient(135deg, #2E2E33, #4A4A52);">ED</span>
+          <span class="lb-meta">
+            <div class="lb-name">Emma Dubois <span class="lb-arrow">&#x25BC;</span></div>
+            <div class="lb-status">-1 place</div>
+          </span>
+          <span class="lb-stats">
+            <div class="lb-laps">10 laps</div>
+            <div class="lb-time">04:51</div>
+          </span>
+        </div>
+        <div class="lb-row" data-lb="4">
+          <span class="lb-rank">5</span>
+          <span class="lb-avatar" style="background: linear-gradient(135deg, #FF1840, #FF6B86);">SA</span>
+          <span class="lb-meta">
+            <div class="lb-name">Sofia Andersen</div>
+            <div class="lb-status">Active</div>
+          </span>
+          <span class="lb-stats">
+            <div class="lb-laps">10 laps</div>
+            <div class="lb-time">04:55</div>
+          </span>
+        </div>
+      </div>
+      <div class="felt-tag">Leaderboard</div>
+      <div class="felt-title">Where movement becomes status.</div>
+      <div class="felt-desc">The moment a name climbs, the competition becomes real. Not a number in the background. A position earned in public. This is where movement becomes status, rivalry, and a reason to come back.</div>
+    </div>
+
+    <!-- 2. RECORD -->
+    <div class="felt-card reveal" style="--rd:0.15s;">
+      <div class="felt-stage rec-stage">
+        <div class="map-grid"></div>
+        <svg viewBox="0 0 360 320" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="recGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#0751FB"/>
+              <stop offset="50%" stop-color="#3B7BFF"/>
+              <stop offset="100%" stop-color="#12E094"/>
+            </linearGradient>
+          </defs>
+          <!-- background trail (faint) -->
+          <path id="recPath" class="rec-route-bg"
+            d="M40,260 C70,240 90,180 130,170 C170,160 180,210 220,200 C260,190 280,140 250,110 C220,80 180,90 200,50 C220,10 290,30 320,80"/>
+          <!-- animated drawn trail with gradient -->
+          <path class="rec-route"
+            d="M40,260 C70,240 90,180 130,170 C170,160 180,210 220,200 C260,190 280,140 250,110 C220,80 180,90 200,50 C220,10 290,30 320,80"/>
+          <!-- moving live position pin -->
+          <circle class="rec-pin" r="5">
+            <animateMotion dur="5s" repeatCount="indefinite" rotate="auto">
+              <mpath href="#recPath"/>
+            </animateMotion>
+          </circle>
+          <!-- ring around pin -->
+          <circle r="11" fill="none" stroke="rgba(59,123,255,0.45)" stroke-width="1.2">
+            <animateMotion dur="5s" repeatCount="indefinite">
+              <mpath href="#recPath"/>
+            </animateMotion>
+            <animate attributeName="r" values="6;14;6" dur="1.4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.7;0;0.7" dur="1.4s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+        <div class="rec-stats">
+          <div class="rec-stat-block">
+            <span class="rec-label">Distance</span>
+            <span class="rec-value">5.42<span class="u">km</span></span>
+          </div>
+          <span class="rec-pace-chip">Live Replay</span>
+          <div class="rec-stat-block" style="text-align: right;">
+            <span class="rec-label">Pace</span>
+            <span class="rec-value">5:12<span class="u">/km</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="felt-tag">Record</div>
+      <div class="felt-title">A line in motion.</div>
+      <div class="felt-desc">Every run deserves more than a number. SportIn captures the path, then brings it back as a living memory. A line in motion, replayed through the places the effort really happened.</div>
+    </div>
+
+    <!-- 3. VIRTUAL TRACK -->
+    <div class="felt-card reveal" style="--rd:0.25s;">
+      <div class="felt-stage vt-stage">
+        <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <!-- 4 zones at 9-12-3-6 positions: blue, light-blue, orange, red -->
+            <!-- Oval: width 280, height 220, centered at (180, 160) -->
+            <!-- Track outer / inner radii built from path -->
+            <path id="vtPath" d="M 80,80
+              A 80,80 0 0 1 240,80
+              L 240,240
+              A 80,80 0 0 1 80,240
+              Z"
+              fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="50" />
+            <!-- Inner track outline -->
+            <path id="vtPathInner" d="M 80,80
+              A 80,80 0 0 1 240,80
+              L 240,240
+              A 80,80 0 0 1 80,240
+              Z" fill="none" />
+          </defs>
+          <!-- Shadow layer (offset down/right) -->
+          <path d="M 82,86 A 80,80 0 0 1 242,86 L 242,246 A 80,80 0 0 1 82,246 Z"
+            fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="50" />
+          <!-- Zone 1: top half left (9 to 12) — blue -->
+          <path d="M 80,160 A 80,80 0 0 1 160,80" fill="none" stroke="#0751FB" stroke-width="48" stroke-linecap="butt"/>
+          <!-- Zone 2: top half right (12 to 3) — light blue -->
+          <path d="M 160,80 A 80,80 0 0 1 240,160" fill="none" stroke="#4D88FF" stroke-width="48"/>
+          <!-- Right straight (going down) — light blue continues -->
+          <line x1="240" y1="160" x2="240" y2="160" stroke="#4D88FF" stroke-width="48"/>
+          <!-- Zone 3: bottom half right (3 to 6) — orange -->
+          <line x1="240" y1="160" x2="240" y2="160" stroke="#FF9500" stroke-width="48"/>
+          <path d="M 240,160 A 80,80 0 0 1 160,240" fill="none" stroke="#FF9500" stroke-width="48"/>
+          <!-- Zone 4: bottom half left (6 to 9) — red -->
+          <path d="M 160,240 A 80,80 0 0 1 80,160" fill="none" stroke="#E63946" stroke-width="48"/>
+          <!-- Lane stripes -->
+          <path d="M 80,80 A 80,80 0 0 1 240,80 L 240,240 A 80,80 0 0 1 80,240 Z"
+            fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="6 6"/>
+          <!-- Clock markers (9, 12, 3, 6) -->
+          <circle cx="80" cy="160" r="3" fill="#fff"/>
+          <circle cx="160" cy="80" r="3" fill="#fff"/>
+          <circle cx="240" cy="160" r="3" fill="#fff"/>
+          <circle cx="160" cy="240" r="3" fill="#fff"/>
+          <!-- START line + label -->
+          <text x="80" y="146" font-family="IBM Plex Mono" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle" font-weight="700">START</text>
+          <!-- Runner avatars travelling along track -->
+          <circle class="me-runner" r="7">
+            <animateMotion dur="8s" repeatCount="indefinite" rotate="auto"><mpath href="#vtPath"/></animateMotion>
+          </circle>
+          <circle class="runner r1" r="5">
+            <animateMotion dur="9.2s" repeatCount="indefinite" rotate="auto" begin="-1.6s"><mpath href="#vtPath"/></animateMotion>
+          </circle>
+          <circle class="runner r2" r="5">
+            <animateMotion dur="10s" repeatCount="indefinite" rotate="auto" begin="-3.2s"><mpath href="#vtPath"/></animateMotion>
+          </circle>
+          <circle class="runner r3" r="5">
+            <animateMotion dur="11s" repeatCount="indefinite" rotate="auto" begin="-4.8s"><mpath href="#vtPath"/></animateMotion>
+          </circle>
+        </svg>
+        <div class="vt-overlay">Live &middot; Lap 8 / 12</div>
+      </div>
+      <div class="felt-tag">Virtual Track</div>
+      <div class="felt-title">Race them, in real time.</div>
+      <div class="felt-desc">Movement feels different when someone is right beside you. SportIn turns real-time effort into live competition, so people can chase, defend, race, and feel the energy of professional sport in every step.</div>
+    </div>
+  </div>
+</section>
+
 <!-- TESTIMONIALS · REAL REACTIONS -->
 <section class="signals-section" id="signals">
   <div class="signals-head">
@@ -2542,6 +2996,80 @@
         overlay.classList.remove('is-paused-from-play');
       }
     });
+  })();
+
+  // FELT · Leaderboard live overtake animation
+  (function setupLeaderboardLoop() {
+    const stage = document.getElementById('lbStage');
+    if (!stage) return;
+    const rows = Array.from(stage.querySelectorAll('.lb-row'));
+    if (rows.length < 2) return;
+
+    function shuffle() {
+      // Pick two adjacent rows and swap them visually
+      const idx = Math.floor(Math.random() * (rows.length - 1));
+      const a = rows[idx], b = rows[idx + 1];
+
+      // Mark direction states
+      rows.forEach(r => r.classList.remove('up', 'down'));
+      a.classList.add('down');
+      b.classList.add('up');
+
+      // Swap arrows
+      const arrowA = a.querySelector('.lb-arrow');
+      const arrowB = b.querySelector('.lb-arrow');
+      if (arrowA) arrowA.innerHTML = '&#x25BC;';
+      if (arrowB) arrowB.innerHTML = '&#x25B2;';
+
+      // Swap status text
+      const statusA = a.querySelector('.lb-status');
+      const statusB = b.querySelector('.lb-status');
+      if (statusA) statusA.textContent = '-1 place';
+      if (statusB) statusB.textContent = '+1 place';
+
+      // Animate the position swap by translating
+      const aRect = a.getBoundingClientRect();
+      const bRect = b.getBoundingClientRect();
+      const dy = bRect.top - aRect.top;
+      a.style.transform = `translateY(${dy}px)`;
+      b.style.transform = `translateY(${-dy}px)`;
+
+      setTimeout(() => {
+        // Reset transforms; physically re-order so next cycle works on new positions
+        a.style.transition = 'none';
+        b.style.transition = 'none';
+        a.style.transform = '';
+        b.style.transform = '';
+        // Swap in DOM
+        if (idx + 1 === rows.indexOf(b) && idx === rows.indexOf(a)) {
+          stage.insertBefore(b, a);
+          rows[idx] = b; rows[idx + 1] = a;
+        }
+        // Update visible rank numbers
+        rows.forEach((r, i) => {
+          const rk = r.querySelector('.lb-rank');
+          if (rk) rk.textContent = String(i + 1);
+        });
+        // Restore transitions
+        requestAnimationFrame(() => {
+          a.style.transition = '';
+          b.style.transition = '';
+        });
+      }, 900);
+    }
+
+    // First cycle starts after a delay; then repeats every ~3s
+    let started = false;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          setTimeout(shuffle, 1200);
+          setInterval(shuffle, 3200);
+        }
+      });
+    }, { threshold: 0.3 });
+    io.observe(stage);
   })();
 
   // Pillars: opposite-direction scroll-driven marquee
