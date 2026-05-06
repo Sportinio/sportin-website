@@ -1621,49 +1621,87 @@
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 40px rgba(7, 81, 251, 0.4);
   }
-  .why-col.diff .diff-words {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 28px;
-    line-height: 1.05;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    text-align: center;
+  /* Card 3 — animated team crest (Belonging / Rivalry / Identity) */
+  .diff-crest {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto;
   }
-  .why-col.diff .diff-words span {
-    background: linear-gradient(135deg, #FFFFFF 0%, var(--text-2) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .diff-crest svg.crest-mark { width: 110px; height: 110px; position: relative; z-index: 2; filter: drop-shadow(0 6px 18px rgba(7,81,251,0.45)); animation: crestFloat 5s ease-in-out infinite; }
+  @keyframes crestFloat {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50%      { transform: translateY(-4px) rotate(-1deg); }
   }
-  .why-col.diff .diff-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .crest-ring {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 110px; height: 110px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1.5px solid rgba(59, 123, 255, 0.4);
+    animation: crestRing 3.2s ease-out infinite;
+    pointer-events: none;
+  }
+  .crest-ring.r1 { animation-delay: 0s; }
+  .crest-ring.r2 { animation-delay: 1.6s; }
+  @keyframes crestRing {
+    0%   { width: 90px; height: 90px; opacity: 0.9; }
+    100% { width: 180px; height: 180px; opacity: 0; }
+  }
+  /* Three orbit dots — small avatars representing the team */
+  .crest-dot {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFFFFF, #B8C5E5);
+    border: 1.5px solid rgba(255,255,255,0.5);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    z-index: 3;
+  }
+  .crest-dot.d1 { top: 6px; left: 50%; transform: translateX(-50%); }
+  .crest-dot.d2 { bottom: 14px; left: 12px; }
+  .crest-dot.d3 { bottom: 14px; right: 12px; }
+
+  /* Card 4 — recurring revenue chart */
+  .diff-revenue {
     width: 100%;
-  }
-  .why-col.diff .diff-stack-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 9px 12px;
-    border-radius: 10px;
-    background: rgba(7, 81, 251, 0.08);
-    border: 1px solid rgba(7, 81, 251, 0.2);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-2);
   }
-  .why-col.diff .diff-stack-row .arr {
-    color: #2ECC71;
-    font-weight: 700;
-    margin-left: auto;
-    font-size: 12px;
+  .diff-revenue svg { width: 100%; max-width: 240px; height: 100px; display: block; }
+  .diff-revenue .rev-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diff-revenue .rev-label::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #2ECC71;
+    box-shadow: 0 0 8px #2ECC71;
+    animation: livePulse 1.6s ease-in-out infinite;
+  }
+  .rev-bar { animation: revBarRise 1.6s cubic-bezier(0.16, 1, 0.3, 1) backwards; transform-origin: bottom; }
+  .rev-bar.b1 { animation-delay: 0s; }
+  .rev-bar.b2 { animation-delay: 0.12s; }
+  .rev-bar.b3 { animation-delay: 0.24s; }
+  .rev-bar.b4 { animation-delay: 0.36s; }
+  .rev-bar.b5 { animation-delay: 0.48s; }
+  .rev-bar.b6 { animation-delay: 0.60s; }
+  @keyframes revBarRise {
+    from { transform: scaleY(0); opacity: 0; }
+    to   { transform: scaleY(1); opacity: 1; }
   }
   .why-col.diff .diff-desc {
     font-family: 'Geist', 'Inter', sans-serif;
@@ -3095,29 +3133,75 @@
         <div class="diff-title">Belonging.<br/>Rivalry. Identity.</div>
       </div>
       <div class="diff-hero">
-        <div class="diff-words">
-          <span>Belonging</span>
-          <span>Rivalry</span>
-          <span>Identity</span>
+        <div class="diff-crest">
+          <span class="crest-ring r1"></span>
+          <span class="crest-ring r2"></span>
+          <span class="crest-dot d1"></span>
+          <span class="crest-dot d2"></span>
+          <span class="crest-dot d3"></span>
+          <svg class="crest-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="crestGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#3B7BFF"/>
+                <stop offset="100%" stop-color="#0751FB"/>
+              </linearGradient>
+            </defs>
+            <!-- Hexagonal team crest -->
+            <polygon points="50,8 88,28 88,72 50,92 12,72 12,28"
+                     fill="url(#crestGrad)"
+                     stroke="rgba(255,255,255,0.35)"
+                     stroke-width="1.5"/>
+            <!-- SportIn 'S' bolt inside -->
+            <g transform="translate(28,22) scale(0.58)" fill="white">
+              <path d="M68.06 1.18C68.48 2.11 68.28 2.40 64.76 5.87C63.08 7.53 59.80 10.77 57.48 13.06C55.16 15.35 51.55 18.89 49.46 20.92C47.37 22.95 44.49 25.76 43.06 27.17C36.73 33.38 35.05 35.02 31.91 38.06C30.08 39.83 28.06 41.78 27.43 42.38C26.81 42.98 25.28 44.47 24.05 45.68C22.81 46.89 21.58 48.06 21.31 48.27C20.02 49.25 18.24 49.67 16.73 49.35C15.67 49.12 14.81 48.59 13.68 47.45C12.66 46.42 8.87 42.48 7.22 40.72C6.76 40.24 5.85 39.28 5.19 38.59C1.75 35.01 1.41 34.59 0.82 33.28C-0.24 30.92 -0.28 27.50 0.73 25.34C1.24 24.24 1.75 23.52 4.31 20.29C5.77 18.45 7.10 16.78 7.27 16.57C8.01 15.66 10.68 12.26 11.22 11.55C11.54 11.12 12.18 10.29 12.64 9.72C13.10 9.14 14.06 7.90 14.77 6.96C17.26 3.71 17.76 3.17 19.20 2.20C20.64 1.22 22.09 0.59 23.68 0.22C24.33 0.07 26.66 0.05 45.40 0.02C64.81 -0.02 66.42 -0.01 66.86 0.15C67.41 0.36 67.87 0.75 68.06 1.18Z"/>
+              <path d="M74.30 47.90C74.48 48.91 73.99 52.24 73.58 52.82C73.49 52.95 73.42 53.12 73.42 53.21C73.42 53.54 72.38 55.05 70.49 57.46C69.43 58.82 68.01 60.64 67.35 61.50C65.62 63.73 61.42 69.06 59.86 70.99C59.44 71.52 58.56 72.64 57.90 73.49C56.43 75.39 55.59 76.25 54.51 76.96C53.20 77.81 52.00 78.31 50.29 78.70C49.57 78.87 48.09 78.88 29.10 78.85C9.57 78.82 8.66 78.81 8.31 78.63C7.33 78.13 7.20 76.90 8.02 75.95C8.51 75.38 20.86 62.96 40.25 43.53C50.15 33.61 53.98 29.84 54.42 29.57C54.82 29.33 55.31 29.15 55.91 29.03C57.02 28.80 57.44 28.80 58.23 29.00C59.33 29.29 59.80 29.62 61.21 31.13C61.93 31.90 63.01 33.06 63.62 33.69C65.00 35.13 66.00 36.19 67.85 38.16C68.65 39.02 69.64 40.07 70.04 40.51C72.41 43.03 72.89 43.62 73.30 44.49C73.77 45.50 73.99 46.16 74.14 47.02C74.20 47.36 74.27 47.76 74.30 47.90Z"/>
+            </g>
+          </svg>
         </div>
       </div>
-      <div class="diff-desc">Movement becomes something they carry with pride. A logo on the chest, not a notification on the phone.</div>
+      <div class="diff-desc">A logo on the chest, not a notification on the phone. Movement becomes something they carry with pride.</div>
     </div>
 
     <!-- Card 4: What business gets back -->
     <div class="why-col diff reveal" style="--rd:0.35s;">
       <div>
         <div class="why-eyebrow">What business gets back</div>
-        <div class="diff-title">Retention,<br/>loyalty, energy.</div>
+        <div class="diff-title">Recurring revenue<br/>that compounds.</div>
       </div>
       <div class="diff-hero">
-        <div class="diff-stack">
-          <div class="diff-stack-row">Client Retention <span class="arr">&uarr;</span></div>
-          <div class="diff-stack-row">Employee Retention <span class="arr">&uarr;</span></div>
-          <div class="diff-stack-row">Brand Energy <span class="arr">&uarr;</span></div>
+        <div class="diff-revenue">
+          <svg viewBox="0 0 240 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="revBarGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#0751FB" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#3B7BFF" stop-opacity="1"/>
+              </linearGradient>
+              <linearGradient id="revLine" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#3B7BFF"/>
+                <stop offset="100%" stop-color="#12E094"/>
+              </linearGradient>
+            </defs>
+            <!-- Bars rising left to right -->
+            <rect class="rev-bar b1" x="10"  y="78" width="22" height="18" rx="3" fill="url(#revBarGrad)"/>
+            <rect class="rev-bar b2" x="42"  y="68" width="22" height="28" rx="3" fill="url(#revBarGrad)"/>
+            <rect class="rev-bar b3" x="74"  y="58" width="22" height="38" rx="3" fill="url(#revBarGrad)"/>
+            <rect class="rev-bar b4" x="106" y="46" width="22" height="50" rx="3" fill="url(#revBarGrad)"/>
+            <rect class="rev-bar b5" x="138" y="32" width="22" height="64" rx="3" fill="url(#revBarGrad)"/>
+            <rect class="rev-bar b6" x="170" y="14" width="22" height="82" rx="3" fill="url(#revBarGrad)"/>
+            <!-- Trend line through bar tops -->
+            <path d="M21,82 L53,72 L85,62 L117,50 L149,36 L181,18 L210,8"
+                  stroke="url(#revLine)" stroke-width="1.6" fill="none"
+                  stroke-linecap="round" stroke-dasharray="160" stroke-dashoffset="160"
+                  style="animation: miDraw 1.4s ease-out 0.7s forwards;"/>
+            <!-- Glowing endpoint -->
+            <circle cx="210" cy="8" r="4" fill="#12E094" filter="drop-shadow(0 0 8px #12E094)" opacity="0">
+              <animate attributeName="opacity" from="0" to="1" begin="2s" dur="0.4s" fill="freeze"/>
+            </circle>
+          </svg>
+          <div class="rev-label">Recurring Revenue</div>
         </div>
       </div>
-      <div class="diff-desc">Higher retention. Higher loyalty. More energy around the brand &mdash; week after week, season after season.</div>
+      <div class="diff-desc">Retention. Loyalty. Brand energy. They compound into recurring revenue you can count on, season after season.</div>
     </div>
   </div>
 </section>
