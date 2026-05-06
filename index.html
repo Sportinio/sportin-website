@@ -950,19 +950,9 @@
   /* Phone Showcase — scroll-driven arc carousel */
   .phone-showcase {
     margin-top: 60px;
-    padding: 0;
+    padding: 40px 0 80px;
     position: relative;
     z-index: 1;
-    /* tall section so scroll travel is slow & satisfying */
-    height: 320vh;
-  }
-  .phone-sticky {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
     /* edge fade gradient */
     -webkit-mask-image: linear-gradient(90deg,
@@ -990,8 +980,8 @@
   }
   .phone-track-wrap {
     position: relative;
-    width: 100%;
     height: 620px;
+    overflow: visible;
   }
   .phone-track {
     position: absolute;
@@ -1328,9 +1318,8 @@
 
 <!-- PHONE SHOWCASE -->
 <section class="phone-showcase" id="phoneShowcase">
-  <div class="phone-sticky">
-    <div class="phone-track-wrap">
-      <div class="phone-track" id="phoneTrack">
+  <div class="phone-track-wrap">
+    <div class="phone-track" id="phoneTrack">
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-login.png" alt="SportIn App" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-feed.png" alt="Feed & Virtual Races" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-weekly.jpg" alt="Weekly Progress" /></div></div>
@@ -1338,7 +1327,6 @@
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-monthly.jpg" alt="Monthly Target" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-leaderboard.png" alt="Leaderboard" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-profile.png" alt="Profile & Connections" /></div></div>
-      </div>
     </div>
   </div>
 </section>
@@ -1758,13 +1746,13 @@
     }
 
     function computeTargetProgress() {
-      // Section is 320vh tall; the sticky track is pinned for ~220vh of scroll.
-      // Map scroll within that pinned range to 0..1.
+      // Map scroll position to 0..1 as the section traverses the viewport.
+      // 0 when section is just entering from the bottom, 1 when it's fully exited at the top.
       const rect = showcase.getBoundingClientRect();
       const winH = window.innerHeight;
-      const totalScrollable = showcase.offsetHeight - winH; // length of pinned travel
-      const scrolled = -rect.top; // 0 when section top hits viewport top
-      let p = scrolled / totalScrollable;
+      const total = winH + rect.height;
+      const traveled = winH - rect.top;
+      let p = traveled / total;
       return Math.max(0, Math.min(1, p));
     }
 
