@@ -950,7 +950,7 @@
   /* Phone Showcase — scroll-driven arc carousel */
   .phone-showcase {
     margin-top: 60px;
-    padding: 40px 0 80px;
+    padding: 240px 0 240px; /* extra vertical room → slower horizontal motion per scroll unit */
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -1733,7 +1733,7 @@
     // Smoothing state
     let targetProgress = 0;
     let currentProgress = 0;
-    const ease = 0.085; // lower = smoother/slower follow
+    const ease = 0.06; // lower = smoother/slower follow
     let rafId = null;
 
     function measure() {
