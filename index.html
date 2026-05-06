@@ -2371,8 +2371,8 @@
       <div class="felt-stage vt-stage">
         <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet">
           <defs>
-            <!-- Centered oval: width 240-120=120 + r60 arcs => x 60..300, y 90..210 (with top/bottom semicircles to y 30 and 270) -->
-            <path id="vtPath" d="M 120,90 A 60,60 0 0 1 240,90 L 240,210 A 60,60 0 0 1 120,210 Z" fill="none"/>
+            <!-- Original-size oval shifted +20 right to center in viewBox (center at 180,160) -->
+            <path id="vtPath" d="M 100,80 A 80,80 0 0 1 260,80 L 260,240 A 80,80 0 0 1 100,240 Z" fill="none"/>
             <clipPath id="vtAv1"><circle cx="0" cy="0" r="14"/></clipPath>
             <clipPath id="vtAv2"><circle cx="0" cy="0" r="14"/></clipPath>
             <clipPath id="vtAv3"><circle cx="0" cy="0" r="14"/></clipPath>
@@ -2380,20 +2380,20 @@
           </defs>
 
           <!-- Track shadow / outline -->
-          <path d="M 120,90 A 60,60 0 0 1 240,90 L 240,210 A 60,60 0 0 1 120,210 Z"
-            fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="44"/>
+          <path d="M 100,80 A 80,80 0 0 1 260,80 L 260,240 A 80,80 0 0 1 100,240 Z"
+            fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="48"/>
           <!-- Lane stripes -->
-          <path d="M 120,90 A 60,60 0 0 1 240,90 L 240,210 A 60,60 0 0 1 120,210 Z"
+          <path d="M 100,80 A 80,80 0 0 1 260,80 L 260,240 A 80,80 0 0 1 100,240 Z"
             fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1" stroke-dasharray="4 6"/>
 
           <!-- Clock markers (9 / 12 / 3 / 6) -->
-          <circle cx="120" cy="150" r="2" fill="rgba(255,255,255,0.4)"/>
-          <circle cx="180" cy="90"  r="2" fill="rgba(255,255,255,0.4)"/>
-          <circle cx="240" cy="150" r="2" fill="rgba(255,255,255,0.4)"/>
-          <circle cx="180" cy="210" r="2" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="100" cy="160" r="2" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="180" cy="80"  r="2" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="260" cy="160" r="2" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="180" cy="240" r="2" fill="rgba(255,255,255,0.4)"/>
 
           <!-- START label -->
-          <text x="120" y="138" font-family="IBM Plex Mono" font-size="8" fill="rgba(255,255,255,0.6)" text-anchor="middle" font-weight="700">START</text>
+          <text x="100" y="146" font-family="IBM Plex Mono" font-size="8" fill="rgba(255,255,255,0.6)" text-anchor="middle" font-weight="700">START</text>
 
           <!-- Avatar runners (circles cropping <image> elements). Each in a <g> with animateMotion -->
           <!-- ME runner (with blue glow ring) -->
