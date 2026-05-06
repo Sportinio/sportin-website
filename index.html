@@ -969,9 +969,9 @@
   }
   .phone-frame {
     flex-shrink: 0;
-    width: 180px;
-    padding: 6px;
-    border-radius: 44px;
+    width: 200px;
+    padding: 5px;
+    border-radius: 36px;
     background: linear-gradient(160deg,
       rgba(180, 180, 190, 0.25) 0%,
       rgba(60, 60, 68, 0.9) 15%,
@@ -990,7 +990,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 44px;
+    border-radius: 36px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     pointer-events: none;
     z-index: 4;
@@ -1016,9 +1016,10 @@
   }
   .phone-inner {
     position: relative;
-    border-radius: 38px;
+    border-radius: 32px;
     overflow: hidden;
     background: #000;
+    height: 420px;
   }
   /* Dynamic Island */
   .phone-inner::before {
@@ -1038,7 +1039,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 38px;
+    border-radius: 32px;
     background: linear-gradient(
       125deg,
       rgba(255, 255, 255, 0.06) 0%,
@@ -1048,9 +1049,11 @@
     pointer-events: none;
     z-index: 2;
   }
-  .phone-screen img {
+  .phone-screen {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
     display: block;
   }
 
@@ -1144,12 +1147,12 @@
     .phone-frame + .phone-frame { margin-left: -12px; }
   }
   @media (max-width: 768px) {
-    .phone-showcase { margin-top: 60px; padding: 20px 0 60px; }
-    .phone-arc { flex-wrap: wrap; gap: 16px; padding: 20px; }
-    .phone-frame { width: 42%; border-radius: 28px; padding: 4px; margin-left: 0 !important; }
-    .phone-inner { border-radius: 24px; }
-    .phone-inner::before { width: 44px; height: 14px; top: 6px; border-radius: 14px; }
-    .phone-frame::after { border-radius: 28px; }
+    .phone-showcase { margin-top: 60px; padding: 20px 16px 60px; }
+    .phone-arc { flex-wrap: wrap; gap: 12px; padding: 0; justify-content: center; }
+    .phone-frame { width: 140px; border-radius: 24px; padding: 3px; margin-left: 0 !important; }
+    .phone-inner { border-radius: 21px; height: 290px; }
+    .phone-inner::before { width: 36px; height: 12px; top: 5px; border-radius: 10px; }
+    .phone-frame::after { border-radius: 24px; }
     .phone-frame::before { display: none; }
     .phone-frame:nth-child(1),
     .phone-frame:nth-child(2),
@@ -1164,7 +1167,6 @@
       transform: translateY(0) scale(1) rotate(0deg) translateX(0);
       box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
-    .phone-frame:nth-child(5) { margin: 0 auto; }
   }
 
   /* Footer */
