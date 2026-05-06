@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SportIn · Where running becomes legend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Cinzel+Decorative:wght@700;900&family=Anton&family=Bebas+Neue&family=Barlow+Condensed:wght@600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #06060C;
+    --ink-1: #0D0D14;
+    --ink-2: #131322;
+    --ink-3: #1B1B2E;
+    --surface: rgba(255, 255, 255, 0.04);
+    --surface-2: rgba(255, 255, 255, 0.07);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.2);
+    --text: #FFFFFF;
+    --text-2: #C8CAD4;
+    --text-3: #9AA0B4;
+    --text-4: #5F667E;
+    --blue: #1A8CFF;
+    --blue-glow: rgba(26, 140, 255, 0.4);
+    --cyan: #00E5FF;
+    --gold: #F5E4A8;
+    --purple: #6B3FA0;
+    --red: #FF3B5C;
+    --green: #12E094;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    background: var(--ink-1);
+    color: var(--text);
+    font-family: 'Lato', system-ui, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(26, 140, 255, 0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 60%, rgba(0, 229, 255, 0.06) 0%, transparent 50%),
+      linear-gradient(180deg, #0D0D14 0%, #06060C 100%);
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 80%);
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* Nav */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(13, 13, 20, 0.75);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    color: var(--ink-0);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 9px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 8px 30px var(--blue-glow);
+  }
+  .brand .dot { color: var(--blue); font-weight: 800; }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .nav-links a {
+    color: var(--text-3);
+    padding: 8px 0;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: var(--text);
+    color: var(--ink-0);
+    border-radius: 999px;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); }
+
+  /* Wrap */
+  .wrap { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 48px; }
+
+  /* Hero */
+  .hero {
+    padding: 120px 48px 100px;
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--text-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    margin-bottom: 32px;
+  }
+  .hero-eyebrow .pulse {
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--green);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .hero-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 108px;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    color: var(--text);
+  }
+  .hero-title .gradient {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-family: 'Lato', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-3);
+    max-width: 640px;
+    margin: 28px auto 42px;
+    line-height: 1.55;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 26px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    color: var(--ink-0);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22) inset; }
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-ghost:hover { background: var(--surface-2); border-color: var(--text); }
+
+  .hero-media {
+    margin-top: 70px;
+    position: relative;
+  }
+  .phone {
+    width: 300px;
+    height: 600px;
+    margin: 0 auto;
+    background: linear-gradient(160deg, #1B1B2E, #0D0D14);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 40px;
+    padding: 14px;
+    box-shadow:
+      0 0 0 2px rgba(0, 0, 0, 0.8),
+      0 30px 100px rgba(26, 140, 255, 0.35),
+      0 50px 80px rgba(0, 0, 0, 0.5);
+    position: relative;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #06060C 0%, #0D0D14 50%, #131322 100%);
+    border-radius: 26px;
+    overflow: hidden;
+    position: relative;
+    padding: 28px 20px;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 22px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 2;
+  }
+  .phone-status {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    margin-bottom: 30px;
+    margin-top: 10px;
+  }
+  .phone-hero-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.03em;
+  }
+  .phone-hero-lbl {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .phone-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+  .phone-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .phone-card-row:first-child { margin-top: 0; }
+  .phone-card-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .phone-card-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .phone-card-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phone-card-bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 68%;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    border-radius: 3px;
+    box-shadow: 0 0 14px var(--cyan);
+  }
+
+  .phone-orbs {
+    position: absolute;
+    inset: -80px;
+    z-index: -1;
+  }
+  .orb {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+  }
+  .orb.blue { top: 0; left: -60px; background: var(--blue); }
+  .orb.cyan { bottom: 0; right: -40px; background: var(--cyan); opacity: 0.35; }
+  .orb.gold { top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--gold); opacity: 0.06; width: 500px; height: 500px; }
+
+  /* Pillars */
+  .pillars-section {
+    margin-top: 100px;
+    padding: 0 48px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .section-kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 56px;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    max-width: 800px;
+  }
+  .section-title .muted { color: var(--text-3); }
+  .section-title .gradient {
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .section-intro {
+    font-family: 'Lato', sans-serif;
+    font-size: 17px;
+    color: var(--text-3);
+    line-height: 1.6;
+    max-width: 640px;
+    margin-top: 20px;
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 48px;
+  }
+  .pillar {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    padding: 28px 24px;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.25);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s ease,
+                background 0.4s ease,
+                box-shadow 0.4s ease;
+  }
+  .pillar:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+  .pillar-ico {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, rgba(26, 140, 255, 0.2), rgba(0, 229, 255, 0.15));
+    border: 1px solid rgba(26, 140, 255, 0.3);
+    border-radius: 12px;
+    color: var(--cyan);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  .pillar-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .pillar-desc {
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-3);
+  }
+
+  /* Two Worlds */
+  .worlds-section {
+    margin-top: 140px;
+    padding: 0 48px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .worlds-head { text-align: center; margin-bottom: 56px; }
+  .worlds-head .section-title { margin: 0 auto; }
+  .worlds-head .section-intro { margin: 20px auto 0; }
+  .worlds {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+  .world {
+    position: relative;
+    display: block;
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 520px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+      0 18px 50px rgba(0, 0, 0, 0.35);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    isolation: isolate;
+  }
+  .world::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 28%);
+    z-index: 2;
+  }
+  .world:hover { transform: translateY(-5px); }
+  .world-runtag {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 999px;
+    z-index: 2;
+  }
+
+  /* World: GoR (Run 1) */
+  .world.gor {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(107, 63, 160, 0.4) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(201, 162, 75, 0.15) 0%, transparent 55%),
+      linear-gradient(180deg, #1E1530 0%, #06050A 100%);
+  }
+  .world.gor:hover { box-shadow: 0 30px 80px rgba(107, 63, 160, 0.35); }
+  .world.gor .world-runtag { color: #F5E4A8; background: rgba(107, 63, 160, 0.3); border: 1px solid rgba(245, 228, 168, 0.3); }
+  .world.gor .world-mark {
+    color: #F5E4A8;
+    border-color: rgba(245, 228, 168, 0.3);
+    background: rgba(107, 63, 160, 0.15);
+  }
+  .world.gor .world-title {
+    font-family: 'Cinzel Decorative', serif;
+    color: #F5E4A8;
+    letter-spacing: 0.03em;
+  }
+  .world.gor .world-enter { border-color: rgba(245, 228, 168, 0.4); color: #F5E4A8; }
+  .world.gor .world-enter:hover { background: rgba(245, 228, 168, 0.1); }
+
+  /* World: LoB (Run 2) */
+  .world.lob {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(26, 140, 255, 0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(0, 229, 255, 0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #04123F 0%, #000418 100%);
+  }
+  .world.lob:hover { box-shadow: 0 30px 80px rgba(0, 229, 255, 0.3); }
+  .world.lob .world-runtag { color: var(--cyan); background: rgba(26, 140, 255, 0.2); border: 1px solid rgba(0, 229, 255, 0.35); }
+  .world.lob .world-mark {
+    color: var(--cyan);
+    border-color: rgba(0, 229, 255, 0.35);
+    background: rgba(0, 229, 255, 0.08);
+  }
+  .world.lob .world-title {
+    font-family: 'Anton', sans-serif;
+    text-transform: uppercase;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+  .world.lob .world-enter { border-color: rgba(0, 229, 255, 0.4); color: var(--cyan); }
+  .world.lob .world-enter:hover { background: rgba(0, 229, 255, 0.1); }
+
+  /* World: Le Grand Run (Run 3) · the LIGHT one */
+  .world.lgr {
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(245, 212, 0, 0.4) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(209, 23, 45, 0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #F4ECCE 0%, #E5D8AB 100%);
+    border-color: rgba(26, 15, 8, 0.15);
+  }
+  .world.lgr:hover { box-shadow: 0 30px 80px rgba(245, 212, 0, 0.4); }
+  .world.lgr .world-runtag { color: #1A0F08; background: rgba(245, 212, 0, 0.85); border: 1px solid rgba(26, 15, 8, 0.3); }
+  .world.lgr .world-mark {
+    color: #1A0F08;
+    border-color: rgba(26, 15, 8, 0.3);
+    background: rgba(245, 212, 0, 0.5);
+  }
+  .world.lgr .world-title {
+    font-family: 'Bebas Neue', sans-serif;
+    color: #1A0F08;
+    letter-spacing: 0.03em;
+  }
+  .world.lgr .world-title .le-italic {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    color: #D1172D;
+  }
+  .world.lgr .world-tagline { color: #5A3A1A !important; }
+  .world.lgr .world-desc { color: #3B2A12 !important; }
+  .world.lgr .world-stats { border-top-color: rgba(26, 15, 8, 0.15); }
+  .world.lgr .ws-val { color: #1A0F08 !important; }
+  .world.lgr .ws-lbl { color: #5A3A1A !important; }
+  .world.lgr .world-enter { border-color: #1A0F08; color: #1A0F08; background: #F5D400; }
+  .world.lgr .world-enter:hover { background: #1A0F08; color: #F5D400; }
+
+  /* World: Grand Prix Series (Run 4) */
+  .world.gps {
+    background:
+      radial-gradient(ellipse at 70% 0%, rgba(232, 0, 45, 0.28) 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 100%, rgba(198, 202, 209, 0.08) 0%, transparent 55%),
+      linear-gradient(180deg, #12141A 0%, #050608 100%);
+  }
+  .world.gps::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 4px),
+      repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .world.gps .world-inner { position: relative; z-index: 1; }
+  .world.gps:hover { box-shadow: 0 30px 80px rgba(232, 0, 45, 0.32); }
+  .world.gps .world-runtag { color: #FF1840; background: rgba(232, 0, 45, 0.12); border: 1px solid rgba(232, 0, 45, 0.5); }
+  .world.gps .world-mark {
+    color: #FF1840;
+    border-color: rgba(232, 0, 45, 0.5);
+    background: rgba(232, 0, 45, 0.1);
+  }
+  .world.gps .world-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    color: var(--text);
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  .world.gps .world-title em {
+    font-style: italic;
+    color: #E8002D;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+  }
+  .world.gps .world-enter { border-color: #E8002D; color: #FF1840; }
+  .world.gps .world-enter:hover { background: rgba(232, 0, 45, 0.1); }
+
+  .world-inner { padding: 40px 36px 36px; display: flex; flex-direction: column; height: 100%; gap: 20px; }
+  .world-mark {
+    align-self: flex-start;
+    padding: 8px 14px;
+    border: 1px solid;
+    border-radius: 999px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .world-title {
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .world-tagline {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-2);
+    margin-top: -4px;
+  }
+  .world-desc {
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+    color: var(--text-3);
+    line-height: 1.6;
+  }
+  .world-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .ws-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .ws-lbl {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-top: 6px;
+  }
+  .world-enter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 12px 22px;
+    border: 1px solid;
+    border-radius: 999px;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: background 0.2s;
+    margin-top: 6px;
+  }
+  .world-enter::after { content: '→'; font-size: 16px; }
+
+  /* Teaser visual for each world */
+  .world-visual {
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+    height: 200px;
+    opacity: 0.14;
+    pointer-events: none;
+  }
+
+  /* Stats strip */
+  .stats-strip {
+    margin-top: 140px;
+    padding: 40px 48px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .stats-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
+  .stat-block { text-align: left; }
+  .stat-big {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .stat-big .unit {
+    font-size: 24px;
+    color: var(--cyan);
+    margin-left: 4px;
+    font-weight: 600;
+  }
+  .stat-cap {
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: var(--text-3);
+    margin-top: 10px;
+    line-height: 1.4;
+  }
+
+  /* Why SportIn · persona benefits */
+  .why-section {
+    margin-top: 140px;
+    padding: 0 48px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .why-head { margin-bottom: 48px; }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .why-col {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 20px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.25);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s ease,
+                background 0.4s ease,
+                box-shadow 0.4s ease;
+  }
+  .why-col:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.055);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 22px 60px rgba(0, 0, 0, 0.35);
+  }
+  .why-persona {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    background: rgba(0, 229, 255, 0.08);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    align-self: flex-start;
+  }
+  .why-col.coms .why-persona { color: #F5E4A8; background: rgba(245, 228, 168, 0.06); border-color: rgba(245, 228, 168, 0.3); }
+  .why-col.club .why-persona { color: #FF1840; background: rgba(232, 0, 45, 0.1); border-color: rgba(232, 0, 45, 0.4); }
+  .why-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    line-height: 1.15;
+  }
+  .why-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 6px;
+  }
+  .why-list li {
+    display: flex;
+    gap: 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+  .why-list li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    margin-top: 4px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    box-shadow: 0 0 10px rgba(26, 140, 255, 0.4);
+  }
+  .why-col.coms .why-list li::before { background: linear-gradient(135deg, #C9A24B, #F5E4A8); box-shadow: 0 0 10px rgba(245, 228, 168, 0.35); }
+  .why-col.club .why-list li::before { background: linear-gradient(135deg, #E8002D, #FF1840); box-shadow: 0 0 10px rgba(232, 0, 45, 0.35); }
+
+  /* Example snippet from a partner */
+  .example-section {
+    margin-top: 80px;
+    padding: 0 48px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .example-card {
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(26, 140, 255, 0.12), transparent 55%),
+      rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 24px;
+    padding: 48px 44px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 48px;
+    align-items: center;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 24px 60px rgba(0, 0, 0, 0.3);
+  }
+  .example-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 18px;
+  }
+  .example-quote {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.35;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .example-quote::before { content: '“'; color: var(--cyan); margin-right: 4px; }
+  .example-quote::after { content: '”'; color: var(--cyan); margin-left: 4px; }
+  .example-attribution {
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: var(--text-3);
+    margin-top: 24px;
+    letter-spacing: 0.02em;
+  }
+  .example-attribution strong { color: var(--text); font-weight: 600; }
+  .example-kpis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .example-kpi {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 14px;
+    padding: 18px 20px;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 6px 20px rgba(0, 0, 0, 0.18);
+  }
+  .example-kpi-v {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .example-kpi-v .u { color: var(--cyan); font-size: 15px; margin-left: 4px; font-weight: 600; }
+  .example-kpi-l {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-top: 8px;
+  }
+
+  /* Signals */
+  .signals-section {
+    margin-top: 140px;
+    padding: 0 48px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .signals-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; margin-bottom: 48px; }
+  .signals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .signal {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    padding: 22px 20px;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 10px 32px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.35s ease,
+                background 0.35s ease,
+                box-shadow 0.35s ease;
+  }
+  .signal:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 20px 50px rgba(0, 0, 0, 0.35);
+  }
+  .signal-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--text-4);
+    font-weight: 500;
+  }
+  .signal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--text);
+    margin-top: 12px;
+  }
+  .signal-desc {
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: var(--text-3);
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  /* App CTA */
+  .app-cta {
+    margin-top: 140px;
+    padding: 0 48px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .app-cta-inner {
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 28px;
+    padding: 60px 56px;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(26, 140, 255, 0.18), transparent 60%),
+      radial-gradient(ellipse at 100% 100%, rgba(0, 229, 255, 0.14), transparent 60%),
+      rgba(255, 255, 255, 0.035);
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+    align-items: center;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 30px 80px rgba(0, 0, 0, 0.35);
+  }
+  .app-cta-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .app-cta-copy {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    color: var(--text-3);
+    line-height: 1.6;
+    margin-top: 18px;
+    max-width: 460px;
+  }
+  .app-cta-actions { display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+  .store-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 24px;
+    background: var(--text);
+    color: var(--ink-0);
+    border-radius: 16px;
+    transition: transform 0.15s;
+  }
+  .store-btn:hover { transform: translateY(-2px); }
+  .store-btn .store-sub {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    font-weight: 500;
+  }
+  .store-btn .store-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .store-btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+
+  /* Footer */
+  .footer {
+    margin-top: 120px;
+    padding: 60px 48px 40px;
+    border-top: 1px solid var(--border);
+    background: var(--ink-0);
+  }
+  .footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 50px;
+  }
+  .footer-brand .brand { margin-bottom: 18px; }
+  .footer-tag {
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: var(--text-3);
+    line-height: 1.55;
+    max-width: 320px;
+  }
+  .footer-col h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 10px; }
+  .footer-col a {
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: var(--text-2);
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--text); }
+  .footer-bottom {
+    max-width: 1280px;
+    margin: 50px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text-4);
+    text-transform: uppercase;
+  }
+
+  /* ==================================================
+     ANIMATIONS · scroll-reveal, hero entrance, orbs
+     ================================================== */
+
+  /* Scroll progress bar */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    z-index: 40;
+    transition: width 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Base reveal · silky with blur */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    filter: blur(10px);
+    transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--rd, 0s);
+    will-change: opacity, transform, filter;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  /* Variants */
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-48px);
+    filter: blur(10px);
+    transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--rd, 0s);
+  }
+  .reveal-left.in { opacity: 1; transform: translateX(0); filter: blur(0); }
+
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(48px);
+    filter: blur(10px);
+    transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--rd, 0s);
+  }
+  .reveal-right.in { opacity: 1; transform: translateX(0); filter: blur(0); }
+
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+    filter: blur(12px);
+    transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--rd, 0s);
+  }
+  .reveal-scale.in { opacity: 1; transform: scale(1); filter: blur(0); }
+
+  /* Hero entrance · staggered words */
+  .hero-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(34px);
+    filter: blur(12px);
+    animation: heroWordIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--wd, 0s);
+    will-change: opacity, transform, filter;
+  }
+  @keyframes heroWordIn {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .hero-eyebrow,
+  .hero-sub,
+  .hero-cta {
+    opacity: 0;
+    animation: heroFadeIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .hero-eyebrow { animation-delay: 0.15s; }
+  .hero-sub { animation-delay: 1.45s; }
+  .hero-cta { animation-delay: 1.7s; }
+  @keyframes heroFadeIn {
+    from { opacity: 0; transform: translateY(18px); filter: blur(8px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  /* Phone floating */
+  .hero-media {
+    opacity: 0;
+    animation: phoneRise 1.5s cubic-bezier(0.16, 1, 0.3, 1) 1.55s forwards;
+  }
+  @keyframes phoneRise {
+    from { opacity: 0; transform: translateY(60px); filter: blur(14px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .phone {
+    animation: phoneFloat 9s ease-in-out infinite;
+    animation-delay: 3s;
+  }
+  @keyframes phoneFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-16px); }
+  }
+
+  /* Drifting orbs */
+  .orb.blue {
+    animation: orbDrift1 18s ease-in-out infinite;
+  }
+  .orb.cyan {
+    animation: orbDrift2 22s ease-in-out infinite;
+  }
+  .orb.gold {
+    animation: orbPulse 10s ease-in-out infinite;
+  }
+  @keyframes orbDrift1 {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(40px, -30px); }
+    66% { transform: translate(-20px, 20px); }
+  }
+  @keyframes orbDrift2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-40px, -25px); }
+  }
+  @keyframes orbPulse {
+    0%, 100% { opacity: 0.06; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.11; transform: translate(-50%, -50%) scale(1.08); }
+  }
+
+  /* Stat counter pulse when animated */
+  .stat-big.counting {
+    background: linear-gradient(135deg, var(--text) 0%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s;
+  }
+
+  /* Pillar icon spin on hover */
+  .pillar-ico {
+    transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1), background 0.3s;
+  }
+  .pillar:hover .pillar-ico {
+    transform: rotate(8deg) scale(1.06);
+  }
+
+  /* world transition handled in primary definition above */
+
+  /* Section-title gradient shimmer */
+  .section-title .gradient {
+    background-size: 200% auto;
+    animation: shimmer 8s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+
+  /* signal + why-col transitions handled in their primary definitions above */
+
+  /* Pulse ring around nav dot pulse reused */
+  .hero-eyebrow .pulse::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: ringOut 1.8s ease-out infinite;
+  }
+  .hero-eyebrow .pulse {
+    position: relative;
+  }
+  @keyframes ringOut {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(3.4); opacity: 0; }
+  }
+
+  /* Smooth section anchor scroll offset */
+  section[id] { scroll-margin-top: 90px; }
+
+  /* Reduced-motion users get no animations */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001s !important;
+      animation-delay: 0s !important;
+      transition-duration: 0.001s !important;
+    }
+    .reveal, .reveal-left, .reveal-right, .reveal-scale {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    .hero-word { opacity: 1 !important; transform: none !important; filter: none !important; }
+  }
+
+  @media (max-width: 1000px) {
+    .nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 60px 20px 60px; }
+    .hero-title { font-size: 56px; letter-spacing: -0.03em; }
+    .hero-sub { font-size: 17px; }
+    .wrap, .pillars-section, .worlds-section, .signals-section, .app-cta { padding-left: 20px; padding-right: 20px; }
+    .pillars { grid-template-columns: repeat(2, 1fr); }
+    .worlds { grid-template-columns: 1fr; }
+    .world { min-height: 460px; }
+    .world-title { font-size: 46px; }
+    .section-title { font-size: 36px; }
+    .stats-strip { padding: 30px 20px; }
+    .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    .stat-big { font-size: 38px; }
+    .signals-head { flex-direction: column; align-items: flex-start; }
+    .signals-grid { grid-template-columns: repeat(2, 1fr); }
+    .why-grid { grid-template-columns: 1fr; }
+    .example-card { grid-template-columns: 1fr; padding: 32px 24px; gap: 28px; }
+    .example-quote { font-size: 20px; }
+    .app-cta-inner { grid-template-columns: 1fr; padding: 36px 28px; }
+    .app-cta-title { font-size: 34px; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .footer-bottom { flex-direction: column; gap: 12px; }
+    .phone { width: 240px; height: 480px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="nav">
+  <a class="brand" href="/">
+    <span class="brand-mark">S</span>
+    Sport<span class="dot">In</span>
+  </a>
+  <div class="nav-links">
+    <a href="#pillars">Platform</a>
+    <a href="#worlds">Four Runs</a>
+    <a href="#why">Why SportIn</a>
+    <a href="#signals">Sponsor a Signal</a>
+    <a href="mailto:partners@sportin.io">Contact</a>
+  </div>
+  <a class="nav-cta" href="#app">Book a Call</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow"><span class="pulse"></span>For Brand Managers · Heads of Community · Club Directors</div>
+  <h1 class="hero-title">
+    <span class="hero-word" style="--wd:0.30s;">Turn</span>
+    <span class="hero-word" style="--wd:0.45s;">your</span>
+    <span class="hero-word" style="--wd:0.60s;">audience</span><br/>
+    <span class="hero-word" style="--wd:0.75s;">into</span>
+    <span class="hero-word" style="--wd:0.88s;">a</span>
+    <span class="hero-word gradient" style="--wd:1.05s;">team.</span>
+  </h1>
+  <p class="hero-sub">SportIn is a year-round sports property your brand, community, or club can sponsor, field teams in, and measure down to every step. Four running competitions. One dashboard. Zero apps to build. Your members move, your brand earns the spotlight.</p>
+  <div class="hero-cta">
+    <a href="#why" class="btn btn-primary">Book a Partnership Call</a>
+    <a href="#worlds" class="btn btn-ghost">See the Four Runs</a>
+  </div>
+
+  <div class="hero-media">
+    <div class="phone-orbs">
+      <div class="orb blue"></div>
+      <div class="orb cyan"></div>
+      <div class="orb gold"></div>
+    </div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-status">
+          <span>9:41</span>
+          <span>5G · 100%</span>
+        </div>
+        <div class="phone-hero-num">12.480</div>
+        <div class="phone-hero-lbl">Movement Index Today</div>
+        <div class="phone-card">
+          <div class="phone-card-row">
+            <span class="phone-card-title">Today · Steps</span>
+            <span class="phone-card-val">8.724</span>
+          </div>
+          <div class="phone-card-bar"></div>
+        </div>
+        <div class="phone-card">
+          <div class="phone-card-row">
+            <span class="phone-card-title">Distance</span>
+            <span class="phone-card-val">6,4 km</span>
+          </div>
+          <div class="phone-card-row" style="margin-top: 14px;">
+            <span class="phone-card-title">Tier</span>
+            <span class="phone-card-val" style="color: var(--gold);">Gold</span>
+          </div>
+        </div>
+        <div class="phone-card">
+          <div class="phone-card-row">
+            <span class="phone-card-title">This Week</span>
+            <span class="phone-card-val" style="color: var(--green);">+18,2%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="pillars-section" id="pillars">
+  <div class="section-kicker reveal">What Your Team Gets</div>
+  <h2 class="section-title reveal" style="--rd:0.05s;">A sports property, a team, and a dashboard. <span class="muted">Without building a thing.</span></h2>
+  <p class="section-intro reveal" style="--rd:0.15s;">Marketing budgets buy banners. SportIn buys you a living competition your audience runs inside. Here is what lands in your stack the day you sign.</p>
+
+  <div class="pillars">
+    <div class="pillar reveal" style="--rd:0.05s;">
+      <div class="pillar-ico">AU</div>
+      <div class="pillar-title">Audience on Day 1</div>
+      <div class="pillar-desc">42.000+ active runners across Spain, Portugal, and Romania already on the platform. Your team joins a live roster, not an empty app.</div>
+    </div>
+    <div class="pillar reveal" style="--rd:0.15s;">
+      <div class="pillar-ico">MI</div>
+      <div class="pillar-title">Measured to the Step</div>
+      <div class="pillar-desc">Every km, every step, every Movement Index point tracked and attributed. Campaign ROI you can screenshot for your board.</div>
+    </div>
+    <div class="pillar reveal" style="--rd:0.25s;">
+      <div class="pillar-ico">CP</div>
+      <div class="pillar-title">Four Sponsorable Runs</div>
+      <div class="pillar-desc">From a 9-month medieval saga to a 24-round championship. Pick the format that fits your audience, your budget, and your brand tone.</div>
+    </div>
+    <div class="pillar reveal" style="--rd:0.35s;">
+      <div class="pillar-ico">DB</div>
+      <div class="pillar-title">Partner Dashboard</div>
+      <div class="pillar-desc">One view: engagement, impressions, team standings, voucher redemption, retention. Live data, exportable, CRM-ready.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUR RUNS -->
+<section class="worlds-section" id="worlds">
+  <div class="worlds-head">
+    <div class="section-kicker reveal" style="text-align: center;">Four Sponsorable Properties</div>
+    <h2 class="section-title reveal" style="--rd:0.1s; text-align: center;">Pick the run <span class="gradient">that fits your audience.</span></h2>
+    <p class="section-intro reveal" style="--rd:0.2s; text-align: center;">Each run targets a different runner and a different marketing need. Field teams in one, sponsor another, title a third. One contract, four possible activations.</p>
+  </div>
+
+  <div class="worlds">
+    <!-- Run 1 · GoR -->
+    <a class="world gor reveal-left" style="--rd:0.05s;" href="GoR_01_Overture.html">
+      <span class="world-runtag">Run 01</span>
+      <div class="world-inner">
+        <span class="world-mark">Saga · 9 Months</span>
+        <div>
+          <div class="world-title">Game of<br/>Run</div>
+          <div class="world-tagline" style="color: #E9CE85;">Best for: place-based communities &amp; city brands</div>
+        </div>
+        <p class="world-desc">A nine-month medieval saga across three kingdoms. Your community fields a House and defends zones across real cities. Long narrative, local pride, daily storytelling hooks your comms team can ride.</p>
+        <div class="world-stats">
+          <div><div class="ws-val" style="color: #F5E4A8;">9mo</div><div class="ws-lbl">Engagement</div></div>
+          <div><div class="ws-val" style="color: #F5E4A8;">24</div><div class="ws-lbl">Zones to Own</div></div>
+          <div><div class="ws-val" style="color: #F5E4A8;">4</div><div class="ws-lbl">House Slots</div></div>
+        </div>
+        <span class="world-enter">Sponsor a House</span>
+      </div>
+    </a>
+
+    <!-- Run 2 · LoB -->
+    <a class="world lob reveal-right" style="--rd:0.15s;" href="LoB_01_Homepage.html">
+      <span class="world-runtag">Run 02</span>
+      <div class="world-inner">
+        <span class="world-mark">Cup · Every Saturday</span>
+        <div>
+          <div class="world-title">League of<br/>Brands</div>
+          <div class="world-tagline">Best for: brands that want head-to-head broadcast</div>
+        </div>
+        <p class="world-desc">Sixteen brand teams, four groups, knockout bracket, one silver cup. Every Saturday is a 24h matchday with live leaderboards, social cards, and employee activation baked in. Football format, measurable reach.</p>
+        <div class="world-stats">
+          <div><div class="ws-val" style="color: var(--cyan);">16</div><div class="ws-lbl">Brand Slots</div></div>
+          <div><div class="ws-val" style="color: var(--cyan);">40wk</div><div class="ws-lbl">Live Matchdays</div></div>
+          <div><div class="ws-val" style="color: var(--cyan);">24h</div><div class="ws-lbl">Per Match</div></div>
+        </div>
+        <span class="world-enter">Claim a Brand Slot</span>
+      </div>
+    </a>
+
+    <!-- Run 3 · Le Grand Run -->
+    <a class="world lgr reveal-left" style="--rd:0.25s;" href="LGR_01_Homepage.html">
+      <span class="world-runtag">Run 03</span>
+      <div class="world-inner">
+        <span class="world-mark">Grand Tour · 3 Weeks</span>
+        <div>
+          <div class="world-title"><span class="le-italic">Le</span><br/>Grand Run</div>
+          <div class="world-tagline">Best for: title sponsors &amp; premium brands</div>
+        </div>
+        <p class="world-desc">Twenty-one stages, four jerseys, eighteen teams. A three-week grand tour with daily broadcast beats. Yellow, green, polka dot and white jerseys are each a sponsorable property. Daily editorial, daily reach.</p>
+        <div class="world-stats">
+          <div><div class="ws-val">4</div><div class="ws-lbl">Jersey Sponsorships</div></div>
+          <div><div class="ws-val">21</div><div class="ws-lbl">Daily Broadcasts</div></div>
+          <div><div class="ws-val">18</div><div class="ws-lbl">Team Slots</div></div>
+        </div>
+        <span class="world-enter">Buy a Jersey</span>
+      </div>
+    </a>
+
+    <!-- Run 4 · Grand Prix Series -->
+    <a class="world gps reveal-right" style="--rd:0.35s;" href="GPS_01_Homepage.html">
+      <span class="world-runtag">Run 04</span>
+      <div class="world-inner">
+        <span class="world-mark">Championship · 24 Rounds</span>
+        <div>
+          <div class="world-title">Grand <em>Prix</em><br/>Series</div>
+          <div class="world-tagline" style="color: #FF1840;">Best for: pro clubs &amp; performance brands</div>
+        </div>
+        <p class="world-desc">Twenty-four rounds on every continent. Three-day race weekends. Constructors championship and drivers championship in parallel. Perfect for performance brands and pro sport clubs that want fan teams worldwide.</p>
+        <div class="world-stats">
+          <div><div class="ws-val" style="color: #FF1840;">24</div><div class="ws-lbl">Global Rounds</div></div>
+          <div><div class="ws-val" style="color: #FF1840;">20</div><div class="ws-lbl">Constructor Slots</div></div>
+          <div><div class="ws-val" style="color: #FF1840;">9mo</div><div class="ws-lbl">Championship</div></div>
+        </div>
+        <span class="world-enter">Enter a Constructor</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-block reveal" style="--rd:0.05s;">
+      <div class="stat-big"><span class="count" data-target="42180" data-format="dot">0</span><span class="unit">+</span></div>
+      <div class="stat-cap">Runners across four parallel competitions</div>
+    </div>
+    <div class="stat-block reveal" style="--rd:0.15s;">
+      <div class="stat-big"><span class="count" data-target="3264000" data-format="dot">0</span><span class="unit">km</span></div>
+      <div class="stat-cap">Logged across all runs this season to date</div>
+    </div>
+    <div class="stat-block reveal" style="--rd:0.25s;">
+      <div class="stat-big"><span class="count" data-target="74">0</span><span class="unit">wk</span></div>
+      <div class="stat-cap">Race days from GoR opening through GPS finale</div>
+    </div>
+    <div class="stat-block reveal" style="--rd:0.35s;">
+      <div class="stat-big"><span class="count" data-target="4">0</span><span class="unit">runs</span></div>
+      <div class="stat-cap">GoR · LoB · Le Grand Run · Grand Prix Series</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY SPORTIN · persona benefits -->
+<section class="why-section" id="why">
+  <div class="why-head">
+    <div class="section-kicker reveal">Why SportIn</div>
+    <h2 class="section-title reveal" style="--rd:0.1s;">Three seats. <span class="gradient">Three wins.</span></h2>
+    <p class="section-intro reveal" style="--rd:0.2s;">Whether you run brand, community, or a pro club, SportIn delivers a different line item. Here is what each seat walks away with when the season ends.</p>
+  </div>
+
+  <div class="why-grid">
+    <!-- Brand Manager -->
+    <div class="why-col reveal" style="--rd:0.05s;">
+      <span class="why-persona">Brand Manager</span>
+      <div class="why-title">Own a competition,<br/>not just a logo.</div>
+      <ul class="why-list">
+        <li>Title-sponsor a Run, a jersey, or a matchday with measurable share-of-voice.</li>
+        <li>42.000+ runners already in the platform. Your activation starts with an audience.</li>
+        <li>Employees field a brand team. Internal engagement and external reach, same budget.</li>
+        <li>Every activation has a CPM, a CPE, and a retention curve. Board-ready.</li>
+        <li>Brand-safe health halo. You sponsor movement, not gambling, not alcohol.</li>
+      </ul>
+    </div>
+
+    <!-- Head of Community -->
+    <div class="why-col coms reveal" style="--rd:0.2s;">
+      <span class="why-persona">Head of Community</span>
+      <div class="why-title">Turn members<br/>into a season-long team.</div>
+      <ul class="why-list">
+        <li>Field your club as a House, a Brand Team, or a Constructor. Turnkey, no code.</li>
+        <li>Sustain engagement for 9 months, not a one-day race. Members keep showing up.</li>
+        <li>Live leaderboards, member profiles, and standings your community reshares for free.</li>
+        <li>Recruit and retain: new members see your banner every time they open the app.</li>
+        <li>Data on who is active, who is slipping, and which cities are heating up.</li>
+      </ul>
+    </div>
+
+    <!-- Pro Club Director -->
+    <div class="why-col club reveal" style="--rd:0.35s;">
+      <span class="why-persona">Pro Club Director</span>
+      <div class="why-title">Your fans earn points<br/>365 days a year.</div>
+      <ul class="why-list">
+        <li>Fan Teams run under your club colors. Supporters compete even when the first team doesn't play.</li>
+        <li>Diaspora fans move in their cities, points flow back to your crest.</li>
+        <li>New monetisable sponsorship tier: "Official Running Partner" of your fan team.</li>
+        <li>Member acquisition funnel: a runner in Lisbon becomes a season ticket lead in Porto.</li>
+        <li>Cross-sell: your retail vouchers drop straight into fan wallets after wins.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLE · partner spotlight -->
+<section class="example-section">
+  <div class="example-card reveal-scale">
+    <div>
+      <div class="example-label">Partner Example · 2026 Season</div>
+      <p class="example-quote">We fielded a 600-employee team in League of Brands. Three matchdays in, we had more internal engagement than our last two wellness campaigns combined. The weekend before our quarterly review, our group was the most-clicked page on our intranet.</p>
+      <div class="example-attribution"><strong>Elena Ruiz</strong> · Head of Community, Mama Harmony España</div>
+    </div>
+
+    <div class="example-kpis">
+      <div class="example-kpi">
+        <div class="example-kpi-v">+34<span class="u">%</span></div>
+        <div class="example-kpi-l">Employee App Opens</div>
+      </div>
+      <div class="example-kpi">
+        <div class="example-kpi-v">18.420<span class="u">km</span></div>
+        <div class="example-kpi-l">Logged by Brand Team</div>
+      </div>
+      <div class="example-kpi">
+        <div class="example-kpi-v">2,4<span class="u">m</span></div>
+        <div class="example-kpi-l">Organic Impressions</div>
+      </div>
+      <div class="example-kpi">
+        <div class="example-kpi-v">0,18<span class="u">€</span></div>
+        <div class="example-kpi-l">Cost per Engagement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNALS -->
+<section class="signals-section" id="signals">
+  <div class="signals-head">
+    <div>
+      <div class="section-kicker reveal">Health Signals · Brand Rewards</div>
+      <h2 class="section-title reveal" style="--rd:0.1s;">Eight challenges.<br/>Eight voucher slots.</h2>
+    </div>
+    <p class="section-intro reveal" style="--rd:0.2s;">Every signal your member completes unlocks a brand voucher in their wallet. Sponsor a signal, land your logo on the challenge, and redemption data flows back to your CRM.</p>
+  </div>
+
+  <div class="signals-grid">
+    <div class="signal reveal" style="--rd:0.02s;">
+      <div class="signal-num">SIGNAL 01</div>
+      <div class="signal-title">Morning Light</div>
+      <div class="signal-desc">Walk before 10:00 for seven days. Anchor your circadian rhythm.</div>
+    </div>
+    <div class="signal reveal" style="--rd:0.08s;">
+      <div class="signal-num">SIGNAL 02</div>
+      <div class="signal-title">Steady Cardio</div>
+      <div class="signal-desc">Hit 8.000 steps for five days running. Lower resting heart rate.</div>
+    </div>
+    <div class="signal reveal" style="--rd:0.14s;">
+      <div class="signal-num">SIGNAL 03</div>
+      <div class="signal-title">Post-Meal Walk</div>
+      <div class="signal-desc">Move within 30 minutes of lunch. Blunt the glucose spike.</div>
+    </div>
+    <div class="signal reveal" style="--rd:0.2s;">
+      <div class="signal-num">SIGNAL 04</div>
+      <div class="signal-title">Long Sunday</div>
+      <div class="signal-desc">One slow hour, every Sunday. Build the aerobic base.</div>
+    </div>
+    <div class="signal reveal" style="--rd:0.26s;">
+      <div class="signal-num">SIGNAL 05</div>
+      <div class="signal-title">Mood Mover</div>
+      <div class="signal-desc">20 minutes outdoor on low-energy days. Lift the baseline.</div>
+    </div>
+    <div class="signal reveal" style="--rd:0.32s;">
+      <div class="signal-num">SIGNAL 06</div>
+      <div class="signal-title">Sleep Primer</div>
+      <div class="signal-desc">Walk 1 km within an hour of waking. Cue deeper sleep tonight.</div>
+    </div>
+    <div class="signal reveal" style="--rd:0.38s;">
+      <div class="signal-num">SIGNAL 07</div>
+      <div class="signal-title">Focus Loop</div>
+      <div class="signal-desc">Three short walks across a workday. Reset attention.</div>
+    </div>
+    <div class="signal reveal" style="--rd:0.44s;">
+      <div class="signal-num">SIGNAL 08</div>
+      <div class="signal-title">Longevity Lap</div>
+      <div class="signal-desc">10.000 steps, four days a week. The all-cause mortality signal.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERSHIP CTA -->
+<section class="app-cta" id="app">
+  <div class="app-cta-inner reveal-scale">
+    <div>
+      <div class="section-kicker">Partnership Opens · Season 2026</div>
+      <h2 class="app-cta-title">Run a team.<br/>Sponsor a Run.</h2>
+      <p class="app-cta-copy">16 brand slots in League of Brands. 4 jersey sponsorships in Le Grand Run. Unlimited brand teams in Grand Prix Series. Season closes November 2026. Talk to us before the grid fills up.</p>
+    </div>
+    <div class="app-cta-actions">
+      <a href="mailto:partners@sportin.io" class="store-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <div>
+          <div class="store-sub">Book a call</div>
+          <div class="store-name">Partnership Team</div>
+        </div>
+      </a>
+      <a href="mailto:partners@sportin.io?subject=2026%20Media%20Kit" class="store-btn ghost">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <div>
+          <div class="store-sub">Download the</div>
+          <div class="store-name">2026 Media Kit</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="brand" href="/">
+        <span class="brand-mark">S</span>
+        Sport<span class="dot">In</span>
+      </a>
+      <p class="footer-tag">Where running becomes legend. Built in Spain. Running in three kingdoms, sixteen brands, twenty-one stages, twenty-four grands prix.</p>
+    </div>
+    <div class="footer-col">
+      <h4>The Four Runs</h4>
+      <ul>
+        <li><a href="GoR_01_Overture.html">Run 1 · Game of Run</a></li>
+        <li><a href="LoB_01_Homepage.html">Run 2 · League of Brands</a></li>
+        <li><a href="LGR_01_Homepage.html">Run 3 · Le Grand Run</a></li>
+        <li><a href="GPS_01_Homepage.html">Run 4 · Grand Prix Series</a></li>
+        <li><a href="#signals">Health Signals</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>For Partners</h4>
+      <ul>
+        <li><a href="#why">Brand Managers</a></li>
+        <li><a href="#why">Heads of Community</a></li>
+        <li><a href="#why">Pro Club Directors</a></li>
+        <li><a href="mailto:partners@sportin.io?subject=2026%20Media%20Kit">2026 Media Kit</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Book a Call</h4>
+      <ul>
+        <li><a href="mailto:partners@sportin.io">Partnership Team</a></li>
+        <li><a href="mailto:league@sportin.io">League of Brands</a></li>
+        <li><a href="mailto:press@sportin.io">Press</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© MMXXVI · SportIn · Made in Spain</span>
+    <span>Four Runs · Live Now · Season 2026</span>
+  </div>
+</footer>
+
+<script>
+  /* ============================================
+     Scroll progress bar
+     ============================================ */
+  const progressBar = document.getElementById('scrollProgress');
+  const updateProgress = () => {
+    const doc = document.documentElement;
+    const scrolled = (doc.scrollTop || document.body.scrollTop);
+    const total = doc.scrollHeight - doc.clientHeight;
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  };
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ============================================
+     IntersectionObserver · reveal on scroll
+     ============================================ */
+  const revealables = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -60px 0px'
+  });
+  revealables.forEach((el) => io.observe(el));
+
+  /* ============================================
+     Animated counters · European dot format
+     ============================================ */
+  const formatNumber = (n, useDot) => {
+    const rounded = Math.round(n);
+    if (useDot) {
+      return rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+    return rounded.toString();
+  };
+
+  const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+
+  const animateCounter = (el) => {
+    const target = parseFloat(el.dataset.target);
+    const useDot = el.dataset.format === 'dot';
+    const duration = 2200;
+    const start = performance.now();
+    const big = el.closest('.stat-big');
+
+    if (big) big.classList.add('counting');
+
+    const tick = (now) => {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = easeOutQuart(t);
+      const val = target * eased;
+      el.textContent = formatNumber(val, useDot);
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = formatNumber(target, useDot);
+        if (big) setTimeout(() => big.classList.remove('counting'), 400);
+      }
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const counters = document.querySelectorAll('.count');
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        counterIO.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach((el) => counterIO.observe(el));
+
+  /* ============================================
+     Gentle parallax · orbs and phone
+     ============================================ */
+  const phoneMedia = document.querySelector('.hero-media');
+  let parallaxTicking = false;
+  window.addEventListener('scroll', () => {
+    if (!parallaxTicking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (phoneMedia && y < 900) {
+          phoneMedia.style.transform = `translateY(${y * 0.1}px)`;
+        }
+        parallaxTicking = false;
+      });
+      parallaxTicking = true;
+    }
+  }, { passive: true });
+
+  /* ============================================
+     Smooth scroll for anchor links
+     ============================================ */
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const id = link.getAttribute('href');
+      if (id.length <= 1) return;
+      const target = document.querySelector(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
