@@ -261,32 +261,25 @@
   .partner-logo {
     flex-shrink: 0;
     width: 180px;
-    height: 78px;
+    height: 88px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     display: grid;
     place-items: center;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 0.04em;
-    color: var(--text-3);
-    text-transform: uppercase;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+    padding: 14px 18px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   .partner-logo:hover {
-    color: var(--text);
-    border-color: rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   }
   .partner-logo img {
-    max-width: 70%;
-    max-height: 60%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
-    opacity: 0.85;
+    display: block;
   }
   /* Pause on hover for accessibility */
   .partners-strip:hover .partners-row { animation-play-state: paused; }
@@ -2775,44 +2768,30 @@
 
   <!-- Row 1: drifts left -->
   <div class="partners-row row-l">
-    <div class="partner-logo">Partner 01</div>
-    <div class="partner-logo">Partner 02</div>
-    <div class="partner-logo">Partner 03</div>
-    <div class="partner-logo">Partner 04</div>
-    <div class="partner-logo">Partner 05</div>
-    <div class="partner-logo">Partner 06</div>
-    <div class="partner-logo">Partner 07</div>
-    <div class="partner-logo">Partner 08</div>
+    <div class="partner-logo"><img src="partners/porsche.png" alt="Porsche"/></div>
+    <div class="partner-logo"><img src="partners/bmw.webp" alt="BMW"/></div>
+    <div class="partner-logo"><img src="partners/garmin.png" alt="Garmin"/></div>
+    <div class="partner-logo"><img src="partners/google.webp" alt="Google"/></div>
+    <div class="partner-logo"><img src="partners/pirelli.png" alt="Pirelli"/></div>
     <!-- duplicated for seamless loop -->
-    <div class="partner-logo">Partner 01</div>
-    <div class="partner-logo">Partner 02</div>
-    <div class="partner-logo">Partner 03</div>
-    <div class="partner-logo">Partner 04</div>
-    <div class="partner-logo">Partner 05</div>
-    <div class="partner-logo">Partner 06</div>
-    <div class="partner-logo">Partner 07</div>
-    <div class="partner-logo">Partner 08</div>
+    <div class="partner-logo"><img src="partners/porsche.png" alt="Porsche"/></div>
+    <div class="partner-logo"><img src="partners/bmw.webp" alt="BMW"/></div>
+    <div class="partner-logo"><img src="partners/garmin.png" alt="Garmin"/></div>
+    <div class="partner-logo"><img src="partners/google.webp" alt="Google"/></div>
+    <div class="partner-logo"><img src="partners/pirelli.png" alt="Pirelli"/></div>
   </div>
 
   <!-- Row 2: drifts right -->
   <div class="partners-row row-r">
-    <div class="partner-logo">Partner 09</div>
-    <div class="partner-logo">Partner 10</div>
-    <div class="partner-logo">Partner 11</div>
-    <div class="partner-logo">Partner 12</div>
-    <div class="partner-logo">Partner 13</div>
-    <div class="partner-logo">Partner 14</div>
-    <div class="partner-logo">Partner 15</div>
-    <div class="partner-logo">Partner 16</div>
+    <div class="partner-logo"><img src="partners/bosch.png" alt="Bosch"/></div>
+    <div class="partner-logo"><img src="partners/decathlon.svg" alt="Decathlon"/></div>
+    <div class="partner-logo"><img src="partners/carrefour.svg" alt="Carrefour"/></div>
+    <div class="partner-logo"><img src="partners/emag.png" alt="eMAG"/></div>
     <!-- duplicated -->
-    <div class="partner-logo">Partner 09</div>
-    <div class="partner-logo">Partner 10</div>
-    <div class="partner-logo">Partner 11</div>
-    <div class="partner-logo">Partner 12</div>
-    <div class="partner-logo">Partner 13</div>
-    <div class="partner-logo">Partner 14</div>
-    <div class="partner-logo">Partner 15</div>
-    <div class="partner-logo">Partner 16</div>
+    <div class="partner-logo"><img src="partners/bosch.png" alt="Bosch"/></div>
+    <div class="partner-logo"><img src="partners/decathlon.svg" alt="Decathlon"/></div>
+    <div class="partner-logo"><img src="partners/carrefour.svg" alt="Carrefour"/></div>
+    <div class="partner-logo"><img src="partners/emag.png" alt="eMAG"/></div>
   </div>
 </section>
 
