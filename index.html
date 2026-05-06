@@ -950,9 +950,19 @@
   /* Phone Showcase — scroll-driven arc carousel */
   .phone-showcase {
     margin-top: 60px;
-    padding: 40px 0 100px;
+    padding: 0;
     position: relative;
     z-index: 1;
+    /* tall section so scroll travel is slow & satisfying */
+    height: 320vh;
+  }
+  .phone-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     /* edge fade gradient */
     -webkit-mask-image: linear-gradient(90deg,
@@ -980,8 +990,8 @@
   }
   .phone-track-wrap {
     position: relative;
+    width: 100%;
     height: 620px;
-    overflow: hidden;
   }
   .phone-track {
     position: absolute;
@@ -989,8 +999,6 @@
     display: flex;
     align-items: center;
     will-change: transform;
-    /* slight smoothing — JS uses rAF so transition is light */
-    transition: transform 0.08s linear;
   }
   .phone-frame {
     flex-shrink: 0;
@@ -1320,8 +1328,9 @@
 
 <!-- PHONE SHOWCASE -->
 <section class="phone-showcase" id="phoneShowcase">
-  <div class="phone-track-wrap">
-    <div class="phone-track" id="phoneTrack">
+  <div class="phone-sticky">
+    <div class="phone-track-wrap">
+      <div class="phone-track" id="phoneTrack">
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-login.png" alt="SportIn App" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-feed.png" alt="Feed & Virtual Races" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-weekly.jpg" alt="Weekly Progress" /></div></div>
@@ -1329,6 +1338,7 @@
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-monthly.jpg" alt="Monthly Target" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-leaderboard.png" alt="Leaderboard" /></div></div>
       <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-profile.png" alt="Profile & Connections" /></div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1716,7 +1726,7 @@
   });
   revealables.forEach((el) => io.observe(el));
 
-  // Scroll-driven phone arc carousel
+  // Scroll-driven phone arc carousel — smooth & satisfying
   (function setupPhoneCarousel() {
     const showcase = document.getElementById('phoneShowcase');
     const track = document.getElementById('phoneTrack');
@@ -1727,14 +1737,19 @@
     let viewportW = window.innerWidth;
     let trackW = 0;
     let frameWidth = 0;
-    const arcHeight = 80; // max vertical lift along arc
-    const maxRotate = 14; // deg at edges
-    const maxScale = 1.05; // center scale
-    const minScale = 0.78; // edge scale
+    const arcHeight = 80;
+    const maxRotate = 14;
+    const maxScale = 1.06;
+    const minScale = 0.76;
+
+    // Smoothing state
+    let targetProgress = 0;
+    let currentProgress = 0;
+    const ease = 0.085; // lower = smoother/slower follow
+    let rafId = null;
 
     function measure() {
       viewportW = window.innerWidth;
-      // total content width: sum of frame outer widths
       trackW = frames.reduce((sum, el) => {
         const cs = getComputedStyle(el);
         return sum + el.offsetWidth + parseFloat(cs.marginLeft) + parseFloat(cs.marginRight);
@@ -1742,22 +1757,34 @@
       frameWidth = frames[0].offsetWidth + 2 * parseFloat(getComputedStyle(frames[0]).marginLeft);
     }
 
-    function update() {
+    function computeTargetProgress() {
+      // Section is 320vh tall; the sticky track is pinned for ~220vh of scroll.
+      // Map scroll within that pinned range to 0..1.
       const rect = showcase.getBoundingClientRect();
       const winH = window.innerHeight;
-      // progress 0..1 as the section travels through the viewport
-      const total = winH + rect.height;
-      const traveled = winH - rect.top;
-      let progress = traveled / total;
-      progress = Math.max(0, Math.min(1, progress));
+      const totalScrollable = showcase.offsetHeight - winH; // length of pinned travel
+      const scrolled = -rect.top; // 0 when section top hits viewport top
+      let p = scrolled / totalScrollable;
+      return Math.max(0, Math.min(1, p));
+    }
 
-      // translate the strip from +offset to -offset (scroll down → moves left)
-      const startX = viewportW * 0.5 + frameWidth * 0.5; // first phone enters from right
-      const endX = -(trackW - viewportW * 0.5 + frameWidth * 0.5); // last phone exits left
-      const trackX = startX + (endX - startX) * progress;
+    function render() {
+      // Lerp current toward target for buttery smooth motion
+      const diff = targetProgress - currentProgress;
+      if (Math.abs(diff) > 0.0002) {
+        currentProgress += diff * ease;
+      } else {
+        currentProgress = targetProgress;
+      }
+
+      // Eased progress curve (subtle ease-in-out) for extra polish
+      const p = currentProgress;
+      // translate strip from +offset to -offset
+      const startX = viewportW * 0.5 + frameWidth * 0.5;
+      const endX = -(trackW - viewportW * 0.5 + frameWidth * 0.5);
+      const trackX = startX + (endX - startX) * p;
       track.style.transform = `translate3d(${trackX}px, 0, 0)`;
 
-      // arc transform per phone based on its center distance from viewport center
       const center = viewportW / 2;
       let acc = trackX;
       frames.forEach((el) => {
@@ -1768,38 +1795,40 @@
         const phoneCenter = acc + ml + w / 2;
         acc += ml + w + mr;
 
-        const dist = (phoneCenter - center) / (viewportW / 2); // -1..1 across viewport
-        const clamped = Math.max(-1.4, Math.min(1.4, dist));
-        const norm = clamped; // for arc math
+        const dist = (phoneCenter - center) / (viewportW / 2);
+        const norm = Math.max(-1.4, Math.min(1.4, dist));
 
-        // Semicircle Y: lower at edges, lifted at center
-        const yArc = arcHeight * (norm * norm); // parabola, 0 at center, max at edges
-        // Slight rotation toward center
+        const yArc = arcHeight * (norm * norm);
         const rot = norm * maxRotate;
-        // Scale peaks at center
         const scale = maxScale - (maxScale - minScale) * Math.min(1, Math.abs(norm));
 
         el.style.transform = `translate3d(0, ${yArc}px, 0) rotate(${rot}deg) scale(${scale})`;
         el.style.zIndex = String(100 - Math.round(Math.abs(norm) * 50));
       });
-    }
 
-    let ticking = false;
-    function onScroll() {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => { update(); ticking = false; });
+      // Continue rafing until current catches up
+      if (Math.abs(targetProgress - currentProgress) > 0.0002) {
+        rafId = requestAnimationFrame(render);
+      } else {
+        rafId = null;
       }
     }
 
+    function onScroll() {
+      targetProgress = computeTargetProgress();
+      if (rafId == null) rafId = requestAnimationFrame(render);
+    }
+
     measure();
-    update();
+    targetProgress = computeTargetProgress();
+    currentProgress = targetProgress;
+    render();
+
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { measure(); update(); }, { passive: true });
-    // Re-measure when images load (their height affects nothing, but be safe)
+    window.addEventListener('resize', () => { measure(); onScroll(); }, { passive: true });
     frames.forEach((el) => {
       const img = el.querySelector('img');
-      if (img && !img.complete) img.addEventListener('load', () => { measure(); update(); }, { once: true });
+      if (img && !img.complete) img.addEventListener('load', () => { measure(); onScroll(); }, { once: true });
     });
   })();
 
