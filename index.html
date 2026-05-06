@@ -1717,6 +1717,51 @@
   .store-btn.coming-soon .store-sub { color: var(--text-4); }
   .store-btn.coming-soon .store-name { color: var(--text-2); font-style: italic; }
 
+  /* Contact section — open layout, no card placeholder */
+  .contact-section {
+    margin-top: 120px;
+    padding: 0 48px 60px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .contact-row {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .contact-row.below { margin-top: 36px; margin-bottom: 0; }
+  .contact-row .store-btn { padding: 14px 22px; }
+  .contact-banner { text-align: center; }
+  .contact-banner .section-kicker { color: var(--blue-bright); }
+  .contact-banner .app-cta-title {
+    margin: 14px auto 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .contact-banner .app-cta-copy {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    color: var(--text-3);
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) {
+    .contact-section { padding: 0 20px 40px; margin-top: 80px; }
+    .contact-banner .app-cta-title { font-size: 38px; }
+    .contact-row { gap: 10px; }
+  }
+
   /* Phone Showcase: scroll-driven arc carousel */
   .phone-showcase {
     margin-top: 60px;
@@ -2703,71 +2748,56 @@
   </div>
 </section>
 
-<!-- FINAL CTA · LAUNCH YOUR SEASON -->
-<section class="app-cta" id="app">
-  <div class="app-cta-inner reveal-scale">
-    <div>
-      <div class="section-kicker">Get SportIn</div>
-      <h2 class="app-cta-title">Move first.<br/>Talk to us next.</h2>
-      <p class="app-cta-copy">Take the product for a run yourself, on the web or on your phone. The same season your team will live inside.</p>
-    </div>
-    <div class="app-cta-actions">
-      <a href="https://try.sportin.io" class="store-btn" target="_blank">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        <div>
-          <div class="store-sub">Try the product</div>
-          <div class="store-name">Open the Web App</div>
-        </div>
-      </a>
-      <span class="store-btn coming-soon" aria-disabled="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        <div>
-          <div class="store-sub">App Store</div>
-          <div class="store-name">Coming Soon</div>
-        </div>
-      </span>
-      <span class="store-btn coming-soon" aria-disabled="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.49c.18.09.38.14.58.14.2 0 .41-.05.59-.15l8.43-4.87-3.53-3.53-6.07 7.41c-.12.15-.12.36 0 .5l0 .5zM20.16 10.33l-3.59-2.07-3.89 3.74 3.89 3.89 3.59-2.07c.76-.44 1.22-1.24 1.22-2.11v-.27c0-.87-.46-1.67-1.22-2.11zM3.05 2.06L14.47 12 3.76.51C3.56.29 3.31.15 3.05.06v2zM15.73 12.82L4.12 23.47l11.22-6.48-3.61-3.61 4-4.56z"/></svg>
-        <div>
-          <div class="store-sub">Google Play</div>
-          <div class="store-name">Coming Soon</div>
-        </div>
-      </span>
-    </div>
+<!-- FINAL CTA · LAUNCH YOUR SEASON / CONTACT -->
+<section class="contact-section" id="contact">
+  <!-- Download buttons row (above banner) -->
+  <div class="contact-row reveal">
+    <a href="https://try.sportin.io" class="store-btn" target="_blank">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <div>
+        <div class="store-sub">Try the product</div>
+        <div class="store-name">Open the Web App</div>
+      </div>
+    </a>
+    <span class="store-btn coming-soon" aria-disabled="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div>
+        <div class="store-sub">App Store</div>
+        <div class="store-name">Coming Soon</div>
+      </div>
+    </span>
+    <span class="store-btn coming-soon" aria-disabled="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.49c.18.09.38.14.58.14.2 0 .41-.05.59-.15l8.43-4.87-3.53-3.53-6.07 7.41c-.12.15-.12.36 0 .5l0 .5zM20.16 10.33l-3.59-2.07-3.89 3.74 3.89 3.89 3.59-2.07c.76-.44 1.22-1.24 1.22-2.11v-.27c0-.87-.46-1.67-1.22-2.11zM3.05 2.06L14.47 12 3.76.51C3.56.29 3.31.15 3.05.06v2zM15.73 12.82L4.12 23.47l11.22-6.48-3.61-3.61 4-4.56z"/></svg>
+      <div>
+        <div class="store-sub">Google Play</div>
+        <div class="store-name">Coming Soon</div>
+      </div>
+    </span>
   </div>
-</section>
 
-<!-- CONTACT · TALK TO US -->
-<section class="app-cta" id="contact" style="margin-top: 60px;">
-  <div class="app-cta-inner reveal-scale">
-    <div>
-      <div class="section-kicker">Talk to us</div>
-      <h2 class="app-cta-title">Let&rsquo;s build<br/>your season.</h2>
-      <p class="app-cta-copy">Brands, clubs, communities. We&rsquo;ll walk you through formats, sponsorship tiers, and white-label paths. Or just say hi on WhatsApp.</p>
-    </div>
-    <div class="app-cta-actions">
-      <a href="https://calendly.com/sportin" class="store-btn" target="_blank">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <div>
-          <div class="store-sub">Book a 30-min walkthrough</div>
-          <div class="store-name">Schedule a Demo</div>
-        </div>
-      </a>
-      <a href="https://wa.me/+34662681333" class="store-btn whatsapp" target="_blank">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
-        <div>
-          <div class="store-sub">Send us a message on</div>
-          <div class="store-name">WhatsApp</div>
-        </div>
-      </a>
-      <a href="mailto:hello@sportin.io" class="store-btn ghost">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <div>
-          <div class="store-sub">Or write to</div>
-          <div class="store-name">hello@sportin.io</div>
-        </div>
-      </a>
-    </div>
+  <!-- Banner: title + copy (no card) -->
+  <div class="contact-banner reveal" style="--rd:0.1s;">
+    <div class="section-kicker">Talk to us</div>
+    <h2 class="app-cta-title">Let&rsquo;s build<br/>your season.</h2>
+    <p class="app-cta-copy">Brands, clubs, communities. We&rsquo;ll walk you through formats, sponsorship tiers, and white-label paths. Or just say hi on WhatsApp.</p>
+  </div>
+
+  <!-- Contact buttons row (below banner) -->
+  <div class="contact-row below reveal" style="--rd:0.2s;">
+    <a href="https://calendly.com/sportin" class="store-btn" target="_blank">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div>
+        <div class="store-sub">Book a 30-min walkthrough</div>
+        <div class="store-name">Schedule a Demo</div>
+      </div>
+    </a>
+    <a href="https://wa.me/+34662681333" class="store-btn whatsapp" target="_blank">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
+      <div>
+        <div class="store-sub">Send us a message on</div>
+        <div class="store-name">WhatsApp</div>
+      </div>
+    </a>
   </div>
 </section>
 
