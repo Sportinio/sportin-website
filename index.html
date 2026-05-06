@@ -559,6 +559,8 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 22px;
+    align-items: center; /* keep all 3 cards vertically centered as they scale */
+    overflow: visible;
   }
   .felt-card {
     background: rgba(255, 255, 255, 0.035);
@@ -572,10 +574,13 @@
       0 12px 40px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.4s ease,
-                box-shadow 0.4s ease;
+    will-change: transform;
+    transform-origin: center center;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
   }
+  .felt-card.middle { z-index: 5; }
+  .felt-card.side { z-index: 2; }
+  .felt-section { overflow: visible; }
   .felt-card:hover {
     transform: translateY(-4px);
     border-color: rgba(255, 255, 255, 0.16);
@@ -2284,8 +2289,8 @@
   </div>
 
   <div class="felt-grid">
-    <!-- 1. LEADERBOARD -->
-    <div class="felt-card reveal" style="--rd:0.05s;">
+    <!-- 1. LEADERBOARD (middle hero) -->
+    <div class="felt-card middle reveal" style="--rd:0.05s; order: 2;">
       <div class="felt-stage lb-stage" id="lbStage">
         <div class="lb-row" data-lb="0">
           <span class="lb-rank">1</span>
@@ -2353,8 +2358,8 @@
       <div class="felt-desc">A table that never stands still. The moment your name rises, everyone feels it.</div>
     </div>
 
-    <!-- 2. RECORD -->
-    <div class="felt-card reveal" style="--rd:0.15s;">
+    <!-- 2. RECORD (left side) -->
+    <div class="felt-card side reveal" style="--rd:0.15s; order: 1;">
       <div class="felt-stage rec-stage">
         <video class="rec-video" autoplay loop muted playsinline preload="metadata">
           <source src="replay.mp4" type="video/mp4"/>
@@ -2366,8 +2371,8 @@
       <div class="felt-desc">Your effort, beautifully replayed. Because some runs deserve more than a number.</div>
     </div>
 
-    <!-- 3. VIRTUAL TRACK -->
-    <div class="felt-card reveal" style="--rd:0.25s;">
+    <!-- 3. VIRTUAL TRACK (right side) -->
+    <div class="felt-card side reveal" style="--rd:0.25s; order: 3;">
       <div class="felt-stage vt-stage">
         <svg viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet">
           <defs>
@@ -2983,6 +2988,59 @@
         overlay.classList.remove('is-paused-from-play');
       }
     });
+  })();
+
+  // FELT · scroll-driven hero scale (middle big → all equal as you scroll)
+  (function setupFeltScale() {
+    const section = document.getElementById('felt');
+    if (!section) return;
+    const middle = section.querySelector('.felt-card.middle');
+    const sides = Array.from(section.querySelectorAll('.felt-card.side'));
+    if (!middle || sides.length === 0) return;
+
+    const SCALE_HERO = 1.5;
+    const SCALE_SMALL = 0.55; // ~half size
+    const SCALE_END = 1.0;
+    const ease = 0.085;
+    let target = 0, current = 0, rafId = null;
+
+    function compute() {
+      const rect = section.getBoundingClientRect();
+      const winH = window.innerHeight;
+      // p=0 when section just enters viewport; p=1 when it's been scrolled
+      // through enough to fully equalize. Tie completion to 60% of total travel.
+      const total = winH + rect.height;
+      const traveled = winH - rect.top;
+      let p = traveled / total;
+      // Squash to complete by p=0.6 → equal state stays through to p=1
+      p = Math.max(0, Math.min(1, p / 0.6));
+      target = p;
+    }
+
+    function render() {
+      current += (target - current) * ease;
+      const p = current;
+      const midScale = SCALE_HERO + (SCALE_END - SCALE_HERO) * p; // 1.5 → 1.0
+      const sideScale = SCALE_SMALL + (SCALE_END - SCALE_SMALL) * p; // 0.55 → 1.0
+      middle.style.transform = `scale(${midScale.toFixed(4)})`;
+      sides.forEach((el) => { el.style.transform = `scale(${sideScale.toFixed(4)})`; });
+      if (Math.abs(target - current) > 0.0008) {
+        rafId = requestAnimationFrame(render);
+      } else {
+        rafId = null;
+      }
+    }
+
+    function onScroll() {
+      compute();
+      if (rafId == null) rafId = requestAnimationFrame(render);
+    }
+
+    compute();
+    current = target;
+    render();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
   })();
 
   // FELT · Leaderboard live overtake animation
