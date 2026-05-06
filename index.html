@@ -559,8 +559,10 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 22px;
-    align-items: center; /* keep all 3 cards vertically centered as they scale */
+    align-items: start; /* anchor every card to the top — text positions stay coherent */
     overflow: visible;
+    /* Reserve enough vertical room so the 1.5x middle card never overlaps
+       whatever sits below the section. JS keeps this in sync. */
   }
   .felt-card {
     background: rgba(255, 255, 255, 0.035);
@@ -575,7 +577,7 @@
     display: flex;
     flex-direction: column;
     will-change: transform;
-    transform-origin: center center;
+    transform-origin: top center; /* grow / shrink toward the top edge */
     transition: border-color 0.4s ease, box-shadow 0.4s ease;
   }
   .felt-card.middle { z-index: 5; }
@@ -2991,28 +2993,38 @@
   })();
 
   // FELT · scroll-driven hero scale (middle big → all equal as you scroll)
+  // Cards are top-anchored; section padding-bottom grows with the middle's
+  // overflow so the section below never collides with the scaled hero card.
   (function setupFeltScale() {
     const section = document.getElementById('felt');
     if (!section) return;
+    const grid = section.querySelector('.felt-grid');
     const middle = section.querySelector('.felt-card.middle');
     const sides = Array.from(section.querySelectorAll('.felt-card.side'));
-    if (!middle || sides.length === 0) return;
+    if (!grid || !middle || sides.length === 0) return;
 
     const SCALE_HERO = 1.5;
-    const SCALE_SMALL = 0.55; // ~half size
+    const SCALE_SMALL = 0.55;
     const SCALE_END = 1.0;
     const ease = 0.085;
     let target = 0, current = 0, rafId = null;
+    let cardH = 0;
+
+    function measure() {
+      // Natural (unscaled) card height — middle should stay close to this
+      // when transform is scale(1)
+      const original = middle.style.transform;
+      middle.style.transform = 'scale(1)';
+      cardH = middle.offsetHeight;
+      middle.style.transform = original;
+    }
 
     function compute() {
       const rect = section.getBoundingClientRect();
       const winH = window.innerHeight;
-      // p=0 when section just enters viewport; p=1 when it's been scrolled
-      // through enough to fully equalize. Tie completion to 60% of total travel.
       const total = winH + rect.height;
       const traveled = winH - rect.top;
       let p = traveled / total;
-      // Squash to complete by p=0.6 → equal state stays through to p=1
       p = Math.max(0, Math.min(1, p / 0.6));
       target = p;
     }
@@ -3024,6 +3036,14 @@
       const sideScale = SCALE_SMALL + (SCALE_END - SCALE_SMALL) * p; // 0.55 → 1.0
       middle.style.transform = `scale(${midScale.toFixed(4)})`;
       sides.forEach((el) => { el.style.transform = `scale(${sideScale.toFixed(4)})`; });
+
+      // Reserve extra space below the grid for the visually-larger middle card
+      // so it never overlaps the testimonials section beneath.
+      if (cardH > 0) {
+        const overflow = Math.max(0, (midScale - 1) * cardH);
+        grid.style.paddingBottom = `${overflow.toFixed(0)}px`;
+      }
+
       if (Math.abs(target - current) > 0.0008) {
         rafId = requestAnimationFrame(render);
       } else {
@@ -3036,11 +3056,67 @@
       if (rafId == null) rafId = requestAnimationFrame(render);
     }
 
+    measure();
     compute();
     current = target;
     render();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
+    window.addEventListener('resize', () => { measure(); onScroll(); }, { passive: true });
+    // Re-measure once images / fonts load
+    setTimeout(() => { measure(); onScroll(); }, 1000);
+  })();
+
+  // FELT · Leaderboard live step counter — smooth ticking values
+  (function setupLeaderboardSteps() {
+    const stage = document.getElementById('lbStage');
+    if (!stage) return;
+
+    const fmtDot = (n) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    const stepEls = Array.from(stage.querySelectorAll('.lb-steps')).map((el) => {
+      const raw = (el.textContent || '').replace(/\./g, '');
+      const n = parseInt(raw, 10) || 0;
+      el.textContent = fmtDot(n);
+      return { el, value: n, target: n };
+    });
+    if (stepEls.length === 0) return;
+
+    function tween(item, to, dur) {
+      const from = item.value;
+      const start = performance.now();
+      function frame(now) {
+        const t = Math.min(1, (now - start) / dur);
+        // ease-out cubic
+        const k = 1 - Math.pow(1 - t, 3);
+        const v = from + (to - from) * k;
+        item.value = v;
+        item.el.textContent = fmtDot(v);
+        if (t < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    function tick() {
+      stepEls.forEach((item, i) => {
+        // Smaller bumps for higher ranks, larger bumps for lower (active)
+        const bump = Math.floor(40 + Math.random() * 220);
+        item.target = item.target + bump;
+        // Stagger tween starts so they don't all change in lockstep
+        setTimeout(() => tween(item, item.target, 700 + Math.random() * 400), i * 120);
+      });
+    }
+
+    let started = false;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          setTimeout(tick, 800);
+          setInterval(tick, 2800);
+        }
+      });
+    }, { threshold: 0.25 });
+    io.observe(stage);
   })();
 
   // FELT · Leaderboard live overtake animation
