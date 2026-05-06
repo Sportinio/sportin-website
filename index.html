@@ -3015,24 +3015,19 @@
       middle.style.transform = prevMid;
     }
 
-    // Smooth ease-in-out cubic for the scroll-to-progress mapping
-    function easeInOutCubic(t) {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    }
-
     function update() {
       const rect = section.getBoundingClientRect();
       const winH = window.innerHeight;
-      // Start animating when the section's TOP enters the viewport,
-      // finish when the section has scrolled up by ~70% of the viewport height.
-      const start = winH;             // section top equals winH at first contact
-      const end = winH * 0.30;        // animation completes here (top has crossed 70% up)
-      let raw = (start - rect.top) / (start - end);
-      raw = Math.max(0, Math.min(1, raw));
-      const p = easeInOutCubic(raw);
+      // Animation runs while the section travels through ~half a viewport,
+      // starting the moment the section enters the screen.
+      // Linear mapping: every pixel of scroll = visible change in scale.
+      const start = winH;              // section top hits bottom of viewport
+      const end   = winH * 0.45;       // animation finishes here
+      let p = (start - rect.top) / (start - end);
+      p = Math.max(0, Math.min(1, p));
 
-      const midScale = SCALE_HERO + (SCALE_END - SCALE_HERO) * p;
-      const sideScale = SCALE_SMALL + (SCALE_END - SCALE_SMALL) * p;
+      const midScale  = SCALE_HERO  + (SCALE_END   - SCALE_HERO)  * p;
+      const sideScale = SCALE_SMALL + (SCALE_END   - SCALE_SMALL) * p;
       middle.style.transform = `scale(${midScale.toFixed(4)})`;
       sides.forEach((el) => { el.style.transform = `scale(${sideScale.toFixed(4)})`; });
 
