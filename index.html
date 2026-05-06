@@ -3013,30 +3013,26 @@
       middle.style.transform = 'none';
       cardH = middle.offsetHeight;
       middle.style.transform = prev;
+      // Reserve peak overflow ONCE so the scroll handler never touches layout.
+      // Worst case is when middle is at SCALE_HERO (1.5x) → overflow = 0.5 * cardH.
+      const peakOverflow = (SCALE_HERO - 1) * cardH;
+      grid.style.paddingBottom = `${peakOverflow.toFixed(0)}px`;
     }
 
     function update() {
       const rect = section.getBoundingClientRect();
       const winH = window.innerHeight;
-      // Animation runs across the section's full traversal of the viewport.
-      // Hero state when section enters, equal state when section center
-      // reaches viewport center, stays equal as it exits.
       const total = winH + rect.height;
       const traveled = winH - rect.top;
       let raw = traveled / total;
       raw = Math.max(0, Math.min(1, raw));
-      // p: 0 = hero, 1 = equal. Reach equal at half traversal, then stay.
       let p = Math.min(1, raw / 0.5);
 
       const midScale  = SCALE_HERO  + (SCALE_END   - SCALE_HERO)  * p;
       const sideScale = SCALE_SMALL + (SCALE_END   - SCALE_SMALL) * p;
+      // Only transform writes — GPU-composited, no layout reflow per scroll frame.
       middle.style.transform = `scale(${midScale.toFixed(4)})`;
       sides.forEach((el) => { el.style.transform = `scale(${sideScale.toFixed(4)})`; });
-
-      if (cardH > 0) {
-        const overflow = Math.max(0, (midScale - 1) * cardH);
-        grid.style.paddingBottom = `${overflow.toFixed(0)}px`;
-      }
     }
 
     function onScroll() {
