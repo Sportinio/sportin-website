@@ -10,9 +10,9 @@
 <style>
   :root {
     --ink-0: #06060C;
-    --ink-1: #0D0D14;
-    --ink-2: #131322;
-    --ink-3: #1B1B2E;
+    --ink-1: #0A0A12;
+    --ink-2: #111119;
+    --ink-3: #1A1A26;
     --surface: rgba(255, 255, 255, 0.04);
     --surface-2: rgba(255, 255, 255, 0.07);
     --border: rgba(255, 255, 255, 0.1);
@@ -21,9 +21,10 @@
     --text-2: #C8CAD4;
     --text-3: #9AA0B4;
     --text-4: #5F667E;
-    --blue: #1A8CFF;
-    --blue-glow: rgba(26, 140, 255, 0.4);
-    --cyan: #00E5FF;
+    --blue: #0751FB;
+    --blue-bright: #3B7BFF;
+    --blue-glow: rgba(7, 81, 251, 0.4);
+    --blue-light: #4D8AFF;
     --gold: #F5E4A8;
     --purple: #6B3FA0;
     --red: #FF3B5C;
@@ -40,9 +41,9 @@
   }
   body {
     background:
-      radial-gradient(ellipse at 50% -10%, rgba(26, 140, 255, 0.18) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 60%, rgba(0, 229, 255, 0.06) 0%, transparent 50%),
-      linear-gradient(180deg, #0D0D14 0%, #06060C 100%);
+      radial-gradient(ellipse at 50% -10%, rgba(7, 81, 251, 0.22) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 60%, rgba(59, 123, 255, 0.06) 0%, transparent 50%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
   }
   body::before {
     content: '';
@@ -68,7 +69,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 18px 48px;
-    background: rgba(13, 13, 20, 0.75);
+    background: rgba(10, 10, 18, 0.75);
     backdrop-filter: blur(20px) saturate(1.3);
     -webkit-backdrop-filter: blur(20px) saturate(1.3);
     border-bottom: 1px solid var(--border);
@@ -76,27 +77,12 @@
   .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    letter-spacing: -0.02em;
-    color: var(--text);
+    gap: 0;
   }
-  .brand-mark {
-    width: 30px;
-    height: 30px;
-    display: grid;
-    place-items: center;
-    background: linear-gradient(135deg, var(--blue), var(--cyan));
-    color: var(--ink-0);
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 9px;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset, 0 8px 30px var(--blue-glow);
+  .brand svg {
+    height: 28px;
+    width: auto;
   }
-  .brand .dot { color: var(--blue); font-weight: 800; }
   .nav-links {
     display: flex;
     gap: 32px;
@@ -116,16 +102,16 @@
     align-items: center;
     gap: 8px;
     padding: 11px 20px;
-    background: var(--text);
-    color: var(--ink-0);
+    background: var(--blue);
+    color: var(--text);
     border-radius: 999px;
     font-family: 'Lato', sans-serif;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.02em;
-    transition: transform 0.15s, box-shadow 0.2s;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
   }
-  .nav-cta:hover { transform: translateY(-1px); }
+  .nav-cta:hover { transform: translateY(-1px); background: var(--blue-bright); }
 
   /* Wrap */
   .wrap { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 48px; }
@@ -173,7 +159,7 @@
     color: var(--text);
   }
   .hero-title .gradient {
-    background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -209,11 +195,11 @@
     white-space: nowrap;
   }
   .btn-primary {
-    background: linear-gradient(135deg, var(--blue), var(--cyan));
-    color: var(--ink-0);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+    background: var(--blue);
+    color: var(--text);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset, 0 8px 30px var(--blue-glow);
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22) inset; }
+  .btn-primary:hover { transform: translateY(-2px); background: var(--blue-bright); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22) inset, 0 12px 40px var(--blue-glow); }
   .btn-ghost {
     background: var(--surface);
     color: var(--text);
@@ -225,131 +211,17 @@
     margin-top: 70px;
     position: relative;
   }
-  .phone {
-    width: 300px;
-    height: 600px;
-    margin: 0 auto;
-    background: linear-gradient(160deg, #1B1B2E, #0D0D14);
-    border: 1.5px solid rgba(255, 255, 255, 0.12);
-    border-radius: 40px;
-    padding: 14px;
-    box-shadow:
-      0 0 0 2px rgba(0, 0, 0, 0.8),
-      0 30px 100px rgba(26, 140, 255, 0.35),
-      0 50px 80px rgba(0, 0, 0, 0.5);
-    position: relative;
-  }
-  .phone-screen {
+  .hero-banner {
     width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, #06060C 0%, #0D0D14 50%, #131322 100%);
-    border-radius: 26px;
-    overflow: hidden;
-    position: relative;
-    padding: 28px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 30px 100px rgba(7, 81, 251, 0.25),
+      0 50px 80px rgba(0, 0, 0, 0.4);
   }
-  .phone-notch {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 22px;
-    background: #000;
-    border-radius: 20px;
-    z-index: 2;
-  }
-  .phone-status {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-3);
-    margin-bottom: 30px;
-    margin-top: 10px;
-  }
-  .phone-hero-num {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 72px;
-    font-weight: 700;
-    line-height: 1;
-    background: linear-gradient(135deg, var(--blue), var(--cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.03em;
-  }
-  .phone-hero-lbl {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    color: var(--text-3);
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
-  .phone-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 14px 16px;
-    margin-top: 16px;
-  }
-  .phone-card-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-  }
-  .phone-card-row:first-child { margin-top: 0; }
-  .phone-card-title {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--text-3);
-    text-transform: uppercase;
-  }
-  .phone-card-val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-  }
-  .phone-card-bar {
-    height: 6px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 3px;
-    margin-top: 8px;
-    position: relative;
-    overflow: hidden;
-  }
-  .phone-card-bar::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 68%;
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
-    border-radius: 3px;
-    box-shadow: 0 0 14px var(--cyan);
-  }
-
-  .phone-orbs {
-    position: absolute;
-    inset: -80px;
-    z-index: -1;
-  }
-  .orb {
-    position: absolute;
-    width: 320px;
-    height: 320px;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.6;
-  }
-  .orb.blue { top: 0; left: -60px; background: var(--blue); }
-  .orb.cyan { bottom: 0; right: -40px; background: var(--cyan); opacity: 0.35; }
-  .orb.gold { top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--gold); opacity: 0.06; width: 500px; height: 500px; }
 
   /* Pillars */
   .pillars-section {
@@ -367,7 +239,7 @@
     font-weight: 500;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-bright);
     margin-bottom: 14px;
   }
   .section-title {
@@ -381,7 +253,7 @@
   }
   .section-title .muted { color: var(--text-3); }
   .section-title .gradient {
-    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    background: linear-gradient(135deg, var(--blue), var(--blue-bright));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -429,10 +301,10 @@
     height: 44px;
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, rgba(26, 140, 255, 0.2), rgba(0, 229, 255, 0.15));
-    border: 1px solid rgba(26, 140, 255, 0.3);
+    background: rgba(7, 81, 251, 0.15);
+    border: 1px solid rgba(7, 81, 251, 0.35);
     border-radius: 12px;
-    color: var(--cyan);
+    color: var(--blue-bright);
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
     font-size: 18px;
@@ -533,16 +405,16 @@
   /* World: LoB (Run 2) */
   .world.lob {
     background:
-      radial-gradient(ellipse at 50% 0%, rgba(26, 140, 255, 0.35) 0%, transparent 55%),
-      radial-gradient(ellipse at 50% 100%, rgba(0, 229, 255, 0.18) 0%, transparent 55%),
-      linear-gradient(180deg, #04123F 0%, #000418 100%);
+      radial-gradient(ellipse at 50% 0%, rgba(7, 81, 251, 0.4) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(59, 123, 255, 0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #04103A 0%, #000418 100%);
   }
-  .world.lob:hover { box-shadow: 0 30px 80px rgba(0, 229, 255, 0.3); }
-  .world.lob .world-runtag { color: var(--cyan); background: rgba(26, 140, 255, 0.2); border: 1px solid rgba(0, 229, 255, 0.35); }
+  .world.lob:hover { box-shadow: 0 30px 80px rgba(7, 81, 251, 0.35); }
+  .world.lob .world-runtag { color: var(--blue-bright); background: rgba(7, 81, 251, 0.2); border: 1px solid rgba(59, 123, 255, 0.4); }
   .world.lob .world-mark {
-    color: var(--cyan);
-    border-color: rgba(0, 229, 255, 0.35);
-    background: rgba(0, 229, 255, 0.08);
+    color: var(--blue-bright);
+    border-color: rgba(59, 123, 255, 0.4);
+    background: rgba(7, 81, 251, 0.1);
   }
   .world.lob .world-title {
     font-family: 'Anton', sans-serif;
@@ -550,8 +422,8 @@
     color: var(--text);
     letter-spacing: 0.01em;
   }
-  .world.lob .world-enter { border-color: rgba(0, 229, 255, 0.4); color: var(--cyan); }
-  .world.lob .world-enter:hover { background: rgba(0, 229, 255, 0.1); }
+  .world.lob .world-enter { border-color: rgba(59, 123, 255, 0.5); color: var(--blue-bright); }
+  .world.lob .world-enter:hover { background: rgba(7, 81, 251, 0.15); }
 
   /* World: Le Grand Run (Run 3) · the LIGHT one */
   .world.lgr {
@@ -697,19 +569,7 @@
     transition: background 0.2s;
     margin-top: 6px;
   }
-  .world-enter::after { content: '→'; font-size: 16px; }
-
-  /* Teaser visual for each world */
-  .world-visual {
-    position: absolute;
-    right: -30px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 200px;
-    height: 200px;
-    opacity: 0.14;
-    pointer-events: none;
-  }
+  .world-enter::after { content: '\2192'; font-size: 16px; }
 
   /* Stats strip */
   .stats-strip {
@@ -742,7 +602,7 @@
   }
   .stat-big .unit {
     font-size: 24px;
-    color: var(--cyan);
+    color: var(--blue-bright);
     margin-left: 4px;
     font-weight: 600;
   }
@@ -754,7 +614,7 @@
     line-height: 1.4;
   }
 
-  /* Why SportIn · persona benefits */
+  /* Why SportIn */
   .why-section {
     margin-top: 140px;
     padding: 0 48px;
@@ -806,9 +666,9 @@
     font-size: 10px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--cyan);
-    background: rgba(0, 229, 255, 0.08);
-    border: 1px solid rgba(0, 229, 255, 0.3);
+    color: var(--blue-bright);
+    background: rgba(7, 81, 251, 0.1);
+    border: 1px solid rgba(7, 81, 251, 0.35);
     align-self: flex-start;
   }
   .why-col.coms .why-persona { color: #F5E4A8; background: rgba(245, 228, 168, 0.06); border-color: rgba(245, 228, 168, 0.3); }
@@ -843,13 +703,13 @@
     height: 14px;
     margin-top: 4px;
     border-radius: 4px;
-    background: linear-gradient(135deg, var(--blue), var(--cyan));
-    box-shadow: 0 0 10px rgba(26, 140, 255, 0.4);
+    background: var(--blue);
+    box-shadow: 0 0 10px var(--blue-glow);
   }
   .why-col.coms .why-list li::before { background: linear-gradient(135deg, #C9A24B, #F5E4A8); box-shadow: 0 0 10px rgba(245, 228, 168, 0.35); }
   .why-col.club .why-list li::before { background: linear-gradient(135deg, #E8002D, #FF1840); box-shadow: 0 0 10px rgba(232, 0, 45, 0.35); }
 
-  /* Example snippet from a partner */
+  /* Example */
   .example-section {
     margin-top: 80px;
     padding: 0 48px;
@@ -861,7 +721,7 @@
   }
   .example-card {
     background:
-      radial-gradient(ellipse at 0% 0%, rgba(26, 140, 255, 0.12), transparent 55%),
+      radial-gradient(ellipse at 0% 0%, rgba(7, 81, 251, 0.15), transparent 55%),
       rgba(255, 255, 255, 0.035);
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 24px;
@@ -881,7 +741,7 @@
     font-size: 11px;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--cyan);
+    color: var(--blue-bright);
     margin-bottom: 18px;
   }
   .example-quote {
@@ -892,8 +752,8 @@
     color: var(--text);
     letter-spacing: -0.01em;
   }
-  .example-quote::before { content: '“'; color: var(--cyan); margin-right: 4px; }
-  .example-quote::after { content: '”'; color: var(--cyan); margin-left: 4px; }
+  .example-quote::before { content: '\201C'; color: var(--blue-bright); margin-right: 4px; }
+  .example-quote::after { content: '\201D'; color: var(--blue-bright); margin-left: 4px; }
   .example-attribution {
     font-family: 'Lato', sans-serif;
     font-size: 13px;
@@ -926,7 +786,7 @@
     color: var(--text);
     letter-spacing: -0.02em;
   }
-  .example-kpi-v .u { color: var(--cyan); font-size: 15px; margin-left: 4px; font-weight: 600; }
+  .example-kpi-v .u { color: var(--blue-bright); font-size: 15px; margin-left: 4px; font-weight: 600; }
   .example-kpi-l {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
@@ -1013,8 +873,8 @@
     border-radius: 28px;
     padding: 60px 56px;
     background:
-      radial-gradient(ellipse at 0% 0%, rgba(26, 140, 255, 0.18), transparent 60%),
-      radial-gradient(ellipse at 100% 100%, rgba(0, 229, 255, 0.14), transparent 60%),
+      radial-gradient(ellipse at 0% 0%, rgba(7, 81, 251, 0.22), transparent 60%),
+      radial-gradient(ellipse at 100% 100%, rgba(59, 123, 255, 0.14), transparent 60%),
       rgba(255, 255, 255, 0.035);
     display: grid;
     grid-template-columns: 1.3fr 1fr;
@@ -1048,12 +908,12 @@
     align-items: center;
     gap: 14px;
     padding: 16px 24px;
-    background: var(--text);
-    color: var(--ink-0);
+    background: var(--blue);
+    color: var(--text);
     border-radius: 16px;
-    transition: transform 0.15s;
+    transition: transform 0.15s, background 0.2s;
   }
-  .store-btn:hover { transform: translateY(-2px); }
+  .store-btn:hover { transform: translateY(-2px); background: var(--blue-bright); }
   .store-btn .store-sub {
     font-size: 10px;
     letter-spacing: 0.1em;
@@ -1068,6 +928,7 @@
     margin-top: 2px;
   }
   .store-btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+  .store-btn.ghost:hover { background: var(--surface-2); }
 
   /* Footer */
   .footer {
@@ -1124,22 +985,20 @@
   }
 
   /* ==================================================
-     ANIMATIONS · scroll-reveal, hero entrance, orbs
+     ANIMATIONS
      ================================================== */
 
-  /* Scroll progress bar */
   .scroll-progress {
     position: fixed;
     top: 0;
     left: 0;
     height: 2px;
     width: 0%;
-    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    background: var(--blue);
     z-index: 40;
     transition: width 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Base reveal · silky with blur */
   .reveal {
     opacity: 0;
     transform: translateY(40px);
@@ -1156,7 +1015,6 @@
     filter: blur(0);
   }
 
-  /* Variants */
   .reveal-left {
     opacity: 0;
     transform: translateX(-48px);
@@ -1190,7 +1048,6 @@
   }
   .reveal-scale.in { opacity: 1; transform: scale(1); filter: blur(0); }
 
-  /* Hero entrance · staggered words */
   .hero-word {
     display: inline-block;
     opacity: 0;
@@ -1217,58 +1074,20 @@
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
 
-  /* Phone floating */
   .hero-media {
     opacity: 0;
-    animation: phoneRise 1.5s cubic-bezier(0.16, 1, 0.3, 1) 1.55s forwards;
+    animation: bannerRise 1.5s cubic-bezier(0.16, 1, 0.3, 1) 1.55s forwards;
   }
-  @keyframes phoneRise {
+  @keyframes bannerRise {
     from { opacity: 0; transform: translateY(60px); filter: blur(14px); }
     to { opacity: 1; transform: translateY(0); filter: blur(0); }
   }
-  .phone {
-    animation: phoneFloat 9s ease-in-out infinite;
-    animation-delay: 3s;
-  }
-  @keyframes phoneFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-16px); }
-  }
 
-  /* Drifting orbs */
-  .orb.blue {
-    animation: orbDrift1 18s ease-in-out infinite;
-  }
-  .orb.cyan {
-    animation: orbDrift2 22s ease-in-out infinite;
-  }
-  .orb.gold {
-    animation: orbPulse 10s ease-in-out infinite;
-  }
-  @keyframes orbDrift1 {
-    0%, 100% { transform: translate(0, 0); }
-    33% { transform: translate(40px, -30px); }
-    66% { transform: translate(-20px, 20px); }
-  }
-  @keyframes orbDrift2 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-40px, -25px); }
-  }
-  @keyframes orbPulse {
-    0%, 100% { opacity: 0.06; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.11; transform: translate(-50%, -50%) scale(1.08); }
-  }
-
-  /* Stat counter pulse when animated */
   .stat-big.counting {
-    background: linear-gradient(135deg, var(--text) 0%, var(--cyan) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--blue-bright);
     transition: all 0.3s;
   }
 
-  /* Pillar icon spin on hover */
   .pillar-ico {
     transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1), background 0.3s;
   }
@@ -1276,9 +1095,6 @@
     transform: rotate(8deg) scale(1.06);
   }
 
-  /* world transition handled in primary definition above */
-
-  /* Section-title gradient shimmer */
   .section-title .gradient {
     background-size: 200% auto;
     animation: shimmer 8s ease-in-out infinite;
@@ -1288,9 +1104,6 @@
     50% { background-position: 100% center; }
   }
 
-  /* signal + why-col transitions handled in their primary definitions above */
-
-  /* Pulse ring around nav dot pulse reused */
   .hero-eyebrow .pulse::after {
     content: '';
     position: absolute;
@@ -1308,10 +1121,8 @@
     100% { transform: scale(3.4); opacity: 0; }
   }
 
-  /* Smooth section anchor scroll offset */
   section[id] { scroll-margin-top: 90px; }
 
-  /* Reduced-motion users get no animations */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.001s !important;
@@ -1351,6 +1162,9 @@
     .footer-inner { grid-template-columns: 1fr 1fr; }
     .footer-bottom { flex-direction: column; gap: 12px; }
     .phone { width: 240px; height: 480px; }
+    .why-section, .example-section, .signals-section { padding-left: 20px; padding-right: 20px; }
+    .stats-strip { padding-left: 20px; padding-right: 20px; }
+    .footer { padding-left: 20px; padding-right: 20px; }
   }
 </style>
 </head>
@@ -1360,8 +1174,10 @@
 
 <nav class="nav">
   <a class="brand" href="/">
-    <span class="brand-mark">S</span>
-    Sport<span class="dot">In</span>
+    <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M68.0643 1.18373C68.4786 2.11227 68.2768 2.39873 64.7589 5.87123C63.0757 7.53268 59.7993 10.7671 57.4782 13.0587C55.157 15.3504 51.548 18.8875 49.4586 20.9193C47.3693 22.951 44.4876 25.7635 43.0553 27.1693C36.7282 33.3789 35.0468 35.0216 31.9097 38.0583C30.0763 39.8329 28.0624 41.7777 27.4341 42.3802C26.8057 42.9827 25.2824 44.4681 24.0486 45.6814C22.8149 46.8948 21.5813 48.0581 21.3076 48.2666C20.0186 49.2485 18.2418 49.6683 16.7324 49.3477C15.668 49.1214 14.8088 48.5866 13.6772 47.4458C12.6572 46.4177 8.87468 42.4789 7.2178 40.7204C6.76176 40.2366 5.84718 39.2756 5.18509 38.585C1.75343 35.0056 1.40718 34.585 0.823635 33.2841C-0.236365 30.9219 -0.278033 27.4966 0.726551 25.3369C1.2353 24.2431 1.75051 23.5179 4.30926 20.2937C5.76864 18.4548 7.1028 16.7777 7.27447 16.5668C8.01447 15.6583 10.6828 12.2637 11.2195 11.5483C11.5418 11.1187 12.1805 10.2937 12.6388 9.71539C13.0972 9.13664 14.058 7.89748 14.7743 6.96123C17.263 3.70831 17.7591 3.17435 19.2013 2.1981C20.6397 1.22456 22.088 0.586017 23.6805 0.223309C24.3316 0.0749757 26.6563 0.0528925 45.3993 0.0176841C64.8053 -0.0191909 66.4241 -0.00898313 66.8576 0.15185C67.4116 0.357059 67.8705 0.749767 68.0643 1.18373Z" fill="white"/>
+      <path d="M74.2966 47.9023C74.4751 48.9085 73.9912 52.2362 73.5808 52.8223C73.4918 52.9489 73.4193 53.1246 73.4191 53.2119C73.4183 53.5369 72.3755 55.0504 70.4947 57.4575C69.4301 58.8192 68.0147 60.6367 67.3487 61.496C65.6174 63.7302 61.4189 69.0571 59.8637 70.9925C59.4416 71.5177 58.5589 72.6427 57.9018 73.4925C56.4318 75.3944 55.5903 76.2548 54.5145 76.9571C53.2012 77.8144 51.9985 78.3119 50.2943 78.7016C49.5676 78.8681 48.0866 78.8781 29.0964 78.8479C9.57034 78.8169 8.66347 78.8071 8.30513 78.6254C7.33326 78.1319 7.20241 76.9046 8.0197 75.9502C8.51116 75.3769 20.8564 62.9579 40.2512 43.5273C50.147 33.6129 53.982 29.8354 54.4193 29.571C54.8226 29.3271 55.3114 29.1487 55.912 29.0258C57.017 28.7998 57.437 28.7956 58.2337 29.0019C59.3307 29.2862 59.8041 29.625 61.2068 31.131C61.9276 31.9048 63.0133 33.056 63.6193 33.6894C65.0014 35.1337 65.9966 36.1871 67.8464 38.1642C68.6485 39.0212 69.6351 40.0748 70.0389 40.5052C72.4093 43.0317 72.8914 43.6208 73.2978 44.4867C73.7732 45.4998 73.9924 46.1569 74.1418 47.0169C74.2016 47.3606 74.271 47.7589 74.2966 47.9023Z" fill="white"/>
+    </svg>
   </a>
   <div class="nav-links">
     <a href="#pillars">Platform</a>
@@ -1375,7 +1191,7 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow"><span class="pulse"></span>For Brand Managers · Heads of Community · Club Directors</div>
+  <div class="hero-eyebrow"><span class="pulse"></span>For Brand Managers &middot; Heads of Community &middot; Club Directors</div>
   <h1 class="hero-title">
     <span class="hero-word" style="--wd:0.30s;">Turn</span>
     <span class="hero-word" style="--wd:0.45s;">your</span>
@@ -1391,45 +1207,7 @@
   </div>
 
   <div class="hero-media">
-    <div class="phone-orbs">
-      <div class="orb blue"></div>
-      <div class="orb cyan"></div>
-      <div class="orb gold"></div>
-    </div>
-    <div class="phone">
-      <div class="phone-notch"></div>
-      <div class="phone-screen">
-        <div class="phone-status">
-          <span>9:41</span>
-          <span>5G · 100%</span>
-        </div>
-        <div class="phone-hero-num">12.480</div>
-        <div class="phone-hero-lbl">Movement Index Today</div>
-        <div class="phone-card">
-          <div class="phone-card-row">
-            <span class="phone-card-title">Today · Steps</span>
-            <span class="phone-card-val">8.724</span>
-          </div>
-          <div class="phone-card-bar"></div>
-        </div>
-        <div class="phone-card">
-          <div class="phone-card-row">
-            <span class="phone-card-title">Distance</span>
-            <span class="phone-card-val">6,4 km</span>
-          </div>
-          <div class="phone-card-row" style="margin-top: 14px;">
-            <span class="phone-card-title">Tier</span>
-            <span class="phone-card-val" style="color: var(--gold);">Gold</span>
-          </div>
-        </div>
-        <div class="phone-card">
-          <div class="phone-card-row">
-            <span class="phone-card-title">This Week</span>
-            <span class="phone-card-val" style="color: var(--green);">+18,2%</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <img class="hero-banner" src="hero-banner.png" alt="SportIn — To be in the same team means to rise together" />
   </div>
 </section>
 
@@ -1472,11 +1250,11 @@
   </div>
 
   <div class="worlds">
-    <!-- Run 1 · GoR -->
+    <!-- Run 1 GoR -->
     <a class="world gor reveal-left" style="--rd:0.05s;" href="GoR_01_Overture.html">
       <span class="world-runtag">Run 01</span>
       <div class="world-inner">
-        <span class="world-mark">Saga · 9 Months</span>
+        <span class="world-mark">Saga &middot; 9 Months</span>
         <div>
           <div class="world-title">Game of<br/>Run</div>
           <div class="world-tagline" style="color: #E9CE85;">Best for: place-based communities &amp; city brands</div>
@@ -1491,30 +1269,30 @@
       </div>
     </a>
 
-    <!-- Run 2 · LoB -->
+    <!-- Run 2 LoB -->
     <a class="world lob reveal-right" style="--rd:0.15s;" href="LoB_01_Homepage.html">
       <span class="world-runtag">Run 02</span>
       <div class="world-inner">
-        <span class="world-mark">Cup · Every Saturday</span>
+        <span class="world-mark">Cup &middot; Every Saturday</span>
         <div>
           <div class="world-title">League of<br/>Brands</div>
           <div class="world-tagline">Best for: brands that want head-to-head broadcast</div>
         </div>
         <p class="world-desc">Sixteen brand teams, four groups, knockout bracket, one silver cup. Every Saturday is a 24h matchday with live leaderboards, social cards, and employee activation baked in. Football format, measurable reach.</p>
         <div class="world-stats">
-          <div><div class="ws-val" style="color: var(--cyan);">16</div><div class="ws-lbl">Brand Slots</div></div>
-          <div><div class="ws-val" style="color: var(--cyan);">40wk</div><div class="ws-lbl">Live Matchdays</div></div>
-          <div><div class="ws-val" style="color: var(--cyan);">24h</div><div class="ws-lbl">Per Match</div></div>
+          <div><div class="ws-val" style="color: var(--blue-bright);">16</div><div class="ws-lbl">Brand Slots</div></div>
+          <div><div class="ws-val" style="color: var(--blue-bright);">40wk</div><div class="ws-lbl">Live Matchdays</div></div>
+          <div><div class="ws-val" style="color: var(--blue-bright);">24h</div><div class="ws-lbl">Per Match</div></div>
         </div>
         <span class="world-enter">Claim a Brand Slot</span>
       </div>
     </a>
 
-    <!-- Run 3 · Le Grand Run -->
+    <!-- Run 3 Le Grand Run -->
     <a class="world lgr reveal-left" style="--rd:0.25s;" href="LGR_01_Homepage.html">
       <span class="world-runtag">Run 03</span>
       <div class="world-inner">
-        <span class="world-mark">Grand Tour · 3 Weeks</span>
+        <span class="world-mark">Grand Tour &middot; 3 Weeks</span>
         <div>
           <div class="world-title"><span class="le-italic">Le</span><br/>Grand Run</div>
           <div class="world-tagline">Best for: title sponsors &amp; premium brands</div>
@@ -1529,11 +1307,11 @@
       </div>
     </a>
 
-    <!-- Run 4 · Grand Prix Series -->
+    <!-- Run 4 Grand Prix Series -->
     <a class="world gps reveal-right" style="--rd:0.35s;" href="GPS_01_Homepage.html">
       <span class="world-runtag">Run 04</span>
       <div class="world-inner">
-        <span class="world-mark">Championship · 24 Rounds</span>
+        <span class="world-mark">Championship &middot; 24 Rounds</span>
         <div>
           <div class="world-title">Grand <em>Prix</em><br/>Series</div>
           <div class="world-tagline" style="color: #FF1840;">Best for: pro clubs &amp; performance brands</div>
@@ -1567,12 +1345,12 @@
     </div>
     <div class="stat-block reveal" style="--rd:0.35s;">
       <div class="stat-big"><span class="count" data-target="4">0</span><span class="unit">runs</span></div>
-      <div class="stat-cap">GoR · LoB · Le Grand Run · Grand Prix Series</div>
+      <div class="stat-cap">GoR &middot; LoB &middot; Le Grand Run &middot; Grand Prix Series</div>
     </div>
   </div>
 </div>
 
-<!-- WHY SPORTIN · persona benefits -->
+<!-- WHY SPORTIN -->
 <section class="why-section" id="why">
   <div class="why-head">
     <div class="section-kicker reveal">Why SportIn</div>
@@ -1581,7 +1359,6 @@
   </div>
 
   <div class="why-grid">
-    <!-- Brand Manager -->
     <div class="why-col reveal" style="--rd:0.05s;">
       <span class="why-persona">Brand Manager</span>
       <div class="why-title">Own a competition,<br/>not just a logo.</div>
@@ -1594,7 +1371,6 @@
       </ul>
     </div>
 
-    <!-- Head of Community -->
     <div class="why-col coms reveal" style="--rd:0.2s;">
       <span class="why-persona">Head of Community</span>
       <div class="why-title">Turn members<br/>into a season-long team.</div>
@@ -1607,7 +1383,6 @@
       </ul>
     </div>
 
-    <!-- Pro Club Director -->
     <div class="why-col club reveal" style="--rd:0.35s;">
       <span class="why-persona">Pro Club Director</span>
       <div class="why-title">Your fans earn points<br/>365 days a year.</div>
@@ -1622,13 +1397,13 @@
   </div>
 </section>
 
-<!-- EXAMPLE · partner spotlight -->
+<!-- EXAMPLE -->
 <section class="example-section">
   <div class="example-card reveal-scale">
     <div>
-      <div class="example-label">Partner Example · 2026 Season</div>
+      <div class="example-label">Partner Example &middot; 2026 Season</div>
       <p class="example-quote">We fielded a 600-employee team in League of Brands. Three matchdays in, we had more internal engagement than our last two wellness campaigns combined. The weekend before our quarterly review, our group was the most-clicked page on our intranet.</p>
-      <div class="example-attribution"><strong>Elena Ruiz</strong> · Head of Community, Mama Harmony España</div>
+      <div class="example-attribution"><strong>Elena Ruiz</strong> &middot; Head of Community, Mama Harmony Espa&ntilde;a</div>
     </div>
 
     <div class="example-kpis">
@@ -1645,7 +1420,7 @@
         <div class="example-kpi-l">Organic Impressions</div>
       </div>
       <div class="example-kpi">
-        <div class="example-kpi-v">0,18<span class="u">€</span></div>
+        <div class="example-kpi-v">0,18<span class="u">&euro;</span></div>
         <div class="example-kpi-l">Cost per Engagement</div>
       </div>
     </div>
@@ -1656,7 +1431,7 @@
 <section class="signals-section" id="signals">
   <div class="signals-head">
     <div>
-      <div class="section-kicker reveal">Health Signals · Brand Rewards</div>
+      <div class="section-kicker reveal">Health Signals &middot; Brand Rewards</div>
       <h2 class="section-title reveal" style="--rd:0.1s;">Eight challenges.<br/>Eight voucher slots.</h2>
     </div>
     <p class="section-intro reveal" style="--rd:0.2s;">Every signal your member completes unlocks a brand voucher in their wallet. Sponsor a signal, land your logo on the challenge, and redemption data flows back to your CRM.</p>
@@ -1710,7 +1485,7 @@
 <section class="app-cta" id="app">
   <div class="app-cta-inner reveal-scale">
     <div>
-      <div class="section-kicker">Partnership Opens · Season 2026</div>
+      <div class="section-kicker">Partnership Opens &middot; Season 2026</div>
       <h2 class="app-cta-title">Run a team.<br/>Sponsor a Run.</h2>
       <p class="app-cta-copy">16 brand slots in League of Brands. 4 jersey sponsorships in Le Grand Run. Unlimited brand teams in Grand Prix Series. Season closes November 2026. Talk to us before the grid fills up.</p>
     </div>
@@ -1738,18 +1513,27 @@
   <div class="footer-inner">
     <div class="footer-brand">
       <a class="brand" href="/">
-        <span class="brand-mark">S</span>
-        Sport<span class="dot">In</span>
+        <svg viewBox="0 0 208 107" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M81.2725 82.0357C91.9558 82.0778 91.4877 82.045 93.0977 82.8521C94.788 83.6991 96.0191 85.312 96.3711 87.1382C96.4236 87.4116 96.4755 90.6699 96.4863 94.3785C96.4926 96.6258 96.4992 98.8733 96.5059 101.121C96.4109 101.398 96.3157 101.677 96.2207 101.955C95.8441 103.056 95.4586 103.705 94.7607 104.417C93.7092 105.489 92.7426 106.005 91.1416 106.35C90.3423 106.523 89.527 106.538 80.8467 106.538C70.1494 106.538 70.6939 106.577 68.8672 105.678C67.5529 105.032 66.6521 104.142 66.0654 102.914C65.8409 102.443 65.6022 101.824 65.5352 101.538C65.3904 100.917 65.2988 89.9409 65.4248 88.3003C65.5563 86.5894 66.0638 85.367 67.1035 84.2554C68.1293 83.1586 69.3712 82.4837 70.96 82.1597C71.6481 82.0193 72.9845 82.0032 81.2725 82.0357ZM80.6797 88.1753C78.739 88.1851 76.7981 88.1948 74.8574 88.2046C74.6919 88.3019 74.5259 88.3992 74.3604 88.4966C74.0862 88.6577 73.7358 88.9849 73.5791 89.2261C73.4844 89.3715 73.3897 89.5171 73.2949 89.6626V94.1939C73.2949 98.6378 73.2989 98.7334 73.5195 99.1421C73.807 99.6748 74.2293 100.068 74.7393 100.278C75.3305 100.521 86.2525 100.528 87.0703 100.286C87.7297 100.09 88.39 99.4007 88.4883 98.8042C88.5947 98.1604 88.5436 90.1164 88.4307 89.691C88.3731 89.4751 88.1436 89.1195 87.9141 88.8902C87.1576 88.1339 87.2385 88.1422 80.6797 88.1753Z" fill="white"/>
+          <path d="M43.7363 82.0063C56.162 82.0067 56.2813 82.0119 57.7344 82.6225C59.6672 83.4346 60.9457 84.9504 61.4047 86.9742C61.6528 88.0677 61.6547 94.5392 61.4069 95.5261C61.0219 97.0609 59.759 98.5915 58.2936 99.2984C56.6972 100.069 56.8305 100.058 48.1634 100.103C45.5853 100.116 43.0072 100.13 40.429 100.143C40.429 101.217 40.429 102.292 40.429 103.366C40.429 104.44 40.429 105.515 40.429 106.589C39.1136 106.589 37.7984 106.589 36.4828 106.589C35.1676 106.589 33.852 106.589 32.5365 106.589C32.5157 106.511 32.4949 106.433 32.4738 106.355C32.4392 106.226 32.4105 100.695 32.4097 94.0632C32.4092 90.044 32.4086 86.025 32.4082 82.0059C36.1842 82.0059 39.9603 82.0061 43.7363 82.0063ZM53.4117 89.0486C53.277 88.8256 52.9842 88.5329 52.7613 88.3981C52.6263 88.3163 52.4913 88.2346 52.3561 88.1527C50.3682 88.1525 48.3803 88.1525 46.3926 88.1523C44.4049 88.1519 42.4167 88.1519 40.429 88.1517C40.429 89.125 40.429 90.0982 40.429 91.0715C40.429 92.045 40.429 93.0184 40.429 93.9917C42.4167 93.9819 44.4049 93.9721 46.3926 93.9621C48.3803 93.9523 50.3682 93.9427 52.3561 93.9329C52.4986 93.8402 52.6411 93.7475 52.7836 93.6546C53.559 93.15 53.6582 92.8532 53.6576 91.0363C53.6572 89.559 53.6409 89.4269 53.4117 89.0486Z" fill="white"/>
+          <path d="M178.208 82.074C178.246 82.0367 180.114 82.0059 182.36 82.0059C183.721 82.0059 185.082 82.0059 186.443 82.0059C187.445 83.0563 188.448 84.1065 189.45 85.1569C191.105 86.8898 193.001 88.8704 193.665 89.5579C194.829 90.7642 197.706 93.815 199.049 95.2675C199.266 95.5023 199.483 95.7369 199.7 95.9719C199.7 93.6442 199.7 91.3165 199.7 88.989C199.7 86.6613 199.7 84.3336 199.7 82.0059C201.071 82.0059 202.443 82.0059 203.814 82.0059C205.186 82.0059 206.557 82.0059 207.929 82.0059C207.929 86.1032 207.929 90.2002 207.929 94.2975C207.929 98.3948 207.929 102.492 207.929 106.589C206.531 106.589 205.134 106.59 203.736 106.59C202.339 106.59 200.941 106.59 199.544 106.59C199.283 106.318 199.023 106.045 198.762 105.772C194.925 101.75 192.48 99.1798 191.479 98.115C190.824 97.419 189.602 96.1232 188.763 95.235C187.924 94.3469 187.059 93.4213 186.842 93.1777C186.624 92.9342 186.405 92.735 186.354 92.735C186.302 92.735 186.262 95.7221 186.262 99.6634C186.262 101.973 186.262 104.282 186.262 106.591C184.917 106.583 183.571 106.573 182.226 106.564C180.88 106.555 179.535 106.546 178.189 106.537C178.181 102.471 178.173 98.4054 178.165 94.3396C178.151 87.6311 178.17 82.1117 178.208 82.074Z" fill="white"/>
+          <path d="M112.539 82.0317C116.576 82.0421 120.612 82.0527 124.648 82.0633C124.908 82.1431 125.168 82.2229 125.428 82.3025C127.757 83.0173 129.127 84.3754 129.718 86.5573C129.908 87.259 129.945 87.7452 129.987 90.0814C130.056 93.9869 129.889 94.9931 128.936 96.4098C127.843 98.035 125.889 98.9825 123.624 98.985C123.233 98.9854 122.928 99.0281 122.947 99.0802C122.966 99.1321 124.042 100.152 125.338 101.346C129.276 104.973 130.826 106.43 130.837 106.512C130.842 106.555 128.444 106.59 125.507 106.59C123.728 106.59 121.948 106.59 120.168 106.59C118.919 105.341 117.671 104.092 116.422 102.843C115.173 101.594 113.925 100.345 112.676 99.0956C112.21 99.086 111.744 99.0762 111.278 99.0669C110.812 99.0571 110.347 99.0475 109.881 99.0379C109.877 98.1004 109.873 97.1629 109.869 96.2254C109.865 95.2879 109.861 94.3504 109.857 93.4129C111.714 93.3956 113.572 93.3781 115.43 93.3608C120.797 93.3106 121.016 93.3008 121.363 93.0967C122.01 92.7169 122.144 92.3429 122.182 90.8087C122.213 89.5519 122.198 89.4217 121.971 88.9969C121.498 88.1112 121.851 88.1525 114.728 88.1525C112.636 88.1525 110.543 88.1525 108.451 88.1525C108.451 91.2254 108.451 94.2983 108.451 97.3712C108.451 100.444 108.451 103.517 108.451 106.59C107.114 106.59 105.777 106.59 104.44 106.59C103.103 106.59 101.767 106.59 100.43 106.59C100.43 102.492 100.43 98.3933 100.43 94.295C100.43 90.1967 100.43 86.0983 100.43 82C104.466 82.0106 108.503 82.021 112.539 82.0317Z" fill="white"/>
+          <path d="M0.111039 87.456C0.350206 85.9438 1.00354 84.5783 1.8625 83.7963C2.13396 83.549 2.77812 83.1402 3.29375 82.8885C5.08125 82.0154 4.22083 82.0713 16.4448 82.0335C20.0646 82.0225 23.6844 82.0113 27.3042 82C27.3042 83.0254 27.3042 84.0506 27.3042 85.0762C27.3042 86.1017 27.3042 87.1269 27.3042 88.1523C24.2294 88.1523 21.1548 88.1523 18.0802 88.1523C8.04292 88.1523 8.48729 88.1265 8.08979 88.7331C7.98917 88.8865 7.88271 89.2798 7.85313 89.6069C7.78542 90.3529 8.00688 90.8665 8.53917 91.1975C8.66583 91.2763 8.79208 91.3548 8.91875 91.4335C11.3321 91.4342 13.745 91.4348 16.1583 91.4356C22.8527 91.4373 23.4529 91.4519 24.1271 91.6292C26.4144 92.2308 27.9337 93.7144 28.5146 95.9127C28.6758 96.5229 28.7073 97.0413 28.7073 99.0898C28.7075 101.485 28.7012 101.556 28.421 102.387C28.059 103.462 27.4492 104.378 26.6596 105.035C25.961 105.616 25.6425 105.798 24.8131 106.085C23.4115 106.572 22.9515 106.589 11.126 106.589C7.41729 106.589 3.70854 106.59 0 106.59C0.0216667 106.251 0.0435392 105.913 0.0652059 105.574C0.201248 103.459 0.431876 100.615 0.470626 100.576C0.492709 100.554 4.91062 100.509 10.2879 100.476C18.4715 100.425 20.1127 100.391 20.3592 100.267C20.6923 100.098 21.0487 99.4117 21.0512 98.9335C21.0542 98.3969 20.8598 97.8921 20.5273 97.5733C20.4206 97.4713 20.314 97.369 20.2073 97.2669C17.7704 97.2479 15.3333 97.2287 12.8963 97.2096C5.73625 97.1533 5.56833 97.1473 4.75208 96.9194C3.50937 96.5719 2.68292 96.1279 1.89292 95.3825C1.09229 94.6275 0.606248 93.8056 0.302289 92.6942C0.144164 92.1154 0.0920823 91.5235 0.0627073 89.9752C0.0422906 88.8867 0.0639561 87.7529 0.111039 87.456Z" fill="white"/>
+          <path d="M148.504 82.0059C153.383 82.0059 158.262 82.0059 163.141 82.0059C163.132 83.0215 163.123 84.0371 163.113 85.0527C163.104 86.0684 163.095 87.084 163.086 88.0996C161.307 88.1086 159.527 88.1177 157.748 88.1267C155.969 88.1357 154.189 88.1446 152.41 88.1536C152.401 91.2175 152.392 94.2815 152.383 97.3454C152.374 100.409 152.366 103.473 152.357 106.537C151.029 106.546 149.701 106.555 148.372 106.564C147.044 106.573 145.716 106.583 144.388 106.592C144.388 103.518 144.388 100.445 144.388 97.3717C144.388 94.2984 144.388 91.225 144.388 88.1517C142.634 88.1517 140.881 88.1517 139.128 88.1517C137.374 88.1517 135.621 88.1517 133.867 88.1517C133.867 87.1273 133.867 86.1032 133.867 85.0788C133.867 84.0544 133.867 83.0302 133.867 82.0059C138.746 82.0059 143.625 82.0059 148.504 82.0059Z" fill="white"/>
+          <path d="M170.269 82.0059C171.605 82.0059 172.941 82.0059 174.277 82.0059C174.287 82.4486 174.297 82.8913 174.306 83.334C174.322 84.0644 174.323 89.5963 174.308 95.6269C174.3 99.2817 174.29 102.937 174.282 106.592C172.954 106.583 171.626 106.573 170.298 106.564C168.97 106.555 167.642 106.546 166.315 106.537C166.306 102.449 166.297 98.36 166.288 94.2715C166.279 90.1829 166.271 86.0944 166.262 82.0059C167.598 82.0059 168.934 82.0059 170.269 82.0059Z" fill="white"/>
+          <path d="M124.848 0.953882C125.182 1.70213 125.019 1.93297 122.185 4.73121C120.828 6.07007 118.188 8.67642 116.318 10.5231C114.447 12.3698 111.539 15.2201 109.855 16.8574C108.172 18.4946 105.849 20.761 104.695 21.8939C99.5967 26.8978 98.2417 28.2215 95.7138 30.6685C94.2364 32.0986 92.6135 33.6657 92.1072 34.1512C91.6009 34.6368 90.3733 35.8338 89.3791 36.8115C88.3849 37.7892 87.3909 38.7267 87.1703 38.8947C86.1316 39.686 84.6998 40.0242 83.4835 39.7659C82.6258 39.5836 81.9334 39.1526 81.0215 38.2333C80.1995 37.4048 77.1515 34.2308 75.8163 32.8137C75.4488 32.4239 74.7118 31.6495 74.1783 31.093C71.413 28.2086 71.1339 27.8696 70.6637 26.8214C69.8095 24.9178 69.776 22.1576 70.5855 20.4172C70.9954 19.5358 71.4106 18.9514 73.4725 16.3533C74.6485 14.8714 75.7237 13.52 75.862 13.3501C76.4583 12.6179 78.6085 9.88248 79.041 9.30598C79.3007 8.95981 79.8154 8.295 80.1848 7.82896C80.5541 7.36258 81.3284 6.36403 81.9056 5.60957C83.9111 2.98827 84.3108 2.55799 85.473 1.7713C86.6321 0.986788 87.7992 0.472231 89.0825 0.179949C89.6071 0.0604177 91.4805 0.0426224 106.584 0.0142504C122.222 -0.0154646 123.527 -0.00723888 123.876 0.122366C124.322 0.287729 124.692 0.604185 124.848 0.953882Z" fill="white"/>
+          <path d="M129.87 38.6016C130.014 39.4125 129.624 42.0941 129.293 42.5663C129.222 42.6684 129.163 42.8099 129.163 42.8803C129.162 43.1422 128.322 44.3618 126.807 46.3015C125.949 47.3988 124.808 48.8634 124.271 49.5559C122.876 51.3563 119.493 55.6488 118.24 57.2084C117.9 57.6317 117.188 58.5382 116.659 59.223C115.474 60.7556 114.796 61.449 113.929 62.0149C112.871 62.7057 111.902 63.1066 110.528 63.4207C109.943 63.5549 108.749 63.5629 93.4465 63.5386C77.7118 63.5136 76.981 63.5057 76.6923 63.3593C75.9091 62.9616 75.8037 61.9726 76.4623 61.2035C76.8583 60.7415 86.8064 50.7339 102.435 35.0761C110.41 27.0868 113.5 24.0428 113.852 23.8298C114.177 23.6332 114.571 23.4895 115.055 23.3904C115.946 23.2083 116.284 23.2049 116.926 23.3711C117.81 23.6003 118.192 23.8732 119.322 25.0869C119.903 25.7104 120.778 26.6381 121.266 27.1484C122.38 28.3124 123.182 29.1612 124.672 30.7544C125.319 31.445 126.114 32.294 126.439 32.6409C128.349 34.6767 128.738 35.1515 129.065 35.8492C129.448 36.6656 129.625 37.1951 129.745 37.8882C129.794 38.1652 129.85 38.4861 129.87 38.6016Z" fill="white"/>
+        </svg>
       </a>
       <p class="footer-tag">Where running becomes legend. Built in Spain. Running in three kingdoms, sixteen brands, twenty-one stages, twenty-four grands prix.</p>
     </div>
     <div class="footer-col">
       <h4>The Four Runs</h4>
       <ul>
-        <li><a href="GoR_01_Overture.html">Run 1 · Game of Run</a></li>
-        <li><a href="LoB_01_Homepage.html">Run 2 · League of Brands</a></li>
-        <li><a href="LGR_01_Homepage.html">Run 3 · Le Grand Run</a></li>
-        <li><a href="GPS_01_Homepage.html">Run 4 · Grand Prix Series</a></li>
+        <li><a href="GoR_01_Overture.html">Run 1 &middot; Game of Run</a></li>
+        <li><a href="LoB_01_Homepage.html">Run 2 &middot; League of Brands</a></li>
+        <li><a href="LGR_01_Homepage.html">Run 3 &middot; Le Grand Run</a></li>
+        <li><a href="GPS_01_Homepage.html">Run 4 &middot; Grand Prix Series</a></li>
         <li><a href="#signals">Health Signals</a></li>
       </ul>
     </div>
@@ -1772,15 +1556,12 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© MMXXVI · SportIn · Made in Spain</span>
-    <span>Four Runs · Live Now · Season 2026</span>
+    <span>&copy; MMXXVI &middot; SportIn &middot; Made in Spain</span>
+    <span>Four Runs &middot; Live Now &middot; Season 2026</span>
   </div>
 </footer>
 
 <script>
-  /* ============================================
-     Scroll progress bar
-     ============================================ */
   const progressBar = document.getElementById('scrollProgress');
   const updateProgress = () => {
     const doc = document.documentElement;
@@ -1792,9 +1573,6 @@
   window.addEventListener('scroll', updateProgress, { passive: true });
   updateProgress();
 
-  /* ============================================
-     IntersectionObserver · reveal on scroll
-     ============================================ */
   const revealables = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -1809,9 +1587,6 @@
   });
   revealables.forEach((el) => io.observe(el));
 
-  /* ============================================
-     Animated counters · European dot format
-     ============================================ */
   const formatNumber = (n, useDot) => {
     const rounded = Math.round(n);
     if (useDot) {
@@ -1858,27 +1633,7 @@
   }, { threshold: 0.5 });
   counters.forEach((el) => counterIO.observe(el));
 
-  /* ============================================
-     Gentle parallax · orbs and phone
-     ============================================ */
-  const phoneMedia = document.querySelector('.hero-media');
-  let parallaxTicking = false;
-  window.addEventListener('scroll', () => {
-    if (!parallaxTicking) {
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        if (phoneMedia && y < 900) {
-          phoneMedia.style.transform = `translateY(${y * 0.1}px)`;
-        }
-        parallaxTicking = false;
-      });
-      parallaxTicking = true;
-    }
-  }, { passive: true });
 
-  /* ============================================
-     Smooth scroll for anchor links
-     ============================================ */
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (e) => {
       const id = link.getAttribute('href');
