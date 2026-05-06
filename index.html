@@ -244,10 +244,14 @@
     will-change: transform;
   }
   .partners-row.row-l {
+    /* both rows start at the SAME visual position (mid-cycle, translate -25%)
+       and diverge in opposite directions */
     animation: marqueeLeft 38s linear infinite;
+    animation-delay: -19s; /* half of 38s → starts at translate -25% */
   }
   .partners-row.row-r {
     animation: marqueeRight 44s linear infinite;
+    animation-delay: -22s; /* half of 44s → starts at translate -25% */
     margin-top: 18px;
   }
   @keyframes marqueeLeft {
