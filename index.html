@@ -949,11 +949,8 @@
 
   /* Phone Showcase */
   .phone-showcase {
-    margin-top: 120px;
-    padding: 0 48px 80px;
-    max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-top: 100px;
+    padding: 40px 0 100px;
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -961,76 +958,92 @@
   .phone-arc {
     display: flex;
     justify-content: center;
-    align-items: flex-end;
-    gap: 32px;
-    perspective: 1200px;
+    align-items: center;
+    gap: 0;
+    perspective: 2000px;
+    transform-style: preserve-3d;
+    padding: 40px 20px;
   }
   .phone-frame {
     flex-shrink: 0;
-    width: 260px;
-    padding: 10px;
-    border-radius: 40px;
-    background: linear-gradient(145deg, #3a3a3f 0%, #1c1c20 50%, #2e2e33 100%);
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.6),
-      0 4px 12px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    width: 240px;
+    padding: 6px;
+    border-radius: 44px;
+    background: linear-gradient(160deg,
+      rgba(180, 180, 190, 0.25) 0%,
+      rgba(60, 60, 68, 0.9) 15%,
+      rgba(28, 28, 32, 0.98) 40%,
+      rgba(40, 40, 46, 0.95) 60%,
+      rgba(60, 60, 68, 0.9) 85%,
+      rgba(180, 180, 190, 0.2) 100%);
     position: relative;
+    will-change: transform, opacity;
     opacity: 0;
-    transform: translateY(120px) scale(0.85);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  /* Titanium edge highlight */
+  .phone-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+    z-index: 4;
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 30%,
+      transparent 70%,
+      rgba(255, 255, 255, 0.04) 100%);
+    mask-image: linear-gradient(180deg, white 0%, transparent 40%, transparent 60%, white 100%);
+    -webkit-mask-image: linear-gradient(180deg, white 0%, transparent 40%, transparent 60%, white 100%);
+  }
+  /* Side button – right */
   .phone-frame::before {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 110px;
+    width: 3px;
+    height: 36px;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(180deg, rgba(100, 100, 108, 0.6), rgba(50, 50, 56, 0.8));
+    z-index: 5;
+  }
+  .phone-inner {
+    position: relative;
+    border-radius: 38px;
+    overflow: hidden;
+    background: #000;
+  }
+  /* Dynamic Island */
+  .phone-inner::before {
     content: '';
     position: absolute;
     top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80px;
-    height: 24px;
-    background: #1a1a1e;
-    border-radius: 0 0 14px 14px;
+    width: 72px;
+    height: 22px;
+    background: #000;
+    border-radius: 20px;
     z-index: 3;
   }
-  .phone-frame.visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  .phone-frame:nth-child(1) {
-    transform: translateY(120px) scale(0.85) rotate(-6deg);
-    transition-delay: 0s;
-  }
-  .phone-frame:nth-child(1).visible {
-    transform: translateY(20px) scale(1) rotate(-6deg);
-  }
-  .phone-frame:nth-child(2) {
-    transform: translateY(120px) scale(0.85) rotate(-2deg);
-    transition-delay: 0.15s;
-  }
-  .phone-frame:nth-child(2).visible {
-    transform: translateY(-10px) scale(1.04) rotate(-2deg);
-  }
-  .phone-frame:nth-child(3) {
-    transform: translateY(120px) scale(0.85) rotate(2deg);
-    transition-delay: 0.3s;
-  }
-  .phone-frame:nth-child(3).visible {
-    transform: translateY(-10px) scale(1.04) rotate(2deg);
-  }
-  .phone-frame:nth-child(4) {
-    transform: translateY(120px) scale(0.85) rotate(6deg);
-    transition-delay: 0.45s;
-  }
-  .phone-frame:nth-child(4).visible {
-    transform: translateY(20px) scale(1) rotate(6deg);
-  }
-  .phone-screen {
-    width: 100%;
-    display: block;
-    border-radius: 30px;
-    overflow: hidden;
+  /* Screen glare reflection */
+  .phone-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 38px;
+    background: linear-gradient(
+      125deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 40%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 2;
   }
   .phone-screen img {
     width: 100%;
@@ -1038,33 +1051,117 @@
     display: block;
   }
 
-  @media (max-width: 1000px) {
-    .phone-arc {
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .phone-frame {
-      width: 200px;
-      border-radius: 32px;
-      padding: 8px;
-    }
-    .phone-screen { border-radius: 24px; }
-    .phone-frame::before { width: 60px; height: 18px; top: 8px; border-radius: 0 0 10px 10px; }
+  /* Initial positions — fanned out below, converge on scroll */
+  .phone-frame:nth-child(1) {
+    transform: translateY(200px) translateX(80px) rotate(12deg) scale(0.7);
+    transition-delay: 0.05s;
+    z-index: 1;
+  }
+  .phone-frame:nth-child(2) {
+    transform: translateY(200px) translateX(40px) rotate(6deg) scale(0.7);
+    transition-delay: 0.15s;
+    z-index: 2;
+  }
+  .phone-frame:nth-child(3) {
+    transform: translateY(200px) rotate(0deg) scale(0.7);
+    transition-delay: 0.25s;
+    z-index: 5;
+  }
+  .phone-frame:nth-child(4) {
+    transform: translateY(200px) translateX(-40px) rotate(-6deg) scale(0.7);
+    transition-delay: 0.35s;
+    z-index: 2;
+  }
+  .phone-frame:nth-child(5) {
+    transform: translateY(200px) translateX(-80px) rotate(-12deg) scale(0.7);
+    transition-delay: 0.45s;
+    z-index: 1;
+  }
+
+  /* Visible — arc formation */
+  .phone-frame.visible {
+    opacity: 1;
+  }
+  .phone-frame:nth-child(1).visible {
+    transform: translateY(40px) translateX(-20px) rotate(-8deg) scale(0.88);
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.5),
+      0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  .phone-frame:nth-child(2).visible {
+    transform: translateY(10px) translateX(-8px) rotate(-3.5deg) scale(0.95);
+    box-shadow:
+      0 40px 80px rgba(0, 0, 0, 0.5),
+      0 10px 24px rgba(0, 0, 0, 0.3);
+  }
+  .phone-frame:nth-child(3).visible {
+    transform: translateY(-10px) rotate(0deg) scale(1.02);
+    box-shadow:
+      0 50px 100px rgba(0, 0, 0, 0.55),
+      0 12px 30px rgba(0, 0, 0, 0.35),
+      0 0 80px rgba(7, 81, 251, 0.1);
+  }
+  .phone-frame:nth-child(4).visible {
+    transform: translateY(10px) translateX(8px) rotate(3.5deg) scale(0.95);
+    box-shadow:
+      0 40px 80px rgba(0, 0, 0, 0.5),
+      0 10px 24px rgba(0, 0, 0, 0.3);
+  }
+  .phone-frame:nth-child(5).visible {
+    transform: translateY(40px) translateX(20px) rotate(8deg) scale(0.88);
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.5),
+      0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Subtle float after reveal */
+  .phone-frame.visible.float {
+    animation: phoneFloat 4s ease-in-out infinite;
+  }
+  .phone-frame:nth-child(1).float { animation-delay: 0s; }
+  .phone-frame:nth-child(2).float { animation-delay: 0.6s; }
+  .phone-frame:nth-child(3).float { animation-delay: 1.2s; }
+  .phone-frame:nth-child(4).float { animation-delay: 1.8s; }
+  .phone-frame:nth-child(5).float { animation-delay: 2.4s; }
+  @keyframes phoneFloat {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -8px; }
+  }
+
+  /* Overlap the phones slightly via negative margin */
+  .phone-frame + .phone-frame {
+    margin-left: -28px;
+  }
+
+  @media (max-width: 1100px) {
+    .phone-frame { width: 190px; border-radius: 36px; padding: 5px; }
+    .phone-inner { border-radius: 31px; }
+    .phone-inner::before { width: 56px; height: 18px; top: 8px; }
+    .phone-frame::after { border-radius: 36px; }
+    .phone-frame + .phone-frame { margin-left: -20px; }
+  }
+  @media (max-width: 768px) {
+    .phone-showcase { margin-top: 60px; padding: 20px 0 60px; }
+    .phone-arc { flex-wrap: wrap; gap: 16px; padding: 20px; }
+    .phone-frame { width: 42%; border-radius: 28px; padding: 4px; margin-left: 0 !important; }
+    .phone-inner { border-radius: 24px; }
+    .phone-inner::before { width: 44px; height: 14px; top: 6px; border-radius: 14px; }
+    .phone-frame::after { border-radius: 28px; }
+    .phone-frame::before { display: none; }
     .phone-frame:nth-child(1),
     .phone-frame:nth-child(2),
     .phone-frame:nth-child(3),
-    .phone-frame:nth-child(4) { transform: translateY(80px) scale(0.9) rotate(0deg); }
+    .phone-frame:nth-child(4),
+    .phone-frame:nth-child(5) { transform: translateY(60px) scale(0.9) rotate(0deg) translateX(0); }
     .phone-frame:nth-child(1).visible,
-    .phone-frame:nth-child(4).visible { transform: translateY(0) scale(1) rotate(0deg); }
     .phone-frame:nth-child(2).visible,
-    .phone-frame:nth-child(3).visible { transform: translateY(0) scale(1) rotate(0deg); }
-  }
-  @media (max-width: 600px) {
-    .phone-showcase { padding: 0 20px 60px; }
-    .phone-arc { gap: 12px; }
-    .phone-frame { width: 46%; border-radius: 24px; padding: 6px; }
-    .phone-screen { border-radius: 18px; }
-    .phone-frame::before { width: 40px; height: 14px; top: 6px; border-radius: 0 0 8px 8px; }
+    .phone-frame:nth-child(3).visible,
+    .phone-frame:nth-child(4).visible,
+    .phone-frame:nth-child(5).visible {
+      transform: translateY(0) scale(1) rotate(0deg) translateX(0);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .phone-frame:nth-child(5) { margin: 0 auto; }
   }
 
   /* Footer */
@@ -1357,16 +1454,29 @@
 <section class="phone-showcase">
   <div class="phone-arc">
     <div class="phone-frame">
-      <div class="phone-screen"><img src="screen-weekly.jpg" alt="Weekly Progress" /></div>
+      <div class="phone-inner">
+        <img class="phone-screen" src="screen-login.png" alt="SportIn App" />
+      </div>
     </div>
     <div class="phone-frame">
-      <div class="phone-screen"><img src="screen-monthly.jpg" alt="Monthly Target" /></div>
+      <div class="phone-inner">
+        <img class="phone-screen" src="screen-weekly.jpg" alt="Weekly Progress" />
+      </div>
     </div>
     <div class="phone-frame">
-      <div class="phone-screen"><img src="screen-run.jpg" alt="Run Stats" /></div>
+      <div class="phone-inner">
+        <img class="phone-screen" src="screen-run.jpg" alt="Run Stats" />
+      </div>
     </div>
     <div class="phone-frame">
-      <div class="phone-screen"><img src="screen-login.png" alt="SportIn App" /></div>
+      <div class="phone-inner">
+        <img class="phone-screen" src="screen-monthly.jpg" alt="Monthly Target" />
+      </div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-inner">
+        <img class="phone-screen" src="screen-profile.png" alt="Profile & Connections" />
+      </div>
     </div>
   </div>
 </section>
@@ -1759,10 +1869,12 @@
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
+        const delay = parseFloat(getComputedStyle(entry.target).transitionDelay) * 1000 + 1200;
+        setTimeout(() => entry.target.classList.add('float'), delay);
         phoneIO.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
   phoneFrames.forEach((el) => phoneIO.observe(el));
 
   const formatNumber = (n, useDot) => {
