@@ -400,20 +400,32 @@
     position: relative;
   }
 
-  /* Anim 1: League Table (Professional Sport Formats) */
-  .anim-table { padding: 14px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); }
-  .anim-table .row { display: flex; justify-content: space-between; padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); animation: tableRow 6s ease-in-out infinite; opacity: 0; transform: translateY(6px); }
-  .anim-table .row.lead { color: var(--text); }
-  .anim-table .row.lead .pts { color: var(--blue-bright); font-weight: 600; }
-  .anim-table .row .name { display: flex; gap: 8px; align-items: center; }
-  .anim-table .row .pos { width: 14px; color: var(--text-4); }
-  .anim-table .row .dot { width: 8px; height: 8px; border-radius: 2px; background: var(--blue); }
-  .anim-table .row.lead .dot { background: var(--blue-bright); box-shadow: 0 0 8px var(--blue-bright); }
+  /* Anim 1: Pro Sport Formats — list of formats SportIn supports */
+  .anim-table { padding: 14px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); display: flex; flex-direction: column; gap: 4px; height: 100%; }
+  .anim-table .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    animation: tableRow 6s ease-in-out infinite;
+    opacity: 0;
+    transform: translateY(6px);
+    color: var(--text-2);
+  }
+  .anim-table .row.active { color: var(--text); }
+  .anim-table .row .name { display: flex; gap: 10px; align-items: center; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .anim-table .row .mark { width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .anim-table .row .meta { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-4); }
+  .anim-table .row.active .meta { color: var(--blue-bright); }
+  .anim-table .row.cl .mark { background: linear-gradient(135deg, #003399, #1857F1); color: #fff; }
+  .anim-table .row.f1 .mark { background: #FF1840; color: #fff; }
+  .anim-table .row.uefa .mark { background: linear-gradient(135deg, #FF6900, #FFB100); color: #fff; }
+  .anim-table .row.tdf .mark { background: linear-gradient(135deg, #F5E4A8, #C9A24B); color: #1a1a1e; }
   .anim-table .row:nth-child(1) { animation-delay: 0s; }
-  .anim-table .row:nth-child(2) { animation-delay: 0.4s; }
-  .anim-table .row:nth-child(3) { animation-delay: 0.8s; }
-  .anim-table .row:nth-child(4) { animation-delay: 1.2s; }
-  .anim-table .row:nth-child(5) { animation-delay: 1.6s; }
+  .anim-table .row:nth-child(2) { animation-delay: 0.5s; }
+  .anim-table .row:nth-child(3) { animation-delay: 1.0s; }
+  .anim-table .row:nth-child(4) { animation-delay: 1.5s; }
   @keyframes tableRow {
     0% { opacity: 0; transform: translateY(6px); }
     8%, 92% { opacity: 1; transform: translateY(0); }
@@ -1673,11 +1685,10 @@
         <div class="pillar-title">Professional Sport Formats</div>
         <div class="pillar-desc">Bring the structures of professional sport: leagues, cups, tours, championships, territorial conquest. All in a format your people can live inside.</div>
         <div class="pillar-anim anim-table">
-          <div class="row lead"><span class="name"><span class="pos">1</span><span class="dot"></span>Real Madrid</span><span class="pts">87</span></div>
-          <div class="row"><span class="name"><span class="pos">2</span><span class="dot"></span>FC Barcelona</span><span class="pts">82</span></div>
-          <div class="row"><span class="name"><span class="pos">3</span><span class="dot"></span>Atl&eacute;tico</span><span class="pts">74</span></div>
-          <div class="row"><span class="name"><span class="pos">4</span><span class="dot"></span>Sevilla</span><span class="pts">68</span></div>
-          <div class="row"><span class="name"><span class="pos">5</span><span class="dot"></span>Valencia</span><span class="pts">61</span></div>
+          <div class="row cl active"><span class="name"><span class="mark">UCL</span>Champions League</span><span class="meta">Group Stage</span></div>
+          <div class="row f1"><span class="name"><span class="mark">F1</span>Formula 1</span><span class="meta">Round 8 / 24</span></div>
+          <div class="row uefa"><span class="name"><span class="mark">UEL</span>UEFA League</span><span class="meta">Knockout</span></div>
+          <div class="row tdf"><span class="name"><span class="mark">TDF</span>Tour de France</span><span class="meta">Stage 12 / 21</span></div>
         </div>
       </div>
 
