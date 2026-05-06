@@ -962,7 +962,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0;
+    gap: 32px;
     perspective: 2000px;
     transform-style: preserve-3d;
     padding: 40px 20px;
@@ -970,84 +970,28 @@
   .phone-frame {
     flex-shrink: 0;
     width: 200px;
-    padding: 5px;
-    border-radius: 36px;
-    background: linear-gradient(160deg,
-      rgba(180, 180, 190, 0.25) 0%,
-      rgba(60, 60, 68, 0.9) 15%,
-      rgba(28, 28, 32, 0.98) 40%,
-      rgba(40, 40, 46, 0.95) 60%,
-      rgba(60, 60, 68, 0.9) 85%,
-      rgba(180, 180, 190, 0.2) 100%);
+    padding: 8px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
     position: relative;
     will-change: transform, opacity;
     opacity: 0;
     transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  /* Titanium edge highlight */
-  .phone-frame::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 36px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    pointer-events: none;
-    z-index: 4;
-    background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      transparent 30%,
-      transparent 70%,
-      rgba(255, 255, 255, 0.04) 100%);
-    mask-image: linear-gradient(180deg, white 0%, transparent 40%, transparent 60%, white 100%);
-    -webkit-mask-image: linear-gradient(180deg, white 0%, transparent 40%, transparent 60%, white 100%);
-  }
-  /* Side button – right */
-  .phone-frame::before {
-    content: '';
-    position: absolute;
-    right: -2px;
-    top: 80px;
-    width: 2px;
-    height: 28px;
-    border-radius: 0 2px 2px 0;
-    background: linear-gradient(180deg, rgba(100, 100, 108, 0.6), rgba(50, 50, 56, 0.8));
-    z-index: 5;
-  }
   .phone-inner {
     position: relative;
-    border-radius: 32px;
+    border-radius: 16px;
     overflow: hidden;
     background: #000;
     height: 420px;
-  }
-  /* Dynamic Island */
-  .phone-inner::before {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 52px;
-    height: 16px;
-    background: #000;
-    border-radius: 20px;
-    z-index: 3;
-  }
-  /* Screen glare reflection */
-  .phone-inner::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 32px;
-    background: linear-gradient(
-      125deg,
-      rgba(255, 255, 255, 0.06) 0%,
-      transparent 40%,
-      transparent 100%
-    );
-    pointer-events: none;
-    z-index: 2;
   }
   .phone-screen {
     width: 100%;
@@ -1134,26 +1078,16 @@
     50% { translate: 0 -8px; }
   }
 
-  /* Overlap the phones slightly via negative margin */
-  .phone-frame + .phone-frame {
-    margin-left: -16px;
-  }
-
   @media (max-width: 1100px) {
-    .phone-frame { width: 155px; border-radius: 34px; padding: 4px; }
-    .phone-inner { border-radius: 30px; }
-    .phone-inner::before { width: 44px; height: 14px; top: 7px; }
-    .phone-frame::after { border-radius: 34px; }
-    .phone-frame + .phone-frame { margin-left: -12px; }
+    .phone-arc { gap: 20px; }
+    .phone-frame { width: 165px; padding: 6px; }
+    .phone-inner { height: 350px; }
   }
   @media (max-width: 768px) {
     .phone-showcase { margin-top: 60px; padding: 20px 16px 60px; }
-    .phone-arc { flex-wrap: wrap; gap: 12px; padding: 0; justify-content: center; }
-    .phone-frame { width: 140px; border-radius: 24px; padding: 3px; margin-left: 0 !important; }
-    .phone-inner { border-radius: 21px; height: 290px; }
-    .phone-inner::before { width: 36px; height: 12px; top: 5px; border-radius: 10px; }
-    .phone-frame::after { border-radius: 24px; }
-    .phone-frame::before { display: none; }
+    .phone-arc { flex-wrap: wrap; gap: 16px; padding: 0; justify-content: center; }
+    .phone-frame { width: 140px; padding: 6px; }
+    .phone-inner { height: 290px; }
     .phone-frame:nth-child(1),
     .phone-frame:nth-child(2),
     .phone-frame:nth-child(3),
