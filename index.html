@@ -580,8 +580,9 @@
     transform-origin: top center; /* grow / shrink toward the top edge */
     transition: border-color 0.4s ease, box-shadow 0.4s ease;
   }
-  .felt-card.middle { z-index: 5; }
-  .felt-card.side { z-index: 2; }
+  .felt-card { opacity: 0; }
+  .felt-card.middle { z-index: 2; }
+  .felt-card.side { z-index: 1; }
   .felt-section { overflow: visible; }
   .felt-card:hover {
     transform: translateY(-4px);
@@ -2992,47 +2993,41 @@
     });
   })();
 
-  // FELT · scroll-driven hero scale — PURE 1:1 mapping. No lerp, no catching up.
-  // Scroll = motion. Stop scrolling = motion stops instantly.
-  (function setupFeltScale() {
+  // FELT · scroll-driven staggered fade-in. Opacity + translateY only —
+  // both GPU-composited, no layout reflow. Scroll-tied 1:1, freezes when stopped.
+  (function setupFeltReveal() {
     const section = document.getElementById('felt');
     if (!section) return;
-    const grid = section.querySelector('.felt-grid');
-    const middle = section.querySelector('.felt-card.middle');
-    const sides = Array.from(section.querySelectorAll('.felt-card.side'));
-    if (!grid || !middle || sides.length === 0) return;
+    const cards = Array.from(section.querySelectorAll('.felt-card'));
+    if (cards.length === 0) return;
 
-    const SCALE_HERO = 1.5;
-    const SCALE_SMALL = 0.55;
-    const SCALE_END = 1.0;
-    let cardH = 0;
+    // Reveal ranges expressed as (start, end) progress through the section's
+    // traversal of the viewport. Cards reveal in order Record → Leaderboard →
+    // Virtual Track for a smooth left-to-right wave.
+    const reveals = cards.map((el) => {
+      if (el.classList.contains('side') && el.style.order === '1') return { el, start: 0.10, end: 0.32 };
+      if (el.classList.contains('middle')) return { el, start: 0.18, end: 0.42 };
+      return { el, start: 0.26, end: 0.52 }; // right side
+    });
+
     let ticking = false;
-
-    function measureCardHeight() {
-      const prev = middle.style.transform;
-      middle.style.transform = 'none';
-      cardH = middle.offsetHeight;
-      middle.style.transform = prev;
-      // Reserve peak overflow ONCE so the scroll handler never touches layout.
-      // Worst case is when middle is at SCALE_HERO (1.5x) → overflow = 0.5 * cardH.
-      const peakOverflow = (SCALE_HERO - 1) * cardH;
-      grid.style.paddingBottom = `${peakOverflow.toFixed(0)}px`;
-    }
 
     function update() {
       const rect = section.getBoundingClientRect();
       const winH = window.innerHeight;
       const total = winH + rect.height;
       const traveled = winH - rect.top;
-      let raw = traveled / total;
-      raw = Math.max(0, Math.min(1, raw));
-      let p = Math.min(1, raw / 0.5);
+      let p = traveled / total;
+      p = Math.max(0, Math.min(1, p));
 
-      const midScale  = SCALE_HERO  + (SCALE_END   - SCALE_HERO)  * p;
-      const sideScale = SCALE_SMALL + (SCALE_END   - SCALE_SMALL) * p;
-      // Only transform writes — GPU-composited, no layout reflow per scroll frame.
-      middle.style.transform = `scale(${midScale.toFixed(4)})`;
-      sides.forEach((el) => { el.style.transform = `scale(${sideScale.toFixed(4)})`; });
+      reveals.forEach(({ el, start, end }) => {
+        let local = (p - start) / (end - start);
+        local = Math.max(0, Math.min(1, local));
+        el.style.opacity = local.toFixed(3);
+        // subtle 24px upward slide as it fades in
+        const y = (1 - local) * 24;
+        el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+      });
     }
 
     function onScroll() {
@@ -3042,10 +3037,9 @@
       }
     }
 
-    measureCardHeight();
     update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { measureCardHeight(); update(); }, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
   })();
 
   // FELT · Leaderboard live step counter — smooth ticking values
