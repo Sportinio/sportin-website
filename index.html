@@ -218,6 +218,80 @@
   }
   .btn-ghost:hover { background: var(--surface-2); border-color: var(--text); }
 
+  /* PARTNER MARQUEE — replaces the hero banner image */
+  .partners-strip {
+    position: relative;
+    z-index: 1;
+    padding: 36px 0 16px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.2) 4%, rgba(0,0,0,0.7) 12%, black 20%, black 80%, rgba(0,0,0,0.7) 88%, rgba(0,0,0,0.2) 96%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.2) 4%, rgba(0,0,0,0.7) 12%, black 20%, black 80%, rgba(0,0,0,0.7) 88%, rgba(0,0,0,0.2) 96%, transparent 100%);
+  }
+  .partners-eyebrow {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    margin-bottom: 28px;
+  }
+  .partners-row {
+    display: flex;
+    gap: 40px;
+    width: max-content;
+    will-change: transform;
+  }
+  .partners-row.row-l {
+    animation: marqueeLeft 38s linear infinite;
+  }
+  .partners-row.row-r {
+    animation: marqueeRight 44s linear infinite;
+    margin-top: 18px;
+  }
+  @keyframes marqueeLeft {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+  }
+  @keyframes marqueeRight {
+    from { transform: translate3d(-50%, 0, 0); }
+    to   { transform: translate3d(0, 0, 0); }
+  }
+  .partner-logo {
+    flex-shrink: 0;
+    width: 180px;
+    height: 78px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: grid;
+    place-items: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+  }
+  .partner-logo:hover {
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .partner-logo img {
+    max-width: 70%;
+    max-height: 60%;
+    object-fit: contain;
+    opacity: 0.85;
+  }
+  /* Pause on hover for accessibility */
+  .partners-strip:hover .partners-row { animation-play-state: paused; }
+
+  /* Legacy hero-banner-glass kept (no longer used) */
   .hero-media {
     position: relative;
     z-index: 1;
@@ -2240,11 +2314,52 @@
 </nav>
 
 <!-- HERO BANNER -->
-<div class="hero-media">
-  <div class="hero-banner-glass">
-    <img class="hero-banner" src="hero-banner.png" alt="SportIn. To be in the same team means to rise together." />
+<!-- PARTNER MARQUEE -->
+<section class="partners-strip" aria-label="Partners">
+  <div class="partners-eyebrow">Trusted by brands, clubs &amp; communities</div>
+
+  <!-- Row 1: drifts left. Logos duplicated so the loop is seamless. -->
+  <div class="partners-row row-l">
+    <div class="partner-logo">Partner 01</div>
+    <div class="partner-logo">Partner 02</div>
+    <div class="partner-logo">Partner 03</div>
+    <div class="partner-logo">Partner 04</div>
+    <div class="partner-logo">Partner 05</div>
+    <div class="partner-logo">Partner 06</div>
+    <div class="partner-logo">Partner 07</div>
+    <div class="partner-logo">Partner 08</div>
+    <!-- duplicated set for seamless loop -->
+    <div class="partner-logo">Partner 01</div>
+    <div class="partner-logo">Partner 02</div>
+    <div class="partner-logo">Partner 03</div>
+    <div class="partner-logo">Partner 04</div>
+    <div class="partner-logo">Partner 05</div>
+    <div class="partner-logo">Partner 06</div>
+    <div class="partner-logo">Partner 07</div>
+    <div class="partner-logo">Partner 08</div>
   </div>
-</div>
+
+  <!-- Row 2: drifts right. -->
+  <div class="partners-row row-r">
+    <div class="partner-logo">Partner 09</div>
+    <div class="partner-logo">Partner 10</div>
+    <div class="partner-logo">Partner 11</div>
+    <div class="partner-logo">Partner 12</div>
+    <div class="partner-logo">Partner 13</div>
+    <div class="partner-logo">Partner 14</div>
+    <div class="partner-logo">Partner 15</div>
+    <div class="partner-logo">Partner 16</div>
+    <!-- duplicated -->
+    <div class="partner-logo">Partner 09</div>
+    <div class="partner-logo">Partner 10</div>
+    <div class="partner-logo">Partner 11</div>
+    <div class="partner-logo">Partner 12</div>
+    <div class="partner-logo">Partner 13</div>
+    <div class="partner-logo">Partner 14</div>
+    <div class="partner-logo">Partner 15</div>
+    <div class="partner-logo">Partner 16</div>
+  </div>
+</section>
 
 <!-- HERO -->
 <section class="hero">
