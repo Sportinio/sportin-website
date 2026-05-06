@@ -338,6 +338,236 @@
     color: var(--text-3);
   }
 
+  /* Pillar title graph (under section title) */
+  .pillars-graph {
+    margin: 28px 0 0;
+    height: 56px;
+    width: 100%;
+    overflow: hidden;
+    opacity: 0.55;
+  }
+  .pillars-graph svg { width: 100%; height: 100%; display: block; }
+  .pillars-graph .ln { stroke: url(#pgGrad); stroke-width: 1.6; fill: none; }
+  .pillars-graph .ar { fill: url(#pgFill); opacity: 0.6; }
+  .pillars-graph .dot {
+    fill: var(--blue-bright);
+    filter: drop-shadow(0 0 6px rgba(59,123,255,0.7));
+  }
+  @keyframes pgPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.85; }
+  }
+
+  /* Two-row marquee for the six pillars */
+  .pillars-rows {
+    margin-top: 56px;
+    position: relative;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg,
+      transparent 0%, rgba(0,0,0,0.2) 4%, rgba(0,0,0,0.7) 10%, black 16%,
+      black 84%, rgba(0,0,0,0.7) 90%, rgba(0,0,0,0.2) 96%, transparent 100%);
+    mask-image: linear-gradient(90deg,
+      transparent 0%, rgba(0,0,0,0.2) 4%, rgba(0,0,0,0.7) 10%, black 16%,
+      black 84%, rgba(0,0,0,0.7) 90%, rgba(0,0,0,0.2) 96%, transparent 100%);
+  }
+  .pillars-row {
+    display: flex;
+    gap: 22px;
+    will-change: transform;
+    padding: 8px 0;
+  }
+  .pillars-row + .pillars-row { margin-top: 22px; }
+  .pillar.expanded {
+    flex: 0 0 auto;
+    width: 380px;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 28px;
+  }
+  .pillar.expanded .pillar-anim {
+    margin-top: auto;
+    height: 240px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Anim 1: League Table (Professional Sport Formats) */
+  .anim-table { padding: 14px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); }
+  .anim-table .row { display: flex; justify-content: space-between; padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); animation: tableRow 6s ease-in-out infinite; opacity: 0; transform: translateY(6px); }
+  .anim-table .row.lead { color: var(--text); }
+  .anim-table .row.lead .pts { color: var(--blue-bright); font-weight: 600; }
+  .anim-table .row .name { display: flex; gap: 8px; align-items: center; }
+  .anim-table .row .pos { width: 14px; color: var(--text-4); }
+  .anim-table .row .dot { width: 8px; height: 8px; border-radius: 2px; background: var(--blue); }
+  .anim-table .row.lead .dot { background: var(--blue-bright); box-shadow: 0 0 8px var(--blue-bright); }
+  .anim-table .row:nth-child(1) { animation-delay: 0s; }
+  .anim-table .row:nth-child(2) { animation-delay: 0.4s; }
+  .anim-table .row:nth-child(3) { animation-delay: 0.8s; }
+  .anim-table .row:nth-child(4) { animation-delay: 1.2s; }
+  .anim-table .row:nth-child(5) { animation-delay: 1.6s; }
+  @keyframes tableRow {
+    0% { opacity: 0; transform: translateY(6px); }
+    8%, 92% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-6px); }
+  }
+
+  /* Anim 2: AI Voice waveform (AI Storytelling) */
+  .anim-wave { display: flex; align-items: center; justify-content: center; gap: 4px; height: 100%; padding: 0 20px; }
+  .anim-wave .bar {
+    width: 4px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--blue-bright), var(--blue));
+    animation: wave 1.4s ease-in-out infinite;
+  }
+  @keyframes wave {
+    0%, 100% { height: 8px; opacity: 0.4; }
+    50% { height: 90px; opacity: 1; }
+  }
+  .anim-wave-label {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-4);
+    text-transform: uppercase;
+  }
+  .anim-wave-label .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #12E094; box-shadow: 0 0 8px #12E094; margin-right: 6px; vertical-align: middle; animation: livePulse 1.6s ease-in-out infinite; }
+  @keyframes livePulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* Anim 3: Movement Index data flow (Movement Index) */
+  .anim-mi { padding: 16px; }
+  .anim-mi svg { width: 100%; height: 100%; }
+  @keyframes miDraw { to { stroke-dashoffset: 0; } }
+  @keyframes miDot { 0%,100% { transform: translateX(0); } 50% { transform: translateX(180px); } }
+
+  /* Anim 4: SafeGuard scanner (SafeGuard AI) */
+  .anim-sg { position: relative; }
+  .anim-sg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .anim-sg-scan {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(7, 81, 251, 0.15) 50%, transparent 100%);
+    height: 80px;
+    animation: sgScan 3s linear infinite;
+  }
+  @keyframes sgScan {
+    0% { transform: translateY(-80px); }
+    100% { transform: translateY(240px); }
+  }
+  .anim-sg-flag {
+    position: absolute;
+    width: 12px; height: 12px;
+    border: 1.5px solid #FF3B5C;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6);
+    animation: sgFlag 2.4s ease-out infinite;
+  }
+  .anim-sg-flag.f1 { top: 30%; left: 25%; animation-delay: 0s; }
+  .anim-sg-flag.f2 { top: 60%; left: 70%; animation-delay: 1.2s; }
+  .anim-sg-flag.f3 { top: 45%; left: 50%; animation-delay: 0.6s; }
+  @keyframes sgFlag {
+    0% { transform: scale(0.6); opacity: 0; box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6); }
+    20% { opacity: 1; transform: scale(1); }
+    80%, 100% { opacity: 0; transform: scale(1.4); box-shadow: 0 0 0 18px rgba(255, 59, 92, 0); }
+  }
+
+  /* Anim 5: Integration floating logos */
+  .anim-int { position: relative; }
+  .anim-int-logo {
+    position: absolute;
+    width: 56px; height: 56px;
+    display: grid; place-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+    color: var(--text-2);
+    animation: floatLogo 6s ease-in-out infinite;
+  }
+  .anim-int-logo svg { width: 28px; height: 28px; }
+  .anim-int-logo.l1 { top: 20px; left: 30px; animation-delay: 0s; }
+  .anim-int-logo.l2 { top: 30px; right: 30px; animation-delay: 1.5s; }
+  .anim-int-logo.l3 { bottom: 30px; left: 60px; animation-delay: 3s; }
+  .anim-int-logo.l4 { bottom: 20px; right: 40px; animation-delay: 4.5s; }
+  @keyframes floatLogo {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+  }
+  .anim-int-line {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue-bright);
+    box-shadow: 0 0 16px var(--blue-bright);
+    animation: intPulse 2s ease-in-out infinite;
+  }
+  @keyframes intPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(59, 123, 255, 0.5); }
+    50% { box-shadow: 0 0 0 30px rgba(59, 123, 255, 0); }
+  }
+
+  /* Anim 6: eMotion engine pulses */
+  .anim-em {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+  }
+  .anim-em-core {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--blue-bright), var(--blue));
+    box-shadow: 0 0 40px rgba(59, 123, 255, 0.6);
+    animation: emCore 2s ease-in-out infinite;
+  }
+  @keyframes emCore {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .anim-em-ring {
+    position: absolute;
+    border: 1.5px solid rgba(59, 123, 255, 0.4);
+    border-radius: 50%;
+    animation: emRing 2.5s ease-out infinite;
+  }
+  .anim-em-ring.r1 { width: 60px; height: 60px; animation-delay: 0s; }
+  .anim-em-ring.r2 { width: 60px; height: 60px; animation-delay: 0.6s; }
+  .anim-em-ring.r3 { width: 60px; height: 60px; animation-delay: 1.2s; }
+  @keyframes emRing {
+    0% { width: 60px; height: 60px; opacity: 1; }
+    100% { width: 220px; height: 220px; opacity: 0; }
+  }
+  .anim-em-step {
+    position: absolute;
+    bottom: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .anim-em-step span { color: var(--blue-bright); }
+
+  @media (max-width: 768px) {
+    .pillar.expanded { width: 280px; min-height: 460px; padding: 24px 20px; }
+    .pillar.expanded .pillar-anim { height: 200px; }
+    .pillars-row { gap: 14px; }
+  }
+
   /* Two Worlds */
   .worlds-section {
     margin-top: 140px;
@@ -1339,36 +1569,153 @@
   <h2 class="section-title reveal" style="--rd:0.05s;">Six layers of <span class="gradient">one feeling.</span></h2>
   <p class="section-intro reveal" style="--rd:0.15s;">Each layer makes the next one possible. Together they turn movement into a season worth showing up for. The foundation of a branded competition platform built for fans, employees, and communities.</p>
 
-  <div class="pillars" style="grid-template-columns: repeat(3, 1fr);">
-    <div class="pillar reveal" style="--rd:0.05s;">
-      <div class="pillar-ico">PS</div>
-      <div class="pillar-title">Professional Sport Formats</div>
-      <div class="pillar-desc">Bring the structures of professional sport: leagues, cups, tours, championships, territorial conquest. All in a format your people can live inside.</div>
+  <div class="pillars-graph reveal" style="--rd:0.22s;">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="pgGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0751FB" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#3B7BFF" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#0751FB" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="pgFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3B7BFF" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#3B7BFF" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="ar" d="M0,42 C60,38 120,30 180,28 C240,26 300,32 360,30 C420,28 480,18 540,16 C600,14 660,24 720,22 C780,20 840,12 900,10 C960,8 1020,16 1080,18 C1140,20 1200,16 1200,16 L1200,60 L0,60 Z"/>
+      <path class="ln" d="M0,42 C60,38 120,30 180,28 C240,26 300,32 360,30 C420,28 480,18 540,16 C600,14 660,24 720,22 C780,20 840,12 900,10 C960,8 1020,16 1080,18 C1140,20 1200,16 1200,16"/>
+      <circle class="dot" cx="900" cy="10" r="3" style="animation: pgPulse 2s ease-in-out infinite;"/>
+    </svg>
+  </div>
+
+  <div class="pillars-rows">
+    <div class="pillars-row" id="pillarsRowTop">
+      <!-- 1. Professional Sport Formats -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">PS</div>
+        <div class="pillar-title">Professional Sport Formats</div>
+        <div class="pillar-desc">Bring the structures of professional sport: leagues, cups, tours, championships, territorial conquest. All in a format your people can live inside.</div>
+        <div class="pillar-anim anim-table">
+          <div class="row lead"><span class="name"><span class="pos">1</span><span class="dot"></span>Real Madrid</span><span class="pts">87</span></div>
+          <div class="row"><span class="name"><span class="pos">2</span><span class="dot"></span>FC Barcelona</span><span class="pts">82</span></div>
+          <div class="row"><span class="name"><span class="pos">3</span><span class="dot"></span>Atl&eacute;tico</span><span class="pts">74</span></div>
+          <div class="row"><span class="name"><span class="pos">4</span><span class="dot"></span>Sevilla</span><span class="pts">68</span></div>
+          <div class="row"><span class="name"><span class="pos">5</span><span class="dot"></span>Valencia</span><span class="pts">61</span></div>
+        </div>
+      </div>
+
+      <!-- 2. AI Storytelling -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">AS</div>
+        <div class="pillar-title">AI Storytelling</div>
+        <div class="pillar-desc">Every effort deserves a story. SportIn turns movement into commentary, rivalry, momentum, and moments worth sharing.</div>
+        <div class="pillar-anim">
+          <div class="anim-wave">
+            <div class="bar" style="animation-delay: 0s"></div>
+            <div class="bar" style="animation-delay: 0.1s"></div>
+            <div class="bar" style="animation-delay: 0.2s"></div>
+            <div class="bar" style="animation-delay: 0.3s"></div>
+            <div class="bar" style="animation-delay: 0.4s"></div>
+            <div class="bar" style="animation-delay: 0.5s"></div>
+            <div class="bar" style="animation-delay: 0.6s"></div>
+            <div class="bar" style="animation-delay: 0.7s"></div>
+            <div class="bar" style="animation-delay: 0.8s"></div>
+            <div class="bar" style="animation-delay: 0.7s"></div>
+            <div class="bar" style="animation-delay: 0.6s"></div>
+            <div class="bar" style="animation-delay: 0.5s"></div>
+            <div class="bar" style="animation-delay: 0.4s"></div>
+            <div class="bar" style="animation-delay: 0.3s"></div>
+            <div class="bar" style="animation-delay: 0.2s"></div>
+            <div class="bar" style="animation-delay: 0.1s"></div>
+          </div>
+          <div class="anim-wave-label"><span class="live-dot"></span>AI Commentary &middot; Live</div>
+        </div>
+      </div>
+
+      <!-- 3. Movement Index -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">MI</div>
+        <div class="pillar-title">Movement Index</div>
+        <div class="pillar-desc">A proprietary signal that reads device data and reveals real effort, real health patterns, and a smarter way to understand activity.</div>
+        <div class="pillar-anim anim-mi">
+          <svg viewBox="0 0 320 200" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="miGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#0751FB"/>
+                <stop offset="100%" stop-color="#3B7BFF"/>
+              </linearGradient>
+              <linearGradient id="miFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3B7BFF" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#3B7BFF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,160 L20,150 L40,140 L60,130 L80,150 L100,120 L120,130 L140,90 L160,100 L180,70 L200,80 L220,60 L240,70 L260,40 L280,50 L300,30 L320,40 L320,200 L0,200 Z" fill="url(#miFill)"/>
+            <path d="M0,160 L20,150 L40,140 L60,130 L80,150 L100,120 L120,130 L140,90 L160,100 L180,70 L200,80 L220,60 L240,70 L260,40 L280,50 L300,30 L320,40"
+                  stroke="url(#miGrad)" stroke-width="2" fill="none"
+                  stroke-dasharray="800" stroke-dashoffset="800"
+                  style="animation: miDraw 3s ease-out forwards infinite;"/>
+            <circle r="4" fill="#3B7BFF" style="filter: drop-shadow(0 0 8px #3B7BFF);">
+              <animateMotion dur="3s" repeatCount="indefinite"
+                path="M0,160 L20,150 L40,140 L60,130 L80,150 L100,120 L120,130 L140,90 L160,100 L180,70 L200,80 L220,60 L240,70 L260,40 L280,50 L300,30 L320,40"/>
+            </circle>
+            <text x="14" y="26" font-family="IBM Plex Mono" font-size="10" fill="#5F667E" letter-spacing="2">MOVEMENT INDEX</text>
+            <text x="14" y="44" font-family="Space Grotesk" font-size="22" font-weight="700" fill="#FFFFFF">7.4</text>
+          </svg>
+        </div>
+      </div>
     </div>
-    <div class="pillar reveal" style="--rd:0.12s;">
-      <div class="pillar-ico">AS</div>
-      <div class="pillar-title">AI Storytelling</div>
-      <div class="pillar-desc">Every effort deserves a story. SportIn turns movement into commentary, rivalry, momentum, and moments worth sharing.</div>
-    </div>
-    <div class="pillar reveal" style="--rd:0.19s;">
-      <div class="pillar-ico">MI</div>
-      <div class="pillar-title">Movement Index</div>
-      <div class="pillar-desc">A proprietary signal that reads device data and reveals real effort, real health patterns, and a smarter way to understand activity.</div>
-    </div>
-    <div class="pillar reveal" style="--rd:0.26s;">
-      <div class="pillar-ico">SG</div>
-      <div class="pillar-title">SafeGuard AI</div>
-      <div class="pillar-desc">Built to protect every competition. SafeGuard AI reads activity in real time and flags suspicious behavior before it distorts the game.</div>
-    </div>
-    <div class="pillar reveal" style="--rd:0.33s;">
-      <div class="pillar-ico">IN</div>
-      <div class="pillar-title">Integration</div>
-      <div class="pillar-desc">SportIn connects with the ecosystem around your users: devices, wearables, tracking environments. Joining the competition is seamless from day one.</div>
-    </div>
-    <div class="pillar reveal" style="--rd:0.40s;">
-      <div class="pillar-ico">eM</div>
-      <div class="pillar-title">eMotion by SportIn</div>
-      <div class="pillar-desc">Our in-house motion engine measures distance and steps in real time, straight from the phone. A live experience today; a hardware-ready foundation for tomorrow.</div>
+
+    <div class="pillars-row" id="pillarsRowBottom">
+      <!-- 4. SafeGuard AI -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">SG</div>
+        <div class="pillar-title">SafeGuard AI</div>
+        <div class="pillar-desc">Built to protect every competition. SafeGuard AI reads activity in real time and flags suspicious behavior before it distorts the game.</div>
+        <div class="pillar-anim anim-sg">
+          <div class="anim-sg-grid"></div>
+          <div class="anim-sg-scan"></div>
+          <div class="anim-sg-flag f1"></div>
+          <div class="anim-sg-flag f2"></div>
+          <div class="anim-sg-flag f3"></div>
+          <div class="anim-wave-label" style="bottom: 12px;"><span class="live-dot" style="background: #FF3B5C; box-shadow: 0 0 8px #FF3B5C;"></span>3 Anomalies Flagged</div>
+        </div>
+      </div>
+
+      <!-- 5. Integration -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">IN</div>
+        <div class="pillar-title">Integration</div>
+        <div class="pillar-desc">SportIn connects with the ecosystem around your users: devices, wearables, tracking environments. Joining the competition is seamless from day one.</div>
+        <div class="pillar-anim anim-int">
+          <div class="anim-int-logo l1" title="Apple Health">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+          <div class="anim-int-logo l2" title="Garmin">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="anim-int-logo l3" title="Fitbit">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="18" r="2"/><circle cx="18" cy="12" r="2"/></svg>
+          </div>
+          <div class="anim-int-logo l4" title="Polar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <div class="anim-int-line"></div>
+        </div>
+      </div>
+
+      <!-- 6. eMotion by SportIn -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">eM</div>
+        <div class="pillar-title">eMotion by SportIn</div>
+        <div class="pillar-desc">Our in-house motion engine measures distance and steps in real time, straight from the phone. A live experience today; a hardware-ready foundation for tomorrow.</div>
+        <div class="pillar-anim anim-em">
+          <div class="anim-em-ring r1"></div>
+          <div class="anim-em-ring r2"></div>
+          <div class="anim-em-ring r3"></div>
+          <div class="anim-em-core"></div>
+          <div class="anim-em-step">Steps <span>2.904</span> &middot; Live</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1830,6 +2177,57 @@
       const img = el.querySelector('img');
       if (img && !img.complete) img.addEventListener('load', () => { measure(); onScroll(); }, { once: true });
     });
+  })();
+
+  // Pillars: opposite-direction scroll-driven marquee
+  (function setupPillarsMarquee() {
+    const section = document.querySelector('.pillars-section');
+    const top = document.getElementById('pillarsRowTop');
+    const bot = document.getElementById('pillarsRowBottom');
+    if (!section || !top || !bot) return;
+
+    const SHIFT = 280; // px range each row travels in each direction
+
+    let targetT = 0, currentT = 0;
+    let targetB = 0, currentB = 0;
+    let rafId = null;
+    const ease = 0.08;
+
+    function compute() {
+      const rect = section.getBoundingClientRect();
+      const winH = window.innerHeight;
+      const total = winH + rect.height;
+      const traveled = winH - rect.top;
+      let p = traveled / total;
+      p = Math.max(0, Math.min(1, p));
+      // map 0..1 → -1..1 (so motion goes through neutral when section is centered)
+      const signed = (p - 0.5) * 2;
+      targetT = -signed * SHIFT; // top row drifts left as you scroll down
+      targetB = signed * SHIFT;  // bottom row drifts right as you scroll down
+    }
+
+    function render() {
+      currentT += (targetT - currentT) * ease;
+      currentB += (targetB - currentB) * ease;
+      top.style.transform = `translate3d(${currentT}px, 0, 0)`;
+      bot.style.transform = `translate3d(${currentB}px, 0, 0)`;
+      if (Math.abs(targetT - currentT) > 0.2 || Math.abs(targetB - currentB) > 0.2) {
+        rafId = requestAnimationFrame(render);
+      } else {
+        rafId = null;
+      }
+    }
+
+    function onScroll() {
+      compute();
+      if (rafId == null) rafId = requestAnimationFrame(render);
+    }
+
+    compute();
+    currentT = targetT; currentB = targetB;
+    render();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
   })();
 
   const formatNumber = (n, useDot) => {
