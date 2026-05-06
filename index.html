@@ -358,36 +358,41 @@
     50% { opacity: 0.85; }
   }
 
-  /* Two-row marquee for the six pillars */
+  /* Two-row marquee for the six pillars — full-bleed for big-screen breathing room */
   .pillars-rows {
     margin-top: 56px;
     position: relative;
     overflow: hidden;
+    /* break out of section's max-width so motion + fade reach the viewport edges */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: 8px 0;
     -webkit-mask-image: linear-gradient(90deg,
-      transparent 0%, rgba(0,0,0,0.2) 4%, rgba(0,0,0,0.7) 10%, black 16%,
-      black 84%, rgba(0,0,0,0.7) 90%, rgba(0,0,0,0.2) 96%, transparent 100%);
+      transparent 0%, rgba(0,0,0,0.15) 5%, rgba(0,0,0,0.6) 12%, black 20%,
+      black 80%, rgba(0,0,0,0.6) 88%, rgba(0,0,0,0.15) 95%, transparent 100%);
     mask-image: linear-gradient(90deg,
-      transparent 0%, rgba(0,0,0,0.2) 4%, rgba(0,0,0,0.7) 10%, black 16%,
-      black 84%, rgba(0,0,0,0.7) 90%, rgba(0,0,0,0.2) 96%, transparent 100%);
+      transparent 0%, rgba(0,0,0,0.15) 5%, rgba(0,0,0,0.6) 12%, black 20%,
+      black 80%, rgba(0,0,0,0.6) 88%, rgba(0,0,0,0.15) 95%, transparent 100%);
   }
   .pillars-row {
     display: flex;
-    gap: 22px;
+    gap: 24px;
     will-change: transform;
-    padding: 8px 0;
+    padding: 12px 48px;
   }
-  .pillars-row + .pillars-row { margin-top: 22px; }
+  .pillars-row + .pillars-row { margin-top: 24px; }
   .pillar.expanded {
     flex: 0 0 auto;
-    width: 380px;
-    min-height: 520px;
+    width: 420px;
+    min-height: 580px;
     display: flex;
     flex-direction: column;
-    padding: 32px 28px;
+    padding: 36px 32px;
   }
   .pillar.expanded .pillar-anim {
     margin-top: auto;
-    height: 240px;
+    height: 270px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -635,9 +640,9 @@
   .anim-em-step span { color: var(--blue-bright); }
 
   @media (max-width: 768px) {
-    .pillar.expanded { width: 280px; min-height: 460px; padding: 24px 20px; }
-    .pillar.expanded .pillar-anim { height: 200px; }
-    .pillars-row { gap: 14px; }
+    .pillar.expanded { width: 300px; min-height: 500px; padding: 26px 22px; }
+    .pillar.expanded .pillar-anim { height: 220px; }
+    .pillars-row { gap: 14px; padding: 10px 20px; }
   }
 
   /* Two Worlds */
@@ -2344,7 +2349,7 @@
     const bot = document.getElementById('pillarsRowBottom');
     if (!section || !top || !bot) return;
 
-    const SHIFT = 280; // px range each row travels in each direction
+    const SHIFT = 380; // px range each row travels in each direction
 
     let targetT = 0, currentT = 0;
     let targetB = 0, currentB = 0;
