@@ -647,10 +647,8 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 22px;
-    align-items: start; /* anchor every card to the top — text positions stay coherent */
+    align-items: stretch; /* every card takes the height of the tallest in the row */
     overflow: visible;
-    /* Reserve enough vertical room so the 1.5x middle card never overlaps
-       whatever sits below the section. JS keeps this in sync. */
   }
   .felt-card {
     background: rgba(255, 255, 255, 0.035);
