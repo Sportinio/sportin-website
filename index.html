@@ -700,8 +700,26 @@
   .lb-row.up-state .lb-arrow { color: #2ECC71; opacity: 1; }
   .lb-row.down-state .lb-arrow { color: #FF3B5C; opacity: 1; }
 
-  /* --- RECORD card stage (3D side-view terrain replay) --- */
-  .rec-stage { position: relative; background: linear-gradient(180deg, #0A1B3A 0%, #050A1A 60%, #06090F 100%); }
+  /* --- RECORD card stage (real app replay video) --- */
+  .rec-stage { position: relative; background: #06090F; }
+  .rec-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: 16px;
+  }
+  .rec-overlay-fade {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 80px;
+    background: linear-gradient(180deg, transparent 0%, rgba(6,9,15,0.85) 70%, rgba(6,9,15,1) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
   .rec-stage svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; }
   .rec-route { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke: url(#recGrad); stroke-dasharray: 1500; stroke-dashoffset: 1500; animation: recDraw 6s ease-out infinite; filter: drop-shadow(0 0 8px rgba(59,123,255,0.7)); }
   .rec-route-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
@@ -2337,93 +2355,11 @@
     <!-- 2. RECORD -->
     <div class="felt-card reveal" style="--rd:0.15s;">
       <div class="felt-stage rec-stage">
-        <svg class="scene" viewBox="0 0 360 320" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="recGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#0751FB"/>
-              <stop offset="50%" stop-color="#3B7BFF"/>
-              <stop offset="100%" stop-color="#12E094"/>
-            </linearGradient>
-            <linearGradient id="mtFar" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#1a2848"/>
-              <stop offset="100%" stop-color="#0a1228"/>
-            </linearGradient>
-            <linearGradient id="mtMid" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#162242"/>
-              <stop offset="100%" stop-color="#070d20"/>
-            </linearGradient>
-            <linearGradient id="mtNear" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#0d1530"/>
-              <stop offset="100%" stop-color="#04081a"/>
-            </linearGradient>
-            <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#0a1230" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#020410" stop-opacity="1"/>
-            </linearGradient>
-          </defs>
-
-          <!-- Stars / sky dots -->
-          <circle class="rec-star dim" cx="40" cy="30" r="0.8"/>
-          <circle class="rec-star" cx="80" cy="22" r="1" style="animation: starTwinkle 3s ease-in-out infinite;"/>
-          <circle class="rec-star dim" cx="140" cy="40" r="0.8"/>
-          <circle class="rec-star" cx="200" cy="18" r="1" style="animation: starTwinkle 4s ease-in-out infinite 0.5s;"/>
-          <circle class="rec-star dim" cx="260" cy="32" r="0.8"/>
-          <circle class="rec-star" cx="310" cy="14" r="1" style="animation: starTwinkle 3.5s ease-in-out infinite 1s;"/>
-          <circle class="rec-star dim" cx="340" cy="50" r="0.7"/>
-
-          <!-- Far mountains (silhouettes, smallest peaks) -->
-          <path class="rec-mountain-far"
-            d="M0,140 L30,110 L60,125 L100,95 L140,118 L180,88 L220,108 L260,82 L300,108 L330,92 L360,118 L360,180 L0,180 Z"/>
-          <!-- Mid mountains -->
-          <path class="rec-mountain-mid"
-            d="M0,170 L40,135 L75,150 L120,118 L165,148 L210,122 L255,150 L295,128 L335,148 L360,140 L360,220 L0,220 Z"/>
-          <!-- Near mountains (largest, most detailed) -->
-          <path class="rec-mountain-near"
-            d="M0,210 L25,175 L60,200 L95,160 L140,200 L185,170 L230,205 L280,170 L320,205 L360,180 L360,250 L0,250 Z"/>
-
-          <!-- Perspective ground plane (3D grid) — converging to vanishing point -->
-          <path class="rec-ground" d="M0,250 L360,250 L360,320 L0,320 Z"/>
-          <!-- Horizontal grid lines (perspective compression) -->
-          <line class="rec-grid-line" x1="0" y1="252" x2="360" y2="252"/>
-          <line class="rec-grid-line" x1="-20" y1="262" x2="380" y2="262"/>
-          <line class="rec-grid-line bright" x1="-50" y1="278" x2="410" y2="278"/>
-          <line class="rec-grid-line" x1="-90" y1="298" x2="450" y2="298"/>
-          <line class="rec-grid-line bright" x1="-130" y1="320" x2="490" y2="320"/>
-          <!-- Vertical grid lines (converging) -->
-          <line class="rec-grid-line" x1="180" y1="250" x2="180" y2="320"/>
-          <line class="rec-grid-line" x1="135" y1="250" x2="60" y2="320"/>
-          <line class="rec-grid-line" x1="225" y1="250" x2="300" y2="320"/>
-          <line class="rec-grid-line" x1="90" y1="250" x2="-60" y2="320"/>
-          <line class="rec-grid-line" x1="270" y1="250" x2="420" y2="320"/>
-          <line class="rec-grid-line" x1="45" y1="250" x2="-180" y2="320"/>
-          <line class="rec-grid-line" x1="315" y1="250" x2="540" y2="320"/>
-
-          <!-- 3D path: snakes from far horizon (small, faint) toward viewer (big, bright)
-               using vertical motion + curve that follows terrain undulation -->
-          <path id="recPath" class="rec-route-bg"
-            d="M210,170 C195,178 175,182 158,200 C140,218 162,232 188,248 C215,264 245,272 270,288 C295,304 320,310 340,316"/>
-          <path class="rec-route"
-            d="M210,170 C195,178 175,182 158,200 C140,218 162,232 188,248 C215,264 245,272 270,288 C295,304 320,310 340,316"/>
-
-          <!-- Moving live position pin -->
-          <circle class="rec-pin" r="4.5">
-            <animateMotion dur="6s" repeatCount="indefinite">
-              <mpath href="#recPath"/>
-            </animateMotion>
-            <animate attributeName="r" values="3;5;3" dur="6s" repeatCount="indefinite"/>
-          </circle>
-          <!-- Pulsing ring around pin -->
-          <circle r="11" fill="none" stroke="rgba(59,123,255,0.5)" stroke-width="1.2">
-            <animateMotion dur="6s" repeatCount="indefinite">
-              <mpath href="#recPath"/>
-            </animateMotion>
-            <animate attributeName="r" values="6;16;6" dur="1.6s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.8;0;0.8" dur="1.6s" repeatCount="indefinite"/>
-          </circle>
-        </svg>
-
-        <div class="rec-haze"></div>
-
+        <video class="rec-video" autoplay loop muted playsinline preload="metadata" poster="">
+          <source src="replay.mp4" type="video/mp4"/>
+          <source src="replay.webm" type="video/webm"/>
+        </video>
+        <div class="rec-overlay-fade"></div>
         <div class="rec-stats">
           <div class="rec-stat-block">
             <span class="rec-label">Distance</span>
