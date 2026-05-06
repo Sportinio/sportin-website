@@ -1560,6 +1560,142 @@
   .why-col.coms .why-list li::before { background: linear-gradient(135deg, #C9A24B, #F5E4A8); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); }
   .why-col.club .why-list li::before { background: linear-gradient(135deg, #E8002D, #FF1840); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); }
 
+  /* === DIFFERENTIATION VARIANT (replaces persona section) === */
+  .why-grid.diff { grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .why-col.diff {
+    padding: 28px 26px;
+    gap: 14px;
+    min-height: 340px;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .why-col.diff .why-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    margin-bottom: 4px;
+  }
+  .why-col.diff.them .why-eyebrow { color: rgba(255, 59, 92, 0.7); }
+  .why-col.diff.us   .why-eyebrow { color: var(--blue-bright); }
+  .why-col.diff .diff-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .why-col.diff .diff-hero {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+  }
+  .why-col.diff .diff-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 96px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .why-col.diff .diff-num .u {
+    font-size: 38px;
+    margin-left: 4px;
+    font-weight: 600;
+    vertical-align: top;
+    line-height: 1.1;
+  }
+  .why-col.diff.them .diff-num {
+    color: rgba(255, 59, 92, 0.85);
+    text-shadow: 0 0 32px rgba(255, 59, 92, 0.25);
+  }
+  .why-col.diff.us .diff-num {
+    background: linear-gradient(135deg, #3B7BFF 0%, #0751FB 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 40px rgba(7, 81, 251, 0.4);
+  }
+  .why-col.diff .diff-words {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+  .why-col.diff .diff-words span {
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--text-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .why-col.diff .diff-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  .why-col.diff .diff-stack-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: rgba(7, 81, 251, 0.08);
+    border: 1px solid rgba(7, 81, 251, 0.2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-2);
+  }
+  .why-col.diff .diff-stack-row .arr {
+    color: #2ECC71;
+    font-weight: 700;
+    margin-left: auto;
+    font-size: 12px;
+  }
+  .why-col.diff .diff-desc {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-3);
+    line-height: 1.55;
+  }
+  .why-col.diff.them { border-color: rgba(255, 59, 92, 0.18); }
+  .why-col.diff.them::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, rgba(255, 59, 92, 0.06), transparent 60%);
+    pointer-events: none;
+  }
+  .why-col.diff.us { border-color: rgba(7, 81, 251, 0.3); }
+  .why-col.diff.us::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, rgba(7, 81, 251, 0.10), transparent 60%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 1024px) {
+    .why-grid.diff { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .why-grid.diff { grid-template-columns: 1fr; }
+    .why-col.diff .diff-num { font-size: 78px; }
+  }
+
   /* Example */
   .example-section {
     margin-top: 80px;
@@ -2919,49 +3055,69 @@
   </div>
 </div>
 
-<!-- ICP · FOR THE TEAM BEHIND THE BRAND -->
+<!-- THE DIFFERENCE -->
 <section class="why-section" id="why">
   <div class="why-head">
-    <div class="section-kicker reveal">For the team behind the brand</div>
-    <h2 class="section-title reveal" style="--rd:0.1s;">Different seat. <span class="gradient">Same return.</span></h2>
-    <p class="section-intro reveal" style="--rd:0.2s;">SportIn meets each leader where outcomes already get measured. Pick the seat that&rsquo;s yours. The platform speaks your language from the first season.</p>
+    <div class="section-kicker reveal">The Difference</div>
+    <h2 class="section-title reveal" style="--rd:0.1s;">Most platforms measure movement. <span class="gradient">We make it matter.</span></h2>
+    <p class="section-intro reveal" style="--rd:0.2s;">Step challenges chase participation. SportIn builds belonging, rivalry, and return around your brand.</p>
   </div>
 
-  <div class="why-grid">
-    <div class="why-col reveal" style="--rd:0.05s;">
-      <span class="why-persona">Head of Brand &middot; Marketing</span>
-      <div class="why-title">Own a season,<br/>not a banner.</div>
-      <ul class="why-list">
-        <li>Title-sponsor a Run, a jersey, or a matchday with measurable share of voice.</li>
-        <li>Every activation lives inside a story your audience returns to each week.</li>
-        <li>Brand-safe health halo. You sponsor movement, identity, and effort.</li>
-        <li>Reach earned through participation, not through interruption.</li>
-        <li>CPM, CPE, retention curves. The metrics your board already speaks.</li>
-      </ul>
+  <div class="why-grid diff">
+    <!-- Card 1: What others offer -->
+    <div class="why-col diff them reveal" style="--rd:0.05s;">
+      <div>
+        <div class="why-eyebrow">What others offer</div>
+        <div class="diff-title">Short-term challenges.<br/>Fast drop-off.</div>
+      </div>
+      <div class="diff-hero">
+        <div class="diff-num">20<span class="u">%</span></div>
+      </div>
+      <div class="diff-desc">Participation rarely stays above 20%. The kickoff energy fades by week two.</div>
     </div>
 
-    <div class="why-col coms reveal" style="--rd:0.2s;">
-      <span class="why-persona">Head of Partnerships</span>
-      <div class="why-title">A new sponsorship tier<br/>that actually returns.</div>
-      <ul class="why-list">
-        <li>Sponsor a property your partner can field a team inside, not just a logo placement.</li>
-        <li>Attribution from the first kilometre to the last redemption.</li>
-        <li>Co-branded competitions that justify multi-year commitments.</li>
-        <li>Activation surface across leagues, cups, tours, and championships.</li>
-        <li>The emotional structures of professional sport, white-label-ready.</li>
-      </ul>
+    <!-- Card 2: What SportIn creates -->
+    <div class="why-col diff us reveal" style="--rd:0.15s;">
+      <div>
+        <div class="why-eyebrow">What SportIn creates</div>
+        <div class="diff-title">A season people<br/>want to defend.</div>
+      </div>
+      <div class="diff-hero">
+        <div class="diff-num">69<span class="u">%+</span></div>
+      </div>
+      <div class="diff-desc">Participation starts at 69%+ and stays there. Because every week, there&rsquo;s a reason to show up.</div>
     </div>
 
-    <div class="why-col club reveal" style="--rd:0.35s;">
-      <span class="why-persona">Head of Community &middot; People</span>
-      <div class="why-title">Give them a reason<br/>to come back.</div>
-      <ul class="why-list">
-        <li>Turn members and employees into a season-long team that keeps showing up.</li>
-        <li>Belonging becomes the metric. Engagement becomes the rhythm.</li>
-        <li>Live standings, profiles, and stories your community reshares for free.</li>
-        <li>From wellness check-box to identity people choose to wear.</li>
-        <li>Real signal on who is active, who is slipping, where momentum is building.</li>
-      </ul>
+    <!-- Card 3: What people feel -->
+    <div class="why-col diff reveal" style="--rd:0.25s;">
+      <div>
+        <div class="why-eyebrow">What people feel</div>
+        <div class="diff-title">Belonging.<br/>Rivalry. Identity.</div>
+      </div>
+      <div class="diff-hero">
+        <div class="diff-words">
+          <span>Belonging</span>
+          <span>Rivalry</span>
+          <span>Identity</span>
+        </div>
+      </div>
+      <div class="diff-desc">Movement becomes something they carry with pride. A logo on the chest, not a notification on the phone.</div>
+    </div>
+
+    <!-- Card 4: What business gets back -->
+    <div class="why-col diff reveal" style="--rd:0.35s;">
+      <div>
+        <div class="why-eyebrow">What business gets back</div>
+        <div class="diff-title">Retention,<br/>loyalty, energy.</div>
+      </div>
+      <div class="diff-hero">
+        <div class="diff-stack">
+          <div class="diff-stack-row">Client Retention <span class="arr">&uarr;</span></div>
+          <div class="diff-stack-row">Employee Retention <span class="arr">&uarr;</span></div>
+          <div class="diff-stack-row">Brand Energy <span class="arr">&uarr;</span></div>
+        </div>
+      </div>
+      <div class="diff-desc">Higher retention. Higher loyalty. More energy around the brand &mdash; week after week, season after season.</div>
     </div>
   </div>
 </section>
