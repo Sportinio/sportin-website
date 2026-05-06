@@ -608,48 +608,154 @@
     50%      { box-shadow: 0 8px 28px rgba(7, 81, 251, 0.55), 0 0 0 18px rgba(59, 123, 255, 0), inset 0 1px 0 rgba(255,255,255,0.25); }
   }
 
-  /* Anim 6: eMotion engine pulses */
+  /* Anim 6: eMotion chip + software signals working together */
   .anim-em {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
     position: relative;
+    height: 100%;
+    overflow: hidden;
   }
-  .anim-em-core {
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--blue-bright), var(--blue));
-    box-shadow: 0 0 40px rgba(59, 123, 255, 0.6);
-    animation: emCore 2s ease-in-out infinite;
-  }
-  @keyframes emCore {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-  }
-  .anim-em-ring {
+  .anim-em-circuit { position: absolute; inset: 0; }
+  .anim-em-circuit svg { width: 100%; height: 100%; display: block; }
+  .anim-em-circuit .trace { stroke: rgba(59, 123, 255, 0.22); stroke-width: 1; fill: none; }
+  .anim-em-circuit .trace.bright { stroke: rgba(59, 123, 255, 0.5); stroke-width: 1.2; }
+  .anim-em-circuit .pad { fill: rgba(59, 123, 255, 0.5); }
+  .anim-em-circuit .data { fill: var(--blue-bright); filter: drop-shadow(0 0 6px var(--blue-bright)); }
+
+  .anim-em-chip {
     position: absolute;
-    border: 1.5px solid rgba(59, 123, 255, 0.4);
-    border-radius: 50%;
-    animation: emRing 2.5s ease-out infinite;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px; height: 110px;
+    border-radius: 18px;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.18), transparent 50%),
+      linear-gradient(135deg, #0F1729 0%, #06090F 100%);
+    border: 1px solid rgba(59, 123, 255, 0.35);
+    box-shadow:
+      0 0 0 4px rgba(7, 81, 251, 0.12),
+      0 12px 36px rgba(7, 81, 251, 0.35),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    display: grid;
+    place-items: center;
+    z-index: 3;
+    animation: chipPulse 3s ease-in-out infinite;
   }
-  .anim-em-ring.r1 { width: 60px; height: 60px; animation-delay: 0s; }
-  .anim-em-ring.r2 { width: 60px; height: 60px; animation-delay: 0.6s; }
-  .anim-em-ring.r3 { width: 60px; height: 60px; animation-delay: 1.2s; }
-  @keyframes emRing {
-    0% { width: 60px; height: 60px; opacity: 1; }
-    100% { width: 220px; height: 220px; opacity: 0; }
+  @keyframes chipPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(7, 81, 251, 0.10), 0 12px 36px rgba(7, 81, 251, 0.30), inset 0 1px 0 rgba(255,255,255,0.08); }
+    50%      { box-shadow: 0 0 0 4px rgba(7, 81, 251, 0.20), 0 12px 48px rgba(7, 81, 251, 0.55), inset 0 1px 0 rgba(255,255,255,0.10); }
   }
-  .anim-em-step {
+  /* Chip pins on all 4 sides */
+  .anim-em-chip::before,
+  .anim-em-chip::after {
+    content: '';
+    position: absolute;
+    background-image: linear-gradient(90deg, rgba(59,123,255,0.55) 50%, transparent 50%);
+    background-size: 10px 100%;
+  }
+  .anim-em-chip::before {
+    /* top pins */
+    top: -7px; left: 14px; right: 14px; height: 4px;
+    border-radius: 2px;
+  }
+  .anim-em-chip::after {
+    /* bottom pins */
+    bottom: -7px; left: 14px; right: 14px; height: 4px;
+    border-radius: 2px;
+  }
+  /* Side pins via two extra elements */
+  .anim-em-chip .pin-l, .anim-em-chip .pin-r {
+    position: absolute;
+    top: 14px; bottom: 14px; width: 4px;
+    background-image: linear-gradient(180deg, rgba(59,123,255,0.55) 50%, transparent 50%);
+    background-size: 100% 10px;
+    border-radius: 2px;
+  }
+  .anim-em-chip .pin-l { left: -7px; }
+  .anim-em-chip .pin-r { right: -7px; }
+
+  .anim-em-chip .chip-mark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    color: #fff;
+    background: linear-gradient(135deg, var(--blue-bright), var(--blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .anim-em-chip .chip-line {
+    position: absolute;
+    inset: 14px;
+    border: 1px dashed rgba(59, 123, 255, 0.18);
+    border-radius: 8px;
+  }
+
+  /* Software status chips below */
+  .anim-em-stack {
     position: absolute;
     bottom: 14px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    color: var(--text-3);
-    text-transform: uppercase;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
   }
-  .anim-em-step span { color: var(--blue-bright); }
+  .anim-em-stack .pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    animation: emPill 4s ease-in-out infinite;
+  }
+  .anim-em-stack .pill.live::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #12E094;
+    box-shadow: 0 0 6px #12E094;
+    margin-right: 6px;
+    vertical-align: middle;
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
+  .anim-em-stack .pill:nth-child(1) { animation-delay: 0s; }
+  .anim-em-stack .pill:nth-child(2) { animation-delay: 0.6s; }
+  .anim-em-stack .pill:nth-child(3) { animation-delay: 1.2s; }
+  @keyframes emPill {
+    0%, 100% { color: var(--text-3); border-color: rgba(255,255,255,0.08); }
+    50% { color: var(--blue-bright); border-color: rgba(59, 123, 255, 0.35); }
+  }
+
+  /* Top-left tag */
+  .anim-em-tag {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--text-4);
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  .anim-em-tag span { color: #12E094; margin-left: 6px; }
+  .anim-em-tag span::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #12E094;
+    box-shadow: 0 0 6px #12E094;
+    margin-right: 5px;
+    vertical-align: middle;
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
 
   @media (max-width: 768px) {
     .pillar.expanded { width: 300px; min-height: 500px; padding: 26px 22px; }
@@ -1812,11 +1918,43 @@
         <div class="pillar-title">eMotion by SportIn</div>
         <div class="pillar-desc">Our in-house motion engine measures distance and steps in real time, straight from the phone. A live experience today; a hardware-ready foundation for tomorrow.</div>
         <div class="pillar-anim anim-em">
-          <div class="anim-em-ring r1"></div>
-          <div class="anim-em-ring r2"></div>
-          <div class="anim-em-ring r3"></div>
-          <div class="anim-em-core"></div>
-          <div class="anim-em-step">Steps <span>2.904</span> &middot; Live</div>
+          <div class="anim-em-tag">eMotion Engine <span>Running</span></div>
+          <div class="anim-em-circuit">
+            <svg viewBox="0 0 360 270" preserveAspectRatio="none">
+              <!-- circuit traces from edges into chip (chip occupies roughly 125-235 x 80-190) -->
+              <path class="trace" id="emT1" d="M0,40 L80,40 L80,90 L125,90"/>
+              <path class="trace" id="emT2" d="M0,135 L60,135 L60,160 L125,160"/>
+              <path class="trace" id="emT3" d="M0,230 L70,230 L70,180 L125,180"/>
+              <path class="trace bright" id="emT4" d="M360,40 L280,40 L280,90 L235,90"/>
+              <path class="trace" id="emT5" d="M360,135 L300,135 L300,160 L235,160"/>
+              <path class="trace bright" id="emT6" d="M360,230 L290,230 L290,180 L235,180"/>
+              <!-- pads (small squares where traces meet chip) -->
+              <rect class="pad" x="120" y="86" width="6" height="6" rx="1"/>
+              <rect class="pad" x="120" y="156" width="6" height="6" rx="1"/>
+              <rect class="pad" x="120" y="176" width="6" height="6" rx="1"/>
+              <rect class="pad" x="234" y="86" width="6" height="6" rx="1"/>
+              <rect class="pad" x="234" y="156" width="6" height="6" rx="1"/>
+              <rect class="pad" x="234" y="176" width="6" height="6" rx="1"/>
+              <!-- animated data flowing into chip -->
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0s"><mpath href="#emT1"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.6s"><mpath href="#emT2"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="1.2s"><mpath href="#emT3"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.3s"><mpath href="#emT4"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.9s"><mpath href="#emT5"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="1.5s"><mpath href="#emT6"/></animateMotion></circle>
+            </svg>
+          </div>
+          <div class="anim-em-chip">
+            <div class="pin-l"></div>
+            <div class="pin-r"></div>
+            <div class="chip-line"></div>
+            <div class="chip-mark">eM</div>
+          </div>
+          <div class="anim-em-stack">
+            <span class="pill live">Sensors</span>
+            <span class="pill">SDK</span>
+            <span class="pill">Cloud</span>
+          </div>
         </div>
       </div>
     </div>
