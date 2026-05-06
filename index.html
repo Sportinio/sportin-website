@@ -617,7 +617,7 @@
   }
 
   /* --- LEADERBOARD card stage --- */
-  .lb-stage { padding: 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .lb-stage { padding: 16px 14px; display: flex; flex-direction: column; gap: 8px; justify-content: space-between; }
   .lb-row {
     display: flex;
     align-items: center;
@@ -640,55 +640,55 @@
   }
   .lb-row.me .lb-rank { color: var(--blue-bright); }
   .lb-avatar {
-    width: 28px; height: 28px;
+    width: 30px; height: 30px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1a8cff, #0751FB);
-    display: grid; place-items: center;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: #fff;
     flex-shrink: 0;
     border: 1.5px solid rgba(255,255,255,0.1);
+    background: linear-gradient(135deg, #2A2A33, #1A1A22);
+    object-fit: cover;
+    overflow: hidden;
+    display: block;
   }
-  .lb-row.me .lb-avatar { background: linear-gradient(135deg, #3B7BFF, #0751FB); border-color: rgba(255,255,255,0.4); box-shadow: 0 0 12px rgba(59,123,255,0.5); }
+  .lb-row.me .lb-avatar { border-color: rgba(255,255,255,0.4); box-shadow: 0 0 12px rgba(59,123,255,0.5); }
   .lb-meta { flex: 1; min-width: 0; }
   .lb-name {
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-  .lb-status {
+  .lb-team {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
+    font-size: 9.5px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--text-4);
-    margin-top: 2px;
+    color: var(--text-3);
+    margin-top: 3px;
   }
-  .lb-row.up .lb-status { color: #2ECC71; }
-  .lb-row.down .lb-status { color: #FF3B5C; }
   .lb-stats { text-align: right; }
-  .lb-laps {
+  .lb-steps {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--text);
   }
-  .lb-time {
+  .lb-trend {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: var(--text-4);
-    margin-top: 2px;
+    margin-top: 3px;
+    font-weight: 600;
   }
+  .lb-trend.up { color: #2ECC71; }
+  .lb-trend.down { color: #FF3B5C; }
   .lb-arrow {
     width: 12px; height: 12px;
     border-radius: 4px;
-    margin-left: 4px;
     display: inline-grid;
     place-items: center;
     font-size: 10px;
@@ -697,8 +697,8 @@
     opacity: 0;
     transition: opacity 0.4s ease;
   }
-  .lb-row.up .lb-arrow { color: #2ECC71; opacity: 1; }
-  .lb-row.down .lb-arrow { color: #FF3B5C; opacity: 1; }
+  .lb-row.up-state .lb-arrow { color: #2ECC71; opacity: 1; }
+  .lb-row.down-state .lb-arrow { color: #FF3B5C; opacity: 1; }
 
   /* --- RECORD card stage (route replay) --- */
   .rec-stage { position: relative; }
@@ -2265,62 +2265,62 @@
       <div class="felt-stage lb-stage" id="lbStage">
         <div class="lb-row" data-lb="0">
           <span class="lb-rank">1</span>
-          <span class="lb-avatar" style="background: linear-gradient(135deg, #C9A24B, #F5E4A8); color: #1a1a1e;">NP</span>
+          <img class="lb-avatar" src="https://i.pravatar.cc/64?u=nicolae" alt="Nicolae" loading="lazy"/>
           <span class="lb-meta">
-            <div class="lb-name">Nicolae Parpala</div>
-            <div class="lb-status">Finished</div>
+            <div class="lb-name">Nicolae Parpala <span class="lb-arrow">&#x25B2;</span></div>
+            <div class="lb-team">Pirelli</div>
           </span>
           <span class="lb-stats">
-            <div class="lb-laps">12 laps</div>
-            <div class="lb-time">04:21</div>
+            <div class="lb-steps">25.588</div>
+            <div class="lb-trend down">&#x2212; 4%</div>
           </span>
         </div>
-        <div class="lb-row up" data-lb="1">
+        <div class="lb-row" data-lb="1">
           <span class="lb-rank">2</span>
-          <span class="lb-avatar">LI</span>
+          <img class="lb-avatar" src="https://i.pravatar.cc/64?u=laura" alt="Laura" loading="lazy"/>
           <span class="lb-meta">
             <div class="lb-name">Laura Iacob <span class="lb-arrow">&#x25B2;</span></div>
-            <div class="lb-status">+2 places</div>
+            <div class="lb-team">Bosch</div>
           </span>
           <span class="lb-stats">
-            <div class="lb-laps">11 laps</div>
-            <div class="lb-time">04:38</div>
+            <div class="lb-steps">18.420</div>
+            <div class="lb-trend down">&#x2212; 2%</div>
           </span>
         </div>
         <div class="lb-row me" data-lb="2">
           <span class="lb-rank">3</span>
-          <span class="lb-avatar">AP</span>
+          <img class="lb-avatar" src="https://i.pravatar.cc/64?u=adrian" alt="You" loading="lazy"/>
           <span class="lb-meta">
-            <div class="lb-name">You</div>
-            <div class="lb-status">Pace: 5:12 / km</div>
+            <div class="lb-name">You <span class="lb-arrow">&#x25B2;</span></div>
+            <div class="lb-team">Porsche</div>
           </span>
           <span class="lb-stats">
-            <div class="lb-laps">11 laps</div>
-            <div class="lb-time">04:42</div>
+            <div class="lb-steps">14.902</div>
+            <div class="lb-trend down">&#x2212; 6%</div>
           </span>
         </div>
-        <div class="lb-row down" data-lb="3">
+        <div class="lb-row" data-lb="3">
           <span class="lb-rank">4</span>
-          <span class="lb-avatar" style="background: linear-gradient(135deg, #2E2E33, #4A4A52);">ED</span>
+          <img class="lb-avatar" src="https://i.pravatar.cc/64?u=emma" alt="Emma" loading="lazy"/>
           <span class="lb-meta">
-            <div class="lb-name">Emma Dubois <span class="lb-arrow">&#x25BC;</span></div>
-            <div class="lb-status">-1 place</div>
+            <div class="lb-name">Emma Dubois <span class="lb-arrow">&#x25B2;</span></div>
+            <div class="lb-team">Ferrari</div>
           </span>
           <span class="lb-stats">
-            <div class="lb-laps">10 laps</div>
-            <div class="lb-time">04:51</div>
+            <div class="lb-steps">12.380</div>
+            <div class="lb-trend down">&#x2212; 1%</div>
           </span>
         </div>
         <div class="lb-row" data-lb="4">
           <span class="lb-rank">5</span>
-          <span class="lb-avatar" style="background: linear-gradient(135deg, #FF1840, #FF6B86);">SA</span>
+          <img class="lb-avatar" src="https://i.pravatar.cc/64?u=sofia" alt="Sofia" loading="lazy"/>
           <span class="lb-meta">
-            <div class="lb-name">Sofia Andersen</div>
-            <div class="lb-status">Active</div>
+            <div class="lb-name">Sofia Andersen <span class="lb-arrow">&#x25B2;</span></div>
+            <div class="lb-team">McLaren</div>
           </span>
           <span class="lb-stats">
-            <div class="lb-laps">10 laps</div>
-            <div class="lb-time">04:55</div>
+            <div class="lb-steps">10.115</div>
+            <div class="lb-trend up">+ 12%</div>
           </span>
         </div>
       </div>
@@ -3010,22 +3010,16 @@
       const idx = Math.floor(Math.random() * (rows.length - 1));
       const a = rows[idx], b = rows[idx + 1];
 
-      // Mark direction states
-      rows.forEach(r => r.classList.remove('up', 'down'));
-      a.classList.add('down');
-      b.classList.add('up');
+      // Mark direction states (animation only — visual cue for the swap)
+      rows.forEach(r => r.classList.remove('up-state', 'down-state'));
+      a.classList.add('down-state');
+      b.classList.add('up-state');
 
-      // Swap arrows
+      // Swap arrows for the moving pair
       const arrowA = a.querySelector('.lb-arrow');
       const arrowB = b.querySelector('.lb-arrow');
       if (arrowA) arrowA.innerHTML = '&#x25BC;';
       if (arrowB) arrowB.innerHTML = '&#x25B2;';
-
-      // Swap status text
-      const statusA = a.querySelector('.lb-status');
-      const statusB = b.querySelector('.lb-status');
-      if (statusA) statusA.textContent = '-1 place';
-      if (statusB) statusB.textContent = '+1 place';
 
       // Animate the position swap by translating
       const aRect = a.getBoundingClientRect();
