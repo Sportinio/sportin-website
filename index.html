@@ -947,6 +947,126 @@
   .store-btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
   .store-btn.ghost:hover { background: var(--surface-2); }
 
+  /* Phone Showcase */
+  .phone-showcase {
+    margin-top: 120px;
+    padding: 0 48px 80px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .phone-arc {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 32px;
+    perspective: 1200px;
+  }
+  .phone-frame {
+    flex-shrink: 0;
+    width: 260px;
+    padding: 10px;
+    border-radius: 40px;
+    background: linear-gradient(145deg, #3a3a3f 0%, #1c1c20 50%, #2e2e33 100%);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.6),
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    position: relative;
+    opacity: 0;
+    transform: translateY(120px) scale(0.85);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 24px;
+    background: #1a1a1e;
+    border-radius: 0 0 14px 14px;
+    z-index: 3;
+  }
+  .phone-frame.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .phone-frame:nth-child(1) {
+    transform: translateY(120px) scale(0.85) rotate(-6deg);
+    transition-delay: 0s;
+  }
+  .phone-frame:nth-child(1).visible {
+    transform: translateY(20px) scale(1) rotate(-6deg);
+  }
+  .phone-frame:nth-child(2) {
+    transform: translateY(120px) scale(0.85) rotate(-2deg);
+    transition-delay: 0.15s;
+  }
+  .phone-frame:nth-child(2).visible {
+    transform: translateY(-10px) scale(1.04) rotate(-2deg);
+  }
+  .phone-frame:nth-child(3) {
+    transform: translateY(120px) scale(0.85) rotate(2deg);
+    transition-delay: 0.3s;
+  }
+  .phone-frame:nth-child(3).visible {
+    transform: translateY(-10px) scale(1.04) rotate(2deg);
+  }
+  .phone-frame:nth-child(4) {
+    transform: translateY(120px) scale(0.85) rotate(6deg);
+    transition-delay: 0.45s;
+  }
+  .phone-frame:nth-child(4).visible {
+    transform: translateY(20px) scale(1) rotate(6deg);
+  }
+  .phone-screen {
+    width: 100%;
+    display: block;
+    border-radius: 30px;
+    overflow: hidden;
+  }
+  .phone-screen img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: 1000px) {
+    .phone-arc {
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .phone-frame {
+      width: 200px;
+      border-radius: 32px;
+      padding: 8px;
+    }
+    .phone-screen { border-radius: 24px; }
+    .phone-frame::before { width: 60px; height: 18px; top: 8px; border-radius: 0 0 10px 10px; }
+    .phone-frame:nth-child(1),
+    .phone-frame:nth-child(2),
+    .phone-frame:nth-child(3),
+    .phone-frame:nth-child(4) { transform: translateY(80px) scale(0.9) rotate(0deg); }
+    .phone-frame:nth-child(1).visible,
+    .phone-frame:nth-child(4).visible { transform: translateY(0) scale(1) rotate(0deg); }
+    .phone-frame:nth-child(2).visible,
+    .phone-frame:nth-child(3).visible { transform: translateY(0) scale(1) rotate(0deg); }
+  }
+  @media (max-width: 600px) {
+    .phone-showcase { padding: 0 20px 60px; }
+    .phone-arc { gap: 12px; }
+    .phone-frame { width: 46%; border-radius: 24px; padding: 6px; }
+    .phone-screen { border-radius: 18px; }
+    .phone-frame::before { width: 40px; height: 14px; top: 6px; border-radius: 0 0 8px 8px; }
+  }
+
   /* Footer */
   .footer {
     margin-top: 120px;
@@ -1230,6 +1350,24 @@
   <div class="hero-cta">
     <a href="https://app.sportin.io" class="btn btn-primary" target="_blank">Go to Web App</a>
     <a href="#app" class="btn btn-ghost">Download Mobile App</a>
+  </div>
+</section>
+
+<!-- PHONE SHOWCASE -->
+<section class="phone-showcase">
+  <div class="phone-arc">
+    <div class="phone-frame">
+      <div class="phone-screen"><img src="screen-weekly.jpg" alt="Weekly Progress" /></div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-screen"><img src="screen-monthly.jpg" alt="Monthly Target" /></div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-screen"><img src="screen-run.jpg" alt="Run Stats" /></div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-screen"><img src="screen-login.png" alt="SportIn App" /></div>
+    </div>
   </div>
 </section>
 
@@ -1615,6 +1753,17 @@
     rootMargin: '0px 0px -60px 0px'
   });
   revealables.forEach((el) => io.observe(el));
+
+  const phoneFrames = document.querySelectorAll('.phone-frame');
+  const phoneIO = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        phoneIO.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+  phoneFrames.forEach((el) => phoneIO.observe(el));
 
   const formatNumber = (n, useDot) => {
     const rounded = Math.round(n);
