@@ -439,7 +439,7 @@
   }
 
   /* Anim 2: AI Voice waveform (AI Storytelling) — driven by Web Audio analyser */
-  .anim-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 100%; padding: 0 16px; }
+  .anim-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 100%; padding: 0 16px; cursor: pointer; }
   .anim-wave .bar {
     width: 4px;
     border-radius: 2px;
@@ -514,6 +514,33 @@
   .play-btn .ico-pause { display: none; }
   .play-btn.playing .ico-play { display: none; }
   .play-btn.playing .ico-pause { display: block; }
+
+  /* Center overlay play/pause button on waveform area */
+  .wave-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(7, 81, 251, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+    z-index: 5;
+    box-shadow: 0 12px 32px rgba(7, 81, 251, 0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .wave-overlay:hover { background: rgba(59, 123, 255, 1); transform: translate(-50%, -50%) scale(1.06); }
+  .wave-overlay svg { width: 22px; height: 22px; }
+  .wave-overlay .ico-pause { display: none; }
+  .wave-overlay.is-paused-from-play .ico-play { display: none; }
+  .wave-overlay.is-paused-from-play .ico-pause { display: block; }
+  /* hidden while audio is actually playing */
+  .wave-overlay.hidden { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.85); }
 
   /* Anim 3: Movement Index data flow (Movement Index) */
   .anim-mi { padding: 16px; }
@@ -1826,6 +1853,10 @@
             <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
             <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
           </div>
+          <button class="wave-overlay" id="aiWaveOverlay" aria-label="Play / pause AI commentary">
+            <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+          </button>
           <div class="anim-wave-label">AI Commentary &middot; Tap to listen</div>
         </div>
       </div>
@@ -2464,7 +2495,9 @@
       bars.forEach(b => { b.style.height = ''; b.style.opacity = ''; });
     }
 
-    btn.addEventListener('click', () => {
+    const overlay = document.getElementById('aiWaveOverlay');
+
+    function toggle() {
       ensureAnalyser();
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
       if (audio.paused) {
@@ -2472,10 +2505,20 @@
       } else {
         audio.pause();
       }
-    });
+    }
+
+    btn.addEventListener('click', toggle);
+    if (overlay) overlay.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+    // Click the waveform area while playing to pause
+    wave.addEventListener('click', () => { if (!audio.paused) audio.pause(); });
+
     audio.addEventListener('play', () => {
       btn.classList.add('playing');
       wave.classList.add('playing');
+      if (overlay) {
+        overlay.classList.add('hidden');
+        overlay.classList.remove('is-paused-from-play');
+      }
       ensureAnalyser();
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
       if (analyser && !rafId) tick();
@@ -2484,11 +2527,20 @@
       btn.classList.remove('playing');
       wave.classList.remove('playing');
       stopTick();
+      if (overlay) {
+        overlay.classList.remove('hidden');
+        // Show the pause icon to indicate "paused mid-play"
+        if (audio.currentTime > 0 && !audio.ended) overlay.classList.add('is-paused-from-play');
+      }
     });
     audio.addEventListener('ended', () => {
       btn.classList.remove('playing');
       wave.classList.remove('playing');
       stopTick();
+      if (overlay) {
+        overlay.classList.remove('hidden');
+        overlay.classList.remove('is-paused-from-play');
+      }
     });
   })();
 
