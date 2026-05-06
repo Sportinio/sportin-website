@@ -340,11 +340,16 @@
 
   /* Pillar title graph (under section title) */
   .pillars-graph {
-    margin: 28px 0 0;
-    height: 56px;
-    width: 100%;
+    margin-top: 32px;
+    margin-bottom: 0;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    height: 80px;
     overflow: hidden;
     opacity: 0.55;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
   }
   .pillars-graph svg { width: 100%; height: 100%; display: block; }
   .pillars-graph .ln { stroke: url(#pgGrad); stroke-width: 1.6; fill: none; }
@@ -377,6 +382,7 @@
   }
   .pillars-row {
     display: flex;
+    justify-content: center;
     gap: 24px;
     will-change: transform;
     padding: 12px 48px;
