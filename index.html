@@ -264,33 +264,34 @@
   }
   .partner-logo {
     flex-shrink: 0;
-    width: 140px;
-    height: 68px;
-    border-radius: 12px;
-    background: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    /* explicit flex center on both axes */
+    width: 160px;
+    height: 60px;
+    /* no tile — logos sit directly on the dark background */
+    background: transparent;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 16px;
-    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden;
-  }
-  .partner-logo:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    padding: 0 12px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    overflow: visible;
   }
   .partner-logo img {
     max-width: 100%;
-    max-height: 36px;          /* uniform visual height across all logos */
+    max-height: 38px;          /* uniform visual height for consistency */
     width: auto;
     height: auto;
     object-fit: contain;
     object-position: center center;
     display: block;
     margin: auto;
+    /* flatten every brand color to a single light grey tone */
+    filter: brightness(0) invert(1);
+    opacity: 0.55;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+  }
+  .partner-logo:hover img {
+    opacity: 1;
   }
   /* Pause on hover for accessibility */
   .partners-strip:hover .partners-row { animation-play-state: paused; }
