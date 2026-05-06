@@ -2992,8 +2992,8 @@
     });
   })();
 
-  // FELT · scroll-driven hero scale — copied 1:1 from the pillars marquee
-  // (full-section traversal · lerp 0.08 · neutral state at section center)
+  // FELT · scroll-driven hero scale — PURE 1:1 mapping. No lerp, no catching up.
+  // Scroll = motion. Stop scrolling = motion stops instantly.
   (function setupFeltScale() {
     const section = document.getElementById('felt');
     if (!section) return;
@@ -3005,9 +3005,8 @@
     const SCALE_HERO = 1.5;
     const SCALE_SMALL = 0.55;
     const SCALE_END = 1.0;
-    const ease = 0.08;
-
-    let target = 0, current = 0, rafId = null, cardH = 0;
+    let cardH = 0;
+    let ticking = false;
 
     function measureCardHeight() {
       const prev = middle.style.transform;
@@ -3016,27 +3015,21 @@
       middle.style.transform = prev;
     }
 
-    function compute() {
+    function update() {
       const rect = section.getBoundingClientRect();
       const winH = window.innerHeight;
+      // Animation runs across the section's full traversal of the viewport.
+      // Hero state when section enters, equal state when section center
+      // reaches viewport center, stays equal as it exits.
       const total = winH + rect.height;
       const traveled = winH - rect.top;
-      let p = traveled / total;
-      p = Math.max(0, Math.min(1, p));
-      // Map 0..1 → -1..1 (centered = 0). Initial state when entering, equal
-      // state when section is centered in the viewport, then mirrored on exit.
-      const signed = (p - 0.5) * 2;
-      // We want hero state at signed = -1 (entering from below), equal at 0,
-      // and stay at equal as it exits (positive signed). Clamp to [-1, 0].
-      target = Math.max(-1, Math.min(0, signed));
-    }
+      let raw = traveled / total;
+      raw = Math.max(0, Math.min(1, raw));
+      // p: 0 = hero, 1 = equal. Reach equal at half traversal, then stay.
+      let p = Math.min(1, raw / 0.5);
 
-    function render() {
-      current += (target - current) * ease;
-      // p_anim: 0 = hero, 1 = equal
-      const pAnim = 1 + current; // current goes -1..0, so 1+current goes 0..1
-      const midScale  = SCALE_HERO  + (SCALE_END   - SCALE_HERO)  * pAnim;
-      const sideScale = SCALE_SMALL + (SCALE_END   - SCALE_SMALL) * pAnim;
+      const midScale  = SCALE_HERO  + (SCALE_END   - SCALE_HERO)  * p;
+      const sideScale = SCALE_SMALL + (SCALE_END   - SCALE_SMALL) * p;
       middle.style.transform = `scale(${midScale.toFixed(4)})`;
       sides.forEach((el) => { el.style.transform = `scale(${sideScale.toFixed(4)})`; });
 
@@ -3044,25 +3037,19 @@
         const overflow = Math.max(0, (midScale - 1) * cardH);
         grid.style.paddingBottom = `${overflow.toFixed(0)}px`;
       }
-
-      if (Math.abs(target - current) > 0.0008) {
-        rafId = requestAnimationFrame(render);
-      } else {
-        rafId = null;
-      }
     }
 
     function onScroll() {
-      compute();
-      if (rafId == null) rafId = requestAnimationFrame(render);
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => { update(); ticking = false; });
+      }
     }
 
     measureCardHeight();
-    compute();
-    current = target;
-    render();
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { measureCardHeight(); onScroll(); }, { passive: true });
+    window.addEventListener('resize', () => { measureCardHeight(); update(); }, { passive: true });
   })();
 
   // FELT · Leaderboard live step counter — smooth ticking values
