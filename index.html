@@ -947,48 +947,71 @@
   .store-btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
   .store-btn.ghost:hover { background: var(--surface-2); }
 
-  /* Phone Showcase */
+  /* Phone Showcase — scroll-driven arc carousel */
   .phone-showcase {
-    margin-top: 100px;
-    padding: 40px 48px 100px;
-    max-width: 1280px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-top: 60px;
+    padding: 40px 0 100px;
     position: relative;
     z-index: 1;
-    overflow: visible;
+    overflow: hidden;
+    /* edge fade gradient */
+    -webkit-mask-image: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0,0,0,0.1) 4%,
+      rgba(0,0,0,0.5) 10%,
+      rgba(0,0,0,0.8) 16%,
+      black 22%,
+      black 78%,
+      rgba(0,0,0,0.8) 84%,
+      rgba(0,0,0,0.5) 90%,
+      rgba(0,0,0,0.1) 96%,
+      transparent 100%);
+    mask-image: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0,0,0,0.1) 4%,
+      rgba(0,0,0,0.5) 10%,
+      rgba(0,0,0,0.8) 16%,
+      black 22%,
+      black 78%,
+      rgba(0,0,0,0.8) 84%,
+      rgba(0,0,0,0.5) 90%,
+      rgba(0,0,0,0.1) 96%,
+      transparent 100%);
   }
-  .phone-arc {
+  .phone-track-wrap {
+    position: relative;
+    height: 620px;
+    overflow: hidden;
+  }
+  .phone-track {
+    position: absolute;
+    inset: 0;
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 32px;
-    perspective: 2000px;
-    transform-style: preserve-3d;
-    padding: 40px 20px;
+    will-change: transform;
+    /* slight smoothing — JS uses rAF so transition is light */
+    transition: transform 0.08s linear;
   }
   .phone-frame {
     flex-shrink: 0;
-    width: 200px;
-    padding: 8px;
-    border-radius: 24px;
+    width: 260px;
+    padding: 10px;
+    border-radius: 28px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.4),
-      0 2px 8px rgba(0, 0, 0, 0.2),
+      0 16px 48px rgba(0, 0, 0, 0.5),
+      0 4px 12px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
     position: relative;
-    will-change: transform, opacity;
-    opacity: 0;
-    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    margin: 0 20px;
+    will-change: transform;
   }
   .phone-inner {
     position: relative;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
     background: #000;
   }
@@ -998,104 +1021,15 @@
     display: block;
   }
 
-  /* Initial positions — fanned out below, converge on scroll */
-  .phone-frame:nth-child(1) {
-    transform: translateY(200px) translateX(80px) rotate(12deg) scale(0.7);
-    transition-delay: 0.05s;
-    z-index: 1;
-  }
-  .phone-frame:nth-child(2) {
-    transform: translateY(200px) translateX(40px) rotate(6deg) scale(0.7);
-    transition-delay: 0.15s;
-    z-index: 2;
-  }
-  .phone-frame:nth-child(3) {
-    transform: translateY(200px) rotate(0deg) scale(0.7);
-    transition-delay: 0.25s;
-    z-index: 5;
-  }
-  .phone-frame:nth-child(4) {
-    transform: translateY(200px) translateX(-40px) rotate(-6deg) scale(0.7);
-    transition-delay: 0.35s;
-    z-index: 2;
-  }
-  .phone-frame:nth-child(5) {
-    transform: translateY(200px) translateX(-80px) rotate(-12deg) scale(0.7);
-    transition-delay: 0.45s;
-    z-index: 1;
-  }
-
-  /* Visible — arc formation */
-  .phone-frame.visible {
-    opacity: 1;
-  }
-  .phone-frame:nth-child(1).visible {
-    transform: translateY(40px) translateX(-20px) rotate(-8deg) scale(0.88);
-    box-shadow:
-      0 30px 60px rgba(0, 0, 0, 0.5),
-      0 8px 20px rgba(0, 0, 0, 0.3);
-  }
-  .phone-frame:nth-child(2).visible {
-    transform: translateY(10px) translateX(-8px) rotate(-3.5deg) scale(0.95);
-    box-shadow:
-      0 40px 80px rgba(0, 0, 0, 0.5),
-      0 10px 24px rgba(0, 0, 0, 0.3);
-  }
-  .phone-frame:nth-child(3).visible {
-    transform: translateY(-10px) rotate(0deg) scale(1.02);
-    box-shadow:
-      0 50px 100px rgba(0, 0, 0, 0.55),
-      0 12px 30px rgba(0, 0, 0, 0.35),
-      0 0 80px rgba(7, 81, 251, 0.1);
-  }
-  .phone-frame:nth-child(4).visible {
-    transform: translateY(10px) translateX(8px) rotate(3.5deg) scale(0.95);
-    box-shadow:
-      0 40px 80px rgba(0, 0, 0, 0.5),
-      0 10px 24px rgba(0, 0, 0, 0.3);
-  }
-  .phone-frame:nth-child(5).visible {
-    transform: translateY(40px) translateX(20px) rotate(8deg) scale(0.88);
-    box-shadow:
-      0 30px 60px rgba(0, 0, 0, 0.5),
-      0 8px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  /* Subtle float after reveal */
-  .phone-frame.visible.float {
-    animation: phoneFloat 4s ease-in-out infinite;
-  }
-  .phone-frame:nth-child(1).float { animation-delay: 0s; }
-  .phone-frame:nth-child(2).float { animation-delay: 0.6s; }
-  .phone-frame:nth-child(3).float { animation-delay: 1.2s; }
-  .phone-frame:nth-child(4).float { animation-delay: 1.8s; }
-  .phone-frame:nth-child(5).float { animation-delay: 2.4s; }
-  @keyframes phoneFloat {
-    0%, 100% { translate: 0 0; }
-    50% { translate: 0 -8px; }
-  }
-
   @media (max-width: 1100px) {
-    .phone-arc { gap: 20px; }
-    .phone-frame { width: 165px; padding: 6px; }
+    .phone-frame { width: 220px; margin: 0 14px; }
+    .phone-track-wrap { height: 540px; }
   }
   @media (max-width: 768px) {
-    .phone-showcase { margin-top: 60px; padding: 20px 16px 60px; }
-    .phone-arc { flex-wrap: wrap; gap: 16px; padding: 0; justify-content: center; }
-    .phone-frame { width: 140px; padding: 6px; }
-    .phone-frame:nth-child(1),
-    .phone-frame:nth-child(2),
-    .phone-frame:nth-child(3),
-    .phone-frame:nth-child(4),
-    .phone-frame:nth-child(5) { transform: translateY(60px) scale(0.9) rotate(0deg) translateX(0); }
-    .phone-frame:nth-child(1).visible,
-    .phone-frame:nth-child(2).visible,
-    .phone-frame:nth-child(3).visible,
-    .phone-frame:nth-child(4).visible,
-    .phone-frame:nth-child(5).visible {
-      transform: translateY(0) scale(1) rotate(0deg) translateX(0);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
+    .phone-showcase { margin-top: 40px; padding: 20px 0 60px; }
+    .phone-frame { width: 180px; margin: 0 10px; padding: 8px; border-radius: 24px; }
+    .phone-inner { border-radius: 16px; }
+    .phone-track-wrap { height: 440px; }
   }
 
   /* Footer */
@@ -1385,32 +1319,16 @@
 </section>
 
 <!-- PHONE SHOWCASE -->
-<section class="phone-showcase">
-  <div class="phone-arc">
-    <div class="phone-frame">
-      <div class="phone-inner">
-        <img class="phone-screen" src="screen-login.png" alt="SportIn App" />
-      </div>
-    </div>
-    <div class="phone-frame">
-      <div class="phone-inner">
-        <img class="phone-screen" src="screen-weekly.jpg" alt="Weekly Progress" />
-      </div>
-    </div>
-    <div class="phone-frame">
-      <div class="phone-inner">
-        <img class="phone-screen" src="screen-run.jpg" alt="Run Stats" />
-      </div>
-    </div>
-    <div class="phone-frame">
-      <div class="phone-inner">
-        <img class="phone-screen" src="screen-monthly.jpg" alt="Monthly Target" />
-      </div>
-    </div>
-    <div class="phone-frame">
-      <div class="phone-inner">
-        <img class="phone-screen" src="screen-profile.png" alt="Profile & Connections" />
-      </div>
+<section class="phone-showcase" id="phoneShowcase">
+  <div class="phone-track-wrap">
+    <div class="phone-track" id="phoneTrack">
+      <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-login.png" alt="SportIn App" /></div></div>
+      <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-feed.png" alt="Feed & Virtual Races" /></div></div>
+      <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-weekly.jpg" alt="Weekly Progress" /></div></div>
+      <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-run.jpg" alt="Run Stats" /></div></div>
+      <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-monthly.jpg" alt="Monthly Target" /></div></div>
+      <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-leaderboard.png" alt="Leaderboard" /></div></div>
+      <div class="phone-frame"><div class="phone-inner"><img class="phone-screen" src="screen-profile.png" alt="Profile & Connections" /></div></div>
     </div>
   </div>
 </section>
@@ -1798,18 +1716,92 @@
   });
   revealables.forEach((el) => io.observe(el));
 
-  const phoneFrames = document.querySelectorAll('.phone-frame');
-  const phoneIO = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        const delay = parseFloat(getComputedStyle(entry.target).transitionDelay) * 1000 + 1200;
-        setTimeout(() => entry.target.classList.add('float'), delay);
-        phoneIO.unobserve(entry.target);
+  // Scroll-driven phone arc carousel
+  (function setupPhoneCarousel() {
+    const showcase = document.getElementById('phoneShowcase');
+    const track = document.getElementById('phoneTrack');
+    if (!showcase || !track) return;
+    const frames = Array.from(track.querySelectorAll('.phone-frame'));
+    if (!frames.length) return;
+
+    let viewportW = window.innerWidth;
+    let trackW = 0;
+    let frameWidth = 0;
+    const arcHeight = 80; // max vertical lift along arc
+    const maxRotate = 14; // deg at edges
+    const maxScale = 1.05; // center scale
+    const minScale = 0.78; // edge scale
+
+    function measure() {
+      viewportW = window.innerWidth;
+      // total content width: sum of frame outer widths
+      trackW = frames.reduce((sum, el) => {
+        const cs = getComputedStyle(el);
+        return sum + el.offsetWidth + parseFloat(cs.marginLeft) + parseFloat(cs.marginRight);
+      }, 0);
+      frameWidth = frames[0].offsetWidth + 2 * parseFloat(getComputedStyle(frames[0]).marginLeft);
+    }
+
+    function update() {
+      const rect = showcase.getBoundingClientRect();
+      const winH = window.innerHeight;
+      // progress 0..1 as the section travels through the viewport
+      const total = winH + rect.height;
+      const traveled = winH - rect.top;
+      let progress = traveled / total;
+      progress = Math.max(0, Math.min(1, progress));
+
+      // translate the strip from +offset to -offset (scroll down → moves left)
+      const startX = viewportW * 0.5 + frameWidth * 0.5; // first phone enters from right
+      const endX = -(trackW - viewportW * 0.5 + frameWidth * 0.5); // last phone exits left
+      const trackX = startX + (endX - startX) * progress;
+      track.style.transform = `translate3d(${trackX}px, 0, 0)`;
+
+      // arc transform per phone based on its center distance from viewport center
+      const center = viewportW / 2;
+      let acc = trackX;
+      frames.forEach((el) => {
+        const cs = getComputedStyle(el);
+        const ml = parseFloat(cs.marginLeft);
+        const mr = parseFloat(cs.marginRight);
+        const w = el.offsetWidth;
+        const phoneCenter = acc + ml + w / 2;
+        acc += ml + w + mr;
+
+        const dist = (phoneCenter - center) / (viewportW / 2); // -1..1 across viewport
+        const clamped = Math.max(-1.4, Math.min(1.4, dist));
+        const norm = clamped; // for arc math
+
+        // Semicircle Y: lower at edges, lifted at center
+        const yArc = arcHeight * (norm * norm); // parabola, 0 at center, max at edges
+        // Slight rotation toward center
+        const rot = norm * maxRotate;
+        // Scale peaks at center
+        const scale = maxScale - (maxScale - minScale) * Math.min(1, Math.abs(norm));
+
+        el.style.transform = `translate3d(0, ${yArc}px, 0) rotate(${rot}deg) scale(${scale})`;
+        el.style.zIndex = String(100 - Math.round(Math.abs(norm) * 50));
+      });
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => { update(); ticking = false; });
       }
+    }
+
+    measure();
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { measure(); update(); }, { passive: true });
+    // Re-measure when images load (their height affects nothing, but be safe)
+    frames.forEach((el) => {
+      const img = el.querySelector('img');
+      if (img && !img.complete) img.addEventListener('load', () => { measure(); update(); }, { once: true });
     });
-  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
-  phoneFrames.forEach((el) => phoneIO.observe(el));
+  })();
 
   const formatNumber = (n, useDot) => {
     const rounded = Math.round(n);
