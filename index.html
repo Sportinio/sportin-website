@@ -2992,9 +2992,7 @@
     });
   })();
 
-  // FELT · scroll-driven hero scale (middle big → all equal as you scroll)
-  // Cards are top-anchored; section padding-bottom grows with the middle's
-  // overflow so the section below never collides with the scaled hero card.
+  // FELT · scroll-driven hero scale — direct 1:1 mapping with scroll, no lerp lag
   (function setupFeltScale() {
     const section = document.getElementById('felt');
     if (!section) return;
@@ -3006,64 +3004,55 @@
     const SCALE_HERO = 1.5;
     const SCALE_SMALL = 0.55;
     const SCALE_END = 1.0;
-    const ease = 0.085;
-    let target = 0, current = 0, rafId = null;
     let cardH = 0;
+    let ticking = false;
 
-    function measure() {
-      // Natural (unscaled) card height — middle should stay close to this
-      // when transform is scale(1)
-      const original = middle.style.transform;
-      middle.style.transform = 'scale(1)';
+    function measureCardHeight() {
+      // Capture natural (unscaled) height once — read while no transform applied
+      const prevMid = middle.style.transform;
+      middle.style.transform = 'none';
       cardH = middle.offsetHeight;
-      middle.style.transform = original;
+      middle.style.transform = prevMid;
     }
 
-    function compute() {
+    // Smooth ease-in-out cubic for the scroll-to-progress mapping
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function update() {
       const rect = section.getBoundingClientRect();
       const winH = window.innerHeight;
-      const total = winH + rect.height;
-      const traveled = winH - rect.top;
-      let p = traveled / total;
-      p = Math.max(0, Math.min(1, p / 0.6));
-      target = p;
-    }
+      // Start animating when the section's TOP enters the viewport,
+      // finish when the section has scrolled up by ~70% of the viewport height.
+      const start = winH;             // section top equals winH at first contact
+      const end = winH * 0.30;        // animation completes here (top has crossed 70% up)
+      let raw = (start - rect.top) / (start - end);
+      raw = Math.max(0, Math.min(1, raw));
+      const p = easeInOutCubic(raw);
 
-    function render() {
-      current += (target - current) * ease;
-      const p = current;
-      const midScale = SCALE_HERO + (SCALE_END - SCALE_HERO) * p; // 1.5 → 1.0
-      const sideScale = SCALE_SMALL + (SCALE_END - SCALE_SMALL) * p; // 0.55 → 1.0
+      const midScale = SCALE_HERO + (SCALE_END - SCALE_HERO) * p;
+      const sideScale = SCALE_SMALL + (SCALE_END - SCALE_SMALL) * p;
       middle.style.transform = `scale(${midScale.toFixed(4)})`;
       sides.forEach((el) => { el.style.transform = `scale(${sideScale.toFixed(4)})`; });
 
-      // Reserve extra space below the grid for the visually-larger middle card
-      // so it never overlaps the testimonials section beneath.
       if (cardH > 0) {
         const overflow = Math.max(0, (midScale - 1) * cardH);
         grid.style.paddingBottom = `${overflow.toFixed(0)}px`;
       }
-
-      if (Math.abs(target - current) > 0.0008) {
-        rafId = requestAnimationFrame(render);
-      } else {
-        rafId = null;
-      }
     }
 
     function onScroll() {
-      compute();
-      if (rafId == null) rafId = requestAnimationFrame(render);
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => { update(); ticking = false; });
+      }
     }
 
-    measure();
-    compute();
-    current = target;
-    render();
+    measureCardHeight();
+    update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { measure(); onScroll(); }, { passive: true });
-    // Re-measure once images / fonts load
-    setTimeout(() => { measure(); onScroll(); }, 1000);
+    window.addEventListener('resize', () => { measureCardHeight(); update(); }, { passive: true });
   })();
 
   // FELT · Leaderboard live step counter — smooth ticking values
