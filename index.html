@@ -260,26 +260,33 @@
   }
   .partner-logo {
     flex-shrink: 0;
-    width: 180px;
-    height: 88px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.93);
+    width: 140px;
+    height: 68px;
+    border-radius: 12px;
+    background: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.5);
-    display: grid;
-    place-items: center;
-    padding: 14px 18px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    /* explicit flex center on both axes */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.6);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
   }
   .partner-logo:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   }
   .partner-logo img {
     max-width: 100%;
-    max-height: 100%;
+    max-height: 36px;          /* uniform visual height across all logos */
+    width: auto;
+    height: auto;
     object-fit: contain;
+    object-position: center center;
     display: block;
+    margin: auto;
   }
   /* Pause on hover for accessibility */
   .partners-strip:hover .partners-row { animation-play-state: paused; }
@@ -2773,12 +2780,14 @@
     <div class="partner-logo"><img src="partners/garmin.png" alt="Garmin"/></div>
     <div class="partner-logo"><img src="partners/google.webp" alt="Google"/></div>
     <div class="partner-logo"><img src="partners/pirelli.png" alt="Pirelli"/></div>
+    <div class="partner-logo"><img src="partners/Banca_Transilvania.png" alt="Banca Transilvania"/></div>
     <!-- duplicated for seamless loop -->
     <div class="partner-logo"><img src="partners/porsche.png" alt="Porsche"/></div>
     <div class="partner-logo"><img src="partners/bmw.webp" alt="BMW"/></div>
     <div class="partner-logo"><img src="partners/garmin.png" alt="Garmin"/></div>
     <div class="partner-logo"><img src="partners/google.webp" alt="Google"/></div>
     <div class="partner-logo"><img src="partners/pirelli.png" alt="Pirelli"/></div>
+    <div class="partner-logo"><img src="partners/Banca_Transilvania.png" alt="Banca Transilvania"/></div>
   </div>
 
   <!-- Row 2: drifts right -->
@@ -2787,11 +2796,13 @@
     <div class="partner-logo"><img src="partners/decathlon.svg" alt="Decathlon"/></div>
     <div class="partner-logo"><img src="partners/carrefour.svg" alt="Carrefour"/></div>
     <div class="partner-logo"><img src="partners/emag.png" alt="eMAG"/></div>
+    <div class="partner-logo"><img src="partners/Raiffeisen_Bank_2023_logo.svg.png" alt="Raiffeisen Bank"/></div>
     <!-- duplicated -->
     <div class="partner-logo"><img src="partners/bosch.png" alt="Bosch"/></div>
     <div class="partner-logo"><img src="partners/decathlon.svg" alt="Decathlon"/></div>
     <div class="partner-logo"><img src="partners/carrefour.svg" alt="Carrefour"/></div>
     <div class="partner-logo"><img src="partners/emag.png" alt="eMAG"/></div>
+    <div class="partner-logo"><img src="partners/Raiffeisen_Bank_2023_logo.svg.png" alt="Raiffeisen Bank"/></div>
   </div>
 </section>
 
