@@ -474,22 +474,14 @@
   }
   .why-check-box {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.12);
+    width: 32px;
+    height: 32px;
     display: grid;
     place-items: center;
-    transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
-  }
-  .why-check-item.checked .why-check-box {
-    border-color: #12E094;
-    background: rgba(18, 224, 148, 0.1);
-    box-shadow: 0 0 20px rgba(18, 224, 148, 0.2);
   }
   .why-check-svg {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
   }
   .why-check-path {
     stroke-dasharray: 30;
@@ -3874,11 +3866,12 @@
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('checked');
+      } else {
+        entry.target.classList.remove('checked');
       }
     });
   }, {
-    threshold: 0.6,
-    rootMargin: '0px 0px -10% 0px'
+    threshold: 0.5
   });
 
   items.forEach(item => observer.observe(item));
