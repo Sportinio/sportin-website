@@ -224,31 +224,26 @@
   /* === HERO === */
   .hero-wrap {
     position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
+    background: url('/leagueofbrands/cover_2.png') center center / cover no-repeat;
+    padding: 180px 48px 120px;
     overflow: hidden;
   }
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background: url('/leagueofbrands/cover_2.png') center center / cover no-repeat;
-    z-index: 0;
-  }
-  .hero-bg::after {
+  .hero-wrap::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(8, 10, 20, 0.55) 0%, rgba(8, 10, 20, 0.85) 70%, var(--bg) 100%);
+    background: rgba(8, 10, 20, 0.75);
+    z-index: 0;
+  }
+  .hero-wrap > * {
+    position: relative;
+    z-index: 1;
   }
   .hero {
-    padding: 130px 48px 100px;
     max-width: 1120px;
     margin: 0 auto;
     text-align: center;
-    position: relative;
-    z-index: 1;
   }
   .hero-league-badge {
     display: inline-flex;
@@ -2178,7 +2173,6 @@
 
 <!-- HERO -->
 <div class="hero-wrap">
-  <div class="hero-bg"></div>
   <section class="hero" id="hero">
     <div class="hero-league-badge reveal">
       <span class="dot"></span>
