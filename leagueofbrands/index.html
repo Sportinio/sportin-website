@@ -1822,18 +1822,32 @@
     position: relative;
   }
 
-  /* Anim 1: Pro Sport Formats — table rows */
-  .anim-table { padding: 14px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); display: flex; flex-direction: column; gap: 4px; height: 100%; }
+  /* Anim 1: Pro Sport Formats — live leaderboard with swapping rows */
+  .anim-table {
+    padding: 14px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    position: relative;
+    height: 100%;
+  }
   .anim-table .row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 11px 4px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    animation: tableRow 6s ease-in-out infinite;
-    opacity: 0;
-    transform: translateY(6px);
     color: var(--text-2);
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    transition: top 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
+    opacity: 1;
+    z-index: 1;
+  }
+  .anim-table .row.swapping-up {
+    z-index: 2;
+    border-color: rgba(59, 123, 255, 0.2);
   }
   .anim-table .row.active { color: var(--text); }
   .anim-table .row .name { display: flex; gap: 10px; align-items: center; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -1844,15 +1858,6 @@
   .anim-table .row.f1 .mark { background: #FF1840; color: #fff; }
   .anim-table .row.uefa .mark { background: linear-gradient(135deg, #FF6900, #FFB100); color: #fff; }
   .anim-table .row.tdf .mark { background: linear-gradient(135deg, #F5E4A8, #C9A24B); color: #1a1a1e; }
-  .anim-table .row:nth-child(1) { animation-delay: 0s; }
-  .anim-table .row:nth-child(2) { animation-delay: 0.5s; }
-  .anim-table .row:nth-child(3) { animation-delay: 1.0s; }
-  .anim-table .row:nth-child(4) { animation-delay: 1.5s; }
-  @keyframes tableRow {
-    0% { opacity: 0; transform: translateY(6px); }
-    8%, 92% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-6px); }
-  }
 
   /* Anim 2: AI Voice waveform */
   .anim-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 100%; padding: 0 16px; cursor: pointer; }
@@ -3809,6 +3814,79 @@
       overlay.classList.remove('is-paused-from-play');
     }
   });
+})();
+
+// Pro Sport Formats: live leaderboard row swapping
+(function setupTableSwap() {
+  const table = document.querySelector('.anim-table');
+  if (!table) return;
+  const rows = Array.from(table.querySelectorAll('.row'));
+  if (rows.length < 2) return;
+
+  const ROW_HEIGHT = 46; // px per row slot
+  const GAP = 8;
+
+  // current order (indices into rows array)
+  let order = rows.map((_, i) => i);
+
+  // position rows absolutely based on order
+  function layout(animate) {
+    order.forEach((rowIdx, slot) => {
+      const row = rows[rowIdx];
+      row.style.top = (slot * (ROW_HEIGHT + GAP) + 14) + 'px';
+    });
+  }
+
+  // initial layout
+  layout(false);
+
+  // swap schedule: [delayFromStart, slotA, slotB]
+  // these repeat in a cycle
+  const swaps = [
+    { delay: 1500, a: 2, b: 3 },   // 3rd and 4th swap
+    { delay: 3500, a: 0, b: 1 },   // 1st and 2nd swap
+    { delay: 5500, a: 1, b: 2 },   // 2nd and 3rd swap
+    { delay: 8000, a: 3, b: 2 },   // 4th and 3rd swap back
+    { delay: 10500, a: 1, b: 0 },  // 2nd and 1st swap back
+    { delay: 13000, a: 2, b: 1 },  // 3rd and 2nd swap back
+  ];
+
+  const CYCLE = 15000; // total cycle time before repeating
+  let timers = [];
+
+  function doSwap(slotA, slotB) {
+    // the row moving up gets a subtle highlight
+    const movingUp = rows[order[slotB]];
+    movingUp.classList.add('swapping-up');
+
+    // swap in order array
+    const tmp = order[slotA];
+    order[slotA] = order[slotB];
+    order[slotB] = tmp;
+
+    // update active class — top row is always active
+    rows.forEach(r => r.classList.remove('active'));
+    rows[order[0]].classList.add('active');
+
+    layout(true);
+
+    // remove highlight after transition
+    setTimeout(() => {
+      movingUp.classList.remove('swapping-up');
+    }, 1400);
+  }
+
+  function startCycle() {
+    timers.forEach(t => clearTimeout(t));
+    timers = [];
+    swaps.forEach(s => {
+      timers.push(setTimeout(() => doSwap(s.a, s.b), s.delay));
+    });
+    // loop
+    timers.push(setTimeout(startCycle, CYCLE));
+  }
+
+  startCycle();
 })();
 </script>
 
