@@ -554,15 +554,44 @@
   /* === SECTION: WHY BRANDS JOIN === */
   .why {
     margin-top: 140px;
+    position: relative;
   }
   .why-head { text-align: center; margin-bottom: 56px; }
   .why-head .section-title { margin: 0 auto; }
-  .why-checklist {
-    max-width: 620px;
+  .why-body {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    max-width: 1120px;
     margin: 0 auto;
+  }
+  .why-checklist {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0;
+  }
+  .why-cup-wrap {
+    flex-shrink: 0;
+    width: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 120px;
+    align-self: flex-start;
+  }
+  .why-cup {
+    width: 100%;
+    height: auto;
+    opacity: 0.85;
+    filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.5));
+    transition: transform 0.1s linear;
+    will-change: transform;
+  }
+  @media (max-width: 768px) {
+    .why-body { flex-direction: column; gap: 40px; }
+    .why-cup-wrap { width: 200px; position: relative; top: auto; align-self: center; }
   }
   .why-check-item {
     display: flex;
@@ -2753,6 +2782,7 @@
     <div class="section-kicker reveal">The Advantage</div>
     <h2 class="section-title reveal" style="--rd:0.1s;">Why brands <span class="gradient">join.</span></h2>
   </div>
+  <div class="why-body">
   <div class="why-checklist">
     <div class="why-check-item" data-check>
       <div class="why-check-box">
@@ -2820,6 +2850,10 @@
         <div class="why-check-desc">When people share, your brand is there.</div>
       </div>
     </div>
+  </div>
+  <div class="why-cup-wrap">
+    <img src="/leagueofbrands/lob_cup.png" alt="League of Brands Cup" class="why-cup" id="whyCup" />
+  </div>
   </div>
 </section>
 
@@ -4257,6 +4291,25 @@
 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+})();
+</script>
+
+<!-- CUP SCROLL ROTATION JS -->
+<script>
+(function() {
+  const cup = document.getElementById('whyCup');
+  if (!cup) return;
+  const section = cup.closest('.why');
+
+  function update() {
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const progress = Math.max(0, Math.min(1, (vh - rect.top) / (vh + rect.height)));
+    const rotation = -15 + progress * 30;
+    cup.style.transform = 'rotate(' + rotation + 'deg)';
+    requestAnimationFrame(update);
+  }
+  update();
 })();
 </script>
 
