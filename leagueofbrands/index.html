@@ -7,13 +7,13 @@
 <meta name="description" content="League of Brands is a national brand competition built on movement and professional sport logic. July to November. Weekly matches. One league. One cup." />
 <meta name="theme-color" content="#0751FB" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="canonical" href="https://sportin.io/LoB_01_Homepage.html" />
+<link rel="canonical" href="https://sportin.io/leagueofbrands" />
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="SportIn" />
 <meta property="og:title" content="League of Brands — The National Movement Competition" />
 <meta property="og:description" content="A national brand competition built on movement and professional sport logic. July–November. Weekly matches. One league. One cup." />
-<meta property="og:url" content="https://sportin.io/LoB_01_Homepage.html" />
+<meta property="og:url" content="https://sportin.io/leagueofbrands" />
 <meta property="og:image" content="https://sportin.io/hero-banner.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="League of Brands — The National Movement Competition" />
@@ -1403,6 +1403,11 @@
   .mr-btn--reset:hover { border-color: var(--text-4); color: var(--text); }
   .mr-btn[disabled] { opacity: 0.35; pointer-events: none; }
   .mr-btn svg { width: 14px; height: 14px; fill: currentColor; }
+  .mr-btn--commentary { border-color: var(--green); color: var(--green); box-shadow: 0 2px 12px rgba(18, 224, 148, 0.12); }
+  .mr-btn--commentary:hover { box-shadow: 0 4px 18px rgba(18, 224, 148, 0.25); border-color: #34D399; }
+  .mr-btn--commentary.playing { background: rgba(18, 224, 148, 0.1); border-color: var(--green); }
+  .mr-btn--commentary.playing svg { animation: commPulse 1.5s ease-in-out infinite; }
+  @keyframes commPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
   .mr-timer {
     display: flex;
     align-items: center;
@@ -1528,10 +1533,11 @@
     display: flex;
     align-items: center;
     padding: 0 20px;
-    transition: top 2s cubic-bezier(0.34, 0.02, 0.36, 1),
-                background 0.6s, box-shadow 0.6s;
+    transition: top 2.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                background 0.8s ease, box-shadow 0.8s ease;
     border-radius: 10px;
     z-index: 1;
+    will-change: top;
     background: rgba(255, 255, 255, 0.10);
     backdrop-filter: blur(12px) saturate(1.3);
     -webkit-backdrop-filter: blur(12px) saturate(1.3);
@@ -1601,7 +1607,7 @@
     top: 0; left: 0; bottom: 0;
     border-radius: 0 14px 14px 0;
     overflow: hidden;
-    transition: width 0.8s cubic-bezier(0.34, 0.02, 0.36, 1);
+    transition: width 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
   .mr-bar {
     height: 100%;
@@ -1622,7 +1628,7 @@
     color: var(--text);
     border: 2px solid;
     background: rgba(255, 255, 255, 0.06);
-    transition: border-color 0.5s, left 0.8s cubic-bezier(0.34, 0.02, 0.36, 1);
+    transition: border-color 0.8s ease, left 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -1780,7 +1786,12 @@
 <section class="match-replay reveal" style="--rd:0.3s;">
   <div class="section-kicker">LIVE MATCH REPLAY</div>
 
+  <audio id="mrCommentary" src="/sportin_urbanfm.mp3" preload="auto"></audio>
   <div class="mr-controls">
+    <button class="mr-btn mr-btn--commentary" id="mrCommentaryBtn">
+      <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      Play Commentary
+    </button>
     <button class="mr-btn mr-btn--pause" id="mrStopBtn" style="display:none;">
       <svg viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="15" y="3" width="4" height="18" rx="1"/></svg>
       Stop
@@ -2554,26 +2565,26 @@
     name: 'SportIn', color: '#0751FB', colorLight: 'rgba(7,81,251,0.8)',
     players: [
       { id: 1, first: 'Cristina', last: 'Moldovan', avgMI: 6.1, img: 'https://i.pravatar.cc/80?img=1' },
-      { id: 2, first: 'Adrian', last: 'Neagu', avgMI: 6.1, img: 'https://i.pravatar.cc/80?img=14' },
-      { id: 3, first: 'Radu', last: 'Gheorghe', avgMI: 6.0, img: 'https://i.pravatar.cc/80?img=12' },
-      { id: 4, first: 'Elena', last: 'Ciobanu', avgMI: 5.7, img: 'https://i.pravatar.cc/80?img=5' },
-      { id: 5, first: 'Alina', last: 'Dinu', avgMI: 5.1, img: 'https://i.pravatar.cc/80?img=9' },
-      { id: 6, first: 'Bogdan', last: 'Iacob', avgMI: 4.9, img: 'https://i.pravatar.cc/80?img=33' },
-      { id: 7, first: 'Mihai', last: 'Florescu', avgMI: 4.4, img: 'https://i.pravatar.cc/80?img=53' },
-      { id: 8, first: 'Ioana', last: 'Matei', avgMI: 4.1, img: 'https://i.pravatar.cc/80?img=23' },
+      { id: 2, first: 'Adrian', last: 'Neagu', avgMI: 5.9, img: 'https://i.pravatar.cc/80?img=14' },
+      { id: 3, first: 'Radu', last: 'Gheorghe', avgMI: 5.6, img: 'https://i.pravatar.cc/80?img=12' },
+      { id: 4, first: 'Elena', last: 'Ciobanu', avgMI: 5.2, img: 'https://i.pravatar.cc/80?img=5' },
+      { id: 5, first: 'Alina', last: 'Dinu', avgMI: 4.8, img: 'https://i.pravatar.cc/80?img=9' },
+      { id: 6, first: 'Bogdan', last: 'Iacob', avgMI: 4.4, img: 'https://i.pravatar.cc/80?img=33' },
+      { id: 7, first: 'Mihai', last: 'Florescu', avgMI: 3.9, img: 'https://i.pravatar.cc/80?img=53' },
+      { id: 8, first: 'Ioana', last: 'Matei', avgMI: 3.5, img: 'https://i.pravatar.cc/80?img=23' },
     ]
   };
   const awayTeam = {
     name: 'Urban FM', color: '#EF4444', colorLight: 'rgba(239,68,68,0.8)',
     players: [
-      { id: 11, first: 'Vlad', last: 'Marinescu', avgMI: 6.2, img: 'https://i.pravatar.cc/80?img=60' },
-      { id: 12, first: 'Andreea', last: 'Voicu', avgMI: 6.0, img: 'https://i.pravatar.cc/80?img=47' },
-      { id: 13, first: 'Dan', last: 'Costache', avgMI: 5.7, img: 'https://i.pravatar.cc/80?img=57' },
-      { id: 14, first: 'Gabriela', last: 'Enache', avgMI: 5.4, img: 'https://i.pravatar.cc/80?img=44' },
-      { id: 15, first: 'Ciprian', last: 'Lazar', avgMI: 5.1, img: 'https://i.pravatar.cc/80?img=52' },
-      { id: 16, first: 'Irina', last: 'Neculai', avgMI: 4.9, img: 'https://i.pravatar.cc/80?img=26' },
-      { id: 17, first: 'Monica', last: 'Tanase', avgMI: 4.4, img: 'https://i.pravatar.cc/80?img=25' },
-      { id: 18, first: 'Octavian', last: 'Sarbu', avgMI: 4.2, img: 'https://i.pravatar.cc/80?img=68' },
+      { id: 11, first: 'Vlad', last: 'Marinescu', avgMI: 6.3, img: 'https://i.pravatar.cc/80?img=60' },
+      { id: 12, first: 'Andreea', last: 'Voicu', avgMI: 5.8, img: 'https://i.pravatar.cc/80?img=47' },
+      { id: 13, first: 'Dan', last: 'Costache', avgMI: 5.3, img: 'https://i.pravatar.cc/80?img=57' },
+      { id: 14, first: 'Gabriela', last: 'Enache', avgMI: 4.9, img: 'https://i.pravatar.cc/80?img=44' },
+      { id: 15, first: 'Ciprian', last: 'Lazar', avgMI: 4.5, img: 'https://i.pravatar.cc/80?img=52' },
+      { id: 16, first: 'Irina', last: 'Neculai', avgMI: 4.1, img: 'https://i.pravatar.cc/80?img=26' },
+      { id: 17, first: 'Monica', last: 'Tanase', avgMI: 3.7, img: 'https://i.pravatar.cc/80?img=25' },
+      { id: 18, first: 'Octavian', last: 'Sarbu', avgMI: 3.3, img: 'https://i.pravatar.cc/80?img=68' },
     ]
   };
 
@@ -2590,7 +2601,9 @@
   const ROW_H = 58;
   const ROW_GAP = 8;
   const DURATION = 60000; // 60 seconds
-  const MOVE_DURATION = 2200;
+  const GLOW_DURATION = 2800; // how long the moving glow lasts
+  const SWAP_COOLDOWN = 2500; // minimum ms between swaps for a player
+  const MIN_STEP_DIFF = 80; // minimum step difference to trigger a swap
 
   // ── DOM refs ──
   const timerText = document.getElementById('mrTimerText');
@@ -2614,21 +2627,31 @@
     });
   }
 
+  // ── Cache DOM refs per player for performance ──
+  function cachePlayerDOM(p) {
+    const row = p._row;
+    p._posEl = row.querySelector('.mr-pos');
+    p._avatar = row.querySelector('.mr-avatar');
+    p._barInner = row.querySelector('.mr-bar-inner');
+    p._miVal = row.querySelector('.mr-mi-val');
+    p._stepsVal = row.querySelector('.mr-steps-val');
+  }
+
   // ── Build rows for a team ──
   function buildTeamRows(team, containerId, barClass) {
     const container = document.getElementById(containerId);
+    // Use the original array order as the stable initial order
     team.players.forEach((p, i) => {
       const row = document.createElement('div');
       row.className = 'mr-row';
       row.id = 'mr-row-' + p.id;
       row.style.top = (i * (ROW_H + ROW_GAP)) + 'px';
 
-      const initials = p.first[0] + p.last[0];
       const posColor = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
       const avatarBorder = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : '#CD7F32') : team.color;
       const avatarContent = p.img
         ? '<img src="' + p.img + '" alt="' + p.first + '">'
-        : initials;
+        : (p.first[0] + p.last[0]);
 
       row.innerHTML =
         '<span class="mr-pos ' + posColor + '">' + (i + 1) + '</span>' +
@@ -2638,7 +2661,7 @@
         '</div>' +
         '<div class="mr-bar-wrap ' + (barClass === 'blue' ? 'blue-bar' : 'red-bar') + '">' +
           '<div class="mr-bar-inner" style="width:0%"><div class="mr-bar ' + barClass + '" style="width:100%"></div></div>' +
-          '<div class="mr-avatar" style="border-color:' + avatarBorder + '; left:calc(0% - 17px);">' + avatarContent + '</div>' +
+          '<div class="mr-avatar" style="border-color:' + avatarBorder + '; left:-17px;">' + avatarContent + '</div>' +
         '</div>' +
         '<div class="mr-stats">' +
           '<div class="mr-mi-val">0.0 mi</div>' +
@@ -2647,9 +2670,16 @@
 
       container.appendChild(row);
       p._row = row;
+      p._currentPos = i;
       p._prevPos = i;
       p._moveTime = 0;
+      p._lastSwapTime = 0;
+      p._currentSteps = 0;
+      cachePlayerDOM(p);
     });
+
+    // Store current ranking for the team
+    team._ranking = [...team.players];
   }
 
   // ── Initialize ──
@@ -2664,32 +2694,13 @@
 
   // ── Update team footer ──
   function updateFooter(team, prefix) {
-    const totalSteps = team.players.reduce((s, p) => s + (p._currentSteps || p.finalSteps), 0);
+    const totalSteps = team.players.reduce((s, p) => s + (p._currentSteps || 0), 0);
     const avgMI = stepsToMI(totalSteps / team.players.length);
     document.getElementById('mrTotalSteps' + prefix).textContent = totalSteps.toLocaleString();
     document.getElementById('mrAvgMI' + prefix).textContent = avgMI.toFixed(1);
   }
 
-  // ── Set final state ──
-  function setFinalState() {
-    [homeTeam, awayTeam].forEach(team => {
-      team.players.forEach(p => { p._currentSteps = p.finalSteps; });
-    });
-    updateFooter(homeTeam, 'Home');
-    updateFooter(awayTeam, 'Away');
-  }
-
-  // ── Set initial state (start of day, all zeros) ──
-  function setInitialState() {
-    [homeTeam, awayTeam].forEach(team => {
-      team.players.forEach(p => { p._currentSteps = 0; });
-    });
-    updateFooter(homeTeam, 'Home');
-    updateFooter(awayTeam, 'Away');
-  }
-  setInitialState();
-
-  // ── Interpolate steps at a given progress (0-1 maps to hour 0-24) ──
+  // ── Interpolate steps smoothly (0-1 maps to hour 0-24) ──
   function getStepsAtProgress(player, progress) {
     const hour = progress * 24;
     const lo = Math.floor(hour);
@@ -2698,49 +2709,87 @@
     return player.stepsArr[lo] + (player.stepsArr[hi] - player.stepsArr[lo]) * frac;
   }
 
+  // ── Stable position sort with hysteresis ──
+  // Only swap adjacent positions when step difference exceeds threshold
+  // and cooldown has elapsed. This prevents flickering from tiny differences.
+  function updateRanking(team, now) {
+    const ranking = team._ranking;
+
+    // Bubble-sort style: only swap adjacent pairs that clearly differ
+    let swapped = true;
+    let passes = 0;
+    while (swapped && passes < 2) { // max 2 passes per frame
+      swapped = false;
+      for (let i = 0; i < ranking.length - 1; i++) {
+        const above = ranking[i];
+        const below = ranking[i + 1];
+        const diff = below._currentSteps - above._currentSteps;
+
+        // Only swap if the lower-ranked player clearly has more steps
+        if (diff > MIN_STEP_DIFF) {
+          // Check cooldown — don't swap if either player just swapped
+          const aboveCool = now - above._lastSwapTime > SWAP_COOLDOWN;
+          const belowCool = now - below._lastSwapTime > SWAP_COOLDOWN;
+          if (aboveCool && belowCool) {
+            ranking[i] = below;
+            ranking[i + 1] = above;
+            above._lastSwapTime = now;
+            below._lastSwapTime = now;
+            swapped = true;
+          }
+        }
+      }
+      passes++;
+    }
+
+    // Apply positions from ranking
+    ranking.forEach((p, i) => {
+      p._currentPos = i;
+    });
+  }
+
   // ── Render team at progress ──
   function renderTeam(team, progress, barClass, now) {
-    // Calculate current steps
+    // Calculate current steps for all players
     team.players.forEach(p => {
       p._currentSteps = Math.round(getStepsAtProgress(p, progress));
     });
 
-    // Sort by steps descending
-    const sorted = [...team.players].sort((a, b) => b._currentSteps - a._currentSteps);
+    // Update ranking with hysteresis
+    updateRanking(team, now);
 
-    sorted.forEach((p, i) => {
+    // Apply visual updates
+    team._ranking.forEach((p, i) => {
       const row = p._row;
-      const newTop = i * (ROW_H + ROW_GAP);
-      row.style.top = newTop + 'px';
 
-      // Position colors
-      const posEl = row.querySelector('.mr-pos');
-      posEl.textContent = i + 1;
-      posEl.className = 'mr-pos' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
+      // Smoothly move to new position
+      row.style.top = (i * (ROW_H + ROW_GAP)) + 'px';
 
-      // Avatar border + position
-      const avatar = row.querySelector('.mr-avatar');
+      // Position badge
+      p._posEl.textContent = i + 1;
+      p._posEl.className = 'mr-pos' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
+
+      // Avatar border color
       const avatarColor = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : '#CD7F32') : team.color;
-      avatar.style.borderColor = avatarColor;
+      p._avatar.style.borderColor = avatarColor;
 
       // Bar width + avatar follows bar
-      const barInner = row.querySelector('.mr-bar-inner');
       const pct = globalMaxSteps > 0 ? (p._currentSteps / globalMaxSteps) * 100 : 0;
-      barInner.style.width = pct.toFixed(1) + '%';
-      avatar.style.left = 'calc(' + pct.toFixed(1) + '% - 17px)';
+      p._barInner.style.width = pct.toFixed(2) + '%';
+      p._avatar.style.left = 'calc(' + pct.toFixed(2) + '% - 17px)';
 
       // Stats
-      row.querySelector('.mr-mi-val').textContent = stepsToMI(p._currentSteps).toFixed(1) + ' mi';
-      row.querySelector('.mr-steps-val').textContent = p._currentSteps.toLocaleString();
+      p._miVal.textContent = stepsToMI(p._currentSteps).toFixed(1) + ' mi';
+      p._stepsVal.textContent = p._currentSteps.toLocaleString();
 
-      // Movement detection
+      // Movement glow detection
       if (p._prevPos !== i) {
         p._moveDir = i < p._prevPos ? 'up' : 'down';
         p._moveTime = now;
         p._prevPos = i;
       }
       const timeSinceMove = now - (p._moveTime || 0);
-      if (timeSinceMove < MOVE_DURATION && p._moveTime > 0) {
+      if (timeSinceMove < GLOW_DURATION && p._moveTime > 0) {
         if (p._moveDir === 'up') {
           row.classList.add('moving-up');
           row.classList.remove('moving-down');
@@ -2770,6 +2819,7 @@
   let elapsed = 0;
   let rafId = null;
   let autoStarted = false;
+  let lastRenderTime = 0;
 
   const stopBtn = document.getElementById('mrStopBtn');
 
@@ -2790,22 +2840,25 @@
     elapsed = now - startTime;
 
     if (elapsed >= DURATION) {
-      // Animation complete — restart loop after brief pause
       elapsed = DURATION;
       animState = 'done';
       renderFrame(1.0, now);
       updateUI();
-      // Auto-restart after 3 seconds
+      // Auto-restart after 4 seconds
       setTimeout(() => {
         if (animState === 'done') {
           play();
         }
-      }, 3000);
+      }, 4000);
       return;
     }
 
-    const progress = elapsed / DURATION;
-    renderFrame(progress, now);
+    // Throttle DOM updates to ~30fps for smoothness without thrashing
+    if (now - lastRenderTime > 33) {
+      const progress = elapsed / DURATION;
+      renderFrame(progress, now);
+      lastRenderTime = now;
+    }
 
     if (animState === 'playing') {
       rafId = requestAnimationFrame(tick);
@@ -2813,14 +2866,12 @@
   }
 
   function renderFrame(progress, now) {
-    // progress 0→1 maps to hour 0→24 (full day)
     const currentHour = progress * 24;
 
     // Update timer
     timerText.textContent = formatTime(elapsed) + ' / 1:00';
     timerFill.style.width = (progress * 100) + '%';
 
-    // Show actual hour of day with minutes
     const hh = Math.floor(currentHour);
     const mm = Math.floor((currentHour - hh) * 60);
     hourBadge.textContent = hh.toString().padStart(2, '0') + ':' + mm.toString().padStart(2, '0');
@@ -2848,40 +2899,86 @@
     updateVersusScores();
   }
 
+  // ── Disable transitions temporarily for instant positioning ──
+  function setTransitions(enabled) {
+    const rows = document.querySelectorAll('.mr-row');
+    const bars = document.querySelectorAll('.mr-bar-inner');
+    const avatars = document.querySelectorAll('.mr-avatar');
+    if (enabled) {
+      rows.forEach(r => r.style.transition = '');
+      bars.forEach(b => b.style.transition = '');
+      avatars.forEach(a => a.style.transition = '');
+    } else {
+      rows.forEach(r => r.style.transition = 'none');
+      bars.forEach(b => b.style.transition = 'none');
+      avatars.forEach(a => a.style.transition = 'none');
+    }
+  }
+
   function play() {
-    // Reset all players to start position
+    if (rafId) cancelAnimationFrame(rafId);
+
+    // Disable transitions so reset is instant (no flickering)
+    setTransitions(false);
+
+    // Reset all players to their original array position
     [homeTeam, awayTeam].forEach(team => {
-      // Sort by avgMI descending for initial order
-      const initialOrder = [...team.players].sort((a, b) => b.avgMI - a.avgMI);
-      team.players.forEach((p) => {
-        const initIdx = initialOrder.indexOf(p);
-        p._prevPos = initIdx;
+      team._ranking = [...team.players]; // restore original order
+      team.players.forEach((p, i) => {
+        p._currentPos = i;
+        p._prevPos = i;
         p._moveTime = 0;
+        p._lastSwapTime = 0;
         p._currentSteps = 0;
+
         const row = p._row;
-        row.style.top = (initIdx * (ROW_H + ROW_GAP)) + 'px';
+        row.style.top = (i * (ROW_H + ROW_GAP)) + 'px';
         row.classList.remove('moving-up', 'moving-down');
 
-        // Reset bar and avatar
-        const barInner = row.querySelector('.mr-bar-inner');
-        barInner.style.width = '0%';
-        const avatar = row.querySelector('.mr-avatar');
-        avatar.style.left = 'calc(0% - 17px)';
+        p._barInner.style.width = '0%';
+        p._avatar.style.left = '-17px';
 
-        const posEl = row.querySelector('.mr-pos');
-        posEl.textContent = initIdx + 1;
-        posEl.className = 'mr-pos' + (initIdx === 0 ? ' gold' : initIdx === 1 ? ' silver' : initIdx === 2 ? ' bronze' : '');
+        p._posEl.textContent = i + 1;
+        p._posEl.className = 'mr-pos' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
 
-        row.querySelector('.mr-mi-val').textContent = '0.0 mi';
-        row.querySelector('.mr-steps-val').textContent = '0';
+        const avatarColor = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : '#CD7F32') : team.color;
+        p._avatar.style.borderColor = avatarColor;
+
+        p._miVal.textContent = '0.0 mi';
+        p._stepsVal.textContent = '0';
       });
     });
 
-    elapsed = 0;
-    startTime = performance.now();
-    animState = 'playing';
-    updateUI();
-    rafId = requestAnimationFrame(tick);
+    // Update footers to zero
+    updateFooter(homeTeam, 'Home');
+    updateFooter(awayTeam, 'Away');
+
+    // Reset timer display
+    timerText.textContent = '0:00 / 1:00';
+    timerFill.style.width = '0%';
+    hourBadge.textContent = '00:00';
+    playheadHome.style.left = '20px';
+    playheadAway.style.left = '20px';
+    playheadHome.classList.remove('active');
+    playheadAway.classList.remove('active');
+
+    // Force layout so the instant positioning paints before we re-enable transitions
+    document.body.offsetHeight;
+
+    // Re-enable transitions after a frame so the animation is smooth
+    requestAnimationFrame(() => {
+      setTransitions(true);
+
+      // Start animation after another frame to ensure transitions are active
+      requestAnimationFrame(() => {
+        elapsed = 0;
+        startTime = performance.now();
+        lastRenderTime = 0;
+        animState = 'playing';
+        updateUI();
+        rafId = requestAnimationFrame(tick);
+      });
+    });
   }
 
   function stop() {
@@ -2892,33 +2989,33 @@
     // Show final 24h state
     [homeTeam, awayTeam].forEach(team => {
       const sorted = [...team.players].sort((a, b) => b.finalSteps - a.finalSteps);
+      team._ranking = sorted;
       sorted.forEach((p, i) => {
         p._currentSteps = p.finalSteps;
+        p._currentPos = i;
         p._prevPos = i;
         p._moveTime = 0;
         const row = p._row;
         row.style.top = (i * (ROW_H + ROW_GAP)) + 'px';
         row.classList.remove('moving-up', 'moving-down');
 
-        const posEl = row.querySelector('.mr-pos');
-        posEl.textContent = i + 1;
-        posEl.className = 'mr-pos' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
+        p._posEl.textContent = i + 1;
+        p._posEl.className = 'mr-pos' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
 
-        const avatar = row.querySelector('.mr-avatar');
         const avatarColor = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : '#CD7F32') : team.color;
-        avatar.style.borderColor = avatarColor;
+        p._avatar.style.borderColor = avatarColor;
 
-        const barInner = row.querySelector('.mr-bar-inner');
         const pct = ((p.finalSteps / globalMaxSteps) * 100).toFixed(1);
-        barInner.style.width = pct + '%';
-        avatar.style.left = 'calc(' + pct + '% - 17px)';
+        p._barInner.style.width = pct + '%';
+        p._avatar.style.left = 'calc(' + pct + '% - 17px)';
 
-        row.querySelector('.mr-mi-val').textContent = stepsToMI(p.finalSteps).toFixed(1) + ' mi';
-        row.querySelector('.mr-steps-val').textContent = p.finalSteps.toLocaleString();
+        p._miVal.textContent = stepsToMI(p.finalSteps).toFixed(1) + ' mi';
+        p._stepsVal.textContent = p.finalSteps.toLocaleString();
       });
     });
 
-    setFinalState();
+    updateFooter(homeTeam, 'Home');
+    updateFooter(awayTeam, 'Away');
     updateVersusScores();
     timerText.textContent = '1:00 / 1:00';
     timerFill.style.width = '100%';
@@ -2927,6 +3024,36 @@
 
   stopBtn.addEventListener('click', stop);
 
+  // ── Commentary audio ──
+  const commentaryAudio = document.getElementById('mrCommentary');
+  const commentaryBtn = document.getElementById('mrCommentaryBtn');
+
+  commentaryBtn.addEventListener('click', () => {
+    if (commentaryAudio.paused) {
+      commentaryAudio.currentTime = 0;
+      commentaryAudio.play().then(() => {
+        commentaryBtn.classList.add('playing');
+        commentaryBtn.innerHTML =
+          '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18" rx="1" fill="currentColor"/><rect x="15" y="3" width="4" height="18" rx="1" fill="currentColor"/></svg>' +
+          ' Stop Commentary';
+      }).catch(() => {});
+    } else {
+      commentaryAudio.pause();
+      commentaryAudio.currentTime = 0;
+      commentaryBtn.classList.remove('playing');
+      commentaryBtn.innerHTML =
+        '<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>' +
+        ' Play Commentary';
+    }
+  });
+
+  commentaryAudio.addEventListener('ended', () => {
+    commentaryBtn.classList.remove('playing');
+    commentaryBtn.innerHTML =
+      '<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>' +
+      ' Play Commentary';
+  });
+
   // ── Auto-start when section scrolls into view ──
   const mrSection = document.querySelector('.match-replay');
   if (mrSection) {
@@ -2934,14 +3061,12 @@
       entries.forEach(entry => {
         if (entry.isIntersecting && !autoStarted) {
           autoStarted = true;
-          // Small delay so the section is fully visible
-          setTimeout(() => { play(); }, 400);
+          setTimeout(() => { play(); }, 600);
         }
       });
-    }, { threshold: 0.3 });
+    }, { threshold: 0.25 });
     autoObserver.observe(mrSection);
 
-    // Also register with reveal observer
     if (typeof io !== 'undefined') {
       io.observe(mrSection);
     }
