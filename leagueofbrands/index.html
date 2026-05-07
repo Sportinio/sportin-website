@@ -1617,7 +1617,53 @@
     .section-title { font-size: 28px; }
     .wrap { padding: 0 16px; }
     .pricing-amount { font-size: 40px; }
+    /* Logo scaling on small screens */
+    .lob-logo-line1 { font-size: 38px; }
+    .lob-logo-line2 { font-size: 46px; }
+    .lob-logo-of { font-size: 14px; }
+    /* Partner cards: prevent overflow + lighter padding */
+    .partner-card {
+      padding: 28px 18px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+    .partner-shirt {
+      max-width: 100%;
+      height: auto;
+    }
+    /* Versus shirts: scale down to fit */
+    .versus-shirt { max-width: 220px !important; }
+    /* Cup centered, never overflows */
+    .why-cup-wrap {
+      width: 100%;
+      max-width: 240px;
+      margin: 0 auto;
+      position: static;
+    }
+    .why-cup { width: 100%; max-width: 100%; }
+    /* Match replay: tighter ruler */
+    .mr-ruler { font-size: 10px; }
+    .mr-hour-ruler { font-size: 9px; }
+    /* Commentary sphere — slightly smaller on small screens */
+    .commentary-sphere-wrap canvas { transform: scale(0.85); }
+    /* Hero question — allow wrap to prevent horizontal stretch */
+    .hero-question {
+      white-space: normal !important;
+      font-size: 12px !important;
+      letter-spacing: 0.12em !important;
+      max-width: 280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* Hero padding — tighter so inner content doesn't push wider than viewport */
+    .hero { padding: 0 16px !important; }
   }
+
+  /* Hard guard against horizontal overflow at any size.
+     Use overflow-x: clip (not hidden) so it doesn't break position:sticky. */
+  html, body { overflow-x: clip; }
+  img, canvas { max-width: 100%; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
