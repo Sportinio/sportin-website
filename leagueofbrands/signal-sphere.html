@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Signal.EI Sphere</title>
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { background: transparent; overflow: hidden; width: 100%; height: 100%; }
+  canvas { display: block; margin: auto; }
+</style>
+</head>
+<body>
+<canvas id="sphere"></canvas>
+<script>
+/**
+ * Signal.EI Sphere — Standalone renderer
+ *
+ * Usage in Swift WKWebView:
+ *   Load this file, then control via JavaScript:
+ *
+ *   // Set mode: 'idle', 'chat', or 'voice'
+ *   webView.evaluateJavaScript("Sphere.setMode('voice')")
+ *
+ *   // Set thinking intensity (0.0 to 1.0)
+ *   webView.evaluateJavaScript("Sphere.setThinking(0.8)")
+ *
+ *   // Set audio level for voice reactivity (0.0 to 1.0, call per frame or ~15fps)
+ *   webView.evaluateJavaScript("Sphere.setAudioLevel(0.6)")
+ *
+ *   // Resize sphere
+ *   webView.evaluateJavaScript("Sphere.setSize(200)")
+ *
+ *   // Stop / start animation (for battery saving)
+ *   webView.evaluateJavaScript("Sphere.stop()")
+ *   webView.evaluateJavaScript("Sphere.start()")
+ *
+ * URL parameters (for initial config):
+ *   ?size=120&mode=idle&thinking=0
+ */
+
+(function() {
+  var canvas = document.getElementById('sphere');
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+
+  // ── State ──
+  var state = {
+    size: 120,
+    mode: 'idle',       // 'idle' | 'chat' | 'voice'
+    thinking: 0,        // 0.0–1.0
+    audioLevel: 0,      // 0.0–1.0 (voice mode)
+    running: true
+  };
+
+  // Parse URL params for initial config
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('size')) state.size = parseInt(params.get('size'), 10) || 120;
+  if (params.get('mode')) state.mode = params.get('mode');
+  if (params.get('thinking')) state.thinking = parseFloat(params.get('thinking')) || 0;
+
+  // ── Canvas setup ──
+  var s, cx, cy, R, pad = 2.0;
+
+  function setupCanvas() {
+    s = Math.round(state.size * pad * dpr);
+    canvas.width = s;
+    canvas.height = s;
+    canvas.style.width = (state.size * pad) + 'px';
+    canvas.style.height = (state.size * pad) + 'px';
+    cx = s / 2;
+    cy = s / 2;
+    R = state.size * dpr / 2 * 0.75;
+  }
+  setupCanvas();
+
+  // ── Color gradient: bottom=orange → red → purple → blue → top=cyan ──
+  var stops = [[255,110,0],[255,20,60],[180,15,200],[70,30,255],[0,210,255]];
+
+  function lerpC(a, b, t) {
+    t = Math.max(0, Math.min(1, t));
+    return [
+      Math.round(a[0] + (b[0] - a[0]) * t),
+      Math.round(a[1] + (b[1] - a[1]) * t),
+      Math.round(a[2] + (b[2] - a[2]) * t)
+    ];
+  }
+
+  function staticColor(y) {
+    var t = (y + 1) / 2;
+    var idx = t * (stops.length - 1);
+    var lo = Math.floor(idx), hi = Math.min(lo + 1, stops.length - 1);
+    return lerpC(stops[lo], stops[hi], idx - lo);
+  }
+
+  // ── Build particle grid (52 latitude rings) ──
+  var particles = [];
+  var LAT = 52;
+  for (var lat = 0; lat <= LAT; lat++) {
+    var phi = (lat / LAT) * Math.PI;
+    var y0 = Math.cos(phi);
+    var ringR = Math.sin(phi);
+    var lonCount = Math.max(1, Math.round(104 * ringR));
+    for (var lon = 0; lon < lonCount; lon++) {
+      var theta = (lon / lonCount) * Math.PI * 2;
+      particles.push({
+        phi: phi, theta: theta,
+        x0: ringR * Math.cos(theta),
+        y0: y0,
+        z0: ringR * Math.sin(theta)
+      });
+    }
+  }
+
+  var time = 0, rotY = 0;
+  var smoothThinking = 0;
+  var smoothAudio = 0;
+  var rafId = 0;
+
+  function draw() {
+    if (!state.running) return;
+    ctx.clearRect(0, 0, s, s);
+
+    // Smooth lerp toward targets
+    var targetThinking = state.mode === 'idle' ? 0 : state.thinking;
+    smoothThinking += (targetThinking - smoothThinking) * 0.12;
+    smoothAudio += (state.audioLevel - smoothAudio) * 0.18;
+
+    var isVoice = state.mode === 'voice';
+    var isChat = state.mode === 'chat';
+    var level = smoothAudio;
+    var ti = smoothThinking; // thinking intensity
+
+    var cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    var rendered = [];
+
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+
+      // Base idle wave — always present
+      var baseW =
+          0.16 * Math.sin(p.phi * 5 + p.theta * 2 + time)
+        + 0.09 * Math.sin(p.phi * 8 - p.theta * 3 + time * 0.85)
+        + 0.06 * Math.sin(p.phi * 3 + p.theta * 7 + time * 1.4)
+        + 0.04 * Math.sin(p.phi * 11 + p.theta * 4 - time * 0.6);
+
+      var w = baseW;
+
+      // Chat mode: amplified thinking waves
+      if (isChat && ti > 0.01) {
+        var breathe = ti * (0.5 + 0.5 * Math.sin(time * 1.7)) * 0.96;
+        var amp = 1 + ti * 1.44 + breathe;
+        var freq = 1 + ti * 0.6 + ti * 0.2 * Math.sin(time * 2.3);
+        var thinkW =
+            0.16 * Math.sin(p.phi * 5 * freq + p.theta * 2 + time)
+          + 0.09 * Math.sin(p.phi * 8 * freq - p.theta * 3 + time * 0.85)
+          + 0.06 * Math.sin(p.phi * 3 + p.theta * 7 * freq + time * 1.4)
+          + 0.04 * Math.sin(p.phi * 11 + p.theta * 4 - time * 0.6)
+          + ti * 0.08 * Math.sin(p.phi * 14 + p.theta * 9 + time * 2.2)
+          + ti * 0.05 * Math.sin(p.phi * 6 + time * 3.1);
+        w = baseW + ti * (amp * thinkW - baseW);
+      }
+
+      // Voice mode: audio-reactive ripples + turbulence
+      if (isVoice) {
+        var eqDist = Math.abs(p.phi - Math.PI / 2);
+        var eqFactor = 1 - eqDist / (Math.PI / 2);
+        var eqSpread = Math.pow(eqFactor, 1.3);
+
+        var audioWave = level * eqSpread * (
+            0.32 * Math.sin(p.theta * 3 + time * 5.5)
+          + 0.22 * Math.sin(p.theta * 5 - time * 4.8)
+          + 0.16 * Math.sin(p.theta * 8 + time * 7.2)
+          + 0.10 * Math.sin(p.theta * 13 - time * 3.5)
+        );
+        var turbulence = level * 0.6 * (
+            0.12 * Math.sin(p.phi * 7 + p.theta * 4 + time * 3.8)
+          + 0.08 * Math.sin(p.phi * 12 - p.theta * 6 + time * 6.0)
+          + 0.06 * Math.sin(p.phi * 4 + p.theta * 11 - time * 4.5)
+        );
+        var swell = level * 0.06 * Math.sin(time * 3.2);
+        w += audioWave + turbulence + swell;
+
+        // Amplify base with breathing
+        var breatheV = level * (0.5 + 0.5 * Math.sin(time * 1.7)) * 0.96;
+        var ampV = 1 + level * 1.44 + breatheV;
+        w = w * ampV;
+      }
+
+      var r = 1 + w;
+      var x = p.x0 * r, y = p.y0 * r, z = p.z0 * r;
+      var rx = x * cosY + z * sinY;
+      var rz = -x * sinY + z * cosY;
+      rendered.push({ sx: cx + rx * R, sy: cy - y * R, depth: rz, y0: p.y0 });
+    }
+
+    // Depth sort (back to front)
+    rendered.sort(function(a, b) { return a.depth - b.depth; });
+
+    // Render particles
+    var intensity = isVoice ? Math.max(0.3, level) : (isChat ? ti : 0.15);
+    var baseDotR = 1.1 * dpr;
+    var dotPulse = 1 + intensity * 0.3 * Math.sin(time * 2.5);
+    var dotR = baseDotR * (isVoice ? dotPulse + level * 0.15 : dotPulse);
+
+    for (var j = 0; j < rendered.length; j++) {
+      var pt = rendered[j];
+      var bright = Math.max(0, pt.depth);
+      var alpha = pt.depth < 0
+        ? 0.04 + (pt.depth + 1) * 0.06
+        : 0.18 + bright * 0.72;
+
+      var c = staticColor(pt.y0);
+      var dr = pt.depth < 0 ? dotR * 0.7 : dotR * (0.7 + bright * 0.7);
+      ctx.beginPath();
+      ctx.arc(pt.sx, pt.sy, dr, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
+      ctx.fill();
+    }
+
+    // Animation speed
+    var speedMul = isVoice ? 0.0168 : 0.0072;
+    time += 0.010 + intensity * speedMul;
+    rotY += 0.004 + intensity * (isVoice ? 0.0036 : 0.003);
+
+    rafId = requestAnimationFrame(draw);
+  }
+
+  // ── Public API (called from Swift via evaluateJavaScript) ──
+  window.Sphere = {
+    setMode: function(mode) {
+      state.mode = mode; // 'idle', 'chat', 'voice'
+    },
+    setThinking: function(val) {
+      state.thinking = Math.max(0, Math.min(1, val));
+    },
+    setAudioLevel: function(val) {
+      state.audioLevel = Math.max(0, Math.min(1, val));
+    },
+    setSize: function(newSize) {
+      state.size = newSize;
+      setupCanvas();
+    },
+    stop: function() {
+      state.running = false;
+      cancelAnimationFrame(rafId);
+    },
+    start: function() {
+      if (!state.running) {
+        state.running = true;
+        draw();
+      }
+    },
+    getState: function() {
+      return JSON.parse(JSON.stringify(state));
+    }
+  };
+
+  draw();
+})();
+</script>
+</body>
+</html>

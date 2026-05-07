@@ -1714,11 +1714,27 @@
   }
   .mr-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(7, 81, 251, 0.25); border-color: var(--blue-bright); }
   .mr-btn svg { width: 14px; height: 14px; fill: currentColor; }
-  .mr-btn--commentary { border-color: var(--green); color: var(--green); box-shadow: 0 2px 12px rgba(18, 224, 148, 0.12); }
-  .mr-btn--commentary:hover { box-shadow: 0 4px 18px rgba(18, 224, 148, 0.25); border-color: #34D399; }
-  .mr-btn--commentary.playing { background: rgba(18, 224, 148, 0.1); border-color: var(--green); }
-  .mr-btn--commentary.playing svg { animation: commPulse 1.5s ease-in-out infinite; }
-  @keyframes commPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  /* Commentary sphere below Live Match Replay */
+  .commentary-sphere-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: -10px auto 8px;
+  }
+  .commentary-sphere-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-4);
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .commentary-sphere-label.active {
+    opacity: 1;
+  }
   .mr-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2148,14 +2164,15 @@
   /* Anim 2: AI Voice waveform */
   .pillar.expanded { position: relative; }
 
-  /* Anim 2: AI Algorithm neural network */
+  /* Anim 2: AI Sphere */
   .anim-algo {
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .anim-algo canvas {
-    width: 100%;
-    height: 100%;
     display: block;
   }
   .algo-label {
@@ -2495,12 +2512,10 @@
 <!-- MATCH REPLAY -->
 <section class="match-replay reveal" style="--rd:0.3s;">
   <audio id="mrCommentary" src="/sportin_urbanfm.mp3" preload="auto"></audio>
-  <div style="text-align:center; margin-bottom:12px;">
-    <button class="mr-btn mr-btn--commentary" id="mrCommentaryBtn">
-      Play Commentary
-    </button>
+  <div class="commentary-sphere-wrap">
+    <canvas id="commentarySphere"></canvas>
+    <div class="section-kicker" style="margin-top: -8px;">LIVE MATCH COMMENTARY by SPORTIN AI</div>
   </div>
-  <div class="section-kicker">LIVE MATCH REPLAY</div>
 
   <div class="mr-grid">
     <div class="mr-panel" id="mrPanelHome">
@@ -2596,7 +2611,7 @@
         <div class="pillar-desc">Every effort deserves a story. SportIn turns movement into commentary, rivalry, momentum, and moments worth sharing.</div>
         <div class="pillar-anim anim-algo">
           <canvas id="algoCanvas"></canvas>
-          <div class="algo-label">Neural Engine &middot; Processing</div>
+          <div class="algo-label">Signal.EI &middot; Processing</div>
         </div>
       </div>
 
@@ -3349,6 +3364,18 @@
       } else {
         audio.pause();
         fab.classList.remove('playing');
+        // Also stop commentary when user pauses anthem
+        if (window._commentaryState && window._commentaryState.playing) {
+          var commAudio = document.getElementById('mrCommentary');
+          if (commAudio) {
+            commAudio.pause();
+            commAudio.currentTime = 0;
+          }
+          window._commentaryState.playing = false;
+          window._commentaryState.audioLevel = 0;
+          var lbl = document.getElementById('commentarySphereLabel');
+          if (lbl) lbl.classList.remove('active');
+        }
       }
       started = true;
     });
@@ -3914,11 +3941,13 @@
     updateVersusScores();
   }
 
-  // ── Commentary audio ──
+  // ── Commentary audio + sphere ──
   const commentaryAudio = document.getElementById('mrCommentary');
-  const commentaryBtn = document.getElementById('mrCommentaryBtn');
-
   const anthemAudio = document.getElementById('lobAnthem');
+  const sphereLabel = document.getElementById('commentarySphereLabel');
+
+  // Expose globally so anthem pause button can stop commentary too
+  window._commentaryState = { playing: false, audioLevel: 0 };
 
   function duckAnthem() {
     if (anthemAudio) anthemAudio.volume = 0.2;
@@ -3927,30 +3956,66 @@
     if (anthemAudio) anthemAudio.volume = 1.0;
   }
 
-  commentaryBtn.addEventListener('click', () => {
-    if (commentaryAudio.paused) {
-      commentaryAudio.currentTime = 0;
-      commentaryAudio.play().then(() => {
-        commentaryBtn.classList.add('playing');
-        commentaryBtn.innerHTML = 'Stop Commentary';
-        duckAnthem();
-      }).catch(() => {});
-    } else {
-      commentaryAudio.pause();
-      commentaryAudio.currentTime = 0;
-      commentaryBtn.classList.remove('playing');
-      commentaryBtn.innerHTML = 'Play Commentary';
-      restoreAnthem();
-    }
-  });
+  // Audio analyser for sphere reactivity
+  var commAnalyser = null, commDataArray = null, commAudioCtx = null, commSourceNode = null;
 
-  commentaryAudio.addEventListener('ended', () => {
-    commentaryBtn.classList.remove('playing');
-    commentaryBtn.innerHTML = 'Play Commentary';
+  function setupAnalyser() {
+    if (commAnalyser) return;
+    try {
+      commAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      commSourceNode = commAudioCtx.createMediaElementSource(commentaryAudio);
+      commAnalyser = commAudioCtx.createAnalyser();
+      commAnalyser.fftSize = 256;
+      commAnalyser.smoothingTimeConstant = 0.7;
+      commDataArray = new Uint8Array(commAnalyser.frequencyBinCount);
+      commSourceNode.connect(commAnalyser);
+      commAnalyser.connect(commAudioCtx.destination);
+    } catch(e) {}
+  }
+
+  function getAudioLevel() {
+    if (!commAnalyser || !commDataArray) return 0;
+    commAnalyser.getByteFrequencyData(commDataArray);
+    var sum = 0;
+    for (var i = 0; i < commDataArray.length; i++) sum += commDataArray[i];
+    return Math.min(1, (sum / commDataArray.length) / 128);
+  }
+
+  function startCommentary() {
+    if (window._commentaryState.playing) return;
+    setupAnalyser();
+    if (commAudioCtx && commAudioCtx.state === 'suspended') commAudioCtx.resume();
+    commentaryAudio.currentTime = 0;
+    commentaryAudio.play().then(function() {
+      window._commentaryState.playing = true;
+      if (sphereLabel) sphereLabel.classList.add('active');
+      duckAnthem();
+    }).catch(function() {});
+  }
+
+  function stopCommentary() {
+    commentaryAudio.pause();
+    commentaryAudio.currentTime = 0;
+    window._commentaryState.playing = false;
+    window._commentaryState.audioLevel = 0;
+    if (sphereLabel) sphereLabel.classList.remove('active');
     restoreAnthem();
+  }
+
+  // Update audio level each frame (used by sphere renderer)
+  function updateCommentaryLevel() {
+    if (window._commentaryState.playing) {
+      window._commentaryState.audioLevel = getAudioLevel();
+    }
+    requestAnimationFrame(updateCommentaryLevel);
+  }
+  updateCommentaryLevel();
+
+  commentaryAudio.addEventListener('ended', function() {
+    stopCommentary();
   });
 
-  // ── Auto-start when section scrolls into view ──
+  // ── Auto-start replay when section scrolls into view ──
   const mrSection = document.querySelector('.match-replay');
   if (mrSection) {
     const autoObserver = new IntersectionObserver((entries) => {
@@ -3966,6 +4031,21 @@
     if (typeof io !== 'undefined') {
       io.observe(mrSection);
     }
+  }
+
+  // ── Auto-start commentary when t-shirts (versus) section scrolls into view ──
+  var commentaryTriggered = false;
+  var versusSection = document.querySelector('.versus');
+  if (versusSection) {
+    var versusObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !commentaryTriggered) {
+          commentaryTriggered = true;
+          setTimeout(function() { startCommentary(); }, 800);
+        }
+      });
+    }, { threshold: 0.4 });
+    versusObserver.observe(versusSection);
   }
 })();
 </script>
@@ -4020,103 +4100,247 @@
   window.addEventListener('resize', onScroll, { passive: true });
 })();
 
-// AI Algorithm: neural network canvas animation
+// AI Sphere: Signal.EI particle sphere animation (ported from SignalAISphere)
 (function() {
-  const canvas = document.getElementById('algoCanvas');
+  var canvas = document.getElementById('algoCanvas');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
 
-  function resize() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
+  // Sphere size — fit within the card animation area
+  var size = 180;
+  var pad = 2.0;
+  var s = Math.round(size * pad * dpr);
+  canvas.width = s;
+  canvas.height = s;
+  canvas.style.width = (size * pad) + 'px';
+  canvas.style.height = (size * pad) + 'px';
+  var cx = s / 2, cy = s / 2, R = size * dpr / 2 * 0.75;
+
+  // Gradient: bottom=orange → red → purple → blue → top=cyan
+  function lerpC(a, b, t) {
+    t = Math.max(0, Math.min(1, t));
+    return [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)];
   }
-  resize();
-  window.addEventListener('resize', resize);
+  var stops = [[255,110,0],[255,20,60],[180,15,200],[70,30,255],[0,210,255]];
+  function staticColor(y) {
+    var t = (y + 1) / 2;
+    var idx = t * (stops.length - 1);
+    var lo = Math.floor(idx), hi = Math.min(lo + 1, stops.length - 1);
+    return lerpC(stops[lo], stops[hi], idx - lo);
+  }
 
-  // Neural network nodes in layers
-  const layers = [3, 5, 6, 5, 3];
-  const nodes = [];
-  const connections = [];
-
-  function buildNetwork() {
-    nodes.length = 0;
-    connections.length = 0;
-    const w = canvas.width / dpr;
-    const h = canvas.height / dpr;
-    const layerGap = w / (layers.length + 1);
-
-    layers.forEach((count, li) => {
-      const x = layerGap * (li + 1);
-      const nodeGap = (h - 60) / (count + 1);
-      for (let ni = 0; ni < count; ni++) {
-        const y = 30 + nodeGap * (ni + 1);
-        nodes.push({ x, y, layer: li, pulse: Math.random() * Math.PI * 2, radius: 3 + Math.random() * 2 });
-      }
-    });
-
-    // Connect adjacent layers
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = 0; j < nodes.length; j++) {
-        if (nodes[j].layer === nodes[i].layer + 1) {
-          connections.push({ from: i, to: j, signal: Math.random() * Math.PI * 2, speed: 0.8 + Math.random() * 1.5 });
-        }
-      }
+  // Build particle grid (52 latitude rings)
+  var particles = [];
+  var LAT = 52;
+  for (var lat = 0; lat <= LAT; lat++) {
+    var phi = (lat / LAT) * Math.PI;
+    var y0 = Math.cos(phi);
+    var ringR = Math.sin(phi);
+    var lonCount = Math.max(1, Math.round(104 * ringR));
+    for (var lon = 0; lon < lonCount; lon++) {
+      var theta = (lon / lonCount) * Math.PI * 2;
+      particles.push({ phi: phi, theta: theta, x0: ringR * Math.cos(theta), y0: y0, z0: ringR * Math.sin(theta) });
     }
   }
-  buildNetwork();
 
-  let t = 0;
+  var time = 0, rotY = 0;
+  // Thinking intensity: gently pulses between 0.3–0.7 to keep it alive
+  var thinkingIntensity = 0.5;
+
   function draw() {
-    const w = canvas.width / dpr;
-    const h = canvas.height / dpr;
-    ctx.clearRect(0, 0, w, h);
-    t += 0.016;
+    ctx.clearRect(0, 0, s, s);
 
-    // Draw connections
-    connections.forEach(c => {
-      const a = nodes[c.from];
-      const b = nodes[c.to];
-      const signal = (Math.sin(t * c.speed + c.signal) + 1) / 2;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.strokeStyle = `rgba(59, 123, 255, ${0.06 + signal * 0.15})`;
-      ctx.lineWidth = 0.5 + signal * 0.5;
-      ctx.stroke();
+    // Slowly oscillate thinking intensity for a breathing effect
+    thinkingIntensity = 0.35 + 0.25 * Math.sin(time * 0.4);
 
-      // Traveling signal dot
-      const pos = (t * c.speed * 0.15 + c.signal) % 1;
-      const dx = a.x + (b.x - a.x) * pos;
-      const dy = a.y + (b.y - a.y) * pos;
-      ctx.beginPath();
-      ctx.arc(dx, dy, 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(59, 123, 255, ${0.3 + signal * 0.5})`;
-      ctx.fill();
-    });
+    var cosY = Math.cos(rotY), sinY = Math.sin(rotY);
 
-    // Draw nodes
-    nodes.forEach(n => {
-      const pulse = (Math.sin(t * 2 + n.pulse) + 1) / 2;
-      // Glow
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.radius + 6 + pulse * 4, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(59, 123, 255, ${0.04 + pulse * 0.06})`;
-      ctx.fill();
-      // Core
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(59, 123, 255, ${0.5 + pulse * 0.5})`;
-      ctx.fill();
-      // Bright center
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + pulse * 0.4})`;
-      ctx.fill();
-    });
+    var rendered = [];
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
 
+      // Base idle wave
+      var baseW =
+        0.16 * Math.sin(p.phi * 5 + p.theta * 2 + time)
+      + 0.09 * Math.sin(p.phi * 8 - p.theta * 3 + time * 0.85)
+      + 0.06 * Math.sin(p.phi * 3 + p.theta * 7 + time * 1.4)
+      + 0.04 * Math.sin(p.phi * 11 + p.theta * 4 - time * 0.6);
+
+      // Thinking-state wave (amplified, multi-frequency)
+      var breathe = thinkingIntensity * (0.5 + 0.5 * Math.sin(time * 1.7)) * 0.96;
+      var amp = 1 + thinkingIntensity * 1.44 + breathe;
+      var freq = 1 + thinkingIntensity * 0.6 + thinkingIntensity * 0.2 * Math.sin(time * 2.3);
+      var thinkW =
+        0.16 * Math.sin(p.phi * 5 * freq + p.theta * 2 + time)
+      + 0.09 * Math.sin(p.phi * 8 * freq - p.theta * 3 + time * 0.85)
+      + 0.06 * Math.sin(p.phi * 3 + p.theta * 7 * freq + time * 1.4)
+      + 0.04 * Math.sin(p.phi * 11 + p.theta * 4 - time * 0.6)
+      + thinkingIntensity * 0.08 * Math.sin(p.phi * 14 + p.theta * 9 + time * 2.2)
+      + thinkingIntensity * 0.05 * Math.sin(p.phi * 6 + time * 3.1);
+
+      var w = baseW + thinkingIntensity * (amp * thinkW - baseW);
+
+      var r = 1 + w;
+      var x = p.x0 * r, y = p.y0 * r, z = p.z0 * r;
+      var rx = x * cosY + z * sinY;
+      var rz = -x * sinY + z * cosY;
+      rendered.push({ sx: cx + rx * R, sy: cy - y * R, depth: rz, y0: p.y0 });
+    }
+
+    rendered.sort(function(a, b) { return a.depth - b.depth; });
+
+    var baseDotR = 1.1 * dpr;
+    var dotPulse = 1 + thinkingIntensity * 0.3 * Math.sin(time * 2.5);
+    var dotR = baseDotR * dotPulse;
+
+    for (var j = 0; j < rendered.length; j++) {
+      var pt = rendered[j];
+      var bright = Math.max(0, pt.depth);
+      var alpha = pt.depth < 0
+        ? 0.04 + (pt.depth + 1) * 0.06
+        : 0.18 + bright * 0.72;
+
+      var c = staticColor(pt.y0);
+      var dr = pt.depth < 0 ? dotR * 0.7 : dotR * (0.7 + bright * 0.7);
+      ctx.beginPath();
+      ctx.arc(pt.sx, pt.sy, dr, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
+      ctx.fill();
+    }
+
+    time += 0.010 + thinkingIntensity * 0.0072;
+    rotY += 0.004 + thinkingIntensity * 0.003;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Commentary Sphere: voice-reactive Signal.EI sphere below Live Match Replay
+(function() {
+  var canvas = document.getElementById('commentarySphere');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+
+  var size = 120;
+  var pad = 2.0;
+  var s = Math.round(size * pad * dpr);
+  canvas.width = s;
+  canvas.height = s;
+  canvas.style.width = (size * pad) + 'px';
+  canvas.style.height = (size * pad) + 'px';
+  var cx = s / 2, cy = s / 2, R = size * dpr / 2 * 0.75;
+
+  function lerpC(a, b, t) {
+    t = Math.max(0, Math.min(1, t));
+    return [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)];
+  }
+  var stops = [[255,110,0],[255,20,60],[180,15,200],[70,30,255],[0,210,255]];
+  function staticColor(y) {
+    var t = (y + 1) / 2;
+    var idx = t * (stops.length - 1);
+    var lo = Math.floor(idx), hi = Math.min(lo + 1, stops.length - 1);
+    return lerpC(stops[lo], stops[hi], idx - lo);
+  }
+
+  var particles = [];
+  var LAT = 52;
+  for (var lat = 0; lat <= LAT; lat++) {
+    var phi = (lat / LAT) * Math.PI;
+    var y0 = Math.cos(phi);
+    var ringR = Math.sin(phi);
+    var lonCount = Math.max(1, Math.round(104 * ringR));
+    for (var lon = 0; lon < lonCount; lon++) {
+      var theta = (lon / lonCount) * Math.PI * 2;
+      particles.push({ phi: phi, theta: theta, x0: ringR * Math.cos(theta), y0: y0, z0: ringR * Math.sin(theta) });
+    }
+  }
+
+  var time = 0, rotY = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, s, s);
+
+    // Read audio level from commentary state (set by match replay engine)
+    var state = window._commentaryState || { playing: false, audioLevel: 0 };
+    var isVoice = state.playing;
+    var level = state.audioLevel || 0;
+    // Smooth intensity: when voice is active, follow audio level; else idle
+    var thinkingIntensity = isVoice ? Math.max(0.3, level) : 0.15;
+
+    var cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    var rendered = [];
+
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+
+      // Base idle wave
+      var baseW =
+        0.16 * Math.sin(p.phi * 5 + p.theta * 2 + time)
+      + 0.09 * Math.sin(p.phi * 8 - p.theta * 3 + time * 0.85)
+      + 0.06 * Math.sin(p.phi * 3 + p.theta * 7 + time * 1.4)
+      + 0.04 * Math.sin(p.phi * 11 + p.theta * 4 - time * 0.6);
+
+      var w = baseW;
+
+      if (isVoice) {
+        // Voice mode: audio-reactive ripples
+        var eqDist = Math.abs(p.phi - Math.PI / 2);
+        var eqFactor = 1 - eqDist / (Math.PI / 2);
+        var eqSpread = Math.pow(eqFactor, 1.3);
+
+        var audioWave = level * eqSpread * (
+          0.32 * Math.sin(p.theta * 3 + time * 5.5)
+        + 0.22 * Math.sin(p.theta * 5 - time * 4.8)
+        + 0.16 * Math.sin(p.theta * 8 + time * 7.2)
+        + 0.10 * Math.sin(p.theta * 13 - time * 3.5)
+        );
+        var turbulence = level * 0.6 * (
+          0.12 * Math.sin(p.phi * 7 + p.theta * 4 + time * 3.8)
+        + 0.08 * Math.sin(p.phi * 12 - p.theta * 6 + time * 6.0)
+        + 0.06 * Math.sin(p.phi * 4 + p.theta * 11 - time * 4.5)
+        );
+        var swell = level * 0.06 * Math.sin(time * 3.2);
+        w += audioWave + turbulence + swell;
+
+        // Also amplify base wave with breathing
+        var breathe = level * (0.5 + 0.5 * Math.sin(time * 1.7)) * 0.96;
+        var amp = 1 + level * 1.44 + breathe;
+        w = w * amp;
+      }
+
+      var r = 1 + w;
+      var x = p.x0 * r, y = p.y0 * r, z = p.z0 * r;
+      var rx = x * cosY + z * sinY;
+      var rz = -x * sinY + z * cosY;
+      rendered.push({ sx: cx + rx * R, sy: cy - y * R, depth: rz, y0: p.y0 });
+    }
+
+    rendered.sort(function(a, b) { return a.depth - b.depth; });
+
+    var baseDotR = 1.1 * dpr;
+    var dotPulse = 1 + thinkingIntensity * 0.3 * Math.sin(time * 2.5);
+    var dotR = baseDotR * (isVoice ? dotPulse + level * 0.15 : dotPulse);
+
+    for (var j = 0; j < rendered.length; j++) {
+      var pt = rendered[j];
+      var bright = Math.max(0, pt.depth);
+      var alpha = pt.depth < 0
+        ? 0.04 + (pt.depth + 1) * 0.06
+        : 0.18 + bright * 0.72;
+
+      var c = staticColor(pt.y0);
+      var dr = pt.depth < 0 ? dotR * 0.7 : dotR * (0.7 + bright * 0.7);
+      ctx.beginPath();
+      ctx.arc(pt.sx, pt.sy, dr, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
+      ctx.fill();
+    }
+
+    // Speed: faster when voice is active
+    time += 0.010 + thinkingIntensity * (isVoice ? 0.0168 : 0.0072);
+    rotY += 0.004 + thinkingIntensity * (isVoice ? 0.0036 : 0.003);
     requestAnimationFrame(draw);
   }
   draw();
