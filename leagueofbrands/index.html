@@ -222,6 +222,26 @@
   }
 
   /* === HERO === */
+  .hero-wrap {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: url('/leagueofbrands/cover_2.png') center center / cover no-repeat;
+    z-index: 0;
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 10, 20, 0.55) 0%, rgba(8, 10, 20, 0.85) 70%, var(--bg) 100%);
+  }
   .hero {
     padding: 130px 48px 100px;
     max-width: 1120px;
@@ -1132,194 +1152,6 @@
     flex-wrap: wrap;
   }
 
-  /* === COUNTDOWN === */
-  .countdown-section {
-    margin-top: 160px;
-    padding: 100px 48px 80px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-  }
-  .countdown-glow {
-    position: absolute;
-    top: -100px; left: 50%;
-    transform: translateX(-50%);
-    width: 900px;
-    height: 600px;
-    background: radial-gradient(ellipse, rgba(7, 81, 251, 0.18) 0%, rgba(7, 81, 251, 0.06) 40%, transparent 70%);
-    pointer-events: none;
-    animation: countdownGlowPulse 4s ease-in-out infinite;
-  }
-  @keyframes countdownGlowPulse {
-    0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-    50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
-  }
-  .countdown-inner {
-    position: relative;
-    z-index: 2;
-  }
-  .countdown-kicker {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 16px;
-  }
-  .countdown-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: clamp(32px, 5vw, 56px);
-    color: var(--text);
-    line-height: 1.1;
-    margin: 0 0 60px;
-  }
-  .countdown-grid {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 48px;
-  }
-  .countdown-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  .countdown-ring-wrap {
-    position: relative;
-    width: 140px;
-    height: 140px;
-  }
-  .countdown-ring {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-  }
-  .countdown-ring-bg {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.06);
-    stroke-width: 4;
-  }
-  .countdown-ring-fill {
-    fill: none;
-    stroke: var(--blue-bright);
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-dasharray: 339.292;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 0 8px rgba(7, 81, 251, 0.4));
-  }
-  .countdown-ring-seconds {
-    transition: stroke-dashoffset 0.3s linear;
-    stroke: #12E094;
-    filter: drop-shadow(0 0 8px rgba(18, 224, 148, 0.4));
-  }
-  .countdown-value {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 48px;
-    color: var(--text);
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-  .countdown-value-seconds {
-    color: #12E094;
-  }
-  .countdown-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-4);
-  }
-  .countdown-separator {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 40px;
-    color: rgba(255, 255, 255, 0.15);
-    margin-top: -28px;
-    user-select: none;
-    animation: separatorBlink 1s step-end infinite;
-  }
-  @keyframes separatorBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-  .countdown-meta {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  .countdown-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 18px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    color: var(--text-3);
-  }
-  .countdown-chip-icon {
-    font-size: 8px;
-    color: var(--blue-bright);
-  }
-  .countdown-date {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    color: var(--text-4);
-    letter-spacing: 0.08em;
-    margin-bottom: 48px;
-  }
-  .countdown-cta {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .countdown-particles {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 1;
-  }
-  .countdown-particle {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--blue-bright);
-    opacity: 0;
-    animation: particleFloat 6s ease-in-out infinite;
-  }
-  @keyframes particleFloat {
-    0% { opacity: 0; transform: translateY(0) scale(0); }
-    20% { opacity: 0.6; transform: translateY(-40px) scale(1); }
-    80% { opacity: 0.3; transform: translateY(-200px) scale(0.6); }
-    100% { opacity: 0; transform: translateY(-300px) scale(0); }
-  }
-  @media (max-width: 768px) {
-    .countdown-section { padding: 60px 20px; margin-top: 100px; }
-    .countdown-ring-wrap { width: 90px; height: 90px; }
-    .countdown-value { font-size: 32px; }
-    .countdown-separator { font-size: 28px; }
-    .countdown-grid { gap: 6px; }
-  }
   @media (max-width: 480px) {
     .countdown-ring-wrap { width: 72px; height: 72px; }
     .countdown-value { font-size: 24px; }
@@ -2345,43 +2177,25 @@
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="hero">
-  <div class="hero-league-badge reveal">
-    <span class="dot"></span>
-    Season 1 &middot; July &ndash; November
-  </div>
-  <div class="lob-logo reveal" style="--rd:0.1s;">
-    <div class="lob-logo-text lob-logo-glow">
-      <span class="lob-logo-line1">League <span class="lob-logo-of">of</span></span>
-      <span class="lob-logo-line2">Brands</span>
+<div class="hero-wrap">
+  <div class="hero-bg"></div>
+  <section class="hero" id="hero">
+    <div class="hero-league-badge reveal">
+      <span class="dot"></span>
+      Season 1 &middot; July &ndash; November
     </div>
-  </div>
-  <p class="hero-sub reveal" style="--rd:0.2s;">
-    A national competition where brands field teams, play weekly matches, and fight for the cup. Built on movement. Run like a professional league.
-  </p>
-  <div class="hero-cta reveal" style="--rd:0.3s;">
-    <a class="btn btn-primary" href="mailto:league@sportin.io?subject=League%20of%20Brands%20%E2%80%93%20Register%20Team">Sign up your team</a>
-    <a class="btn btn-ghost" href="https://sportin.io/download">Download the app</a>
-  </div>
-  <div class="hero-meta reveal" style="--rd:0.4s;">
-    <div class="hero-meta-item">
-      <div class="hero-meta-val">24h</div>
-      <div class="hero-meta-lbl">Match duration</div>
+    <div class="lob-logo reveal" style="--rd:0.1s;">
+      <div class="lob-logo-text lob-logo-glow">
+        <span class="lob-logo-line1">League <span class="lob-logo-of">of</span></span>
+        <span class="lob-logo-line2">Brands</span>
+      </div>
     </div>
-    <div class="hero-meta-item">
-      <div class="hero-meta-val">SAT</div>
-      <div class="hero-meta-lbl">Match day</div>
+    <div class="hero-cta reveal" style="--rd:0.3s;">
+      <a class="btn btn-primary" href="mailto:league@sportin.io?subject=League%20of%20Brands%20%E2%80%93%20Register%20Team">Sign up your team</a>
+      <a class="btn btn-ghost" href="https://sportin.io/download">Download the app</a>
     </div>
-    <div class="hero-meta-item">
-      <div class="hero-meta-val">5mo</div>
-      <div class="hero-meta-lbl">Full season</div>
-    </div>
-    <div class="hero-meta-item">
-      <div class="hero-meta-val">3pts</div>
-      <div class="hero-meta-lbl">Per win</div>
-    </div>
-  </div>
-</section>
+  </section>
+</div>
 
 <!-- TEAM VS TEAM -->
 <section class="versus">
@@ -3087,60 +2901,6 @@
   </div>
 </section>
 
-<!-- COUNTDOWN -->
-<section class="countdown-section" id="cta">
-  <div class="countdown-glow"></div>
-  <div class="countdown-inner reveal">
-    <div class="countdown-kicker">Season 1 Kickoff</div>
-    <h2 class="countdown-title">The clock is ticking.</h2>
-    <div class="countdown-grid" id="countdownGrid">
-      <div class="countdown-block">
-        <div class="countdown-ring-wrap">
-          <svg class="countdown-ring" viewBox="0 0 120 120">
-            <circle class="countdown-ring-bg" cx="60" cy="60" r="54"/>
-            <circle class="countdown-ring-fill" cx="60" cy="60" r="54" id="ringDays"/>
-          </svg>
-          <div class="countdown-value" id="cdDays">00</div>
-        </div>
-        <div class="countdown-label">Days</div>
-      </div>
-      <div class="countdown-separator">:</div>
-      <div class="countdown-block">
-        <div class="countdown-ring-wrap">
-          <svg class="countdown-ring" viewBox="0 0 120 120">
-            <circle class="countdown-ring-bg" cx="60" cy="60" r="54"/>
-            <circle class="countdown-ring-fill" cx="60" cy="60" r="54" id="ringHours"/>
-          </svg>
-          <div class="countdown-value" id="cdHours">00</div>
-        </div>
-        <div class="countdown-label">Hours</div>
-      </div>
-      <div class="countdown-separator">:</div>
-      <div class="countdown-block">
-        <div class="countdown-ring-wrap">
-          <svg class="countdown-ring" viewBox="0 0 120 120">
-            <circle class="countdown-ring-bg" cx="60" cy="60" r="54"/>
-            <circle class="countdown-ring-fill" cx="60" cy="60" r="54" id="ringMinutes"/>
-          </svg>
-          <div class="countdown-value" id="cdMinutes">00</div>
-        </div>
-        <div class="countdown-label">Minutes</div>
-      </div>
-      <div class="countdown-separator">:</div>
-      <div class="countdown-block">
-        <div class="countdown-ring-wrap">
-          <svg class="countdown-ring" viewBox="0 0 120 120">
-            <circle class="countdown-ring-bg" cx="60" cy="60" r="54"/>
-            <circle class="countdown-ring-fill countdown-ring-seconds" cx="60" cy="60" r="54" id="ringSeconds"/>
-          </svg>
-          <div class="countdown-value countdown-value-seconds" id="cdSeconds">00</div>
-        </div>
-        <div class="countdown-label">Seconds</div>
-      </div>
-    </div>
-  </div>
-  <div class="countdown-particles" id="countdownParticles"></div>
-</section>
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -4201,80 +3961,6 @@
 })();
 </script>
 
-<!-- COUNTDOWN JS -->
-<script>
-(function() {
-  const TARGET = new Date('2026-07-01T00:00:00+03:00').getTime();
-  const CIRC = 2 * Math.PI * 54; // 339.292
-
-  const els = {
-    days: document.getElementById('cdDays'),
-    hours: document.getElementById('cdHours'),
-    minutes: document.getElementById('cdMinutes'),
-    seconds: document.getElementById('cdSeconds'),
-    ringDays: document.getElementById('ringDays'),
-    ringHours: document.getElementById('ringHours'),
-    ringMinutes: document.getElementById('ringMinutes'),
-    ringSeconds: document.getElementById('ringSeconds'),
-  };
-
-  // Floating particles
-  const particleContainer = document.getElementById('countdownParticles');
-  if (particleContainer) {
-    for (let i = 0; i < 20; i++) {
-      const p = document.createElement('div');
-      p.className = 'countdown-particle';
-      p.style.left = Math.random() * 100 + '%';
-      p.style.bottom = Math.random() * 30 + '%';
-      p.style.animationDelay = (Math.random() * 6) + 's';
-      p.style.animationDuration = (4 + Math.random() * 4) + 's';
-      p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
-      if (Math.random() > 0.6) p.style.background = '#12E094';
-      particleContainer.appendChild(p);
-    }
-  }
-
-  let prevSeconds = -1;
-
-  function update() {
-    const now = Date.now();
-    const diff = Math.max(0, TARGET - now);
-
-    const totalSeconds = Math.floor(diff / 1000);
-    const d = Math.floor(totalSeconds / 86400);
-    const h = Math.floor((totalSeconds % 86400) / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
-
-    els.days.textContent = String(d).padStart(2, '0');
-    els.hours.textContent = String(h).padStart(2, '0');
-    els.minutes.textContent = String(m).padStart(2, '0');
-    els.seconds.textContent = String(s).padStart(2, '0');
-
-    // Ring progress (fill = how much is "used")
-    const maxDays = 365;
-    els.ringDays.style.strokeDashoffset = CIRC * (1 - d / maxDays);
-    els.ringHours.style.strokeDashoffset = CIRC * (1 - h / 24);
-    els.ringMinutes.style.strokeDashoffset = CIRC * (1 - m / 60);
-    els.ringSeconds.style.strokeDashoffset = CIRC * (1 - s / 60);
-
-    // Pulse effect on seconds change
-    if (s !== prevSeconds) {
-      prevSeconds = s;
-      els.seconds.style.transform = 'translate(-50%, -50%) scale(1.08)';
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          els.seconds.style.transform = 'translate(-50%, -50%) scale(1)';
-        });
-      });
-    }
-
-    requestAnimationFrame(update);
-  }
-
-  update();
-})();
-</script>
 
 </body>
 </html>
