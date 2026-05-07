@@ -1353,6 +1353,338 @@
   .audio-fab.playing {
     animation: audio-pulse 2s ease-in-out infinite;
   }
+
+  /* === MATCH REPLAY === */
+  .match-replay {
+    margin-top: 0;
+    padding: 0 48px 80px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .match-replay .section-kicker {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .mr-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .mr-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s, border-color 0.2s, opacity 0.3s;
+    white-space: nowrap;
+    background: transparent;
+    color: var(--text);
+    border: 1.5px solid var(--blue);
+    box-shadow: 0 2px 12px rgba(7, 81, 251, 0.15);
+  }
+  .mr-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(7, 81, 251, 0.25); border-color: var(--blue-bright); }
+  .mr-btn--pause { border-color: #F59E0B; color: #F59E0B; box-shadow: 0 2px 12px rgba(245, 158, 11, 0.15); }
+  .mr-btn--pause:hover { box-shadow: 0 4px 18px rgba(245, 158, 11, 0.25); border-color: #FBBF24; }
+  .mr-btn--resume { border-color: var(--green); color: var(--green); box-shadow: 0 2px 12px rgba(18, 224, 148, 0.15); }
+  .mr-btn--resume:hover { box-shadow: 0 4px 18px rgba(18, 224, 148, 0.25); border-color: #34D399; }
+  .mr-btn--reset { border-color: var(--border-strong); color: var(--text-3); box-shadow: none; }
+  .mr-btn--reset:hover { border-color: var(--text-4); color: var(--text); }
+  .mr-btn[disabled] { opacity: 0.35; pointer-events: none; }
+  .mr-btn svg { width: 14px; height: 14px; fill: currentColor; }
+  .mr-timer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-3);
+    letter-spacing: 0.05em;
+  }
+  .mr-timer-bar {
+    width: 120px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .mr-timer-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--blue);
+    border-radius: 2px;
+    transition: width 0.3s linear;
+  }
+  .mr-hour-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--blue-bright);
+    background: rgba(7, 81, 251, 0.12);
+    border: 1px solid rgba(7, 81, 251, 0.2);
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.08em;
+  }
+  .mr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .mr-panel {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 48px rgba(0, 0, 0, 0.35);
+  }
+  .mr-team-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .mr-team-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mr-team-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .mr-team-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-4);
+    letter-spacing: 0.05em;
+  }
+  .mr-ruler {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 20px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  }
+  .mr-ruler span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-4);
+    letter-spacing: 0.05em;
+  }
+  .mr-hour-ruler {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    height: 24px;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  }
+  .mr-hour-ruler span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--text-4);
+    position: absolute;
+  }
+  .mr-playhead {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--blue-bright);
+    box-shadow: 0 0 6px var(--blue-glow);
+    border-radius: 1px;
+    transition: left 0.3s linear;
+    left: 20px;
+    opacity: 0;
+  }
+  .mr-playhead.active { opacity: 1; }
+  .mr-rows {
+    position: relative;
+    padding: 16px 12px 20px;
+    overflow: hidden;
+  }
+  .mr-row {
+    position: absolute;
+    left: 12px; right: 12px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    transition: top 2s cubic-bezier(0.34, 0.02, 0.36, 1),
+                background 0.6s, box-shadow 0.6s;
+    border-radius: 10px;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  }
+  .mr-row.moving-up {
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.15);
+    z-index: 3;
+  }
+  .mr-row.moving-down {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    z-index: 2;
+  }
+  .mr-pos {
+    width: 22px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .mr-pos.gold { color: #FFD700; }
+  .mr-pos.silver { color: #C0C0C0; }
+  .mr-pos.bronze { color: #CD7F32; }
+  .mr-player-info {
+    width: 90px;
+    flex-shrink: 0;
+    margin-left: 8px;
+    overflow: hidden;
+  }
+  .mr-first-name {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mr-last-name {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 10px;
+    color: var(--text-4);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mr-bar-wrap {
+    flex: 1;
+    height: 28px;
+    margin: 0 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 14px;
+    overflow: visible;
+    position: relative;
+    border-left: 3px solid;
+  }
+  .mr-bar-wrap.blue-bar { border-left-color: var(--blue); }
+  .mr-bar-wrap.red-bar { border-left-color: #EF4444; }
+  .mr-bar-inner {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    border-radius: 0 14px 14px 0;
+    overflow: hidden;
+    transition: width 0.8s cubic-bezier(0.34, 0.02, 0.36, 1);
+  }
+  .mr-bar {
+    height: 100%;
+    border-radius: 0 14px 14px 0;
+    min-width: 2px;
+  }
+  .mr-bar.blue { background: linear-gradient(90deg, rgba(7, 81, 251, 0.15), rgba(59, 123, 255, 0.5)); }
+  .mr-bar.red { background: linear-gradient(90deg, rgba(239, 68, 68, 0.15), rgba(248, 113, 113, 0.5)); }
+  .mr-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text);
+    border: 2px solid;
+    background: rgba(255, 255, 255, 0.06);
+    transition: border-color 0.5s, left 0.8s cubic-bezier(0.34, 0.02, 0.36, 1);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+  }
+  .mr-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .mr-stats {
+    width: 72px;
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 6px;
+  }
+  .mr-mi-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .mr-steps-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-4);
+    line-height: 1.2;
+  }
+  .mr-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .mr-footer-stat {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-4);
+    letter-spacing: 0.03em;
+  }
+  .mr-footer-stat strong {
+    color: var(--text-3);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .match-replay { padding: 0 20px 60px; }
+    .mr-grid { grid-template-columns: 1fr; }
+    .mr-player-info { width: 70px; }
+    .mr-stats { width: 60px; }
+    .mr-controls { gap: 8px; }
+    .mr-timer-bar { width: 80px; }
+  }
+  @media (max-width: 480px) {
+    .match-replay { padding: 0 16px 40px; }
+    .mr-player-info { width: 60px; }
+    .mr-bar-wrap { margin: 0 6px; }
+  }
 </style>
 </head>
 <body>
@@ -1440,6 +1772,62 @@
     </div>
     <div class="versus-team">
       <img src="/urban-fm-shirt.png" alt="Urban FM team shirt" class="versus-shirt" />
+    </div>
+  </div>
+</section>
+
+<!-- MATCH REPLAY -->
+<section class="match-replay reveal" style="--rd:0.3s;">
+  <div class="section-kicker">LIVE MATCH REPLAY</div>
+
+  <div class="mr-controls">
+    <button class="mr-btn mr-btn--pause" id="mrStopBtn" style="display:none;">
+      <svg viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="15" y="3" width="4" height="18" rx="1"/></svg>
+      Stop
+    </button>
+    <div class="mr-timer">
+      <span id="mrTimerText">0:00 / 1:00</span>
+      <div class="mr-timer-bar"><div class="mr-timer-fill" id="mrTimerFill"></div></div>
+      <span class="mr-hour-badge" id="mrHourBadge">00:00</span>
+    </div>
+  </div>
+
+  <div class="mr-grid">
+    <div class="mr-panel" id="mrPanelHome">
+      <div class="mr-team-header">
+        <div class="mr-team-name"><span class="mr-team-dot" style="background:#0751FB"></span>SportIn</div>
+        <span class="mr-team-count">8 of 8</span>
+      </div>
+      <div class="mr-ruler">
+        <span>0 mi</span><span>2 mi</span><span>4 mi</span><span>6 mi</span><span>8 mi</span>
+      </div>
+      <div class="mr-hour-ruler" id="mrHourRulerHome">
+        <div class="mr-playhead" id="mrPlayheadHome"></div>
+      </div>
+      <div class="mr-rows" id="mrRowsHome" style="height:544px;"></div>
+      <div class="mr-footer" id="mrFooterHome">
+        <span class="mr-footer-stat">Total: <strong id="mrTotalStepsHome">0</strong> steps</span>
+        <span class="mr-footer-stat">Avg MI: <strong id="mrAvgMIHome">0.0</strong></span>
+        <span class="mr-footer-stat">24h daily steps</span>
+      </div>
+    </div>
+    <div class="mr-panel" id="mrPanelAway">
+      <div class="mr-team-header">
+        <div class="mr-team-name"><span class="mr-team-dot" style="background:#EF4444"></span>Urban FM</div>
+        <span class="mr-team-count">8 of 8</span>
+      </div>
+      <div class="mr-ruler">
+        <span>0 mi</span><span>2 mi</span><span>4 mi</span><span>6 mi</span><span>8 mi</span>
+      </div>
+      <div class="mr-hour-ruler" id="mrHourRulerAway">
+        <div class="mr-playhead" id="mrPlayheadAway"></div>
+      </div>
+      <div class="mr-rows" id="mrRowsAway" style="height:544px;"></div>
+      <div class="mr-footer" id="mrFooterAway">
+        <span class="mr-footer-stat">Total: <strong id="mrTotalStepsAway">0</strong> steps</span>
+        <span class="mr-footer-stat">Avg MI: <strong id="mrAvgMIAway">0.0</strong></span>
+        <span class="mr-footer-stat">24h daily steps</span>
+      </div>
     </div>
   </div>
 </section>
@@ -2050,6 +2438,515 @@
       started = true;
     });
   })();
+</script>
+
+<!-- MATCH REPLAY ENGINE -->
+<script>
+(function() {
+  // ── Seeded random ──
+  function seededRandom(seed) {
+    let s = seed;
+    return () => { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646; };
+  }
+
+  function stepsToMI(steps) { return (steps / 10000) * 5.5; }
+
+  // ── Realistic 24h step generation ──
+  // Models real human behavior: sleep at night, morning commute, lunch walk,
+  // evening sports peak, late wind-down
+  function generateMatchSteps(playerId, matchId, avgMI) {
+    const rng = seededRandom(playerId * 1000 + matchId);
+    const targetSteps = Math.round((avgMI / 5.5) * 10000);
+
+    // 8 realistic daily behavior patterns
+    const patternIdx = Math.floor(rng() * 8);
+    const hours = 24;
+    const weights = [];
+
+    for (let h = 0; h < hours; h++) {
+      let w;
+      if (patternIdx === 0) {
+        // EARLY MORNING JOGGER - runs 5:30-7am, quiet rest of day
+        if (h >= 5 && h <= 7) w = 4 + rng() * 5;
+        else if (h >= 8 && h <= 9) w = 0.5 + rng() * 0.8; // cool down walk
+        else if (h >= 10 && h <= 17) w = 0.15 + rng() * 0.25; // desk job
+        else if (h >= 18 && h <= 19) w = 0.3 + rng() * 0.4; // short evening walk
+        else if (h >= 0 && h <= 4) w = 0.01 + rng() * 0.03; // sleeping
+        else w = 0.05 + rng() * 0.1;
+      } else if (patternIdx === 1) {
+        // EVENING ATHLETE - gym/running after work 18-20h
+        if (h >= 0 && h <= 5) w = 0.01 + rng() * 0.03; // sleeping
+        else if (h >= 6 && h <= 7) w = 0.3 + rng() * 0.4; // morning commute
+        else if (h >= 8 && h <= 12) w = 0.1 + rng() * 0.2; // office
+        else if (h === 13) w = 0.3 + rng() * 0.3; // lunch walk
+        else if (h >= 14 && h <= 17) w = 0.1 + rng() * 0.15;
+        else if (h >= 18 && h <= 20) w = 5 + rng() * 6; // BIG evening session
+        else if (h === 21) w = 0.4 + rng() * 0.5; // cool down
+        else w = 0.02 + rng() * 0.05;
+      } else if (patternIdx === 2) {
+        // MORNING COMMUTER + LUNCH WALKER
+        if (h >= 0 && h <= 5) w = 0.01 + rng() * 0.02;
+        else if (h >= 6 && h <= 8) w = 1.5 + rng() * 2; // commute + walk to office
+        else if (h >= 9 && h <= 11) w = 0.1 + rng() * 0.2;
+        else if (h >= 12 && h <= 13) w = 1.2 + rng() * 1.5; // long lunch walk
+        else if (h >= 14 && h <= 17) w = 0.1 + rng() * 0.2;
+        else if (h >= 17 && h <= 18) w = 1 + rng() * 1.5; // commute home
+        else if (h >= 19 && h <= 20) w = 0.3 + rng() * 0.4; // evening errands
+        else w = 0.02 + rng() * 0.05;
+      } else if (patternIdx === 3) {
+        // EVENING SPORTS (team sport / football 19-21h)
+        if (h >= 0 && h <= 5) w = 0.01 + rng() * 0.02;
+        else if (h >= 6 && h <= 7) w = 0.2 + rng() * 0.3;
+        else if (h >= 8 && h <= 17) w = 0.1 + rng() * 0.15;
+        else if (h === 18) w = 0.8 + rng() * 0.5; // warmup walk to pitch
+        else if (h >= 19 && h <= 21) w = 6 + rng() * 7; // INTENSE sports session
+        else if (h === 22) w = 0.3 + rng() * 0.4;
+        else w = 0.01 + rng() * 0.03;
+      } else if (patternIdx === 4) {
+        // SPLIT - morning run + evening walk
+        if (h >= 0 && h <= 4) w = 0.01 + rng() * 0.02;
+        else if (h >= 5 && h <= 7) w = 2.5 + rng() * 3; // morning run
+        else if (h >= 8 && h <= 12) w = 0.12 + rng() * 0.2;
+        else if (h === 13) w = 0.4 + rng() * 0.4;
+        else if (h >= 14 && h <= 17) w = 0.1 + rng() * 0.15;
+        else if (h >= 18 && h <= 20) w = 1.5 + rng() * 2.5; // evening walk/yoga
+        else w = 0.03 + rng() * 0.06;
+      } else if (patternIdx === 5) {
+        // OFFICE WORKER - steady low activity, lunch bump, short evening walk
+        if (h >= 0 && h <= 5) w = 0.01 + rng() * 0.02;
+        else if (h >= 6 && h <= 7) w = 0.4 + rng() * 0.5;
+        else if (h >= 8 && h <= 11) w = 0.2 + rng() * 0.3; // moving around office
+        else if (h >= 12 && h <= 13) w = 0.8 + rng() * 1; // lunch break
+        else if (h >= 14 && h <= 17) w = 0.15 + rng() * 0.25;
+        else if (h >= 17 && h <= 18) w = 0.5 + rng() * 0.6; // commute
+        else if (h >= 19 && h <= 20) w = 0.4 + rng() * 0.5; // after dinner walk
+        else w = 0.02 + rng() * 0.04;
+      } else if (patternIdx === 6) {
+        // LATE NIGHT WALKER - active 20-23h (night person)
+        if (h >= 0 && h <= 6) w = 0.02 + rng() * 0.03;
+        else if (h >= 7 && h <= 9) w = 0.15 + rng() * 0.2; // slow morning
+        else if (h >= 10 && h <= 16) w = 0.1 + rng() * 0.2;
+        else if (h >= 17 && h <= 19) w = 0.3 + rng() * 0.4;
+        else if (h >= 20 && h <= 23) w = 3 + rng() * 4; // night walk/run
+        else w = 0.01 + rng() * 0.03;
+      } else {
+        // ALL-DAY MOVER - consistent throughout waking hours
+        if (h >= 0 && h <= 5) w = 0.01 + rng() * 0.02;
+        else if (h >= 6 && h <= 22) w = 0.6 + rng() * 0.8; // steady all day
+        else w = 0.03 + rng() * 0.05;
+      }
+      weights.push(w);
+    }
+    const totalW = weights.reduce((a, b) => a + b, 0);
+    const cumulative = [0];
+    let running = 0;
+    for (let h = 0; h < hours; h++) {
+      running += (weights[h] / totalW) * targetSteps;
+      cumulative.push(Math.round(running));
+    }
+    cumulative[hours] = targetSteps;
+    return cumulative;
+  }
+
+  // ── Player data ──
+  const MATCH_ID = 42;
+  const homeTeam = {
+    name: 'SportIn', color: '#0751FB', colorLight: 'rgba(7,81,251,0.8)',
+    players: [
+      { id: 1, first: 'Cristina', last: 'Moldovan', avgMI: 6.1, img: 'https://i.pravatar.cc/80?img=1' },
+      { id: 2, first: 'Adrian', last: 'Neagu', avgMI: 6.1, img: 'https://i.pravatar.cc/80?img=14' },
+      { id: 3, first: 'Radu', last: 'Gheorghe', avgMI: 6.0, img: 'https://i.pravatar.cc/80?img=12' },
+      { id: 4, first: 'Elena', last: 'Ciobanu', avgMI: 5.7, img: 'https://i.pravatar.cc/80?img=5' },
+      { id: 5, first: 'Alina', last: 'Dinu', avgMI: 5.1, img: 'https://i.pravatar.cc/80?img=9' },
+      { id: 6, first: 'Bogdan', last: 'Iacob', avgMI: 4.9, img: 'https://i.pravatar.cc/80?img=33' },
+      { id: 7, first: 'Mihai', last: 'Florescu', avgMI: 4.4, img: 'https://i.pravatar.cc/80?img=53' },
+      { id: 8, first: 'Ioana', last: 'Matei', avgMI: 4.1, img: 'https://i.pravatar.cc/80?img=23' },
+    ]
+  };
+  const awayTeam = {
+    name: 'Urban FM', color: '#EF4444', colorLight: 'rgba(239,68,68,0.8)',
+    players: [
+      { id: 11, first: 'Vlad', last: 'Marinescu', avgMI: 6.2, img: 'https://i.pravatar.cc/80?img=60' },
+      { id: 12, first: 'Andreea', last: 'Voicu', avgMI: 6.0, img: 'https://i.pravatar.cc/80?img=47' },
+      { id: 13, first: 'Dan', last: 'Costache', avgMI: 5.7, img: 'https://i.pravatar.cc/80?img=57' },
+      { id: 14, first: 'Gabriela', last: 'Enache', avgMI: 5.4, img: 'https://i.pravatar.cc/80?img=44' },
+      { id: 15, first: 'Ciprian', last: 'Lazar', avgMI: 5.1, img: 'https://i.pravatar.cc/80?img=52' },
+      { id: 16, first: 'Irina', last: 'Neculai', avgMI: 4.9, img: 'https://i.pravatar.cc/80?img=26' },
+      { id: 17, first: 'Monica', last: 'Tanase', avgMI: 4.4, img: 'https://i.pravatar.cc/80?img=25' },
+      { id: 18, first: 'Octavian', last: 'Sarbu', avgMI: 4.2, img: 'https://i.pravatar.cc/80?img=68' },
+    ]
+  };
+
+  // Pre-generate step arrays
+  const allPlayers = [...homeTeam.players, ...awayTeam.players];
+  allPlayers.forEach(p => {
+    p.stepsArr = generateMatchSteps(p.id, MATCH_ID, p.avgMI);
+    p.finalSteps = p.stepsArr[24];
+  });
+
+  // Max steps across both teams for bar scaling
+  const globalMaxSteps = Math.max(...allPlayers.map(p => p.finalSteps));
+
+  const ROW_H = 58;
+  const ROW_GAP = 8;
+  const DURATION = 60000; // 60 seconds
+  const MOVE_DURATION = 2200;
+
+  // ── DOM refs ──
+  const timerText = document.getElementById('mrTimerText');
+  const timerFill = document.getElementById('mrTimerFill');
+  const hourBadge = document.getElementById('mrHourBadge');
+  const playheadHome = document.getElementById('mrPlayheadHome');
+  const playheadAway = document.getElementById('mrPlayheadAway');
+
+  // ── Build hour ruler marks ──
+  function buildHourMarks(container) {
+    const hours = [0, 3, 6, 9, 12, 15, 18, 21, 24];
+    const padL = 20;
+    const w = container.offsetWidth || 400;
+    const usable = w - padL * 2;
+    hours.forEach(h => {
+      const s = document.createElement('span');
+      s.textContent = (h === 24 ? '24' : h.toString().padStart(2, '0')) + 'h';
+      const pct = h / 24;
+      s.style.left = (padL + pct * usable) + 'px';
+      container.appendChild(s);
+    });
+  }
+
+  // ── Build rows for a team ──
+  function buildTeamRows(team, containerId, barClass) {
+    const container = document.getElementById(containerId);
+    team.players.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'mr-row';
+      row.id = 'mr-row-' + p.id;
+      row.style.top = (i * (ROW_H + ROW_GAP)) + 'px';
+
+      const initials = p.first[0] + p.last[0];
+      const posColor = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      const avatarBorder = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : '#CD7F32') : team.color;
+      const avatarContent = p.img
+        ? '<img src="' + p.img + '" alt="' + p.first + '">'
+        : initials;
+
+      row.innerHTML =
+        '<span class="mr-pos ' + posColor + '">' + (i + 1) + '</span>' +
+        '<div class="mr-player-info">' +
+          '<div class="mr-first-name">' + p.first + '</div>' +
+          '<div class="mr-last-name">' + p.last + '</div>' +
+        '</div>' +
+        '<div class="mr-bar-wrap ' + (barClass === 'blue' ? 'blue-bar' : 'red-bar') + '">' +
+          '<div class="mr-bar-inner" style="width:0%"><div class="mr-bar ' + barClass + '" style="width:100%"></div></div>' +
+          '<div class="mr-avatar" style="border-color:' + avatarBorder + '; left:calc(0% - 17px);">' + avatarContent + '</div>' +
+        '</div>' +
+        '<div class="mr-stats">' +
+          '<div class="mr-mi-val">0.0 mi</div>' +
+          '<div class="mr-steps-val">0</div>' +
+        '</div>';
+
+      container.appendChild(row);
+      p._row = row;
+      p._prevPos = i;
+      p._moveTime = 0;
+    });
+  }
+
+  // ── Initialize ──
+  buildTeamRows(homeTeam, 'mrRowsHome', 'blue');
+  buildTeamRows(awayTeam, 'mrRowsAway', 'red');
+
+  // Build hour rulers after DOM ready
+  setTimeout(() => {
+    buildHourMarks(document.getElementById('mrHourRulerHome'));
+    buildHourMarks(document.getElementById('mrHourRulerAway'));
+  }, 100);
+
+  // ── Update team footer ──
+  function updateFooter(team, prefix) {
+    const totalSteps = team.players.reduce((s, p) => s + (p._currentSteps || p.finalSteps), 0);
+    const avgMI = stepsToMI(totalSteps / team.players.length);
+    document.getElementById('mrTotalSteps' + prefix).textContent = totalSteps.toLocaleString();
+    document.getElementById('mrAvgMI' + prefix).textContent = avgMI.toFixed(1);
+  }
+
+  // ── Set final state ──
+  function setFinalState() {
+    [homeTeam, awayTeam].forEach(team => {
+      team.players.forEach(p => { p._currentSteps = p.finalSteps; });
+    });
+    updateFooter(homeTeam, 'Home');
+    updateFooter(awayTeam, 'Away');
+  }
+
+  // ── Set initial state (start of day, all zeros) ──
+  function setInitialState() {
+    [homeTeam, awayTeam].forEach(team => {
+      team.players.forEach(p => { p._currentSteps = 0; });
+    });
+    updateFooter(homeTeam, 'Home');
+    updateFooter(awayTeam, 'Away');
+  }
+  setInitialState();
+
+  // ── Interpolate steps at a given progress (0-1 maps to hour 0-24) ──
+  function getStepsAtProgress(player, progress) {
+    const hour = progress * 24;
+    const lo = Math.floor(hour);
+    const hi = Math.min(lo + 1, 24);
+    const frac = hour - lo;
+    return player.stepsArr[lo] + (player.stepsArr[hi] - player.stepsArr[lo]) * frac;
+  }
+
+  // ── Render team at progress ──
+  function renderTeam(team, progress, barClass, now) {
+    // Calculate current steps
+    team.players.forEach(p => {
+      p._currentSteps = Math.round(getStepsAtProgress(p, progress));
+    });
+
+    // Sort by steps descending
+    const sorted = [...team.players].sort((a, b) => b._currentSteps - a._currentSteps);
+
+    sorted.forEach((p, i) => {
+      const row = p._row;
+      const newTop = i * (ROW_H + ROW_GAP);
+      row.style.top = newTop + 'px';
+
+      // Position colors
+      const posEl = row.querySelector('.mr-pos');
+      posEl.textContent = i + 1;
+      posEl.className = 'mr-pos' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
+
+      // Avatar border + position
+      const avatar = row.querySelector('.mr-avatar');
+      const avatarColor = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : '#CD7F32') : team.color;
+      avatar.style.borderColor = avatarColor;
+
+      // Bar width + avatar follows bar
+      const barInner = row.querySelector('.mr-bar-inner');
+      const pct = globalMaxSteps > 0 ? (p._currentSteps / globalMaxSteps) * 100 : 0;
+      barInner.style.width = pct.toFixed(1) + '%';
+      avatar.style.left = 'calc(' + pct.toFixed(1) + '% - 17px)';
+
+      // Stats
+      row.querySelector('.mr-mi-val').textContent = stepsToMI(p._currentSteps).toFixed(1) + ' mi';
+      row.querySelector('.mr-steps-val').textContent = p._currentSteps.toLocaleString();
+
+      // Movement detection
+      if (p._prevPos !== i) {
+        p._moveDir = i < p._prevPos ? 'up' : 'down';
+        p._moveTime = now;
+        p._prevPos = i;
+      }
+      const timeSinceMove = now - (p._moveTime || 0);
+      if (timeSinceMove < MOVE_DURATION && p._moveTime > 0) {
+        if (p._moveDir === 'up') {
+          row.classList.add('moving-up');
+          row.classList.remove('moving-down');
+        } else {
+          row.classList.add('moving-down');
+          row.classList.remove('moving-up');
+        }
+      } else {
+        row.classList.remove('moving-up', 'moving-down');
+      }
+    });
+  }
+
+  // ── Versus score live update ──
+  const versusVals = document.querySelectorAll('.versus-index-val');
+
+  function updateVersusScores() {
+    const homeAvg = stepsToMI(homeTeam.players.reduce((s, p) => s + (p._currentSteps || 0), 0) / homeTeam.players.length);
+    const awayAvg = stepsToMI(awayTeam.players.reduce((s, p) => s + (p._currentSteps || 0), 0) / awayTeam.players.length);
+    if (versusVals[0]) versusVals[0].childNodes[0].textContent = homeAvg.toFixed(1);
+    if (versusVals[1]) versusVals[1].childNodes[0].textContent = awayAvg.toFixed(1);
+  }
+
+  // ── Animation state ──
+  let animState = 'idle'; // idle | playing | stopped | done
+  let startTime = 0;
+  let elapsed = 0;
+  let rafId = null;
+  let autoStarted = false;
+
+  const stopBtn = document.getElementById('mrStopBtn');
+
+  function formatTime(ms) {
+    const s = Math.floor(ms / 1000);
+    const m = Math.floor(s / 60);
+    const ss = s % 60;
+    return m + ':' + ss.toString().padStart(2, '0');
+  }
+
+  function updateUI() {
+    stopBtn.style.display = animState === 'playing' ? '' : 'none';
+  }
+
+  function tick(timestamp) {
+    if (animState !== 'playing') return;
+    const now = performance.now();
+    elapsed = now - startTime;
+
+    if (elapsed >= DURATION) {
+      // Animation complete — restart loop after brief pause
+      elapsed = DURATION;
+      animState = 'done';
+      renderFrame(1.0, now);
+      updateUI();
+      // Auto-restart after 3 seconds
+      setTimeout(() => {
+        if (animState === 'done') {
+          play();
+        }
+      }, 3000);
+      return;
+    }
+
+    const progress = elapsed / DURATION;
+    renderFrame(progress, now);
+
+    if (animState === 'playing') {
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  function renderFrame(progress, now) {
+    // progress 0→1 maps to hour 0→24 (full day)
+    const currentHour = progress * 24;
+
+    // Update timer
+    timerText.textContent = formatTime(elapsed) + ' / 1:00';
+    timerFill.style.width = (progress * 100) + '%';
+
+    // Show actual hour of day with minutes
+    const hh = Math.floor(currentHour);
+    const mm = Math.floor((currentHour - hh) * 60);
+    hourBadge.textContent = hh.toString().padStart(2, '0') + ':' + mm.toString().padStart(2, '0');
+
+    // Move playheads
+    const rulerHome = document.getElementById('mrHourRulerHome');
+    const rulerAway = document.getElementById('mrHourRulerAway');
+    const padL = 20;
+    const usableHome = (rulerHome.offsetWidth || 400) - padL * 2;
+    const usableAway = (rulerAway.offsetWidth || 400) - padL * 2;
+    playheadHome.style.left = (padL + progress * usableHome) + 'px';
+    playheadAway.style.left = (padL + progress * usableAway) + 'px';
+    playheadHome.classList.add('active');
+    playheadAway.classList.add('active');
+
+    // Render teams
+    renderTeam(homeTeam, progress, 'blue', now);
+    renderTeam(awayTeam, progress, 'red', now);
+
+    // Update footers
+    updateFooter(homeTeam, 'Home');
+    updateFooter(awayTeam, 'Away');
+
+    // Update versus scores
+    updateVersusScores();
+  }
+
+  function play() {
+    // Reset all players to start position
+    [homeTeam, awayTeam].forEach(team => {
+      // Sort by avgMI descending for initial order
+      const initialOrder = [...team.players].sort((a, b) => b.avgMI - a.avgMI);
+      team.players.forEach((p) => {
+        const initIdx = initialOrder.indexOf(p);
+        p._prevPos = initIdx;
+        p._moveTime = 0;
+        p._currentSteps = 0;
+        const row = p._row;
+        row.style.top = (initIdx * (ROW_H + ROW_GAP)) + 'px';
+        row.classList.remove('moving-up', 'moving-down');
+
+        // Reset bar and avatar
+        const barInner = row.querySelector('.mr-bar-inner');
+        barInner.style.width = '0%';
+        const avatar = row.querySelector('.mr-avatar');
+        avatar.style.left = 'calc(0% - 17px)';
+
+        const posEl = row.querySelector('.mr-pos');
+        posEl.textContent = initIdx + 1;
+        posEl.className = 'mr-pos' + (initIdx === 0 ? ' gold' : initIdx === 1 ? ' silver' : initIdx === 2 ? ' bronze' : '');
+
+        row.querySelector('.mr-mi-val').textContent = '0.0 mi';
+        row.querySelector('.mr-steps-val').textContent = '0';
+      });
+    });
+
+    elapsed = 0;
+    startTime = performance.now();
+    animState = 'playing';
+    updateUI();
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function stop() {
+    if (rafId) cancelAnimationFrame(rafId);
+    animState = 'stopped';
+    updateUI();
+
+    // Show final 24h state
+    [homeTeam, awayTeam].forEach(team => {
+      const sorted = [...team.players].sort((a, b) => b.finalSteps - a.finalSteps);
+      sorted.forEach((p, i) => {
+        p._currentSteps = p.finalSteps;
+        p._prevPos = i;
+        p._moveTime = 0;
+        const row = p._row;
+        row.style.top = (i * (ROW_H + ROW_GAP)) + 'px';
+        row.classList.remove('moving-up', 'moving-down');
+
+        const posEl = row.querySelector('.mr-pos');
+        posEl.textContent = i + 1;
+        posEl.className = 'mr-pos' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
+
+        const avatar = row.querySelector('.mr-avatar');
+        const avatarColor = i < 3 ? (i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : '#CD7F32') : team.color;
+        avatar.style.borderColor = avatarColor;
+
+        const barInner = row.querySelector('.mr-bar-inner');
+        const pct = ((p.finalSteps / globalMaxSteps) * 100).toFixed(1);
+        barInner.style.width = pct + '%';
+        avatar.style.left = 'calc(' + pct + '% - 17px)';
+
+        row.querySelector('.mr-mi-val').textContent = stepsToMI(p.finalSteps).toFixed(1) + ' mi';
+        row.querySelector('.mr-steps-val').textContent = p.finalSteps.toLocaleString();
+      });
+    });
+
+    setFinalState();
+    updateVersusScores();
+    timerText.textContent = '1:00 / 1:00';
+    timerFill.style.width = '100%';
+    hourBadge.textContent = '24:00';
+  }
+
+  stopBtn.addEventListener('click', stop);
+
+  // ── Auto-start when section scrolls into view ──
+  const mrSection = document.querySelector('.match-replay');
+  if (mrSection) {
+    const autoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !autoStarted) {
+          autoStarted = true;
+          // Small delay so the section is fully visible
+          setTimeout(() => { play(); }, 400);
+        }
+      });
+    }, { threshold: 0.3 });
+    autoObserver.observe(mrSection);
+
+    // Also register with reveal observer
+    if (typeof io !== 'undefined') {
+      io.observe(mrSection);
+    }
+  }
+})();
 </script>
 
 </body>
