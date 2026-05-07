@@ -1691,6 +1691,512 @@
     .mr-player-info { width: 60px; }
     .mr-bar-wrap { margin: 0 6px; }
   }
+
+  /* ==== PILLAR CARDS (six platform layers) ==== */
+  .pillars-section {
+    margin-top: 60px;
+    padding: 0 48px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+  }
+  .pillar {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    padding: 28px 24px;
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 12px 40px rgba(0, 0, 0, 0.25);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s ease,
+                background 0.4s ease,
+                box-shadow 0.4s ease;
+  }
+  .pillar:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+  .pillar-ico {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: rgba(7, 81, 251, 0.15);
+    border: 1px solid rgba(7, 81, 251, 0.35);
+    border-radius: 12px;
+    color: var(--blue-bright);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  .pillar-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .pillar-desc {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-3);
+  }
+
+  /* Pillar title graph (curve line) */
+  .pillars-graph {
+    margin-top: 32px;
+    margin-bottom: 0;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    height: 80px;
+    overflow: hidden;
+    opacity: 0.55;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, black 18%, black 82%, transparent 100%);
+  }
+  .pillars-graph svg { width: 100%; height: 100%; display: block; }
+  .pillars-graph .ln { stroke: url(#pgGrad); stroke-width: 1.6; fill: none; }
+  .pillars-graph .ar { fill: url(#pgFill); opacity: 0.6; }
+  .pillars-graph .dot {
+    fill: var(--blue-bright);
+    filter: drop-shadow(0 0 6px rgba(59,123,255,0.7));
+  }
+  @keyframes pgPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.85; }
+  }
+
+  /* Two-row marquee for the six pillars */
+  .pillars-rows {
+    margin-top: 56px;
+    position: relative;
+    overflow: hidden;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: 8px 0;
+    -webkit-mask-image: linear-gradient(90deg,
+      transparent 0%, rgba(0,0,0,0.15) 5%, rgba(0,0,0,0.6) 12%, black 20%,
+      black 80%, rgba(0,0,0,0.6) 88%, rgba(0,0,0,0.15) 95%, transparent 100%);
+    mask-image: linear-gradient(90deg,
+      transparent 0%, rgba(0,0,0,0.15) 5%, rgba(0,0,0,0.6) 12%, black 20%,
+      black 80%, rgba(0,0,0,0.6) 88%, rgba(0,0,0,0.15) 95%, transparent 100%);
+  }
+  .pillars-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    will-change: transform;
+    padding: 12px 48px;
+  }
+  .pillars-row + .pillars-row { margin-top: 24px; }
+  .pillar.expanded {
+    flex: 0 0 auto;
+    width: 420px;
+    min-height: 580px;
+    display: flex;
+    flex-direction: column;
+    padding: 36px 32px;
+  }
+  .pillar.expanded .pillar-anim {
+    margin-top: auto;
+    height: 270px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Anim 1: Pro Sport Formats — table rows */
+  .anim-table { padding: 14px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); display: flex; flex-direction: column; gap: 4px; height: 100%; }
+  .anim-table .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    animation: tableRow 6s ease-in-out infinite;
+    opacity: 0;
+    transform: translateY(6px);
+    color: var(--text-2);
+  }
+  .anim-table .row.active { color: var(--text); }
+  .anim-table .row .name { display: flex; gap: 10px; align-items: center; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .anim-table .row .mark { width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .anim-table .row .meta { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-4); }
+  .anim-table .row.active .meta { color: var(--blue-bright); }
+  .anim-table .row.cl .mark { background: linear-gradient(135deg, #003399, #1857F1); color: #fff; }
+  .anim-table .row.f1 .mark { background: #FF1840; color: #fff; }
+  .anim-table .row.uefa .mark { background: linear-gradient(135deg, #FF6900, #FFB100); color: #fff; }
+  .anim-table .row.tdf .mark { background: linear-gradient(135deg, #F5E4A8, #C9A24B); color: #1a1a1e; }
+  .anim-table .row:nth-child(1) { animation-delay: 0s; }
+  .anim-table .row:nth-child(2) { animation-delay: 0.5s; }
+  .anim-table .row:nth-child(3) { animation-delay: 1.0s; }
+  .anim-table .row:nth-child(4) { animation-delay: 1.5s; }
+  @keyframes tableRow {
+    0% { opacity: 0; transform: translateY(6px); }
+    8%, 92% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-6px); }
+  }
+
+  /* Anim 2: AI Voice waveform */
+  .anim-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 100%; padding: 0 16px; cursor: pointer; }
+  .anim-wave .bar {
+    width: 4px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--blue-bright), var(--blue));
+    height: 6px;
+    opacity: 0.3;
+    transition: height 0.06s linear, opacity 0.06s linear;
+  }
+  .anim-wave.playing .bar { opacity: 0.85; }
+  .anim-wave-label {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--text-4);
+    text-transform: uppercase;
+  }
+  .anim-wave-label .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #12E094; box-shadow: 0 0 8px #12E094; margin-right: 6px; vertical-align: middle; animation: livePulse 1.6s ease-in-out infinite; }
+  @keyframes livePulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  .pillar.expanded { position: relative; }
+  .ai-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .ai-title-row .pillar-title { margin-bottom: 0; }
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 59, 92, 0.14);
+    border: 1px solid rgba(255, 59, 92, 0.4);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: #FF3B5C;
+    text-transform: uppercase;
+  }
+  .live-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #FF3B5C;
+    box-shadow: 0 0 8px #FF3B5C;
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
+  .play-btn {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .play-btn:hover { background: rgba(255, 255, 255, 0.16); transform: scale(1.06); }
+  .play-btn svg { width: 14px; height: 14px; }
+  .play-btn .ico-pause { display: none; }
+  .play-btn.playing .ico-play { display: none; }
+  .play-btn.playing .ico-pause { display: block; }
+
+  .wave-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(7, 81, 251, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+    z-index: 5;
+    box-shadow: 0 12px 32px rgba(7, 81, 251, 0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .wave-overlay:hover { background: rgba(59, 123, 255, 1); transform: translate(-50%, -50%) scale(1.06); }
+  .wave-overlay svg { width: 22px; height: 22px; }
+  .wave-overlay .ico-pause { display: none; }
+  .wave-overlay.is-paused-from-play .ico-play { display: none; }
+  .wave-overlay.is-paused-from-play .ico-pause { display: block; }
+  .wave-overlay.hidden { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.85); }
+
+  /* Anim 3: Movement Index graph */
+  .anim-mi { padding: 16px; }
+  .anim-mi svg { width: 100%; height: 100%; }
+  @keyframes miDraw { to { stroke-dashoffset: 0; } }
+  @keyframes miDot { 0%,100% { transform: translateX(0); } 50% { transform: translateX(180px); } }
+
+  /* Anim 4: SafeGuard scanner */
+  .anim-sg { position: relative; }
+  .anim-sg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .anim-sg-scan {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(7, 81, 251, 0.15) 50%, transparent 100%);
+    height: 80px;
+    animation: sgScan 3s linear infinite;
+  }
+  @keyframes sgScan {
+    0% { transform: translateY(-80px); }
+    100% { transform: translateY(240px); }
+  }
+  .anim-sg-flag {
+    position: absolute;
+    width: 12px; height: 12px;
+    border: 1.5px solid #FF3B5C;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6);
+    animation: sgFlag 2.4s ease-out infinite;
+  }
+  .anim-sg-flag.f1 { top: 30%; left: 25%; animation-delay: 0s; }
+  .anim-sg-flag.f2 { top: 60%; left: 70%; animation-delay: 1.2s; }
+  .anim-sg-flag.f3 { top: 45%; left: 50%; animation-delay: 0.6s; }
+  @keyframes sgFlag {
+    0% { transform: scale(0.6); opacity: 0; box-shadow: 0 0 0 0 rgba(255, 59, 92, 0.6); }
+    20% { opacity: 1; transform: scale(1); }
+    80%, 100% { opacity: 0; transform: scale(1.4); box-shadow: 0 0 0 18px rgba(255, 59, 92, 0); }
+  }
+
+  /* Anim 5: Integration floating logos */
+  .anim-int { position: relative; }
+  .anim-int-logo {
+    position: absolute;
+    width: 56px; height: 56px;
+    display: grid; place-items: center;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+    color: var(--text-2);
+    animation: floatLogo 6s ease-in-out infinite;
+  }
+  .anim-int-logo svg { width: 28px; height: 28px; }
+  .anim-int-logo img { width: 34px; height: 34px; object-fit: contain; opacity: 0.95; }
+  .anim-int-logo { width: 52px; height: 52px; }
+  .anim-int-logo.l1 { top: 16px; left: 22px; animation-delay: 0s; }
+  .anim-int-logo.l2 { top: 12px; right: 24px; animation-delay: 1s; }
+  .anim-int-logo.l3 { top: 50%; left: 6px; transform: translateY(-50%); animation-delay: 2s; }
+  .anim-int-logo.l4 { top: 50%; right: 8px; transform: translateY(-50%); animation-delay: 3s; }
+  .anim-int-logo.l5 { bottom: 16px; left: 30px; animation-delay: 4s; }
+  .anim-int-logo.l6 { bottom: 12px; right: 28px; animation-delay: 5s; }
+  @keyframes floatLogoMid {
+    0%, 100% { transform: translateY(-50%) rotate(0deg); }
+    50% { transform: translateY(calc(-50% - 12px)) rotate(2deg); }
+  }
+  .anim-int-logo.l3, .anim-int-logo.l4 { animation-name: floatLogoMid; }
+  @keyframes floatLogo {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+  }
+  .anim-int-flow { position: absolute; inset: 0; pointer-events: none; }
+  .anim-int-flow svg { width: 100%; height: 100%; display: block; }
+  .anim-int-flow .conn { stroke: rgba(59, 123, 255, 0.18); stroke-width: 1; fill: none; }
+  .anim-int-flow .pkt { fill: var(--blue-bright); filter: drop-shadow(0 0 6px var(--blue-bright)); }
+  .anim-int-core {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+    box-shadow:
+      0 8px 28px rgba(7, 81, 251, 0.45),
+      0 0 0 0 rgba(59, 123, 255, 0.5),
+      inset 0 1px 0 rgba(255,255,255,0.25);
+    animation: intCorePulse 2.4s ease-in-out infinite;
+    z-index: 2;
+  }
+  .anim-int-core svg { width: 30px; height: auto; }
+  @keyframes intCorePulse {
+    0%, 100% { box-shadow: 0 8px 28px rgba(7, 81, 251, 0.45), 0 0 0 0 rgba(59, 123, 255, 0.45), inset 0 1px 0 rgba(255,255,255,0.25); }
+    50%      { box-shadow: 0 8px 28px rgba(7, 81, 251, 0.55), 0 0 0 18px rgba(59, 123, 255, 0), inset 0 1px 0 rgba(255,255,255,0.25); }
+  }
+
+  /* Anim 6: eMotion chip + circuit */
+  .anim-em {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+  }
+  .anim-em-circuit { position: absolute; inset: 0; }
+  .anim-em-circuit svg { width: 100%; height: 100%; display: block; }
+  .anim-em-circuit .trace { stroke: rgba(59, 123, 255, 0.22); stroke-width: 1; fill: none; }
+  .anim-em-circuit .trace.bright { stroke: rgba(59, 123, 255, 0.5); stroke-width: 1.2; }
+  .anim-em-circuit .pad { fill: rgba(59, 123, 255, 0.5); }
+  .anim-em-circuit .data { fill: var(--blue-bright); filter: drop-shadow(0 0 6px var(--blue-bright)); }
+  .anim-em-chip {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px; height: 110px;
+    border-radius: 18px;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.18), transparent 50%),
+      linear-gradient(135deg, #0F1729 0%, #06090F 100%);
+    border: 1px solid rgba(59, 123, 255, 0.35);
+    box-shadow:
+      0 0 0 4px rgba(7, 81, 251, 0.12),
+      0 12px 36px rgba(7, 81, 251, 0.35),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    display: grid;
+    place-items: center;
+    z-index: 3;
+    animation: chipPulse 3s ease-in-out infinite;
+  }
+  @keyframes chipPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(7, 81, 251, 0.10), 0 12px 36px rgba(7, 81, 251, 0.30), inset 0 1px 0 rgba(255,255,255,0.08); }
+    50%      { box-shadow: 0 0 0 4px rgba(7, 81, 251, 0.20), 0 12px 48px rgba(7, 81, 251, 0.55), inset 0 1px 0 rgba(255,255,255,0.10); }
+  }
+  .anim-em-chip::before,
+  .anim-em-chip::after {
+    content: '';
+    position: absolute;
+    background-image: linear-gradient(90deg, rgba(59,123,255,0.55) 50%, transparent 50%);
+    background-size: 10px 100%;
+  }
+  .anim-em-chip::before {
+    top: -7px; left: 14px; right: 14px; height: 4px;
+    border-radius: 2px;
+  }
+  .anim-em-chip::after {
+    bottom: -7px; left: 14px; right: 14px; height: 4px;
+    border-radius: 2px;
+  }
+  .anim-em-chip .pin-l, .anim-em-chip .pin-r {
+    position: absolute;
+    top: 14px; bottom: 14px; width: 4px;
+    background-image: linear-gradient(180deg, rgba(59,123,255,0.55) 50%, transparent 50%);
+    background-size: 100% 10px;
+    border-radius: 2px;
+  }
+  .anim-em-chip .pin-l { left: -7px; }
+  .anim-em-chip .pin-r { right: -7px; }
+  .anim-em-chip .chip-mark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    color: #fff;
+    background: linear-gradient(135deg, var(--blue-bright), var(--blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .anim-em-chip .chip-line {
+    position: absolute;
+    inset: 14px;
+    border: 1px dashed rgba(59, 123, 255, 0.18);
+    border-radius: 8px;
+  }
+  .anim-em-stack {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+  .anim-em-stack .pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    animation: emPill 4s ease-in-out infinite;
+  }
+  .anim-em-stack .pill.live::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #12E094;
+    box-shadow: 0 0 6px #12E094;
+    margin-right: 6px;
+    vertical-align: middle;
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
+  .anim-em-stack .pill:nth-child(1) { animation-delay: 0s; }
+  .anim-em-stack .pill:nth-child(2) { animation-delay: 0.6s; }
+  .anim-em-stack .pill:nth-child(3) { animation-delay: 1.2s; }
+  @keyframes emPill {
+    0%, 100% { color: var(--text-3); border-color: rgba(255,255,255,0.08); }
+    50% { color: var(--blue-bright); border-color: rgba(59, 123, 255, 0.35); }
+  }
+  .anim-em-tag {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--text-4);
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  .anim-em-tag span { color: #12E094; margin-left: 6px; }
+  .anim-em-tag span::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #12E094;
+    box-shadow: 0 0 6px #12E094;
+    margin-right: 5px;
+    vertical-align: middle;
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
+
+  @media (max-width: 768px) {
+    .pillar.expanded { width: 300px; min-height: 500px; padding: 26px 22px; }
+    .pillar.expanded .pillar-anim { height: 220px; }
+    .pillars-row { gap: 14px; padding: 10px 20px; }
+  }
 </style>
 </head>
 <body>
@@ -1981,109 +2487,194 @@
   </p>
 </section>
 
-<!-- LIVE MATCHES -->
-<section class="showcase reveal" style="--rd:0.1s;">
-  <div class="showcase-panel">
-    <div class="showcase-header">
-      <span class="showcase-tab">Overview</span>
-      <div class="showcase-tabs-ghost">
-        <span>Table</span>
-        <span>Matches</span>
-        <span>Racetrack</span>
-        <span>Stats</span>
+<!-- SIX PILLAR CARDS (platform layers) -->
+<section class="pillars-section" id="pillars">
+  <div class="pillars-graph reveal" style="--rd:0.22s;">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="pgGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0751FB" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#3B7BFF" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#0751FB" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="pgFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3B7BFF" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#3B7BFF" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="ar" d="M0,42 C60,38 120,30 180,28 C240,26 300,32 360,30 C420,28 480,18 540,16 C600,14 660,24 720,22 C780,20 840,12 900,10 C960,8 1020,16 1080,18 C1140,20 1200,16 1200,16 L1200,60 L0,60 Z"/>
+      <path class="ln" d="M0,42 C60,38 120,30 180,28 C240,26 300,32 360,30 C420,28 480,18 540,16 C600,14 660,24 720,22 C780,20 840,12 900,10 C960,8 1020,16 1080,18 C1140,20 1200,16 1200,16"/>
+      <circle class="dot" cx="900" cy="10" r="3" style="animation: pgPulse 2s ease-in-out infinite;"/>
+    </svg>
+  </div>
+
+  <div class="pillars-rows">
+    <div class="pillars-row" id="pillarsRowTop">
+      <!-- 1. Professional Sport Formats -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">PS</div>
+        <div class="pillar-title">Professional Sport Formats</div>
+        <div class="pillar-desc">Bring the structures of professional sport: leagues, cups, tours, championships, territorial conquest. All in a format your people can live inside.</div>
+        <div class="pillar-anim anim-table">
+          <div class="row cl active"><span class="name"><span class="mark">UCL</span>Champions League</span><span class="meta">Group Stage</span></div>
+          <div class="row f1"><span class="name"><span class="mark">F1</span>Formula 1</span><span class="meta">Round 8 / 24</span></div>
+          <div class="row uefa"><span class="name"><span class="mark">UEL</span>UEFA League</span><span class="meta">Knockout</span></div>
+          <div class="row tdf"><span class="name"><span class="mark">TDF</span>Tour de France</span><span class="meta">Stage 12 / 21</span></div>
+        </div>
+      </div>
+
+      <!-- 2. AI Storytelling -->
+      <div class="pillar expanded">
+        <audio id="aiAudio" src="/ai-commentary.mp3" preload="auto" crossorigin="anonymous"></audio>
+        <div class="pillar-ico">AS</div>
+        <div class="ai-title-row">
+          <div class="pillar-title">AI Storytelling</div>
+          <span class="live-badge">Live</span>
+          <button class="play-btn" id="aiPlayBtn" aria-label="Play AI commentary">
+            <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+          </button>
+        </div>
+        <div class="pillar-desc">Every effort deserves a story. SportIn turns movement into commentary, rivalry, momentum, and moments worth sharing.</div>
+        <div class="pillar-anim">
+          <div class="anim-wave" id="aiWave">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+          <button class="wave-overlay" id="aiWaveOverlay" aria-label="Play / pause AI commentary">
+            <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+          </button>
+          <div class="anim-wave-label">AI Commentary &middot; Tap to listen</div>
+        </div>
+      </div>
+
+      <!-- 3. Movement Index -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">MI</div>
+        <div class="pillar-title">Movement Index</div>
+        <div class="pillar-desc">A proprietary signal that reads device data and reveals real effort, real health patterns, and a smarter way to understand activity.</div>
+        <div class="pillar-anim anim-mi">
+          <svg viewBox="0 0 320 200" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="miGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#0751FB"/>
+                <stop offset="100%" stop-color="#3B7BFF"/>
+              </linearGradient>
+              <linearGradient id="miFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3B7BFF" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#3B7BFF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,160 L20,150 L40,140 L60,130 L80,150 L100,120 L120,130 L140,90 L160,100 L180,70 L200,80 L220,60 L240,70 L260,40 L280,50 L300,30 L320,40 L320,200 L0,200 Z" fill="url(#miFill)"/>
+            <path d="M0,160 L20,150 L40,140 L60,130 L80,150 L100,120 L120,130 L140,90 L160,100 L180,70 L200,80 L220,60 L240,70 L260,40 L280,50 L300,30 L320,40"
+                  stroke="url(#miGrad)" stroke-width="2" fill="none"
+                  stroke-dasharray="800" stroke-dashoffset="800"
+                  style="animation: miDraw 3s ease-out forwards infinite;"/>
+            <circle r="4" fill="#3B7BFF" style="filter: drop-shadow(0 0 8px #3B7BFF);">
+              <animateMotion dur="3s" repeatCount="indefinite"
+                path="M0,160 L20,150 L40,140 L60,130 L80,150 L100,120 L120,130 L140,90 L160,100 L180,70 L200,80 L220,60 L240,70 L260,40 L280,50 L300,30 L320,40"/>
+            </circle>
+            <text x="14" y="26" font-family="IBM Plex Mono" font-size="10" fill="#5F667E" letter-spacing="2">MOVEMENT INDEX</text>
+            <text x="14" y="62" font-family="Space Grotesk" font-size="26" font-weight="700" fill="#FFFFFF">7.4</text>
+          </svg>
+        </div>
       </div>
     </div>
-    <div class="showcase-live-label">Today&rsquo;s matches</div>
 
-    <div class="match-row">
-      <span class="match-live-dot">Live</span>
-      <div class="match-team">
-        <div class="match-team-info">
-          <div class="match-team-name">Team A</div>
-          <div class="match-team-meta">12 &middot; &hearts; 248</div>
+    <div class="pillars-row" id="pillarsRowBottom">
+      <!-- 4. SafeGuard AI -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">SG</div>
+        <div class="pillar-title">SafeGuard AI</div>
+        <div class="pillar-desc">Built to protect every competition. SafeGuard AI reads activity in real time and flags suspicious behavior before it distorts the game.</div>
+        <div class="pillar-anim anim-sg">
+          <div class="anim-sg-grid"></div>
+          <div class="anim-sg-scan"></div>
+          <div class="anim-sg-flag f1"></div>
+          <div class="anim-sg-flag f2"></div>
+          <div class="anim-sg-flag f3"></div>
+          <div class="anim-wave-label" style="bottom: 12px;"><span class="live-dot" style="background: #FF3B5C; box-shadow: 0 0 8px #FF3B5C;"></span>3 Anomalies Flagged</div>
         </div>
-        <div class="match-team-logo">A</div>
       </div>
-      <div class="match-score">
-        <span class="match-val">7.8<span class="unit">mi</span></span>
-        <span class="match-vs">&ndash;</span>
-        <span class="match-val">6.9<span class="unit">mi</span></span>
-      </div>
-      <div class="match-team away">
-        <div class="match-team-info">
-          <div class="match-team-name">Team H</div>
-          <div class="match-team-meta">10 &middot; &hearts; 156</div>
-        </div>
-        <div class="match-team-logo">H</div>
-      </div>
-    </div>
 
-    <div class="match-row">
-      <span class="match-live-dot">Live</span>
-      <div class="match-team">
-        <div class="match-team-info">
-          <div class="match-team-name">Team B</div>
-          <div class="match-team-meta">13 &middot; &hearts; 312</div>
+      <!-- 5. Integration -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">IN</div>
+        <div class="pillar-title">Integration</div>
+        <div class="pillar-desc">SportIn connects with the ecosystem around your users: devices, wearables, tracking environments. Joining the competition is seamless from day one.</div>
+        <div class="pillar-anim anim-int">
+          <div class="anim-int-flow">
+            <svg viewBox="0 0 320 220" preserveAspectRatio="none">
+              <path class="conn" id="cnL1" d="M48,42 L160,110"/>
+              <path class="conn" id="cnL2" d="M272,38 L160,110"/>
+              <path class="conn" id="cnL3" d="M32,110 L160,110"/>
+              <path class="conn" id="cnL4" d="M288,110 L160,110"/>
+              <path class="conn" id="cnL5" d="M56,178 L160,110"/>
+              <path class="conn" id="cnL6" d="M292,182 L160,110"/>
+              <circle class="pkt" r="2.5"><animateMotion dur="2.2s" repeatCount="indefinite" begin="0s"><mpath href="#cnL1"/></animateMotion></circle>
+              <circle class="pkt" r="2.5"><animateMotion dur="2.2s" repeatCount="indefinite" begin="0.35s"><mpath href="#cnL2"/></animateMotion></circle>
+              <circle class="pkt" r="2.5"><animateMotion dur="2.2s" repeatCount="indefinite" begin="0.7s"><mpath href="#cnL3"/></animateMotion></circle>
+              <circle class="pkt" r="2.5"><animateMotion dur="2.2s" repeatCount="indefinite" begin="1.05s"><mpath href="#cnL4"/></animateMotion></circle>
+              <circle class="pkt" r="2.5"><animateMotion dur="2.2s" repeatCount="indefinite" begin="1.4s"><mpath href="#cnL5"/></animateMotion></circle>
+              <circle class="pkt" r="2.5"><animateMotion dur="2.2s" repeatCount="indefinite" begin="1.75s"><mpath href="#cnL6"/></animateMotion></circle>
+            </svg>
+          </div>
+          <div class="anim-int-logo l1" title="Fitbit"><img src="/logos/fitbit.png" alt="Fitbit" /></div>
+          <div class="anim-int-logo l2" title="Whoop"><img src="/logos/whoop.webp" alt="Whoop" /></div>
+          <div class="anim-int-logo l3" title="Strava"><img src="/logos/strava.webp" alt="Strava" /></div>
+          <div class="anim-int-logo l4" title="Oura"><img src="/logos/oura.png" alt="Oura" /></div>
+          <div class="anim-int-logo l5" title="Huawei"><img src="/logos/huawei.png" alt="Huawei" /></div>
+          <div class="anim-int-logo l6" title="Xiaomi"><img src="/logos/xiaomi.png" alt="Xiaomi" /></div>
+          <div class="anim-int-core" title="SportIn">
+            <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M68.0643 1.18373C68.4786 2.11227 68.2768 2.39873 64.7589 5.87123C63.0757 7.53268 59.7993 10.7671 57.4782 13.0587C55.157 15.3504 51.548 18.8875 49.4586 20.9193C47.3693 22.951 44.4876 25.7635 43.0553 27.1693C36.7282 33.3789 35.0468 35.0216 31.9097 38.0583C30.0763 39.8329 28.0624 41.7777 27.4341 42.3802C26.8057 42.9827 25.2824 44.4681 24.0486 45.6814C22.8149 46.8948 21.5813 48.0581 21.3076 48.2666C20.0186 49.2485 18.2418 49.6683 16.7324 49.3477C15.668 49.1214 14.8088 48.5866 13.6772 47.4458C12.6572 46.4177 8.87468 42.4789 7.2178 40.7204C6.76176 40.2366 5.84718 39.2756 5.18509 38.585C1.75343 35.0056 1.40718 34.585 0.823635 33.2841C-0.236365 30.9219 -0.278033 27.4966 0.726551 25.3369C1.2353 24.2431 1.75051 23.5179 4.30926 20.2937C5.76864 18.4548 7.1028 16.7777 7.27447 16.5668C8.01447 15.6583 10.6828 12.2637 11.2195 11.5483C11.5418 11.1187 12.1805 10.2937 12.6388 9.71539C13.0972 9.13664 14.058 7.89748 14.7743 6.96123C17.263 3.70831 17.7591 3.17435 19.2013 2.1981C20.6397 1.22456 22.088 0.586017 23.6805 0.223309C24.3316 0.0749757 26.6563 0.0528925 45.3993 0.0176841C64.8053 -0.0191909 66.4241 -0.00898313 66.8576 0.15185C67.4116 0.357059 67.8705 0.749767 68.0643 1.18373Z" fill="white"/>
+              <path d="M74.2966 47.9023C74.4751 48.9085 73.9912 52.2362 73.5808 52.8223C73.4918 52.9489 73.4193 53.1246 73.4191 53.2119C73.4183 53.5369 72.3755 55.0504 70.4947 57.4575C69.4301 58.8192 68.0147 60.6367 67.3487 61.496C65.6174 63.7302 61.4189 69.0571 59.8637 70.9925C59.4416 71.5177 58.5589 72.6427 57.9018 73.4925C56.4318 75.3944 55.5903 76.2548 54.5145 76.9571C53.2012 77.8144 51.9985 78.3119 50.2943 78.7016C49.5676 78.8681 48.0866 78.8781 29.0964 78.8479C9.57034 78.8169 8.66347 78.8071 8.30513 78.6254C7.33326 78.1319 7.20241 76.9046 8.0197 75.9502C8.51116 75.3769 20.8564 62.9579 40.2512 43.5273C50.147 33.6129 53.982 29.8354 54.4193 29.571C54.8226 29.3271 55.3114 29.1487 55.912 29.0258C57.017 28.7998 57.437 28.7956 58.2337 29.0019C59.3307 29.2862 59.8041 29.625 61.2068 31.131C61.9276 31.9048 63.0133 33.056 63.6193 33.6894C65.0014 35.1337 65.9966 36.1871 67.8464 38.1642C68.6485 39.0212 69.6351 40.0748 70.0389 40.5052C72.4093 43.0317 72.8914 43.6208 73.2978 44.4867C73.7732 45.4998 73.9924 46.1569 74.1418 47.0169C74.2016 47.3606 74.2710 47.7589 74.2966 47.9023Z" fill="white"/>
+            </svg>
+          </div>
         </div>
-        <div class="match-team-logo" style="background:rgba(59,123,255,0.15);border-color:rgba(59,123,255,0.3);color:var(--blue-bright);">B</div>
       </div>
-      <div class="match-score">
-        <span class="match-val">8.1<span class="unit">mi</span></span>
-        <span class="match-vs">&ndash;</span>
-        <span class="match-val">7.9<span class="unit">mi</span></span>
-      </div>
-      <div class="match-team away">
-        <div class="match-team-info">
-          <div class="match-team-name">Team C</div>
-          <div class="match-team-meta">12 &middot; &hearts; 203</div>
-        </div>
-        <div class="match-team-logo">C</div>
-      </div>
-    </div>
 
-    <div class="match-row">
-      <span class="match-live-dot">Live</span>
-      <div class="match-team">
-        <div class="match-team-info">
-          <div class="match-team-name">Team E</div>
-          <div class="match-team-meta">11 &middot; &hearts; 289</div>
+      <!-- 6. eMotion by SportIn -->
+      <div class="pillar expanded">
+        <div class="pillar-ico">eM</div>
+        <div class="pillar-title">eMotion by SportIn</div>
+        <div class="pillar-desc">Our in-house motion engine measures distance and steps in real time, straight from the phone. A live experience today; a hardware-ready foundation for tomorrow.</div>
+        <div class="pillar-anim anim-em">
+          <div class="anim-em-tag">eMotion Engine <span>Running</span></div>
+          <div class="anim-em-circuit">
+            <svg viewBox="0 0 360 270" preserveAspectRatio="none">
+              <path class="trace" id="emT1" d="M0,40 L80,40 L80,90 L125,90"/>
+              <path class="trace" id="emT2" d="M0,135 L60,135 L60,160 L125,160"/>
+              <path class="trace" id="emT3" d="M0,230 L70,230 L70,180 L125,180"/>
+              <path class="trace bright" id="emT4" d="M360,40 L280,40 L280,90 L235,90"/>
+              <path class="trace" id="emT5" d="M360,135 L300,135 L300,160 L235,160"/>
+              <path class="trace bright" id="emT6" d="M360,230 L290,230 L290,180 L235,180"/>
+              <rect class="pad" x="120" y="86" width="6" height="6" rx="1"/>
+              <rect class="pad" x="120" y="156" width="6" height="6" rx="1"/>
+              <rect class="pad" x="120" y="176" width="6" height="6" rx="1"/>
+              <rect class="pad" x="234" y="86" width="6" height="6" rx="1"/>
+              <rect class="pad" x="234" y="156" width="6" height="6" rx="1"/>
+              <rect class="pad" x="234" y="176" width="6" height="6" rx="1"/>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0s"><mpath href="#emT1"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.6s"><mpath href="#emT2"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="1.2s"><mpath href="#emT3"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.3s"><mpath href="#emT4"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="0.9s"><mpath href="#emT5"/></animateMotion></circle>
+              <circle class="data" r="2.2"><animateMotion dur="2.4s" repeatCount="indefinite" begin="1.5s"><mpath href="#emT6"/></animateMotion></circle>
+            </svg>
+          </div>
+          <div class="anim-em-chip">
+            <div class="pin-l"></div>
+            <div class="pin-r"></div>
+            <div class="chip-line"></div>
+            <div class="chip-mark">eM</div>
+          </div>
         </div>
-        <div class="match-team-logo">E</div>
-      </div>
-      <div class="match-score">
-        <span class="match-val">8.3<span class="unit">mi</span></span>
-        <span class="match-vs">&ndash;</span>
-        <span class="match-val">7.7<span class="unit">mi</span></span>
-      </div>
-      <div class="match-team away">
-        <div class="match-team-info">
-          <div class="match-team-name">Team F</div>
-          <div class="match-team-meta">10 &middot; &hearts; 234</div>
-        </div>
-        <div class="match-team-logo">F</div>
-      </div>
-    </div>
-
-    <div class="match-row">
-      <span class="match-live-dot">Live</span>
-      <div class="match-team">
-        <div class="match-team-info">
-          <div class="match-team-name">Team D</div>
-          <div class="match-team-meta">10 &middot; &hearts; 195</div>
-        </div>
-        <div class="match-team-logo">D</div>
-      </div>
-      <div class="match-score">
-        <span class="match-val">7.4<span class="unit">mi</span></span>
-        <span class="match-vs">&ndash;</span>
-        <span class="match-val">7.1<span class="unit">mi</span></span>
-      </div>
-      <div class="match-team away">
-        <div class="match-team-info">
-          <div class="match-team-name">Team G</div>
-          <div class="match-team-meta">9 &middot; &hearts; 172</div>
-        </div>
-        <div class="match-team-logo">G</div>
       </div>
     </div>
   </div>
@@ -3078,6 +3669,146 @@
       io.observe(mrSection);
     }
   }
+})();
+</script>
+
+<script>
+// Pillar rows scroll parallax
+(function setupPillarParallax() {
+  const section = document.querySelector('.pillars-section');
+  const top = document.getElementById('pillarsRowTop');
+  const bot = document.getElementById('pillarsRowBottom');
+  if (!section || !top || !bot) return;
+
+  const SHIFT = 380;
+  let targetT = 0, currentT = 0;
+  let targetB = 0, currentB = 0;
+  let rafId = null;
+  const ease = 0.08;
+
+  function compute() {
+    const rect = section.getBoundingClientRect();
+    const winH = window.innerHeight;
+    const total = winH + rect.height;
+    const traveled = winH - rect.top;
+    let p = traveled / total;
+    p = Math.max(0, Math.min(1, p));
+    const signed = (p - 0.5) * 2;
+    targetT = -signed * SHIFT;
+    targetB = signed * SHIFT;
+  }
+
+  function render() {
+    currentT += (targetT - currentT) * ease;
+    currentB += (targetB - currentB) * ease;
+    top.style.transform = `translate3d(${currentT}px, 0, 0)`;
+    bot.style.transform = `translate3d(${currentB}px, 0, 0)`;
+    if (Math.abs(targetT - currentT) > 0.2 || Math.abs(targetB - currentB) > 0.2) {
+      rafId = requestAnimationFrame(render);
+    } else {
+      rafId = null;
+    }
+  }
+
+  function onScroll() {
+    compute();
+    if (rafId == null) rafId = requestAnimationFrame(render);
+  }
+
+  compute();
+  currentT = targetT; currentB = targetB;
+  render();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+})();
+
+// AI Storytelling: play/pause + Web Audio analyzer drives waveform bars
+(function setupAiPlayer() {
+  const btn = document.getElementById('aiPlayBtn');
+  const audio = document.getElementById('aiAudio');
+  const wave = document.getElementById('aiWave');
+  if (!btn || !audio || !wave) return;
+  const bars = Array.from(wave.querySelectorAll('.bar'));
+
+  let audioCtx, analyser, source, dataArr, rafId;
+  function ensureAnalyser() {
+    if (audioCtx) return;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    try {
+      audioCtx = new Ctx();
+      source = audioCtx.createMediaElementSource(audio);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      dataArr = new Uint8Array(analyser.frequencyBinCount);
+    } catch (e) { /* noop */ }
+  }
+  function tick() {
+    if (!analyser) return;
+    analyser.getByteFrequencyData(dataArr);
+    const n = bars.length;
+    for (let i = 0; i < n; i++) {
+      const idx = Math.min(dataArr.length - 1, 2 + Math.floor(i * (dataArr.length - 4) / n));
+      const v = dataArr[idx] / 255;
+      const h = 6 + v * 110;
+      bars[i].style.height = h + 'px';
+      bars[i].style.opacity = (0.35 + v * 0.65).toFixed(2);
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+  function stopTick() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
+    bars.forEach(b => { b.style.height = ''; b.style.opacity = ''; });
+  }
+
+  const overlay = document.getElementById('aiWaveOverlay');
+
+  function toggle() {
+    ensureAnalyser();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (audio.paused) {
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+    }
+  }
+
+  btn.addEventListener('click', toggle);
+  if (overlay) overlay.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+  wave.addEventListener('click', () => { if (!audio.paused) audio.pause(); });
+
+  audio.addEventListener('play', () => {
+    btn.classList.add('playing');
+    wave.classList.add('playing');
+    if (overlay) {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('is-paused-from-play');
+    }
+    ensureAnalyser();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (analyser && !rafId) tick();
+  });
+  audio.addEventListener('pause', () => {
+    btn.classList.remove('playing');
+    wave.classList.remove('playing');
+    stopTick();
+    if (overlay) {
+      overlay.classList.remove('hidden');
+      if (audio.currentTime > 0 && !audio.ended) overlay.classList.add('is-paused-from-play');
+    }
+  });
+  audio.addEventListener('ended', () => {
+    btn.classList.remove('playing');
+    wave.classList.remove('playing');
+    stopTick();
+    if (overlay) {
+      overlay.classList.remove('hidden');
+      overlay.classList.remove('is-paused-from-play');
+    }
+  });
 })();
 </script>
 
