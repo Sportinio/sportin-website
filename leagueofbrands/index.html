@@ -971,26 +971,122 @@
     line-height: 1.5;
   }
 
-  /* === SECTION: SPONSORS === */
+  /* === SECTION: PARTNERS & SPONSORS === */
   .sponsors {
     margin-top: 140px;
     text-align: center;
   }
   .sponsors .section-title { margin: 0 auto; }
   .sponsors .section-intro { margin: 24px auto 0; text-align: center; }
+
+  /* Partners row (2 cards) */
+  .partner-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .partner-card {
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 40px rgba(0, 0, 0, 0.25);
+    padding: 36px 32px;
+    text-align: center;
+    transition: border-color 0.4s, background 0.4s, box-shadow 0.4s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .partner-card:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+  .partner-card.filled {
+    border-style: solid;
+  }
+  .partner-card.empty {
+    border-style: dashed;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  .partner-card.empty:hover {
+    border-color: var(--blue-bright);
+    background: rgba(7, 81, 251, 0.04);
+  }
+  .partner-type {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-bottom: 16px;
+  }
+  .partner-shirt {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+  }
+  .partner-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .partner-desc {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-3);
+    max-width: 320px;
+  }
+  .partner-empty-ico {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    display: grid;
+    place-items: center;
+    margin-bottom: 20px;
+  }
+  .partner-empty-ico svg {
+    width: 48px;
+    height: 48px;
+    color: var(--text-4);
+    opacity: 0.5;
+  }
+
+  /* Sub-heading between partner and sponsor rows */
+  .sponsors-sub {
+    margin-top: 64px;
+    margin-bottom: 8px;
+  }
+
+  /* Sponsor slots (4 cards) */
   .sponsor-slots {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    margin-top: 48px;
+    margin-top: 32px;
   }
   .sponsor-slot {
-    padding: 36px 24px;
+    padding: 32px 20px;
     text-align: center;
     border: 1px dashed rgba(255, 255, 255, 0.12);
     border-radius: 22px;
     background: rgba(255, 255, 255, 0.02);
     transition: border-color 0.3s, background 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .sponsor-slot:hover {
     border-color: var(--blue-bright);
@@ -999,30 +1095,58 @@
   .sponsor-num {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-4);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     letter-spacing: 0.08em;
+  }
+  .sponsor-empty-ico {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px dashed rgba(255, 255, 255, 0.08);
+    display: grid;
+    place-items: center;
+    margin-bottom: 16px;
+  }
+  .sponsor-empty-ico svg {
+    width: 28px;
+    height: 28px;
+    color: var(--text-4);
+    opacity: 0.4;
   }
   .sponsor-title {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 22px;
+    font-size: 20px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--text);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  .sponsor-desc {
-    font-size: 13px;
+  .sponsor-price {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .sponsor-price .currency {
+    font-size: 14px;
     color: var(--text-3);
-    line-height: 1.5;
+    font-weight: 500;
+  }
+  .sponsor-price .per {
+    font-size: 13px;
+    color: var(--text-4);
+    font-weight: 500;
   }
   .sponsor-avail {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 14px;
+    margin-top: 12px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
@@ -1263,7 +1387,7 @@
     .wrap { padding: 0 20px; }
     .section-title { font-size: 34px; }
     .section-intro { font-size: 15px; }
-    .how-grid, .why-grid, .rewards-grid, .sponsor-slots { grid-template-columns: 1fr; }
+    .how-grid, .why-grid, .rewards-grid, .sponsor-slots, .partner-row { grid-template-columns: 1fr; }
     .hero-cta { flex-direction: column; align-items: stretch; }
     .hero-cta .btn { text-align: center; justify-content: center; }
     .hero-meta { flex-direction: column; gap: 20px; }
@@ -2829,36 +2953,73 @@
   </div>
 </section>
 
-<!-- SPONSORS -->
+<!-- PARTNERS & SPONSORS -->
 <section class="wrap sponsors" id="sponsors">
-  <div class="section-kicker reveal">Sponsorship</div>
-  <h2 class="section-title reveal" style="--rd:0.1s;">Four sponsors. <span class="gradient">One league.</span></h2>
+  <div class="section-kicker reveal">Partners &amp; Sponsors</div>
+  <h2 class="section-title reveal" style="--rd:0.1s;">Who stands <span class="gradient">with us.</span></h2>
   <p class="section-intro reveal" style="--rd:0.2s;">
-    Four major sponsor positions. Visible inside the app, across the competition experience, and in every piece of media the league touches.
+    The league is built on partnerships. Every partner and sponsor gets real visibility &mdash; inside the app, across media, and in every piece of content the league creates.
   </p>
-  <div class="sponsor-slots">
-    <div class="sponsor-slot reveal" style="--rd:0.05s;">
-      <div class="sponsor-num">Slot 01</div>
-      <div class="sponsor-title">Title Sponsor</div>
-      <div class="sponsor-desc">League naming rights. Maximum visibility across all channels.</div>
+
+  <!-- PARTNERS ROW -->
+  <div class="partner-row">
+    <!-- Media Partner: Urban FM (filled) -->
+    <div class="partner-card filled reveal" style="--rd:0.05s;">
+      <div class="partner-type">Media Partner</div>
+      <img class="partner-shirt" src="/urban-fm-shirt.png" alt="Urban FM jersey" loading="lazy" />
+      <div class="partner-name">Urban FM</div>
+      <div class="partner-desc">Official media partner. Live commentary, matchday coverage, and the voice of the league.</div>
+    </div>
+
+    <!-- Marketing Partner: searching -->
+    <div class="partner-card empty reveal" style="--rd:0.15s;">
+      <div class="partner-type">Marketing Partner</div>
+      <div class="partner-empty-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="partner-name">Your brand here</div>
+      <div class="partner-desc">We are looking for a marketing partner to amplify the league story. Interested?</div>
       <div class="sponsor-avail">Available</div>
     </div>
+  </div>
+
+  <!-- SPONSORS ROW -->
+  <div class="sponsors-sub">
+    <div class="section-kicker reveal" style="--rd:0.2s;">Sponsors</div>
+    <h2 class="section-title reveal" style="--rd:0.25s; font-size: 36px;">Four slots. <span class="gradient">1K / month each.</span></h2>
+  </div>
+
+  <div class="sponsor-slots">
     <div class="sponsor-slot reveal" style="--rd:0.1s;">
-      <div class="sponsor-num">Slot 02</div>
-      <div class="sponsor-title">Official Partner</div>
-      <div class="sponsor-desc">In-app placement, matchday branding, media mentions.</div>
+      <div class="sponsor-num">Slot 01</div>
+      <div class="sponsor-empty-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
       <div class="sponsor-avail">Available</div>
     </div>
     <div class="sponsor-slot reveal" style="--rd:0.15s;">
-      <div class="sponsor-num">Slot 03</div>
-      <div class="sponsor-title">Matchday Sponsor</div>
-      <div class="sponsor-desc">Own the Saturday experience. Rewards, push notifications, recap cards.</div>
+      <div class="sponsor-num">Slot 02</div>
+      <div class="sponsor-empty-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
       <div class="sponsor-avail">Available</div>
     </div>
     <div class="sponsor-slot reveal" style="--rd:0.2s;">
+      <div class="sponsor-num">Slot 03</div>
+      <div class="sponsor-empty-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
+      <div class="sponsor-avail">Available</div>
+    </div>
+    <div class="sponsor-slot reveal" style="--rd:0.25s;">
       <div class="sponsor-num">Slot 04</div>
-      <div class="sponsor-title">Media Sponsor</div>
-      <div class="sponsor-desc">Brand presence across press, radio, and television coverage.</div>
+      <div class="sponsor-empty-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
       <div class="sponsor-avail">Available</div>
     </div>
   </div>
