@@ -574,32 +574,198 @@
   .rewards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 20px;
   }
-  .reward-card {
-    padding: 28px 24px;
-    text-align: center;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  .rw-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    backdrop-filter: blur(16px);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    position: relative;
+    overflow: hidden;
   }
-  .reward-card:hover { transform: translateY(-4px); }
-  .reward-ico {
-    font-size: 32px;
-    margin-bottom: 16px;
-    opacity: 0.85;
+  .rw-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   }
-  .reward-label {
+  .rw-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue), #12E094);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .rw-card.rw-complete::before {
+    opacity: 1;
+  }
+  .rw-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .rw-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .rw-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .rw-brand-sub {
+    font-size: 11px;
+    color: var(--text-4);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .rw-reward {
+    margin-bottom: 20px;
+  }
+  .rw-reward-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    margin-bottom: 6px;
+  }
+  .rw-reward-name {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 22px;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     color: var(--text);
+    line-height: 1.2;
+  }
+  .rw-progress {
+    margin-bottom: 12px;
+  }
+  .rw-progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 8px;
   }
-  .reward-desc {
-    font-size: 13px;
+  .rw-progress-target {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-4);
+    letter-spacing: 0.04em;
+  }
+  .rw-progress-status {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .rw-progress-status.active { color: var(--blue-bright); }
+  .rw-progress-status.done { color: #12E094; }
+  .rw-bars {
+    display: flex;
+    gap: 4px;
+    height: 28px;
+    align-items: flex-end;
+  }
+  .rw-bar {
+    flex: 1;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+  }
+  .rw-bar-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    border-radius: 3px;
+    transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    height: 0%;
+  }
+  .rw-bar-fill.filled {
+    height: 100%;
+    background: var(--blue);
+    box-shadow: 0 0 8px rgba(7, 81, 251, 0.3);
+  }
+  .rw-bar-fill.partial {
+    background: var(--blue);
+    opacity: 0.5;
+  }
+  .rw-bar-fill.empty {
+    height: 0%;
+  }
+  .rw-card.rw-complete .rw-bar-fill.filled {
+    background: #12E094;
+    box-shadow: 0 0 8px rgba(18, 224, 148, 0.3);
+  }
+  .rw-day-labels {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .rw-day-label {
+    flex: 1;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.02em;
+  }
+  .rw-day-label.active { color: var(--text-4); }
+  .rw-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .rw-footer-steps {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-4);
+  }
+  .rw-footer-steps strong {
     color: var(--text-3);
-    line-height: 1.5;
+    font-weight: 600;
+  }
+  .rw-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .rw-badge.unlocked {
+    background: rgba(18, 224, 148, 0.12);
+    color: #12E094;
+    border: 1px solid rgba(18, 224, 148, 0.25);
+  }
+  .rw-badge.in-progress {
+    background: rgba(7, 81, 251, 0.12);
+    color: var(--blue-bright);
+    border: 1px solid rgba(7, 81, 251, 0.25);
+  }
+  @media (max-width: 1024px) {
+    .rewards-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .rewards-grid { grid-template-columns: 1fr; }
+    .rw-card { padding: 24px 20px 20px; }
   }
 
   /* === SECTION: PARTNERS & SPONSORS === */
@@ -1189,7 +1355,6 @@
     .wrap { padding: 0 28px; }
     .section-title { font-size: 42px; }
     .how-grid { grid-template-columns: repeat(2, 1fr); }
-    .rewards-grid { grid-template-columns: repeat(2, 1fr); }
     .sponsor-slots { grid-template-columns: repeat(2, 1fr); }
     .hero-meta { gap: 32px; }
   }
@@ -1205,7 +1370,7 @@
     .wrap { padding: 0 20px; }
     .section-title { font-size: 34px; }
     .section-intro { font-size: 15px; }
-    .how-grid, .rewards-grid, .sponsor-slots, .partner-row { grid-template-columns: 1fr; }
+    .how-grid, .sponsor-slots, .partner-row { grid-template-columns: 1fr; }
     .hero-cta { flex-direction: column; align-items: stretch; }
     .hero-cta .btn { text-align: center; justify-content: center; }
     .hero-meta { flex-direction: column; gap: 20px; }
@@ -2681,21 +2846,138 @@
     </p>
   </div>
   <div class="rewards-grid">
-    <div class="reward-card glass reveal" style="--rd:0.05s;">
-      <div class="reward-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
-      <div class="reward-label">Food &amp; Meals</div>
-      <div class="reward-desc">HoReCa brands can offer burgers, meals, or drinks on matchday. Move to eat.</div>
+
+    <!-- COFFEE — completed -->
+    <div class="rw-card rw-complete reveal" style="--rd:0.05s;">
+      <div class="rw-header">
+        <div class="rw-logo">&#9749;</div>
+        <div>
+          <div class="rw-brand">Your Coffee Brand</div>
+          <div class="rw-brand-sub">Logo placeholder</div>
+        </div>
+      </div>
+      <div class="rw-reward">
+        <div class="rw-reward-label">Reward unlocked</div>
+        <div class="rw-reward-name">Free Espresso</div>
+      </div>
+      <div class="rw-progress">
+        <div class="rw-progress-label">
+          <span class="rw-progress-target">5 days &middot; 8,000 steps/day</span>
+          <span class="rw-progress-status done">&#10003; Complete</span>
+        </div>
+        <div class="rw-bars">
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+        </div>
+        <div class="rw-day-labels">
+          <div class="rw-day-label active">Mon</div>
+          <div class="rw-day-label active">Tue</div>
+          <div class="rw-day-label active">Wed</div>
+          <div class="rw-day-label active">Thu</div>
+          <div class="rw-day-label active">Fri</div>
+        </div>
+      </div>
+      <div class="rw-footer">
+        <div class="rw-footer-steps"><strong>42,180</strong> / 40,000 steps</div>
+        <div class="rw-badge unlocked">UNLOCKED</div>
+      </div>
     </div>
-    <div class="reward-card glass reveal" style="--rd:0.1s;">
-      <div class="reward-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
-      <div class="reward-label">Vouchers &amp; Products</div>
-      <div class="reward-desc">Gift cards, discounts, exclusive drops. Reward distance with something tangible.</div>
+
+    <!-- BURGER — in progress -->
+    <div class="rw-card reveal" style="--rd:0.1s;">
+      <div class="rw-header">
+        <div class="rw-logo">&#127828;</div>
+        <div>
+          <div class="rw-brand">Your Burger Brand</div>
+          <div class="rw-brand-sub">Logo placeholder</div>
+        </div>
+      </div>
+      <div class="rw-reward">
+        <div class="rw-reward-label">Reward</div>
+        <div class="rw-reward-name">Classic Burger Menu</div>
+      </div>
+      <div class="rw-progress">
+        <div class="rw-progress-label">
+          <span class="rw-progress-target">7 days &middot; 10,000 steps/day</span>
+          <span class="rw-progress-status active">Day 5 of 7</span>
+        </div>
+        <div class="rw-bars">
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill partial" style="height:60%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+        </div>
+        <div class="rw-day-labels">
+          <div class="rw-day-label active">Mon</div>
+          <div class="rw-day-label active">Tue</div>
+          <div class="rw-day-label active">Wed</div>
+          <div class="rw-day-label active">Thu</div>
+          <div class="rw-day-label active">Fri</div>
+          <div class="rw-day-label">Sat</div>
+          <div class="rw-day-label">Sun</div>
+        </div>
+      </div>
+      <div class="rw-footer">
+        <div class="rw-footer-steps"><strong>46,320</strong> / 70,000 steps</div>
+        <div class="rw-badge in-progress">IN PROGRESS</div>
+      </div>
     </div>
-    <div class="reward-card glass reveal" style="--rd:0.15s;">
-      <div class="reward-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <div class="reward-label">Experiences &amp; Perks</div>
-      <div class="reward-desc">VIP access, event tickets, brand experiences. The kind of rewards people screenshot.</div>
+
+    <!-- VOUCHER — early stage -->
+    <div class="rw-card reveal" style="--rd:0.15s;">
+      <div class="rw-header">
+        <div class="rw-logo">&#127915;</div>
+        <div>
+          <div class="rw-brand">Your Store Brand</div>
+          <div class="rw-brand-sub">Logo placeholder</div>
+        </div>
+      </div>
+      <div class="rw-reward">
+        <div class="rw-reward-label">Reward</div>
+        <div class="rw-reward-name">&euro;20 Gift Voucher</div>
+      </div>
+      <div class="rw-progress">
+        <div class="rw-progress-label">
+          <span class="rw-progress-target">10 days &middot; 12,000 steps/day</span>
+          <span class="rw-progress-status active">Day 3 of 10</span>
+        </div>
+        <div class="rw-bars">
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill filled" style="height:100%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill partial" style="height:40%"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+          <div class="rw-bar"><div class="rw-bar-fill empty"></div></div>
+        </div>
+        <div class="rw-day-labels">
+          <div class="rw-day-label active">D1</div>
+          <div class="rw-day-label active">D2</div>
+          <div class="rw-day-label active">D3</div>
+          <div class="rw-day-label">D4</div>
+          <div class="rw-day-label">D5</div>
+          <div class="rw-day-label">D6</div>
+          <div class="rw-day-label">D7</div>
+          <div class="rw-day-label">D8</div>
+          <div class="rw-day-label">D9</div>
+          <div class="rw-day-label">D10</div>
+        </div>
+      </div>
+      <div class="rw-footer">
+        <div class="rw-footer-steps"><strong>28,400</strong> / 120,000 steps</div>
+        <div class="rw-badge in-progress">IN PROGRESS</div>
+      </div>
     </div>
+
   </div>
 </section>
 
