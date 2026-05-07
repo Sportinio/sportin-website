@@ -666,9 +666,23 @@
     transform-origin: top center; /* grow / shrink toward the top edge */
     transition: border-color 0.4s ease, box-shadow 0.4s ease;
   }
-  .felt-card { opacity: 0; }
+  .felt-card { opacity: 1; }
   .felt-card.middle { z-index: 2; }
   .felt-card.side { z-index: 1; }
+  /* Ambient breathing — each card fades between visibility levels on its own phase */
+  .felt-card { animation: feltBreathe 9s ease-in-out infinite; }
+  .felt-card.side[style*="order: 1"] { animation-delay: 0s; }
+  .felt-card.middle { animation-delay: -3s; }
+  .felt-card.side[style*="order: 3"] { animation-delay: -6s; }
+  @keyframes feltBreathe {
+    0%   { opacity: 1; }
+    20%  { opacity: 0.35; }
+    40%  { opacity: 0.8; }
+    60%  { opacity: 0.2; }
+    80%  { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+  .felt-card:hover { animation-play-state: paused; opacity: 1 !important; }
   .felt-section { overflow: visible; }
   .felt-card:hover {
     transform: translateY(-4px);
@@ -3513,54 +3527,7 @@
     });
   })();
 
-  // FELT · scroll-driven staggered fade-in. Opacity + translateY only —
-  // both GPU-composited, no layout reflow. Scroll-tied 1:1, freezes when stopped.
-  (function setupFeltReveal() {
-    const section = document.getElementById('felt');
-    if (!section) return;
-    const cards = Array.from(section.querySelectorAll('.felt-card'));
-    if (cards.length === 0) return;
-
-    // Reveal ranges expressed as (start, end) progress through the section's
-    // traversal of the viewport. Cards reveal in order Record → Leaderboard →
-    // Virtual Track for a smooth left-to-right wave.
-    const reveals = cards.map((el) => {
-      if (el.classList.contains('side') && el.style.order === '1') return { el, start: 0.10, end: 0.32 };
-      if (el.classList.contains('middle')) return { el, start: 0.18, end: 0.42 };
-      return { el, start: 0.26, end: 0.52 }; // right side
-    });
-
-    let ticking = false;
-
-    function update() {
-      const rect = section.getBoundingClientRect();
-      const winH = window.innerHeight;
-      const total = winH + rect.height;
-      const traveled = winH - rect.top;
-      let p = traveled / total;
-      p = Math.max(0, Math.min(1, p));
-
-      reveals.forEach(({ el, start, end }) => {
-        let local = (p - start) / (end - start);
-        local = Math.max(0, Math.min(1, local));
-        el.style.opacity = local.toFixed(3);
-        // subtle 24px upward slide as it fades in
-        const y = (1 - local) * 24;
-        el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
-      });
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => { update(); ticking = false; });
-      }
-    }
-
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-  })();
+  // FELT cards: ambient breathing only — fully CSS-driven now (see @keyframes feltBreathe).
 
   // FELT · Leaderboard live step counter — smooth ticking values
   (function setupLeaderboardSteps() {
