@@ -2054,17 +2054,19 @@
   }
 
   /* Anim 2: AI Voice waveform */
-  .anim-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 100%; padding: 0 16px; cursor: pointer; }
-  .anim-wave .bar {
-    width: 4px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, var(--blue-bright), var(--blue));
-    height: 6px;
-    opacity: 0.3;
-    transition: height 0.06s linear, opacity 0.06s linear;
+  .pillar.expanded { position: relative; }
+
+  /* Anim 2: AI Algorithm neural network */
+  .anim-algo {
+    position: relative;
+    overflow: hidden;
   }
-  .anim-wave.playing .bar { opacity: 0.85; }
-  .anim-wave-label {
+  .anim-algo canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .algo-label {
     position: absolute;
     bottom: 14px;
     left: 50%;
@@ -2074,85 +2076,8 @@
     letter-spacing: 0.18em;
     color: var(--text-4);
     text-transform: uppercase;
+    white-space: nowrap;
   }
-  .anim-wave-label .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #12E094; box-shadow: 0 0 8px #12E094; margin-right: 6px; vertical-align: middle; animation: livePulse 1.6s ease-in-out infinite; }
-  @keyframes livePulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
-  .pillar.expanded { position: relative; }
-  .ai-title-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-  .ai-title-row .pillar-title { margin-bottom: 0; }
-  .live-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 9px 4px 8px;
-    border-radius: 999px;
-    background: rgba(255, 59, 92, 0.14);
-    border: 1px solid rgba(255, 59, 92, 0.4);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    color: #FF3B5C;
-    text-transform: uppercase;
-  }
-  .live-badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #FF3B5C;
-    box-shadow: 0 0 8px #FF3B5C;
-    animation: livePulse 1.4s ease-in-out infinite;
-  }
-  .play-btn {
-    margin-left: auto;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: grid;
-    place-items: center;
-    color: #fff;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
-    flex-shrink: 0;
-  }
-  .play-btn:hover { background: rgba(255, 255, 255, 0.16); transform: scale(1.06); }
-  .play-btn svg { width: 14px; height: 14px; }
-  .play-btn .ico-pause { display: none; }
-  .play-btn.playing .ico-play { display: none; }
-  .play-btn.playing .ico-pause { display: block; }
-
-  .wave-overlay {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: rgba(7, 81, 251, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: grid;
-    place-items: center;
-    color: #fff;
-    cursor: pointer;
-    transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
-    z-index: 5;
-    box-shadow: 0 12px 32px rgba(7, 81, 251, 0.45), inset 0 1px 0 rgba(255,255,255,0.2);
-  }
-  .wave-overlay:hover { background: rgba(59, 123, 255, 1); transform: translate(-50%, -50%) scale(1.06); }
-  .wave-overlay svg { width: 22px; height: 22px; }
-  .wave-overlay .ico-pause { display: none; }
-  .wave-overlay.is-paused-from-play .ico-play { display: none; }
-  .wave-overlay.is-paused-from-play .ico-pause { display: block; }
-  .wave-overlay.hidden { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.85); }
 
   /* Anim 3: Movement Index graph */
   .anim-mi { padding: 16px; }
@@ -2577,33 +2502,14 @@
         </div>
       </div>
 
-      <!-- 2. AI Storytelling -->
+      <!-- 2. AI Commentary -->
       <div class="pillar expanded">
-        <audio id="aiAudio" src="/ai-commentary.mp3" preload="auto" crossorigin="anonymous"></audio>
-        <div class="pillar-ico">AS</div>
-        <div class="ai-title-row">
-          <div class="pillar-title">AI Storytelling</div>
-          <span class="live-badge">Live</span>
-          <button class="play-btn" id="aiPlayBtn" aria-label="Play AI commentary">
-            <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-          </button>
-        </div>
+        <div class="pillar-ico">AC</div>
+        <div class="pillar-title">AI Commentary</div>
         <div class="pillar-desc">Every effort deserves a story. SportIn turns movement into commentary, rivalry, momentum, and moments worth sharing.</div>
-        <div class="pillar-anim">
-          <div class="anim-wave" id="aiWave">
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          </div>
-          <button class="wave-overlay" id="aiWaveOverlay" aria-label="Play / pause AI commentary">
-            <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-          </button>
-          <div class="anim-wave-label">AI Commentary &middot; Tap to listen</div>
+        <div class="pillar-anim anim-algo">
+          <canvas id="algoCanvas"></canvas>
+          <div class="algo-label">Neural Engine &middot; Processing</div>
         </div>
       </div>
 
@@ -4021,93 +3927,106 @@
   window.addEventListener('resize', onScroll, { passive: true });
 })();
 
-// AI Storytelling: play/pause + Web Audio analyzer drives waveform bars
-(function setupAiPlayer() {
-  const btn = document.getElementById('aiPlayBtn');
-  const audio = document.getElementById('aiAudio');
-  const wave = document.getElementById('aiWave');
-  if (!btn || !audio || !wave) return;
-  const bars = Array.from(wave.querySelectorAll('.bar'));
+// AI Algorithm: neural network canvas animation
+(function() {
+  const canvas = document.getElementById('algoCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
 
-  let audioCtx, analyser, source, dataArr, rafId;
-  function ensureAnalyser() {
-    if (audioCtx) return;
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return;
-    try {
-      audioCtx = new Ctx();
-      source = audioCtx.createMediaElementSource(audio);
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 64;
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-      dataArr = new Uint8Array(analyser.frequencyBinCount);
-    } catch (e) { /* noop */ }
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
   }
-  function tick() {
-    if (!analyser) return;
-    analyser.getByteFrequencyData(dataArr);
-    const n = bars.length;
-    for (let i = 0; i < n; i++) {
-      const idx = Math.min(dataArr.length - 1, 2 + Math.floor(i * (dataArr.length - 4) / n));
-      const v = dataArr[idx] / 255;
-      const h = 6 + v * 110;
-      bars[i].style.height = h + 'px';
-      bars[i].style.opacity = (0.35 + v * 0.65).toFixed(2);
-    }
-    rafId = requestAnimationFrame(tick);
-  }
-  function stopTick() {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = null;
-    bars.forEach(b => { b.style.height = ''; b.style.opacity = ''; });
-  }
+  resize();
+  window.addEventListener('resize', resize);
 
-  const overlay = document.getElementById('aiWaveOverlay');
+  // Neural network nodes in layers
+  const layers = [3, 5, 6, 5, 3];
+  const nodes = [];
+  const connections = [];
 
-  function toggle() {
-    ensureAnalyser();
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    if (audio.paused) {
-      audio.play().catch(() => {});
-    } else {
-      audio.pause();
+  function buildNetwork() {
+    nodes.length = 0;
+    connections.length = 0;
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    const layerGap = w / (layers.length + 1);
+
+    layers.forEach((count, li) => {
+      const x = layerGap * (li + 1);
+      const nodeGap = (h - 60) / (count + 1);
+      for (let ni = 0; ni < count; ni++) {
+        const y = 30 + nodeGap * (ni + 1);
+        nodes.push({ x, y, layer: li, pulse: Math.random() * Math.PI * 2, radius: 3 + Math.random() * 2 });
+      }
+    });
+
+    // Connect adjacent layers
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = 0; j < nodes.length; j++) {
+        if (nodes[j].layer === nodes[i].layer + 1) {
+          connections.push({ from: i, to: j, signal: Math.random() * Math.PI * 2, speed: 0.8 + Math.random() * 1.5 });
+        }
+      }
     }
   }
+  buildNetwork();
 
-  btn.addEventListener('click', toggle);
-  if (overlay) overlay.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
-  wave.addEventListener('click', () => { if (!audio.paused) audio.pause(); });
+  let t = 0;
+  function draw() {
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    ctx.clearRect(0, 0, w, h);
+    t += 0.016;
 
-  audio.addEventListener('play', () => {
-    btn.classList.add('playing');
-    wave.classList.add('playing');
-    if (overlay) {
-      overlay.classList.add('hidden');
-      overlay.classList.remove('is-paused-from-play');
-    }
-    ensureAnalyser();
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    if (analyser && !rafId) tick();
-  });
-  audio.addEventListener('pause', () => {
-    btn.classList.remove('playing');
-    wave.classList.remove('playing');
-    stopTick();
-    if (overlay) {
-      overlay.classList.remove('hidden');
-      if (audio.currentTime > 0 && !audio.ended) overlay.classList.add('is-paused-from-play');
-    }
-  });
-  audio.addEventListener('ended', () => {
-    btn.classList.remove('playing');
-    wave.classList.remove('playing');
-    stopTick();
-    if (overlay) {
-      overlay.classList.remove('hidden');
-      overlay.classList.remove('is-paused-from-play');
-    }
-  });
+    // Draw connections
+    connections.forEach(c => {
+      const a = nodes[c.from];
+      const b = nodes[c.to];
+      const signal = (Math.sin(t * c.speed + c.signal) + 1) / 2;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = `rgba(59, 123, 255, ${0.06 + signal * 0.15})`;
+      ctx.lineWidth = 0.5 + signal * 0.5;
+      ctx.stroke();
+
+      // Traveling signal dot
+      const pos = (t * c.speed * 0.15 + c.signal) % 1;
+      const dx = a.x + (b.x - a.x) * pos;
+      const dy = a.y + (b.y - a.y) * pos;
+      ctx.beginPath();
+      ctx.arc(dx, dy, 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(59, 123, 255, ${0.3 + signal * 0.5})`;
+      ctx.fill();
+    });
+
+    // Draw nodes
+    nodes.forEach(n => {
+      const pulse = (Math.sin(t * 2 + n.pulse) + 1) / 2;
+      // Glow
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.radius + 6 + pulse * 4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(59, 123, 255, ${0.04 + pulse * 0.06})`;
+      ctx.fill();
+      // Core
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(59, 123, 255, ${0.5 + pulse * 0.5})`;
+      ctx.fill();
+      // Bright center
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + pulse * 0.4})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
 })();
 
 // GDPR Compliance: re-trigger fade-in animation when pillar expands
