@@ -2006,41 +2006,52 @@
   }
 
   /* Anim 1: Pro Sport Formats — live leaderboard with swapping rows */
-  .anim-table {
-    padding: 14px 18px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-3);
-    position: relative;
+  /* Anim 1: GDPR Compliance checklist */
+  .anim-gdpr {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
     height: 100%;
   }
-  .anim-table .row {
+  .gdpr-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 11px 4px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    opacity: 0;
+    transform: translateX(-12px);
+    animation: gdprFadeIn 0.5s ease forwards;
+  }
+  .gdpr-item:nth-child(1) { animation-delay: 0.2s; }
+  .gdpr-item:nth-child(2) { animation-delay: 0.5s; }
+  .gdpr-item:nth-child(3) { animation-delay: 0.8s; }
+  .gdpr-item:nth-child(4) { animation-delay: 1.1s; }
+  @keyframes gdprFadeIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .gdpr-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #22C55E, #16A34A);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .gdpr-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
     color: var(--text-2);
-    position: absolute;
-    left: 18px;
-    right: 18px;
-    transition: top 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
-    opacity: 1;
-    z-index: 1;
   }
-  .anim-table .row.swapping-up {
-    z-index: 2;
-    border-color: rgba(59, 123, 255, 0.2);
-  }
-  .anim-table .row.active { color: var(--text); }
-  .anim-table .row .name { display: flex; gap: 10px; align-items: center; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-  .anim-table .row .mark { width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
-  .anim-table .row .meta { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-4); }
-  .anim-table .row.active .meta { color: var(--blue-bright); }
-  .anim-table .row.cl .mark { background: linear-gradient(135deg, #003399, #1857F1); color: #fff; }
-  .anim-table .row.f1 .mark { background: #FF1840; color: #fff; }
-  .anim-table .row.uefa .mark { background: linear-gradient(135deg, #FF6900, #FFB100); color: #fff; }
-  .anim-table .row.tdf .mark { background: linear-gradient(135deg, #F5E4A8, #C9A24B); color: #1a1a1e; }
 
   /* Anim 2: AI Voice waveform */
   .anim-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 100%; padding: 0 16px; cursor: pointer; }
@@ -2553,16 +2564,16 @@
 
   <div class="pillars-rows">
     <div class="pillars-row" id="pillarsRowTop">
-      <!-- 1. Professional Sport Formats -->
+      <!-- 1. GDPR Compliance -->
       <div class="pillar expanded">
-        <div class="pillar-ico">PS</div>
-        <div class="pillar-title">Professional Sport Formats</div>
-        <div class="pillar-desc">Bring the structures of professional sport: leagues, cups, tours, championships, territorial conquest. All in a format your people can live inside.</div>
-        <div class="pillar-anim anim-table">
-          <div class="row cl active"><span class="name"><span class="mark">UCL</span>Champions League</span><span class="meta">Group Stage</span></div>
-          <div class="row f1"><span class="name"><span class="mark">F1</span>Formula 1</span><span class="meta">Round 8 / 24</span></div>
-          <div class="row uefa"><span class="name"><span class="mark">UEL</span>UEFA League</span><span class="meta">Knockout</span></div>
-          <div class="row tdf"><span class="name"><span class="mark">TDF</span>Tour de France</span><span class="meta">Stage 12 / 21</span></div>
+        <div class="pillar-ico">GC</div>
+        <div class="pillar-title">GDPR Compliance</div>
+        <div class="pillar-desc">Your data stays yours. Full transparency, no surprises. Built for trust from day one.</div>
+        <div class="pillar-anim anim-gdpr">
+          <div class="gdpr-item"><span class="gdpr-check">&#10003;</span><span class="gdpr-text">Account deletion on request</span></div>
+          <div class="gdpr-item"><span class="gdpr-check">&#10003;</span><span class="gdpr-text">No data sold to third parties</span></div>
+          <div class="gdpr-item"><span class="gdpr-check">&#10003;</span><span class="gdpr-text">Audit-ready infrastructure</span></div>
+          <div class="gdpr-item"><span class="gdpr-check">&#10003;</span><span class="gdpr-text">EU data residency</span></div>
         </div>
       </div>
 
@@ -4099,77 +4110,21 @@
   });
 })();
 
-// Pro Sport Formats: live leaderboard row swapping
-(function setupTableSwap() {
-  const table = document.querySelector('.anim-table');
-  if (!table) return;
-  const rows = Array.from(table.querySelectorAll('.row'));
-  if (rows.length < 2) return;
-
-  const ROW_HEIGHT = 46; // px per row slot
-  const GAP = 8;
-
-  // current order (indices into rows array)
-  let order = rows.map((_, i) => i);
-
-  // position rows absolutely based on order
-  function layout(animate) {
-    order.forEach((rowIdx, slot) => {
-      const row = rows[rowIdx];
-      row.style.top = (slot * (ROW_HEIGHT + GAP) + 14) + 'px';
-    });
-  }
-
-  // initial layout
-  layout(false);
-
-  // swap schedule: [delayFromStart, slotA, slotB]
-  // these repeat in a cycle
-  const swaps = [
-    { delay: 1500, a: 2, b: 3 },   // 3rd and 4th swap
-    { delay: 3500, a: 0, b: 1 },   // 1st and 2nd swap
-    { delay: 5500, a: 1, b: 2 },   // 2nd and 3rd swap
-    { delay: 8000, a: 3, b: 2 },   // 4th and 3rd swap back
-    { delay: 10500, a: 1, b: 0 },  // 2nd and 1st swap back
-    { delay: 13000, a: 2, b: 1 },  // 3rd and 2nd swap back
-  ];
-
-  const CYCLE = 15000; // total cycle time before repeating
-  let timers = [];
-
-  function doSwap(slotA, slotB) {
-    // the row moving up gets a subtle highlight
-    const movingUp = rows[order[slotB]];
-    movingUp.classList.add('swapping-up');
-
-    // swap in order array
-    const tmp = order[slotA];
-    order[slotA] = order[slotB];
-    order[slotB] = tmp;
-
-    // update active class — top row is always active
-    rows.forEach(r => r.classList.remove('active'));
-    rows[order[0]].classList.add('active');
-
-    layout(true);
-
-    // remove highlight after transition
-    setTimeout(() => {
-      movingUp.classList.remove('swapping-up');
-    }, 1400);
-  }
-
-  function startCycle() {
-    timers.forEach(t => clearTimeout(t));
-    timers = [];
-    swaps.forEach(s => {
-      timers.push(setTimeout(() => doSwap(s.a, s.b), s.delay));
-    });
-    // loop
-    timers.push(setTimeout(startCycle, CYCLE));
-  }
-
-  startCycle();
+// GDPR Compliance: re-trigger fade-in animation when pillar expands
+(function() {
+  const gdpr = document.querySelector('.anim-gdpr');
+  if (!gdpr) return;
+  const pillar = gdpr.closest('.pillar');
+  if (!pillar) return;
+  pillar.addEventListener('click', function() {
+    if (pillar.classList.contains('expanded')) {
+      gdpr.querySelectorAll('.gdpr-item').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight; // reflow
+        el.style.animation = '';
+      });
+    }
+  });
 })();
 </script>
 
