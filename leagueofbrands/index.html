@@ -222,11 +222,21 @@
   }
 
   /* === HERO === */
-  .hero-wrap {
+  /* Scroll-driven intro sequence */
+  .hero-scroll {
+    height: 400vh;
     position: relative;
+    margin-top: -76px;
+  }
+  .hero-wrap {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     overflow: hidden;
-    margin-top: -76px;
   }
   .hero-cover {
     position: absolute;
@@ -240,10 +250,77 @@
   .hero {
     position: relative;
     text-align: center;
-    padding: 200px 48px 120px;
     max-width: 1120px;
     margin: 0 auto;
+    padding: 0 48px;
     z-index: 1;
+  }
+
+  /* Intro lines */
+  .intro-line {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 72px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1.1;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .intro-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .intro-line.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  .intro-silver {
+    background: linear-gradient(180deg, #FFFFFF 0%, #E0E0E8 15%, #B0B0C0 40%, #8888A0 55%, #B8B8CC 70%, #E8E8F0 85%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  }
+  .intro-blue {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 6px rgba(7, 81, 251, 0.4));
+  }
+  .intro-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: var(--text-3);
+    line-height: 1.6;
+    margin-top: 32px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .intro-sub.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .intro-sub.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  /* Final LOB state */
+  .hero-final {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
+  }
+  .hero-final.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
   .hero-league-badge {
     display: inline-flex;
@@ -2171,25 +2248,37 @@
   <a class="nav-cta" href="mailto:league@sportin.io?subject=League%20of%20Brands%20%E2%80%93%20Register%20Team">Sign up your team</a>
 </nav>
 
-<!-- HERO -->
+<!-- HERO SCROLL SEQUENCE -->
+<div class="hero-scroll" id="heroScroll">
 <div class="hero-wrap">
   <div class="hero-cover"></div>
   <section class="hero" id="hero">
-    <div class="hero-league-badge reveal">
-      <span class="dot"></span>
-      Season 1 &middot; July &ndash; November
+    <!-- Scroll-in intro lines -->
+    <div id="introLines">
+      <div class="intro-line" data-step="1"><span class="intro-silver">One </span><span class="intro-blue">Team</span></div>
+      <div class="intro-line" data-step="2"><span class="intro-silver">One </span><span class="intro-blue">Brand</span></div>
+      <div class="intro-line" data-step="3"><span class="intro-silver">One </span><span class="intro-blue">Legacy.</span></div>
+      <div class="intro-sub" data-step="4">United by purpose<br>Driven by pride</div>
     </div>
-    <div class="lob-logo reveal" style="--rd:0.1s;">
-      <div class="lob-logo-text lob-logo-glow">
-        <span class="lob-logo-line1">League <span class="lob-logo-of">of</span></span>
-        <span class="lob-logo-line2">Brands</span>
+    <!-- Final League of Brands -->
+    <div class="hero-final" id="heroFinal">
+      <div class="hero-league-badge">
+        <span class="dot"></span>
+        Season 1 &middot; July &ndash; November
+      </div>
+      <div class="lob-logo">
+        <div class="lob-logo-text lob-logo-glow">
+          <span class="lob-logo-line1">League <span class="lob-logo-of">of</span></span>
+          <span class="lob-logo-line2">Brands</span>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="mailto:league@sportin.io?subject=League%20of%20Brands%20%E2%80%93%20Register%20Team">Sign up your team</a>
+        <a class="btn btn-ghost" href="https://sportin.io/download">Download the app</a>
       </div>
     </div>
-    <div class="hero-cta reveal" style="--rd:0.3s;">
-      <a class="btn btn-primary" href="mailto:league@sportin.io?subject=League%20of%20Brands%20%E2%80%93%20Register%20Team">Sign up your team</a>
-      <a class="btn btn-ghost" href="https://sportin.io/download">Download the app</a>
-    </div>
   </section>
+</div>
 </div>
 
 <!-- TEAM VS TEAM -->
@@ -3956,6 +4045,60 @@
 })();
 </script>
 
+<!-- HERO SCROLL SEQUENCE JS -->
+<script>
+(function() {
+  const scroller = document.getElementById('heroScroll');
+  if (!scroller) return;
+
+  const lines = document.querySelectorAll('.intro-line');
+  const sub = document.querySelector('.intro-sub');
+  const final = document.getElementById('heroFinal');
+  const introWrap = document.getElementById('introLines');
+
+  // Steps: 0-0.15 = line1, 0.15-0.30 = line2, 0.30-0.45 = line3, 0.45-0.60 = subtitle, 0.60-0.75 = fade out all, 0.75-1.0 = show LOB
+  function update() {
+    const rect = scroller.getBoundingClientRect();
+    const scrollH = scroller.offsetHeight - window.innerHeight;
+    const progress = Math.max(0, Math.min(1, -rect.top / scrollH));
+
+    // Phase thresholds — first line needs a small scroll to feel intentional
+    const steps = [
+      { el: lines[0], showAt: 0.0,   hideAt: 0.65 },
+      { el: lines[1], showAt: 0.18,  hideAt: 0.65 },
+      { el: lines[2], showAt: 0.35,  hideAt: 0.65 },
+      { el: sub,       showAt: 0.50,  hideAt: 0.65 },
+    ];
+
+    steps.forEach(s => {
+      if (progress >= s.hideAt) {
+        s.el.classList.remove('visible');
+        s.el.classList.add('fade-out');
+      } else if (progress >= s.showAt) {
+        s.el.classList.add('visible');
+        s.el.classList.remove('fade-out');
+      } else {
+        s.el.classList.remove('visible');
+        s.el.classList.remove('fade-out');
+      }
+    });
+
+    // Show final LOB
+    if (progress >= 0.72) {
+      final.classList.add('visible');
+      introWrap.style.display = 'none';
+    } else {
+      final.classList.remove('visible');
+      introWrap.style.display = '';
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  // Show first line immediately on load
+  requestAnimationFrame(update);
+})();
+</script>
 
 </body>
 </html>
