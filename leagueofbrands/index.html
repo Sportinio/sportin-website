@@ -977,21 +977,20 @@
   .sponsor-avail {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 12px;
+    margin-top: 24px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--green);
   }
-  .sponsor-avail::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 8px var(--green);
-    animation: pulse 1.8s ease-in-out infinite;
+  .sponsor-avail.on-hold {
+    color: #60A5FA;
+  }
+  .sponsor-slot.held {
+    opacity: 0.4;
+    filter: grayscale(0.5);
+    pointer-events: none;
   }
 
   /* === SECTION: APP SCREENSHOTS CAROUSEL === */
@@ -3060,7 +3059,7 @@
   </div>
 
   <div class="sponsor-slots">
-    <div class="sponsor-slot reveal" style="--rd:0.1s;">
+    <div class="sponsor-slot held reveal" style="--rd:0.1s;">
       <div class="sponsor-num">Slot 01</div>
       <div class="sponsor-empty-ico">
         <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3068,10 +3067,10 @@
             stroke="rgba(255,255,255,0.18)" stroke-width="2" stroke-dasharray="5 4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
-      <div class="sponsor-avail">Available</div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>5,000 <span class="per">/ competition</span></div>
+      <div class="sponsor-avail on-hold">On Hold</div>
     </div>
-    <div class="sponsor-slot reveal" style="--rd:0.15s;">
+    <div class="sponsor-slot held reveal" style="--rd:0.15s;">
       <div class="sponsor-num">Slot 02</div>
       <div class="sponsor-empty-ico">
         <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3079,8 +3078,8 @@
             stroke="rgba(255,255,255,0.18)" stroke-width="2" stroke-dasharray="5 4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
-      <div class="sponsor-avail">Available</div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>5,000 <span class="per">/ competition</span></div>
+      <div class="sponsor-avail on-hold">On Hold</div>
     </div>
     <div class="sponsor-slot reveal" style="--rd:0.2s;">
       <div class="sponsor-num">Slot 03</div>
@@ -3090,7 +3089,7 @@
             stroke="rgba(255,255,255,0.18)" stroke-width="2" stroke-dasharray="5 4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>5,000 <span class="per">/ competition</span></div>
       <div class="sponsor-avail">Available</div>
     </div>
     <div class="sponsor-slot reveal" style="--rd:0.25s;">
@@ -3101,7 +3100,7 @@
             stroke="rgba(255,255,255,0.18)" stroke-width="2" stroke-dasharray="5 4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="sponsor-price"><span class="currency">&euro;</span>1,000 <span class="per">/ mo</span></div>
+      <div class="sponsor-price"><span class="currency">&euro;</span>5,000 <span class="per">/ competition</span></div>
       <div class="sponsor-avail">Available</div>
     </div>
   </div>
