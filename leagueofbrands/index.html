@@ -3343,6 +3343,11 @@
       audio.play().then(() => {
         fab.classList.add('playing');
       }).catch(() => {});
+      // Unlock commentary audio during this user gesture so it can play later from IntersectionObserver
+      var commAudio = document.getElementById('mrCommentary');
+      if (commAudio) {
+        commAudio.play().then(function() { commAudio.pause(); commAudio.currentTime = 0; }).catch(function() {});
+      }
       document.removeEventListener('click', tryAutoplay);
       document.removeEventListener('scroll', tryAutoplay);
       document.removeEventListener('touchstart', tryAutoplay);
@@ -3354,6 +3359,11 @@
     audio.play().then(() => {
       started = true;
       fab.classList.add('playing');
+      // Unlock commentary too
+      var commAudio = document.getElementById('mrCommentary');
+      if (commAudio) {
+        commAudio.play().then(function() { commAudio.pause(); commAudio.currentTime = 0; }).catch(function() {});
+      }
     }).catch(() => {});
 
     fab.addEventListener('click', (e) => {
@@ -3988,9 +3998,21 @@
     commentaryAudio.currentTime = 0;
     commentaryAudio.play().then(function() {
       window._commentaryState.playing = true;
-      if (sphereLabel) sphereLabel.classList.add('active');
       duckAnthem();
-    }).catch(function() {});
+    }).catch(function(err) {
+      // Browser blocked autoplay — retry on next user gesture
+      console.warn('Commentary autoplay blocked, will retry on interaction:', err);
+      function retryOnGesture() {
+        commentaryAudio.play().then(function() {
+          window._commentaryState.playing = true;
+          duckAnthem();
+        }).catch(function() {});
+        document.removeEventListener('click', retryOnGesture);
+        document.removeEventListener('touchstart', retryOnGesture);
+      }
+      document.addEventListener('click', retryOnGesture, { once: true });
+      document.addEventListener('touchstart', retryOnGesture, { once: true });
+    });
   }
 
   function stopCommentary() {
