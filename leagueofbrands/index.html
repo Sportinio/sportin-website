@@ -3339,18 +3339,20 @@
     let started = false;
     function tryAutoplay() {
       if (started) return;
-      started = true;
       audio.play().then(() => {
+        started = true;
         fab.classList.add('playing');
-      }).catch(() => {});
-      // Unlock commentary audio during this user gesture so it can play later from IntersectionObserver
-      var commAudio = document.getElementById('mrCommentary');
-      if (commAudio) {
-        commAudio.play().then(function() { commAudio.pause(); commAudio.currentTime = 0; }).catch(function() {});
-      }
-      document.removeEventListener('click', tryAutoplay);
-      document.removeEventListener('scroll', tryAutoplay);
-      document.removeEventListener('touchstart', tryAutoplay);
+        // Unlock commentary audio so it can play later from IntersectionObserver
+        var commAudio = document.getElementById('mrCommentary');
+        if (commAudio) {
+          commAudio.play().then(function() { commAudio.pause(); commAudio.currentTime = 0; }).catch(function() {});
+        }
+        document.removeEventListener('click', tryAutoplay);
+        document.removeEventListener('scroll', tryAutoplay);
+        document.removeEventListener('touchstart', tryAutoplay);
+      }).catch(() => {
+        // Play failed (not a valid user gesture) — keep listeners, try again next time
+      });
     }
     document.addEventListener('click', tryAutoplay, { once: false });
     document.addEventListener('scroll', tryAutoplay, { once: false });
