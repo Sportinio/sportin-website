@@ -21,7 +21,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800;900&family=Cinzel:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800;900&family=Cinzel:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink-0: #06060C;
@@ -256,14 +256,16 @@
     z-index: 1;
   }
 
-  /* Intro lines */
+  /* Intro lines — bold condensed athletic */
   .intro-line {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 72px;
+    font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+    font-size: 90px;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    line-height: 1.1;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+    color: #FFFFFF;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -276,19 +278,9 @@
     opacity: 0;
     transform: translateY(-20px);
   }
-  .intro-silver {
-    background: linear-gradient(180deg, #FFFFFF 0%, #E0E0E8 15%, #B0B0C0 40%, #8888A0 55%, #B8B8CC 70%, #E8E8F0 85%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-  }
-  .intro-blue {
-    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 6px rgba(7, 81, 251, 0.4));
+  .intro-line.intro-blue-line {
+    color: var(--blue-bright);
+    text-shadow: 0 2px 12px rgba(7, 81, 251, 0.4);
   }
   .intro-sub {
     font-family: 'Space Grotesk', sans-serif;
@@ -1291,6 +1283,7 @@
     .nav { width: 80%; gap: 18px; padding: 11px 14px 11px 20px; }
     .nav-links { display: none; }
     .hero { padding: 80px 28px 60px; }
+    .intro-line { font-size: 72px; }
     .hero-title { font-size: 64px; }
     .lob-logo-line1 { font-size: 62px; }
     .lob-logo-of { font-size: 22px; }
@@ -1305,6 +1298,8 @@
   @media (max-width: 768px) {
     .nav { padding: 10px 12px 10px 18px; gap: 12px; top: 10px; margin-top: 10px; width: calc(100% - 24px); border-radius: 22px; }
     .hero { padding: 50px 20px 50px; }
+    .intro-line { font-size: 56px; }
+    .intro-sub { font-size: 16px; }
     .hero-title { font-size: 44px; line-height: 1.05; }
     .lob-logo-line1 { font-size: 46px; }
     .lob-logo-of { font-size: 16px; }
@@ -1331,6 +1326,7 @@
     .nav { padding: 8px 10px 8px 16px; gap: 10px; }
     .nav-cta { padding: 8px 14px; font-size: 12px; }
     .brand svg { height: 24px; }
+    .intro-line { font-size: 44px; }
     .hero-title { font-size: 36px; }
     .section-title { font-size: 28px; }
     .wrap { padding: 0 16px; }
@@ -2255,9 +2251,9 @@
   <section class="hero" id="hero">
     <!-- Scroll-in intro lines -->
     <div id="introLines">
-      <div class="intro-line" data-step="1"><span class="intro-silver">One </span><span class="intro-blue">Team</span></div>
-      <div class="intro-line" data-step="2"><span class="intro-silver">One </span><span class="intro-blue">Brand</span></div>
-      <div class="intro-line" data-step="3"><span class="intro-silver">One </span><span class="intro-blue">Legacy.</span></div>
+      <div class="intro-line" data-step="1">One Team.</div>
+      <div class="intro-line" data-step="2">One Brand.</div>
+      <div class="intro-line intro-blue-line" data-step="3">One Legacy.</div>
       <div class="intro-sub" data-step="4">United by purpose<br>Driven by pride</div>
     </div>
     <!-- Final League of Brands -->
