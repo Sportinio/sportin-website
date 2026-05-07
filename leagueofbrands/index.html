@@ -527,6 +527,22 @@
   .intl {
     margin-top: 140px;
     text-align: center;
+    position: relative;
+    background: url('/leagueofbrands/international_edition.png') center center / cover no-repeat;
+    padding: 100px 48px;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+  .intl::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 10, 20, 0.75);
+    z-index: 0;
+  }
+  .intl > * {
+    position: relative;
+    z-index: 1;
   }
   .intl .section-title { margin: 0 auto; max-width: 700px; }
   .intl .section-intro { margin: 24px auto 0; text-align: center; }
