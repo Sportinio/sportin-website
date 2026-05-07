@@ -278,7 +278,14 @@
     opacity: 0;
     transform: translateY(-20px);
   }
-  .intro-line.intro-blue-line {
+  .intro-silver {
+    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  }
+  .intro-blue {
     color: var(--blue-bright);
     text-shadow: 0 2px 12px rgba(7, 81, 251, 0.4);
   }
@@ -2250,10 +2257,10 @@
   <div class="hero-cover"></div>
   <section class="hero" id="hero">
     <!-- Scroll-in intro lines -->
-    <div id="introLines">
-      <div class="intro-line" data-step="1">One Team.</div>
-      <div class="intro-line" data-step="2">One Brand.</div>
-      <div class="intro-line intro-blue-line" data-step="3">One Legacy.</div>
+    <div id="introLines" style="margin-top: 80px;">
+      <div class="intro-line" data-step="1"><span class="intro-silver">One </span><span class="intro-blue">Team.</span></div>
+      <div class="intro-line" data-step="2"><span class="intro-silver">One </span><span class="intro-blue">Brand.</span></div>
+      <div class="intro-line" data-step="3"><span class="intro-silver">One </span><span class="intro-blue">Legacy.</span></div>
       <div class="intro-sub" data-step="4">United by purpose<br>Driven by pride</div>
     </div>
     <!-- Final League of Brands -->
