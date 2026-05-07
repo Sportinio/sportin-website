@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Privacy Policy · SportIn</title>
+<meta name="description" content="SportIn Privacy Policy. How SportIn.io SRL collects, uses, and protects your personal data, including movement, location, health, and account information." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://sportin.io/privacy-policy" />
+<meta name="theme-color" content="#0751FB" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #06060C;
+    --ink-1: #0A0A12;
+    --text: #FFFFFF;
+    --text-2: #C8CAD4;
+    --text-3: #9AA0B4;
+    --text-4: #5F667E;
+    --blue: #0751FB;
+    --blue-bright: #3B7BFF;
+    --border: rgba(255, 255, 255, 0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    background: var(--ink-1);
+    color: var(--text);
+    font-family: 'Geist', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(7, 81, 251, 0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+  }
+  a { color: var(--blue-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(10, 10, 18, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; font-size: 14px; }
+  .top .brand svg { height: 22px; width: auto; }
+  .top a.back { font-size: 13px; color: var(--text-3); }
+  .top a.back:hover { color: var(--text); text-decoration: none; }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
+  }
+  .meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .lead { font-size: 18px; color: var(--text-2); margin-bottom: 8px; }
+  .versioning {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-4);
+    margin-bottom: 56px;
+    letter-spacing: 0.04em;
+  }
+  h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 48px 0 14px;
+    line-height: 1.25;
+  }
+  h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+  p, li { color: var(--text-2); font-size: 16px; line-height: 1.7; }
+  p + p { margin-top: 14px; }
+  ul, ol { margin: 14px 0 14px 24px; }
+  ul li, ol li { margin-bottom: 8px; }
+  strong { color: var(--text); font-weight: 600; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-2);
+  }
+  th { color: var(--text); font-weight: 600; background: rgba(255,255,255,0.03); }
+  h2[id], h3[id] { scroll-margin-top: 90px; }
+
+  .toc {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    background: rgba(255,255,255,0.025);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin-bottom: 40px;
+  }
+  .toc h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .toc ol { list-style: decimal; columns: 2; column-gap: 28px; margin: 0 0 0 20px; }
+  .toc li { color: var(--text-3); font-size: 14px; margin-bottom: 4px; break-inside: avoid; }
+  .toc a { color: var(--text-2); }
+  .toc a:hover { color: var(--blue-bright); text-decoration: none; }
+
+  .callout {
+    border-left: 3px solid var(--blue);
+    padding: 14px 16px;
+    background: rgba(7, 81, 251, 0.08);
+    border-radius: 0 10px 10px 0;
+    margin: 18px 0;
+    color: var(--text);
+  }
+
+  footer.foot {
+    border-top: 1px solid var(--border);
+    padding: 30px 24px;
+    text-align: center;
+    color: var(--text-4);
+    font-size: 13px;
+  }
+  footer.foot a { color: var(--text-3); margin: 0 12px; }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 56px 18px 90px; }
+    h1 { font-size: 38px; }
+    .toc ol { columns: 1; }
+    table { font-size: 13px; }
+    th, td { padding: 10px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="/">
+    <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M68.06 1.18C68.48 2.11 68.28 2.40 64.76 5.87C63.08 7.53 59.80 10.77 57.48 13.06C55.16 15.35 51.55 18.89 49.46 20.92C47.37 22.95 44.49 25.76 43.06 27.17C36.73 33.38 35.05 35.02 31.91 38.06C30.08 39.83 28.06 41.78 27.43 42.38C26.81 42.98 25.28 44.47 24.05 45.68C22.81 46.89 21.58 48.06 21.31 48.27C20.02 49.25 18.24 49.67 16.73 49.35C15.67 49.12 14.81 48.59 13.68 47.45C12.66 46.42 8.87 42.48 7.22 40.72C6.76 40.24 5.85 39.28 5.19 38.59C1.75 35.01 1.41 34.59 0.82 33.28C-0.24 30.92 -0.28 27.50 0.73 25.34C1.24 24.24 1.75 23.52 4.31 20.29C5.77 18.45 7.10 16.78 7.27 16.57C8.01 15.66 10.68 12.26 11.22 11.55C11.54 11.12 12.18 10.29 12.64 9.72C13.10 9.14 14.06 7.90 14.77 6.96C17.26 3.71 17.76 3.17 19.20 2.20C20.64 1.22 22.09 0.59 23.68 0.22C24.33 0.07 26.66 0.05 45.40 0.02C64.81 -0.02 66.42 -0.01 66.86 0.15C67.41 0.36 67.87 0.75 68.06 1.18Z" fill="white"/>
+      <path d="M74.30 47.90C74.48 48.91 73.99 52.24 73.58 52.82C73.49 52.95 73.42 53.12 73.42 53.21C73.42 53.54 72.38 55.05 70.49 57.46C69.43 58.82 68.01 60.64 67.35 61.50C65.62 63.73 61.42 69.06 59.86 70.99C59.44 71.52 58.56 72.64 57.90 73.49C56.43 75.39 55.59 76.25 54.51 76.96C53.20 77.81 52.00 78.31 50.29 78.70C49.57 78.87 48.09 78.88 29.10 78.85C9.57 78.82 8.66 78.81 8.31 78.63C7.33 78.13 7.20 76.90 8.02 75.95C8.51 75.38 20.86 62.96 40.25 43.53C50.15 33.61 53.98 29.84 54.42 29.57C54.82 29.33 55.31 29.15 55.91 29.03C57.02 28.80 57.44 28.80 58.23 29.00C59.33 29.29 59.80 29.62 61.21 31.13C61.93 31.90 63.01 33.06 63.62 33.69C65.00 35.13 66.00 36.19 67.85 38.16C68.65 39.02 69.64 40.07 70.04 40.51C72.41 43.03 72.89 43.62 73.30 44.49C73.77 45.50 73.99 46.16 74.14 47.02C74.20 47.36 74.27 47.76 74.30 47.90Z" fill="white"/>
+    </svg>
+    <span>SportIn</span>
+  </a>
+  <a class="back" href="/">← Back to home</a>
+</header>
+
+<main class="wrap">
+  <div class="meta">Legal</div>
+  <h1>Privacy Policy</h1>
+  <p class="lead">How SportIn.io SRL collects, uses, and protects your personal data.</p>
+  <div class="versioning">Last updated: 7 May 2026 · Version 1.0</div>
+
+  <div class="toc" aria-label="Table of contents">
+    <h4>Contents</h4>
+    <ol>
+      <li><a href="#s1">Who we are</a></li>
+      <li><a href="#s2">What this policy covers</a></li>
+      <li><a href="#s3">Data we collect</a></li>
+      <li><a href="#s4">How we use your data and legal basis</a></li>
+      <li><a href="#s5">Apple HealthKit data</a></li>
+      <li><a href="#s6">Location data</a></li>
+      <li><a href="#s7">Wearables and Spike</a></li>
+      <li><a href="#s8">AI voice commentary (ElevenLabs)</a></li>
+      <li><a href="#s9">Map tiles (Mapbox)</a></li>
+      <li><a href="#s10">Sharing your data</a></li>
+      <li><a href="#s11">International transfers</a></li>
+      <li><a href="#s12">Retention</a></li>
+      <li><a href="#s13">Your rights</a></li>
+      <li><a href="#s14">How to delete your account</a></li>
+      <li><a href="#s15">Children</a></li>
+      <li><a href="#s16">Security</a></li>
+      <li><a href="#s17">Right to complain</a></li>
+      <li><a href="#s18">Changes</a></li>
+      <li><a href="#s19">Contact</a></li>
+    </ol>
+  </div>
+
+  <h2 id="s1">1. Who we are</h2>
+  <p><strong>SportIn.io SRL</strong> ("<strong>SportIn</strong>", "<strong>we</strong>", "<strong>us</strong>", "<strong>our</strong>") is a Romanian company. We are the data controller for the personal data described in this policy.</p>
+  <p>Email: <a href="mailto:hello@sportin.io">hello@sportin.io</a><br/>
+  Privacy contact: <a href="mailto:privacy@sportin.io">privacy@sportin.io</a></p>
+
+  <h2 id="s2">2. What this policy covers</h2>
+  <p>This Privacy Policy applies to the SportIn mobile application (iOS and Android), the website at sportin.io and try.sportin.io, and the SportIn web application at app.sportin.io (together, the "<strong>Service</strong>").</p>
+
+  <h2 id="s3">3. Data we collect</h2>
+  <table>
+    <thead>
+      <tr><th>Category</th><th>Examples</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Account data</strong></td><td>Email, display name, password hash, Apple ID identifier (when you Sign in with Apple), profile photo, country</td><td>You</td></tr>
+      <tr><td><strong>Movement data</strong></td><td>Step count, walking and running distance, workout duration, pace, splits, calculated Movement Index</td><td>Apple HealthKit, your phone's Core Motion sensor, our eMotion engine, connected wearables via Spike (Garmin, Fitbit)</td></tr>
+      <tr><td><strong>Location data</strong></td><td>Precise GPS location and route polyline collected only during an active workout you start</td><td>Your device's location services</td></tr>
+      <tr><td><strong>Social data</strong></td><td>Friend graph, posts, photos, comments, reactions, reports, blocks</td><td>You and other users</td></tr>
+      <tr><td><strong>Competition data</strong></td><td>Team affiliation, House or Brand Team membership, leaderboard rank, race participation, lap times</td><td>Generated by your use of the Service</td></tr>
+      <tr><td><strong>Rewards data</strong></td><td>Vouchers earned, redemption events, sponsor offers viewed</td><td>Your use of the Service</td></tr>
+      <tr><td><strong>Notifications</strong></td><td>APNs push token, your notification preferences</td><td>Your device</td></tr>
+      <tr><td><strong>AI commentary data</strong></td><td>Stats we send to a third-party speech provider to synthesize voice commentary about your performance — we do not include personally identifying information in those prompts</td><td>Generated by your use of the Service</td></tr>
+      <tr><td><strong>Wearable connection metadata</strong></td><td>OAuth tokens for Garmin, Fitbit, and other providers (held by Spike on our behalf), connection status</td><td>Spike</td></tr>
+      <tr><td><strong>Compliance data</strong></td><td>Terms acceptance time and version, account deletion requests, ban status</td><td>Your use of the Service</td></tr>
+      <tr><td><strong>Technical data</strong></td><td>App version, OS version, language, crash diagnostics provided by Apple, Mapbox map-tile request metadata</td><td>Apple, Mapbox, your device</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="s4">4. How we use your data and the legal basis</h2>
+  <table>
+    <thead><tr><th>Purpose</th><th>Legal basis (GDPR Art. 6)</th></tr></thead>
+    <tbody>
+      <tr><td>Create and manage your account</td><td>Performance of contract — Art. 6(1)(b)</td></tr>
+      <tr><td>Track movement, calculate the Movement Index, show your activity</td><td>Performance of contract; explicit consent for HealthKit data</td></tr>
+      <tr><td>Show your route on the map and replay your run</td><td>Explicit consent (location services)</td></tr>
+      <tr><td>Place you on leaderboards, run competitions, calculate winners</td><td>Performance of contract</td></tr>
+      <tr><td>Generate AI voice commentary</td><td>Legitimate interest (entertainment), with transparency</td></tr>
+      <tr><td>Send transactional and competition emails</td><td>Performance of contract</td></tr>
+      <tr><td>Send marketing emails</td><td>Consent (you can withdraw at any time)</td></tr>
+      <tr><td>Send push notifications about your runs, leaderboards, and races</td><td>Performance of contract; marketing pushes only with consent</td></tr>
+      <tr><td>Detect cheating via SafeGuard AI</td><td>Legitimate interest in maintaining fair competition</td></tr>
+      <tr><td>Comply with legal obligations (accounting, anti-fraud, regulator requests)</td><td>Legal obligation — Art. 6(1)(c)</td></tr>
+      <tr><td>Account deletion fulfillment</td><td>Legal obligation; performance of contract</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="s5">5. Apple HealthKit data</h2>
+  <p>SportIn reads <strong>step count</strong> and <strong>walking and running distance</strong> from Apple Health when you grant permission.</p>
+  <ul>
+    <li>Health data is used solely to display your activity in the app, calculate your Movement Index, and rank you in competitions.</li>
+    <li><strong>We do not use Health data for advertising or marketing of any kind.</strong></li>
+    <li><strong>We do not sell, rent, or trade Health data to any third party.</strong></li>
+    <li><strong>We do not share Health data with third parties for their own purposes.</strong></li>
+    <li>You can revoke HealthKit access at any time in <strong>iOS Settings → Privacy &amp; Security → Health → SportIn</strong>.</li>
+  </ul>
+
+  <h2 id="s6">6. Location data</h2>
+  <p>SportIn collects <strong>precise GPS location</strong> only while a workout is active — that is, from when you tap Start until you tap Stop. We use this to show your route on the map, calculate distance, and verify the integrity of activities for competitions.</p>
+  <ul>
+    <li>We use <em>When In Use</em> location authorization. Background location collection is permitted only while a workout is active, so the recording can continue when your screen is off.</li>
+    <li>We retain the route polyline as part of your activity history. You can delete an individual activity from the app, which deletes its route.</li>
+    <li>You can revoke location access at any time in <strong>iOS Settings → Privacy &amp; Security → Location Services → SportIn</strong>.</li>
+  </ul>
+
+  <h2 id="s7">7. Wearables and Spike</h2>
+  <p>If you connect a wearable such as Garmin or Fitbit, we use <strong>Spike (TryTerra Inc.)</strong> as our integration provider. Connecting a wearable shares your activity data (steps, distance, sessions) with us via Spike. You can disconnect any wearable from the <strong>Connections</strong> screen in your profile, which revokes the Spike token.</p>
+  <p>Spike processes data on our behalf as a sub-processor under a data processing agreement.</p>
+
+  <h2 id="s8">8. AI voice commentary (ElevenLabs)</h2>
+  <p>We use <strong>ElevenLabs Inc.</strong> to synthesize voice commentary about your performance. We send a short text prompt containing your stats (such as distance, pace, time, and a few descriptive words) to ElevenLabs, which returns audio. We do not include your name, email, or other identifying details in that prompt.</p>
+  <p>The output is generative AI: it can be inaccurate. It is provided for entertainment only and is not coaching, medical, or training advice.</p>
+
+  <h2 id="s9">9. Map tiles (Mapbox)</h2>
+  <p>We use <strong>Mapbox</strong> to render the map. Mapbox receives the data necessary to deliver appropriate map tiles. We do not use Mapbox's product analytics for our own purposes.</p>
+
+  <h2 id="s10">10. Sharing your data</h2>
+  <p>We share personal data only with:</p>
+  <ul>
+    <li><strong>Service providers</strong> acting as our processors under data-processing agreements: Supabase Inc. (database, auth, hosting), ElevenLabs Inc. (text-to-speech), Spike / TryTerra Inc. (wearable integrations), Mapbox Inc. (map tiles), Apple Inc. (push notifications), and similar infrastructure partners.</li>
+    <li><strong>Sponsors and brand partners</strong> — only aggregated, non-identifying competition statistics. We do not share your name, email, or activity data with brand partners unless you explicitly opt in (for example, to redeem a sponsor reward, in which case we share what is necessary to fulfill that reward).</li>
+    <li><strong>Authorities</strong> — when legally required.</li>
+  </ul>
+  <div class="callout">
+    <strong>We never sell your personal data.</strong>
+  </div>
+
+  <h2 id="s11">11. International transfers</h2>
+  <p>Some of our processors are based outside the European Economic Area, including in the United States. For these transfers we rely on the European Commission's <strong>Standard Contractual Clauses</strong> (Decision (EU) 2021/914) and, where applicable, adequacy decisions, with supplementary measures where appropriate.</p>
+
+  <h2 id="s12">12. Retention</h2>
+  <ul>
+    <li><strong>Account data:</strong> until you delete your account, then up to 30 days for backup expiration.</li>
+    <li><strong>Movement and location data:</strong> same as account, unless you delete the activity sooner.</li>
+    <li><strong>Compliance records</strong> (Terms acceptance, deletion requests): up to 5 years for legal proof.</li>
+    <li><strong>Accounting and invoicing records:</strong> 10 years (Romanian fiscal law).</li>
+    <li><strong>Push tokens:</strong> until rotation or deletion.</li>
+    <li><strong>Crash diagnostics</strong> (Apple): per Apple's policy.</li>
+  </ul>
+
+  <h2 id="s13">13. Your rights</h2>
+  <p>Under the GDPR you have the right to:</p>
+  <ul>
+    <li>access your personal data;</li>
+    <li>correct inaccurate data;</li>
+    <li>delete your data ("right to be forgotten");</li>
+    <li>restrict or object to processing;</li>
+    <li>data portability;</li>
+    <li>withdraw consent at any time, where processing is based on consent.</li>
+  </ul>
+  <p>To exercise any of these rights, email <a href="mailto:privacy@sportin.io">privacy@sportin.io</a>. We respond within one month and may extend by two further months for complex requests, with notice.</p>
+
+  <h2 id="s14">14. How to delete your account</h2>
+  <ul>
+    <li><strong>In the app:</strong> Settings → Account → Delete account. Deletion is irreversible.</li>
+    <li><strong>By email:</strong> <a href="mailto:privacy@sportin.io">privacy@sportin.io</a>. We confirm and complete within 30 days.</li>
+  </ul>
+  <p>Account deletion removes your profile, posts, activities, route history, and rewards balance, except records we are legally required to retain.</p>
+
+  <h2 id="s15">15. Children</h2>
+  <p>SportIn is intended for users <strong>16 years of age and older</strong>. We do not knowingly collect personal data from anyone under 16. If you believe a minor has registered, contact <a href="mailto:privacy@sportin.io">privacy@sportin.io</a> and we will delete the account.</p>
+
+  <h2 id="s16">16. Security</h2>
+  <p>We use TLS in transit, encrypted storage at rest, role-based access, and Supabase Row-Level Security policies. No system is perfectly secure. In the event of a personal data breach affecting your rights and freedoms, we will notify you and the Romanian National Supervisory Authority for Personal Data Processing (<strong>ANSPDCP</strong>) per GDPR Articles 33–34.</p>
+
+  <h2 id="s17">17. Right to complain</h2>
+  <p>You may lodge a complaint with the Romanian National Supervisory Authority for Personal Data Processing (<strong>ANSPDCP</strong>), B-dul G-ral. Gheorghe Magheru 28-30, Sector 1, Bucharest, Romania — <a href="https://www.dataprotection.ro" target="_blank" rel="noopener">www.dataprotection.ro</a> — or with the supervisory authority of your country of residence.</p>
+
+  <h2 id="s18">18. Changes</h2>
+  <p>We will notify material changes to this Privacy Policy by email or in-app. The "Last updated" date at the top of this page reflects the current version.</p>
+
+  <h2 id="s19">19. Contact</h2>
+  <p>SportIn.io SRL · Romania<br/>
+  Email: <a href="mailto:hello@sportin.io">hello@sportin.io</a><br/>
+  Privacy: <a href="mailto:privacy@sportin.io">privacy@sportin.io</a></p>
+</main>
+
+<footer class="foot">
+  <div>
+    <a href="/">Home</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="mailto:hello@sportin.io">Contact</a>
+  </div>
+  <div style="margin-top:14px;">© SportIn.io SRL · Romania</div>
+</footer>
+
+</body>
+</html>

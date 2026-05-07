@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Terms of Service · SportIn</title>
+<meta name="description" content="SportIn Terms of Service. The agreement between you and SportIn.io SRL governing use of the SportIn app and website." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://sportin.io/terms" />
+<meta name="theme-color" content="#0751FB" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #06060C;
+    --ink-1: #0A0A12;
+    --text: #FFFFFF;
+    --text-2: #C8CAD4;
+    --text-3: #9AA0B4;
+    --text-4: #5F667E;
+    --blue: #0751FB;
+    --blue-bright: #3B7BFF;
+    --border: rgba(255, 255, 255, 0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    background: var(--ink-1);
+    color: var(--text);
+    font-family: 'Geist', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(7, 81, 251, 0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+  }
+  a { color: var(--blue-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Top bar */
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(10, 10, 18, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; font-size: 14px; letter-spacing: 0.02em; }
+  .top .brand svg { height: 22px; width: auto; }
+  .top a.back { font-size: 13px; color: var(--text-3); }
+  .top a.back:hover { color: var(--text); text-decoration: none; }
+
+  /* Page */
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
+  }
+  .meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .lead {
+    font-size: 18px;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+  .versioning {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-4);
+    margin-bottom: 56px;
+    letter-spacing: 0.04em;
+  }
+  h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 48px 0 14px;
+    line-height: 1.25;
+  }
+  h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+  p, li {
+    color: var(--text-2);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  p + p { margin-top: 14px; }
+  ul, ol { margin: 14px 0 14px 24px; }
+  ul li, ol li { margin-bottom: 8px; }
+  strong { color: var(--text); font-weight: 600; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-2);
+  }
+  th { color: var(--text); font-weight: 600; background: rgba(255,255,255,0.03); }
+
+  /* Anchor offset for sticky header */
+  h2[id], h3[id] { scroll-margin-top: 90px; }
+
+  /* TOC */
+  .toc {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    background: rgba(255,255,255,0.025);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin-bottom: 40px;
+  }
+  .toc h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .toc ol { list-style: decimal; columns: 2; column-gap: 28px; margin: 0 0 0 20px; }
+  .toc li { color: var(--text-3); font-size: 14px; margin-bottom: 4px; break-inside: avoid; }
+  .toc a { color: var(--text-2); }
+  .toc a:hover { color: var(--blue-bright); text-decoration: none; }
+
+  .callout {
+    border-left: 3px solid var(--blue);
+    padding: 14px 16px;
+    background: rgba(7, 81, 251, 0.08);
+    border-radius: 0 10px 10px 0;
+    margin: 18px 0;
+    color: var(--text);
+  }
+
+  footer.foot {
+    border-top: 1px solid var(--border);
+    padding: 30px 24px;
+    text-align: center;
+    color: var(--text-4);
+    font-size: 13px;
+  }
+  footer.foot a { color: var(--text-3); margin: 0 12px; }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 56px 18px 90px; }
+    h1 { font-size: 38px; }
+    .toc ol { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="/">
+    <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M68.06 1.18C68.48 2.11 68.28 2.40 64.76 5.87C63.08 7.53 59.80 10.77 57.48 13.06C55.16 15.35 51.55 18.89 49.46 20.92C47.37 22.95 44.49 25.76 43.06 27.17C36.73 33.38 35.05 35.02 31.91 38.06C30.08 39.83 28.06 41.78 27.43 42.38C26.81 42.98 25.28 44.47 24.05 45.68C22.81 46.89 21.58 48.06 21.31 48.27C20.02 49.25 18.24 49.67 16.73 49.35C15.67 49.12 14.81 48.59 13.68 47.45C12.66 46.42 8.87 42.48 7.22 40.72C6.76 40.24 5.85 39.28 5.19 38.59C1.75 35.01 1.41 34.59 0.82 33.28C-0.24 30.92 -0.28 27.50 0.73 25.34C1.24 24.24 1.75 23.52 4.31 20.29C5.77 18.45 7.10 16.78 7.27 16.57C8.01 15.66 10.68 12.26 11.22 11.55C11.54 11.12 12.18 10.29 12.64 9.72C13.10 9.14 14.06 7.90 14.77 6.96C17.26 3.71 17.76 3.17 19.20 2.20C20.64 1.22 22.09 0.59 23.68 0.22C24.33 0.07 26.66 0.05 45.40 0.02C64.81 -0.02 66.42 -0.01 66.86 0.15C67.41 0.36 67.87 0.75 68.06 1.18Z" fill="white"/>
+      <path d="M74.30 47.90C74.48 48.91 73.99 52.24 73.58 52.82C73.49 52.95 73.42 53.12 73.42 53.21C73.42 53.54 72.38 55.05 70.49 57.46C69.43 58.82 68.01 60.64 67.35 61.50C65.62 63.73 61.42 69.06 59.86 70.99C59.44 71.52 58.56 72.64 57.90 73.49C56.43 75.39 55.59 76.25 54.51 76.96C53.20 77.81 52.00 78.31 50.29 78.70C49.57 78.87 48.09 78.88 29.10 78.85C9.57 78.82 8.66 78.81 8.31 78.63C7.33 78.13 7.20 76.90 8.02 75.95C8.51 75.38 20.86 62.96 40.25 43.53C50.15 33.61 53.98 29.84 54.42 29.57C54.82 29.33 55.31 29.15 55.91 29.03C57.02 28.80 57.44 28.80 58.23 29.00C59.33 29.29 59.80 29.62 61.21 31.13C61.93 31.90 63.01 33.06 63.62 33.69C65.00 35.13 66.00 36.19 67.85 38.16C68.65 39.02 69.64 40.07 70.04 40.51C72.41 43.03 72.89 43.62 73.30 44.49C73.77 45.50 73.99 46.16 74.14 47.02C74.20 47.36 74.27 47.76 74.30 47.90Z" fill="white"/>
+    </svg>
+    <span>SportIn</span>
+  </a>
+  <a class="back" href="/">← Back to home</a>
+</header>
+
+<main class="wrap">
+  <div class="meta">Legal</div>
+  <h1>Terms of Service</h1>
+  <p class="lead">The agreement between you and SportIn.io SRL.</p>
+  <div class="versioning">Last updated: 7 May 2026 · Version 1.0</div>
+
+  <div class="toc" aria-label="Table of contents">
+    <h4>Contents</h4>
+    <ol>
+      <li><a href="#s1">Who we are</a></li>
+      <li><a href="#s2">Eligibility</a></li>
+      <li><a href="#s3">Account</a></li>
+      <li><a href="#s4">Acceptable use</a></li>
+      <li><a href="#s5">Physical activity disclaimer</a></li>
+      <li><a href="#s6">Movement data accuracy</a></li>
+      <li><a href="#s7">Competitions and scoring</a></li>
+      <li><a href="#s8">AI commentary</a></li>
+      <li><a href="#s9">Rewards and sponsor prizes</a></li>
+      <li><a href="#s10">User content</a></li>
+      <li><a href="#s11">Our intellectual property</a></li>
+      <li><a href="#s12">Termination</a></li>
+      <li><a href="#s13">Account deletion</a></li>
+      <li><a href="#s14">Service "AS IS"</a></li>
+      <li><a href="#s15">Limitation of liability</a></li>
+      <li><a href="#s16">Indemnification</a></li>
+      <li><a href="#s17">Apple-specific terms</a></li>
+      <li><a href="#s18">Refunds and billing</a></li>
+      <li><a href="#s19">Governing law</a></li>
+      <li><a href="#s20">Miscellaneous</a></li>
+      <li><a href="#s21">Changes</a></li>
+      <li><a href="#s22">Contact</a></li>
+    </ol>
+  </div>
+
+  <h2 id="s1">1. Who we are and what these terms cover</h2>
+  <p>These Terms of Service ("<strong>Terms</strong>") are a binding agreement between you and <strong>SportIn.io SRL</strong>, a company organized under the laws of Romania ("<strong>SportIn</strong>", "<strong>we</strong>", "<strong>us</strong>", "<strong>our</strong>"). They govern your use of the SportIn mobile application, the SportIn web application at app.sportin.io and try.sportin.io, the website at sportin.io, and any related services (the "<strong>Service</strong>").</p>
+  <p>By creating an account or using the Service, you agree to these Terms and to our <a href="/privacy-policy">Privacy Policy</a>. If you do not agree, do not use the Service.</p>
+
+  <h2 id="s2">2. Eligibility</h2>
+  <p>You must be at least <strong>16 years old</strong> to create an account. You confirm that you have legal capacity to enter into these Terms in your country of residence. We may verify age and refuse or terminate accounts that do not comply with this requirement.</p>
+
+  <h2 id="s3">3. Account</h2>
+  <p>You are responsible for:</p>
+  <ul>
+    <li>keeping your credentials confidential;</li>
+    <li>all activity under your account;</li>
+    <li>making sure your profile information is accurate and current.</li>
+  </ul>
+  <p>Notify us immediately at <a href="mailto:hello@sportin.io">hello@sportin.io</a> of any unauthorized use of your account.</p>
+
+  <h2 id="s4">4. Acceptable use</h2>
+  <p>You agree <strong>not</strong> to:</p>
+  <ul>
+    <li>create fake accounts, impersonate another person, or fabricate activity;</li>
+    <li>use bots, automation, GPS spoofing, treadmill manipulation, manual sensor manipulation, or any other method to inflate metrics — our <strong>SafeGuard AI</strong> monitors for these patterns and we may disqualify, suspend, or ban accounts;</li>
+    <li>harass, threaten, or post hateful, sexually explicit, or unlawful content;</li>
+    <li>reverse-engineer, scrape, or load-test the Service, or interfere with its security;</li>
+    <li>use the Service for any commercial purpose without our prior written permission.</li>
+  </ul>
+
+  <h2 id="s5">5. Physical activity and your health — important disclaimer</h2>
+  <div class="callout">
+    <p><strong>SportIn is a competition and entertainment platform, not a medical, training, or coaching service.</strong> Movement involves a risk of injury. Consult a qualified physician before beginning any exercise program. You participate at your own risk and assume responsibility for your physical condition, training choices, route safety, traffic, weather, and surroundings.</p>
+    <p><strong>SportIn is not a medical device.</strong> No information provided by the Service is intended as a substitute for professional medical advice, diagnosis, or treatment.</p>
+  </div>
+
+  <h2 id="s6">6. Movement data accuracy</h2>
+  <p>Step counts, distance, pace, the Movement Index, and similar measurements are computed from device sensors, Apple HealthKit, and connected wearables. They are estimates and are not guaranteed to be accurate.</p>
+
+  <h2 id="s7">7. Competitions and scoring</h2>
+  <p>We operate competitive formats including but not limited to <em>Game of Run</em>, <em>League of Brands</em>, <em>Le Grand Run</em>, <em>Grand Prix Series</em>, virtual races, and Health Signals. For each format we may publish format-specific rules, schedules, eligibility criteria, scoring rules, prizes, and disqualification grounds. By entering a format, you accept its rules.</p>
+  <p>We may modify rules with reasonable notice and may suspend or end any competition for safety, integrity, or operational reasons. We may disqualify a participant at our reasonable discretion if we suspect cheating or rule violations.</p>
+
+  <h2 id="s8">8. AI commentary</h2>
+  <p>The Service generates voice commentary using artificial intelligence and synthetic voice. <strong>AI output may be inaccurate, misleading, or unintentionally offensive. It is for entertainment only.</strong> It is not coaching, medical, training, or professional advice. You may disable AI commentary in the app's settings.</p>
+
+  <h2 id="s9">9. Rewards, vouchers and brand-sponsored prizes</h2>
+  <p>Sponsors may offer vouchers, products, services, or other rewards through the Service. Each reward is governed by sponsor-specific terms shown to you at the time of redemption (eligibility, geography, expiry, no cash equivalent, sponsor responsibility for fulfillment).</p>
+  <p><strong>The sponsor — not SportIn — is the issuer of the reward and is responsible for its fulfillment, validity, and product quality</strong>, except where Romanian or European Union consumer law provides otherwise. We may withdraw a reward if a sponsor terminates a campaign.</p>
+  <p>Where a campaign qualifies as a public promotion or contest under applicable Romanian or European Union law, the corresponding regulament will be published and made available within or alongside the campaign.</p>
+
+  <h2 id="s10">10. User content</h2>
+  <p>You retain ownership of the content you post (photos, posts, comments, profile photo, share cards). You grant SportIn a worldwide, non-exclusive, royalty-free, sublicensable license to host, store, reproduce, display, transmit, and distribute that content for the purpose of operating, improving, and promoting the Service — including showing your name, avatar, country, and stats on leaderboards, share cards, and recap pages.</p>
+  <p>You represent that you have the rights to grant this license and that your content does not infringe third-party rights.</p>
+
+  <h2 id="s11">11. Our intellectual property</h2>
+  <p>SportIn, the SportIn logo, the Movement Index, eMotion, SafeGuard AI, Game of Run, League of Brands, Le Grand Run, Grand Prix Series, and the visual design and content of the Service are owned by SportIn.io SRL or its licensors. No license to any of the foregoing is granted except as expressly stated in these Terms.</p>
+
+  <h2 id="s12">12. Termination</h2>
+  <p>You may stop using the Service at any time. We may suspend or terminate your account if you breach these Terms, attempt to manipulate competitions, or pose a safety, legal, or operational risk. We will give reasonable notice unless we cannot for safety, legal, or technical reasons.</p>
+
+  <h2 id="s13">13. Account deletion</h2>
+  <p>You may delete your account at any time in <strong>Settings → Account → Delete account</strong>, or by emailing <a href="mailto:privacy@sportin.io">privacy@sportin.io</a>. Account deletion is irreversible and removes your profile, posts, activities, route history, and rewards balance, except records we are legally required to retain.</p>
+
+  <h2 id="s14">14. Service "AS IS"; warranty disclaimer</h2>
+  <p>To the maximum extent permitted by law, the Service is provided <strong>"AS IS" and "AS AVAILABLE"</strong> without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, accuracy, and non-infringement.</p>
+
+  <h2 id="s15">15. Limitation of liability</h2>
+  <p>To the maximum extent permitted by law, SportIn's total cumulative liability to you arising out of or relating to the Service is limited to <strong>the greater of (a) the fees you paid SportIn in the twelve (12) months before the event giving rise to the claim, or (b) one hundred euros (€100)</strong>.</p>
+  <p>SportIn is not liable for indirect, incidental, special, consequential, exemplary, or punitive damages, or for loss of profits, data, goodwill, or business opportunity. Nothing in these Terms limits liability that cannot be excluded under Romanian or European Union consumer law.</p>
+
+  <h2 id="s16">16. Indemnification</h2>
+  <p>You will defend and indemnify SportIn and its officers, employees, and agents against third-party claims arising from your breach of these Terms, your content, your conduct in competitions, or your unlawful use of the Service.</p>
+
+  <h2 id="s17">17. Apple-specific terms (iOS users)</h2>
+  <p>If you use the Service on an Apple device, the following additional terms apply:</p>
+  <ul>
+    <li>These Terms are between you and SportIn, not Apple Inc. SportIn — not Apple — is solely responsible for the Service and its content.</li>
+    <li>The license to use the Service on an Apple device is non-transferable and limited to use on Apple-branded products you own or control, and in compliance with the Apple Media Services Terms and the Usage Rules in the Apple App Store Terms of Service.</li>
+    <li>Apple has no obligation to provide maintenance or support for the Service.</li>
+    <li>If the Service fails to conform to any applicable warranty, you may notify Apple, who will refund the purchase price (if any) of the Service. To the maximum extent permitted by law, Apple has no other warranty obligation with respect to the Service.</li>
+    <li>SportIn — not Apple — is responsible for product liability claims, claims that the Service fails to conform to legal or regulatory requirements, and claims under consumer-protection or similar legislation.</li>
+    <li>For third-party intellectual-property infringement claims relating to the Service, SportIn — not Apple — is responsible for investigation, defense, settlement, and discharge.</li>
+    <li>You confirm you are not located in a country subject to a U.S. Government embargo, or that has been designated by the U.S. Government as a "terrorist supporting" country, and you are not on any U.S. Government restricted-party list.</li>
+    <li><strong>Apple Inc. and its subsidiaries are third-party beneficiaries of these Terms</strong> and, upon your acceptance, will have the right (and will be deemed to have accepted the right) to enforce these Terms against you as a third-party beneficiary.</li>
+  </ul>
+
+  <h2 id="s18">18. Refunds and billing</h2>
+  <p>The Service is currently provided free of charge. If we introduce paid features, additional terms will apply. For any purchases made through Apple, refund requests are handled by Apple under Apple's policies.</p>
+
+  <h2 id="s19">19. Governing law and disputes</h2>
+  <p>These Terms are governed by the laws of <strong>Romania</strong>. The courts of <strong>Bucharest, Romania</strong> have exclusive jurisdiction over any disputes arising out of or relating to these Terms, subject to (a) any mandatory consumer-protection rights you have in your country of residence, and (b) the European Union Online Dispute Resolution platform available at <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.</p>
+
+  <h2 id="s20">20. Miscellaneous</h2>
+  <p><strong>Force majeure.</strong> Neither party is liable for failures caused by events beyond its reasonable control.</p>
+  <p><strong>Severability.</strong> If any provision is held unenforceable, the remainder of these Terms remains in effect.</p>
+  <p><strong>No waiver.</strong> Our failure to enforce a right is not a waiver of that right.</p>
+  <p><strong>Entire agreement.</strong> These Terms (together with the Privacy Policy and any format-specific rules) are the entire agreement between you and SportIn regarding the Service.</p>
+  <p><strong>Assignment.</strong> You may not assign these Terms without our consent. We may assign them to an affiliate or in connection with a merger, acquisition, or sale of assets.</p>
+
+  <h2 id="s21">21. Changes</h2>
+  <p>We may update these Terms. We will notify material changes by email or in-app at least 14 days before they take effect. Continued use of the Service after that date constitutes acceptance of the updated Terms.</p>
+
+  <h2 id="s22">22. Contact</h2>
+  <p>SportIn.io SRL · Romania<br/>
+  Email: <a href="mailto:hello@sportin.io">hello@sportin.io</a><br/>
+  Privacy: <a href="mailto:privacy@sportin.io">privacy@sportin.io</a></p>
+</main>
+
+<footer class="foot">
+  <div>
+    <a href="/">Home</a>
+    <a href="/privacy-policy">Privacy Policy</a>
+    <a href="mailto:hello@sportin.io">Contact</a>
+  </div>
+  <div style="margin-top:14px;">© SportIn.io SRL · Romania</div>
+</footer>
+
+</body>
+</html>
