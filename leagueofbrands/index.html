@@ -2311,7 +2311,7 @@
     <div class="mr-timer">
       <span id="mrTimerText">0:00 / 1:00</span>
       <div class="mr-timer-bar"><div class="mr-timer-fill" id="mrTimerFill"></div></div>
-      <span class="mr-hour-badge" id="mrHourBadge">00:00</span>
+      <span class="mr-hour-badge" id="mrHourBadge">05:00</span>
     </div>
   </div>
 
@@ -3199,8 +3199,9 @@
   const ROW_GAP = 8;
   const DURATION = 60000; // 60 seconds
   const GLOW_DURATION = 2800; // how long the moving glow lasts
-  const SWAP_COOLDOWN = 2500; // minimum ms between swaps for a player
-  const MIN_STEP_DIFF = 80; // minimum step difference to trigger a swap
+  const SWAP_COOLDOWN = 1800; // minimum ms between swaps for a player
+  const MIN_STEP_DIFF = 40; // minimum step difference to trigger a swap
+  const START_HOUR = 5; // start simulation at 5am instead of midnight (early joggers are already moving)
 
   // ── DOM refs ──
   const timerText = document.getElementById('mrTimerText');
@@ -3211,13 +3212,14 @@
 
   // ── Build hour ruler marks ──
   function buildHourMarks(container) {
-    const hours = [0, 3, 6, 9, 12, 15, 18, 21, 24];
+    const offsets = [0, 3, 6, 9, 12, 15, 18, 21, 24]; // hours into the simulation
     const padL = 20;
     const w = container.offsetWidth || 400;
     const usable = w - padL * 2;
-    hours.forEach(h => {
+    offsets.forEach(h => {
       const s = document.createElement('span');
-      s.textContent = (h === 24 ? '24' : h.toString().padStart(2, '0')) + 'h';
+      const displayH = (START_HOUR + h) % 24;
+      s.textContent = (h === 24 ? (START_HOUR % 24).toString().padStart(2, '0') : displayH.toString().padStart(2, '0')) + 'h';
       const pct = h / 24;
       s.style.left = (padL + pct * usable) + 'px';
       container.appendChild(s);
@@ -3297,13 +3299,28 @@
     document.getElementById('mrAvgMI' + prefix).textContent = avgMI.toFixed(1);
   }
 
-  // ── Interpolate steps smoothly (0-1 maps to hour 0-24) ──
+  // ── Interpolate steps smoothly (0-1 maps to START_HOUR → START_HOUR+24) ──
+  // Starting at 5am means early joggers create immediate action
   function getStepsAtProgress(player, progress) {
-    const hour = progress * 24;
+    const hour = START_HOUR + progress * 24; // wraps around via stepsArr which is 0-24
+    // stepsArr is cumulative 0..24 starting at midnight
+    // We need the delta from START_HOUR to the current mapped hour
+    const startSteps = interpolateArr(player.stepsArr, START_HOUR);
+    const currentHour = hour > 24 ? hour - 24 : hour;
+    const currentSteps = interpolateArr(player.stepsArr, currentHour);
+    if (hour <= 24) {
+      return currentSteps - startSteps;
+    } else {
+      // Wrapped past midnight: total from START_HOUR→24 + 0→currentHour
+      return (player.stepsArr[24] - startSteps) + currentSteps;
+    }
+  }
+
+  function interpolateArr(arr, hour) {
     const lo = Math.floor(hour);
     const hi = Math.min(lo + 1, 24);
     const frac = hour - lo;
-    return player.stepsArr[lo] + (player.stepsArr[hi] - player.stepsArr[lo]) * frac;
+    return arr[lo] + (arr[hi] - arr[lo]) * frac;
   }
 
   // ── Stable position sort with hysteresis ──
@@ -3469,8 +3486,10 @@
     timerText.textContent = formatTime(elapsed) + ' / 1:00';
     timerFill.style.width = (progress * 100) + '%';
 
-    const hh = Math.floor(currentHour);
-    const mm = Math.floor((currentHour - hh) * 60);
+    // Display hour shifted by START_HOUR
+    const displayHour = (START_HOUR + currentHour) % 24;
+    const hh = Math.floor(displayHour);
+    const mm = Math.floor((displayHour - hh) * 60);
     hourBadge.textContent = hh.toString().padStart(2, '0') + ':' + mm.toString().padStart(2, '0');
 
     // Move playheads
@@ -3553,7 +3572,7 @@
     // Reset timer display
     timerText.textContent = '0:00 / 1:00';
     timerFill.style.width = '0%';
-    hourBadge.textContent = '00:00';
+    hourBadge.textContent = START_HOUR.toString().padStart(2, '0') + ':00';
     playheadHome.style.left = '20px';
     playheadAway.style.left = '20px';
     playheadHome.classList.remove('active');
@@ -3616,7 +3635,7 @@
     updateVersusScores();
     timerText.textContent = '1:00 / 1:00';
     timerFill.style.width = '100%';
-    hourBadge.textContent = '24:00';
+    hourBadge.textContent = START_HOUR.toString().padStart(2, '0') + ':00';
   }
 
   stopBtn.addEventListener('click', stop);
