@@ -115,7 +115,18 @@
 <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 <link rel="preload" as="image" href="/leagueofbrands/cover_2.png" />
 <link rel="preload" as="image" href="/leagueofbrands/lob_cup.png" />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800;900&family=Cinzel:wght@700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+<!-- Preload critical fonts (Bebas Neue for hero intro, Cinzel for LOB logo) to prevent FOUC -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXoo9Wlhyw.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/cinzel/v23/8vIU7ww63mVu7gtR-kwKxNvkNOjw-tbnTYrvDE5ZdqU.woff2" />
+
+<!-- Use display=block on the critical hero fonts to avoid the swap flash;
+     the browser will hide text for up to ~3s waiting for the font, but
+     since we preload, it arrives in <500ms typically. -->
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@700;800;900&display=block" rel="stylesheet">
+
+<!-- Non-critical body fonts can use swap (small flash on body text is acceptable) -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink-0: #06060C;
