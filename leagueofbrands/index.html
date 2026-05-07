@@ -448,40 +448,87 @@
   }
   .why-head { text-align: center; margin-bottom: 56px; }
   .why-head .section-title { margin: 0 auto; }
-  .why-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+  .why-checklist {
+    max-width: 620px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
-  .why-card {
-    padding: 32px 26px;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  .why-check-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    opacity: 0.35;
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(-12px);
   }
-  .why-card:hover { transform: translateY(-4px); }
-  .why-ico {
-    width: 44px; height: 44px;
+  .why-check-item:first-child {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .why-check-item.checked {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .why-check-box {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.12);
     display: grid;
     place-items: center;
-    background: rgba(7, 81, 251, 0.15);
-    border: 1px solid rgba(7, 81, 251, 0.35);
-    border-radius: 12px;
-    color: var(--blue-bright);
-    font-size: 20px;
-    margin-bottom: 20px;
+    transition: border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
   }
-  .why-label {
+  .why-check-item.checked .why-check-box {
+    border-color: #12E094;
+    background: rgba(18, 224, 148, 0.1);
+    box-shadow: 0 0 20px rgba(18, 224, 148, 0.2);
+  }
+  .why-check-svg {
+    width: 20px;
+    height: 20px;
+  }
+  .why-check-path {
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    transition: stroke-dashoffset 0.5s cubic-bezier(0.65, 0, 0.35, 1) 0.1s;
+  }
+  .why-check-item.checked .why-check-path {
+    stroke-dashoffset: 0;
+  }
+  .why-check-content {
+    flex: 1;
+  }
+  .why-check-label {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 22px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--text);
-    margin-bottom: 10px;
+    margin-bottom: 4px;
+    transition: color 0.4s ease;
   }
-  .why-desc {
-    font-size: 14px;
+  .why-check-item.checked .why-check-label {
+    color: #fff;
+  }
+  .why-check-desc {
+    font-size: 15px;
+    color: var(--text-4);
+    line-height: 1.5;
+    transition: color 0.4s ease;
+  }
+  .why-check-item.checked .why-check-desc {
     color: var(--text-3);
-    line-height: 1.55;
+  }
+  @media (max-width: 768px) {
+    .why-check-item { gap: 18px; padding: 22px 0; }
+    .why-check-label { font-size: 19px; }
+    .why-check-desc { font-size: 14px; }
+    .why-check-box { width: 32px; height: 32px; }
   }
 
   /* === SECTION: INTERNATIONAL === */
@@ -1150,7 +1197,6 @@
     .wrap { padding: 0 28px; }
     .section-title { font-size: 42px; }
     .how-grid { grid-template-columns: repeat(2, 1fr); }
-    .why-grid { grid-template-columns: repeat(2, 1fr); }
     .rewards-grid { grid-template-columns: repeat(2, 1fr); }
     .sponsor-slots { grid-template-columns: repeat(2, 1fr); }
     .hero-meta { gap: 32px; }
@@ -1167,7 +1213,7 @@
     .wrap { padding: 0 20px; }
     .section-title { font-size: 34px; }
     .section-intro { font-size: 15px; }
-    .how-grid, .why-grid, .rewards-grid, .sponsor-slots, .partner-row { grid-template-columns: 1fr; }
+    .how-grid, .rewards-grid, .sponsor-slots, .partner-row { grid-template-columns: 1fr; }
     .hero-cta { flex-direction: column; align-items: stretch; }
     .hero-cta .btn { text-align: center; justify-content: center; }
     .hero-meta { flex-direction: column; gap: 20px; }
@@ -2536,36 +2582,72 @@
     <div class="section-kicker reveal">The Advantage</div>
     <h2 class="section-title reveal" style="--rd:0.1s;">Why brands <span class="gradient">join.</span></h2>
   </div>
-  <div class="why-grid">
-    <div class="why-card glass reveal" style="--rd:0.05s;">
-      <div class="why-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-      <div class="why-label">5-Month Visibility</div>
-      <div class="why-desc">Your brand name in a live league table, on leaderboards, in match recaps, and across participant feeds for an entire season.</div>
+  <div class="why-checklist">
+    <div class="why-check-item" data-check>
+      <div class="why-check-box">
+        <svg class="why-check-svg" viewBox="0 0 24 24" fill="none">
+          <path class="why-check-path" d="M4 12.5L9.5 18L20 6" stroke="#12E094" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="why-check-content">
+        <div class="why-check-label">Viral</div>
+        <div class="why-check-desc">The story spreads through your people.</div>
+      </div>
     </div>
-    <div class="why-card glass reveal" style="--rd:0.1s;">
-      <div class="why-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-      <div class="why-label">Retention Engine</div>
-      <div class="why-desc">Participants return every week for their team. Not because you asked, because the match is on Saturday.</div>
+    <div class="why-check-item" data-check>
+      <div class="why-check-box">
+        <svg class="why-check-svg" viewBox="0 0 24 24" fill="none">
+          <path class="why-check-path" d="M4 12.5L9.5 18L20 6" stroke="#12E094" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="why-check-content">
+        <div class="why-check-label">Trophy</div>
+        <div class="why-check-desc">One symbol everyone wants to lift.</div>
+      </div>
     </div>
-    <div class="why-card glass reveal" style="--rd:0.15s;">
-      <div class="why-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-      <div class="why-label">Built to Go Viral</div>
-      <div class="why-desc">Weekly results, leaderboard drama, and share-worthy moments. The competition creates content your audience actually talks about.</div>
+    <div class="why-check-item" data-check>
+      <div class="why-check-box">
+        <svg class="why-check-svg" viewBox="0 0 24 24" fill="none">
+          <path class="why-check-path" d="M4 12.5L9.5 18L20 6" stroke="#12E094" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="why-check-content">
+        <div class="why-check-label">Team</div>
+        <div class="why-check-desc">Shared effort turns people into a team.</div>
+      </div>
     </div>
-    <div class="why-card glass reveal" style="--rd:0.2s;">
-      <div class="why-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M6 3h12v7a6 6 0 0 1-12 0V3z"/><path d="M9 21h6"/><path d="M12 16v5"/></svg></div>
-      <div class="why-label">Real Trophy</div>
-      <div class="why-desc">The National League Cup is a physical trophy. The winning brand gets bragging rights, press coverage, and international qualification.</div>
+    <div class="why-check-item" data-check>
+      <div class="why-check-box">
+        <svg class="why-check-svg" viewBox="0 0 24 24" fill="none">
+          <path class="why-check-path" d="M4 12.5L9.5 18L20 6" stroke="#12E094" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="why-check-content">
+        <div class="why-check-label">Support</div>
+        <div class="why-check-desc">You get the cheers, SportIn handles the work.</div>
+      </div>
     </div>
-    <div class="why-card glass reveal" style="--rd:0.25s;">
-      <div class="why-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <div class="why-label">Team Culture</div>
-      <div class="why-desc">Nothing bonds people like competing together. Give your employees, clients, or community a reason to move as one.</div>
+    <div class="why-check-item" data-check>
+      <div class="why-check-box">
+        <svg class="why-check-svg" viewBox="0 0 24 24" fill="none">
+          <path class="why-check-path" d="M4 12.5L9.5 18L20 6" stroke="#12E094" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="why-check-content">
+        <div class="why-check-label">Visibility</div>
+        <div class="why-check-desc">Your brand lives in people's hearts for months.</div>
+      </div>
     </div>
-    <div class="why-card glass reveal" style="--rd:0.3s;">
-      <div class="why-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-      <div class="why-label">Full Sport Logic</div>
-      <div class="why-desc">National league structure, matchday rhythm, point system, standings, relegation tension. This is not a step challenge.</div>
+    <div class="why-check-item" data-check>
+      <div class="why-check-box">
+        <svg class="why-check-svg" viewBox="0 0 24 24" fill="none">
+          <path class="why-check-path" d="M4 12.5L9.5 18L20 6" stroke="#12E094" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="why-check-content">
+        <div class="why-check-label">UGC</div>
+        <div class="why-check-desc">When people share, your brand is there.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -3779,6 +3861,27 @@
   }
 
   startCycle();
+})();
+</script>
+
+<!-- WHY CHECKLIST SCROLL JS -->
+<script>
+(function() {
+  const items = document.querySelectorAll('[data-check]');
+  if (!items.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('checked');
+      }
+    });
+  }, {
+    threshold: 0.6,
+    rootMargin: '0px 0px -10% 0px'
+  });
+
+  items.forEach(item => observer.observe(item));
 })();
 </script>
 
