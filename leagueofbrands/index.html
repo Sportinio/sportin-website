@@ -417,14 +417,19 @@
     line-height: 1.55;
   }
   .hero-question {
-    font-family: 'SF Pro Display', 'Inter', system-ui, -apple-system, sans-serif;
-    font-size: 28px;
-    font-weight: 300;
-    color: var(--text-3);
-    letter-spacing: -0.01em;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
     margin: 28px auto 40px;
     line-height: 1.4;
     white-space: nowrap;
+    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
   }
   .hero-cta {
     display: flex;
