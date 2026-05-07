@@ -1784,12 +1784,14 @@
 
 <!-- MATCH REPLAY -->
 <section class="match-replay reveal" style="--rd:0.3s;">
+  <div style="text-align:center; margin-bottom:8px;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+  </div>
   <div class="section-kicker">LIVE MATCH REPLAY</div>
 
   <audio id="mrCommentary" src="/sportin_urbanfm.mp3" preload="auto"></audio>
   <div class="mr-controls">
     <button class="mr-btn mr-btn--commentary" id="mrCommentaryBtn">
-      <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       Play Commentary
     </button>
     <button class="mr-btn mr-btn--pause" id="mrStopBtn" style="display:none;">
@@ -3033,25 +3035,19 @@
       commentaryAudio.currentTime = 0;
       commentaryAudio.play().then(() => {
         commentaryBtn.classList.add('playing');
-        commentaryBtn.innerHTML =
-          '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18" rx="1" fill="currentColor"/><rect x="15" y="3" width="4" height="18" rx="1" fill="currentColor"/></svg>' +
-          ' Stop Commentary';
+        commentaryBtn.innerHTML = 'Stop Commentary';
       }).catch(() => {});
     } else {
       commentaryAudio.pause();
       commentaryAudio.currentTime = 0;
       commentaryBtn.classList.remove('playing');
-      commentaryBtn.innerHTML =
-        '<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>' +
-        ' Play Commentary';
+      commentaryBtn.innerHTML = 'Play Commentary';
     }
   });
 
   commentaryAudio.addEventListener('ended', () => {
     commentaryBtn.classList.remove('playing');
-    commentaryBtn.innerHTML =
-      '<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>' +
-      ' Play Commentary';
+    commentaryBtn.innerHTML = 'Play Commentary';
   });
 
   // ── Auto-start when section scrolls into view ──
