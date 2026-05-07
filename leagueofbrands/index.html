@@ -3029,24 +3029,36 @@
   const commentaryAudio = document.getElementById('mrCommentary');
   const commentaryBtn = document.getElementById('mrCommentaryBtn');
 
+  const anthemAudio = document.getElementById('lobAnthem');
+
+  function duckAnthem() {
+    if (anthemAudio) anthemAudio.volume = 0.2;
+  }
+  function restoreAnthem() {
+    if (anthemAudio) anthemAudio.volume = 1.0;
+  }
+
   commentaryBtn.addEventListener('click', () => {
     if (commentaryAudio.paused) {
       commentaryAudio.currentTime = 0;
       commentaryAudio.play().then(() => {
         commentaryBtn.classList.add('playing');
         commentaryBtn.innerHTML = 'Stop Commentary';
+        duckAnthem();
       }).catch(() => {});
     } else {
       commentaryAudio.pause();
       commentaryAudio.currentTime = 0;
       commentaryBtn.classList.remove('playing');
       commentaryBtn.innerHTML = 'Play Commentary';
+      restoreAnthem();
     }
   });
 
   commentaryAudio.addEventListener('ended', () => {
     commentaryBtn.classList.remove('playing');
     commentaryBtn.innerHTML = 'Play Commentary';
+    restoreAnthem();
   });
 
   // ── Auto-start when section scrolls into view ──
