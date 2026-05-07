@@ -356,414 +356,6 @@
     margin-top: 4px;
   }
 
-  /* === SHOWCASE: MATCHES + TABLE === */
-  .showcase {
-    margin-top: 80px;
-    padding: 0 48px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-    z-index: 1;
-  }
-  .showcase-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-  .showcase-panel {
-    background: rgba(255, 255, 255, 0.025);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    overflow: hidden;
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 16px 48px rgba(0, 0, 0, 0.35);
-  }
-  .showcase-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 22px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-  .showcase-tab {
-    font-family: 'Geist', 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-    padding: 6px 0;
-    border-bottom: 2px solid var(--blue-bright);
-  }
-  .showcase-tabs-ghost {
-    display: flex;
-    gap: 20px;
-  }
-  .showcase-tabs-ghost span {
-    font-family: 'Geist', 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-4);
-    cursor: default;
-  }
-  .showcase-live-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-4);
-    padding: 16px 22px 8px;
-  }
-
-  /* Match rows */
-  .match-row {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 0;
-    padding: 14px 22px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    transition: background 0.2s;
-  }
-  .match-row:last-child { border-bottom: none; }
-  .match-row:hover { background: rgba(255, 255, 255, 0.02); }
-  .match-team {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: flex-end;
-  }
-  .match-team.away { justify-content: flex-start; text-align: right; flex-direction: row-reverse; }
-  .match-team-logo {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: grid;
-    place-items: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-3);
-    flex-shrink: 0;
-  }
-  .match-team-info {}
-  .match-team-name {
-    font-family: 'Geist', 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
-  }
-  .match-team-meta {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    color: var(--text-4);
-    margin-top: 2px;
-  }
-  .match-score {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 16px;
-    min-width: 140px;
-    justify-content: center;
-  }
-  .match-val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    color: var(--text);
-  }
-  .match-val .unit {
-    font-size: 11px;
-    color: var(--text-4);
-    font-weight: 500;
-    vertical-align: super;
-    margin-left: 1px;
-  }
-  .match-vs {
-    font-family: 'Geist', 'Inter', sans-serif;
-    font-size: 11px;
-    color: var(--text-4);
-    margin: 0 2px;
-  }
-  .match-live-dot {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--red);
-    position: absolute;
-    left: 22px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .match-live-dot::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--red);
-    box-shadow: 0 0 8px var(--red);
-    animation: pulse 1.4s ease-in-out infinite;
-  }
-  .match-row { position: relative; padding-left: 70px; }
-
-  /* === VERSUS SHOWCASE === */
-  .versus {
-    padding: 100px 0 120px;
-    position: relative;
-    overflow: hidden;
-  }
-  .versus-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 32px;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 0;
-  }
-  .versus-team {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-  }
-  .versus-shirt {
-    width: 100%;
-    max-width: 380px;
-    height: auto;
-    filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.5));
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .versus-team:hover .versus-shirt {
-    transform: scale(1.04);
-  }
-  .versus-index-val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 42px;
-    color: var(--text);
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-  .versus-index-val .mi {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-4);
-    vertical-align: top;
-    margin-left: 4px;
-    letter-spacing: 0.02em;
-    line-height: 1;
-  }
-  .versus-divider {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 0 16px;
-  }
-  .versus-vs {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 16px;
-    letter-spacing: 0.1em;
-    background: linear-gradient(180deg, #E0E0E8 0%, #B0B0C0 40%, #8A8A9A 70%, #D0D0DD 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
-    user-select: none;
-    flex-shrink: 0;
-  }
-  .versus-score {
-    text-align: center;
-  }
-  .versus-kicker {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-4);
-    text-align: center;
-    margin-bottom: 8px;
-  }
-  @media (max-width: 768px) {
-    .versus { padding: 60px 0 80px; }
-    .versus-inner { grid-template-columns: 1fr; gap: 40px; }
-    .versus-shirt { max-width: 260px; }
-    .versus-divider { gap: 12px; padding: 0 8px; }
-    .versus-vs { font-size: 14px; }
-    .versus-index-val { font-size: 28px; }
-  }
-
-  /* Table */
-  .table-header {
-    display: grid;
-    grid-template-columns: 42px 1fr 52px 52px 52px 52px 60px 120px;
-    align-items: center;
-    gap: 0;
-    padding: 16px 28px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-  .table-header span {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-4);
-    text-align: center;
-  }
-  .table-header span:nth-child(2) { text-align: left; }
-  .table-row {
-    display: grid;
-    grid-template-columns: 42px 1fr 52px 52px 52px 52px 60px 120px;
-    align-items: center;
-    gap: 0;
-    padding: 14px 28px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    transition: background 0.2s;
-  }
-  .table-row:last-child { border-bottom: none; }
-  .table-row:hover { background: rgba(255, 255, 255, 0.02); }
-  .table-row.zone-top { border-left: 2px solid var(--blue-bright); }
-  .table-row.zone-playoff { border-left: 2px solid var(--gold); }
-  .table-pos {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 17px;
-    color: var(--text-3);
-    text-align: center;
-  }
-  .table-pos .arrow {
-    font-size: 10px;
-    display: block;
-    line-height: 1;
-    margin-top: 2px;
-  }
-  .arrow.up { color: var(--green); }
-  .arrow.down { color: var(--red); }
-  .arrow.same { color: var(--text-4); }
-  .table-team {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .table-team-logo {
-    width: 36px; height: 36px;
-    border-radius: 9px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: grid;
-    place-items: center;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-3);
-    flex-shrink: 0;
-  }
-  .table-team-name {
-    font-family: 'Geist', 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .table-team-sub {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--text-4);
-    margin-top: 2px;
-  }
-  .table-stat {
-    font-family: 'Geist', 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text-3);
-    text-align: center;
-  }
-  .table-pts {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 21px;
-    color: var(--text);
-    text-align: center;
-  }
-  .table-form {
-    display: flex;
-    gap: 3px;
-    justify-content: flex-end;
-  }
-  .form-dot {
-    width: 20px; height: 20px;
-    border-radius: 5px;
-    display: grid;
-    place-items: center;
-    font-family: 'Geist', 'Inter', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    color: #fff;
-  }
-  .form-dot.w { background: var(--blue); }
-  .form-dot.d { background: rgba(255, 255, 255, 0.15); color: var(--text-3); }
-  .form-dot.l { background: rgba(255, 59, 92, 0.7); }
-
-  /* Zone legend */
-  .table-legend {
-    display: flex;
-    gap: 20px;
-    padding: 10px 22px 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-  }
-  .table-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-4);
-  }
-  .table-legend-item::before {
-    content: '';
-    width: 8px; height: 8px;
-    border-radius: 2px;
-  }
-  .table-legend-item.intl::before { background: var(--blue-bright); }
-  .table-legend-item.playoff::before { background: var(--gold); }
-
-  @media (max-width: 1024px) {
-    .showcase { padding: 0 28px; }
-    .showcase-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 768px) {
-    .showcase { padding: 0 20px; margin-top: 60px; }
-    .match-row { padding-left: 60px; }
-    .match-score { min-width: 110px; padding: 0 10px; }
-    .match-val { font-size: 18px; }
-    .table-header, .table-row { grid-template-columns: 36px 1fr 42px 42px 42px 42px 50px 100px; padding: 10px 18px; }
-    .table-form { gap: 2px; }
-    .form-dot { width: 16px; height: 16px; font-size: 8px; }
-  }
-  @media (max-width: 480px) {
-    .showcase { padding: 0 16px; }
-    .table-header, .table-row { grid-template-columns: 32px 1fr 50px 100px; }
-    .table-header span:nth-child(4),
-    .table-header span:nth-child(5),
-    .table-header span:nth-child(6),
-    .table-row .table-stat:nth-child(4),
-    .table-row .table-stat:nth-child(5),
-    .table-row .table-stat:nth-child(6) { display: none; }
-  }
-
   /* === SECTION: NOT A CAMPAIGN === */
   .manifesto {
     margin-top: 140px;
@@ -1487,14 +1079,6 @@
     text-align: center;
     margin-bottom: 24px;
   }
-  .mr-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-  }
   .mr-btn {
     display: inline-flex;
     align-items: center;
@@ -1514,53 +1098,12 @@
     box-shadow: 0 2px 12px rgba(7, 81, 251, 0.15);
   }
   .mr-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(7, 81, 251, 0.25); border-color: var(--blue-bright); }
-  .mr-btn--pause { border-color: #F59E0B; color: #F59E0B; box-shadow: 0 2px 12px rgba(245, 158, 11, 0.15); }
-  .mr-btn--pause:hover { box-shadow: 0 4px 18px rgba(245, 158, 11, 0.25); border-color: #FBBF24; }
-  .mr-btn--resume { border-color: var(--green); color: var(--green); box-shadow: 0 2px 12px rgba(18, 224, 148, 0.15); }
-  .mr-btn--resume:hover { box-shadow: 0 4px 18px rgba(18, 224, 148, 0.25); border-color: #34D399; }
-  .mr-btn--reset { border-color: var(--border-strong); color: var(--text-3); box-shadow: none; }
-  .mr-btn--reset:hover { border-color: var(--text-4); color: var(--text); }
-  .mr-btn[disabled] { opacity: 0.35; pointer-events: none; }
   .mr-btn svg { width: 14px; height: 14px; fill: currentColor; }
   .mr-btn--commentary { border-color: var(--green); color: var(--green); box-shadow: 0 2px 12px rgba(18, 224, 148, 0.12); }
   .mr-btn--commentary:hover { box-shadow: 0 4px 18px rgba(18, 224, 148, 0.25); border-color: #34D399; }
   .mr-btn--commentary.playing { background: rgba(18, 224, 148, 0.1); border-color: var(--green); }
   .mr-btn--commentary.playing svg { animation: commPulse 1.5s ease-in-out infinite; }
   @keyframes commPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-  .mr-timer {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    color: var(--text-3);
-    letter-spacing: 0.05em;
-  }
-  .mr-timer-bar {
-    width: 120px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .mr-timer-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--blue);
-    border-radius: 2px;
-    transition: width 0.3s linear;
-  }
-  .mr-hour-badge {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--blue-bright);
-    background: rgba(7, 81, 251, 0.12);
-    border: 1px solid rgba(7, 81, 251, 0.2);
-    padding: 4px 10px;
-    border-radius: 999px;
-    letter-spacing: 0.08em;
-  }
   .mr-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1802,8 +1345,6 @@
     .mr-grid { grid-template-columns: 1fr; }
     .mr-player-info { width: 70px; }
     .mr-stats { width: 60px; }
-    .mr-controls { gap: 8px; }
-    .mr-timer-bar { width: 80px; }
   }
   @media (max-width: 480px) {
     .match-replay { padding: 0 16px 40px; }
@@ -2400,7 +1941,7 @@
       </div>
     </div>
     <div class="versus-team">
-      <img src="/urban-fm-shirt.png" alt="Urban FM team shirt" class="versus-shirt" />
+      <img src="/urban-fm-shirt.png" alt="Urban FM team shirt" class="versus-shirt" style="max-width:275px;" />
     </div>
   </div>
 </section>
@@ -2414,18 +1955,6 @@
     </button>
   </div>
   <div class="section-kicker">LIVE MATCH REPLAY</div>
-
-  <div class="mr-controls">
-    <button class="mr-btn mr-btn--pause" id="mrStopBtn" style="display:none;">
-      <svg viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="15" y="3" width="4" height="18" rx="1"/></svg>
-      Stop
-    </button>
-    <div class="mr-timer">
-      <span id="mrTimerText">0:00 / 1:00</span>
-      <div class="mr-timer-bar"><div class="mr-timer-fill" id="mrTimerFill"></div></div>
-      <span class="mr-hour-badge" id="mrHourBadge">05:00</span>
-    </div>
-  </div>
 
   <div class="mr-grid">
     <div class="mr-panel" id="mrPanelHome">
@@ -2463,132 +1992,6 @@
         <span class="mr-footer-stat">Avg MI: <strong id="mrAvgMIAway">0.0</strong></span>
         <span class="mr-footer-stat">24h daily steps</span>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- LEAGUE TABLE -->
-<section class="showcase reveal" style="--rd:0.5s;">
-  <div class="showcase-panel">
-    <div class="showcase-header">
-      <span class="showcase-tab">Table</span>
-      <div class="showcase-tabs-ghost">
-        <span>Matchday 5</span>
-      </div>
-    </div>
-
-    <div class="table-header">
-      <span>#</span>
-      <span>Team</span>
-      <span>PL</span>
-      <span>W</span>
-      <span>D</span>
-      <span>L</span>
-      <span>PTS</span>
-      <span style="text-align:right;">Form</span>
-    </div>
-
-    <div class="table-row zone-top">
-      <div class="table-pos">1 <span class="arrow up">&blacktriangle;</span></div>
-      <div class="table-team">
-        <div class="table-team-logo">A</div>
-        <div><div class="table-team-name">Team A</div><div class="table-team-sub">12 &middot; &hearts; 248</div></div>
-      </div>
-      <div class="table-stat">4</div>
-      <div class="table-stat">3</div>
-      <div class="table-stat">1</div>
-      <div class="table-stat">0</div>
-      <div class="table-pts">10</div>
-      <div class="table-form"><span class="form-dot w">W</span><span class="form-dot d">D</span><span class="form-dot w">W</span><span class="form-dot w">W</span></div>
-    </div>
-
-    <div class="table-row zone-top">
-      <div class="table-pos">2 <span class="arrow up">&blacktriangle;</span></div>
-      <div class="table-team">
-        <div class="table-team-logo" style="background:rgba(59,123,255,0.15);border-color:rgba(59,123,255,0.3);color:var(--blue-bright);">B</div>
-        <div><div class="table-team-name">Team B</div><div class="table-team-sub">13 &middot; &hearts; 312</div></div>
-      </div>
-      <div class="table-stat">4</div>
-      <div class="table-stat">3</div>
-      <div class="table-stat">0</div>
-      <div class="table-stat">1</div>
-      <div class="table-pts">9</div>
-      <div class="table-form"><span class="form-dot w">W</span><span class="form-dot w">W</span><span class="form-dot l">L</span><span class="form-dot w">W</span></div>
-    </div>
-
-    <div class="table-row zone-playoff">
-      <div class="table-pos">3 <span class="arrow same">&ndash;</span></div>
-      <div class="table-team">
-        <div class="table-team-logo">C</div>
-        <div><div class="table-team-name">Team C</div><div class="table-team-sub">12 &middot; &hearts; 203</div></div>
-      </div>
-      <div class="table-stat">4</div>
-      <div class="table-stat">2</div>
-      <div class="table-stat">2</div>
-      <div class="table-stat">0</div>
-      <div class="table-pts">8</div>
-      <div class="table-form"><span class="form-dot d">D</span><span class="form-dot w">W</span><span class="form-dot d">D</span><span class="form-dot w">W</span></div>
-    </div>
-
-    <div class="table-row zone-playoff">
-      <div class="table-pos">4 <span class="arrow up">&blacktriangle;</span></div>
-      <div class="table-team">
-        <div class="table-team-logo">D</div>
-        <div><div class="table-team-name">Team D</div><div class="table-team-sub">9 &middot; &hearts; 178</div></div>
-      </div>
-      <div class="table-stat">5</div>
-      <div class="table-stat">2</div>
-      <div class="table-stat">2</div>
-      <div class="table-stat">1</div>
-      <div class="table-pts">8</div>
-      <div class="table-form"><span class="form-dot w">W</span><span class="form-dot l">L</span><span class="form-dot d">D</span><span class="form-dot d">D</span></div>
-    </div>
-
-    <div class="table-row">
-      <div class="table-pos">5 <span class="arrow up">&blacktriangle;</span></div>
-      <div class="table-team">
-        <div class="table-team-logo">E</div>
-        <div><div class="table-team-name">Team E</div><div class="table-team-sub">11 &middot; &hearts; 289</div></div>
-      </div>
-      <div class="table-stat">4</div>
-      <div class="table-stat">2</div>
-      <div class="table-stat">1</div>
-      <div class="table-stat">1</div>
-      <div class="table-pts">7</div>
-      <div class="table-form"><span class="form-dot w">W</span><span class="form-dot l">L</span><span class="form-dot w">W</span><span class="form-dot d">D</span></div>
-    </div>
-
-    <div class="table-row">
-      <div class="table-pos">6 <span class="arrow down">&blacktriangledown;</span></div>
-      <div class="table-team">
-        <div class="table-team-logo">F</div>
-        <div><div class="table-team-name">Team F</div><div class="table-team-sub">10 &middot; &hearts; 234</div></div>
-      </div>
-      <div class="table-stat">4</div>
-      <div class="table-stat">2</div>
-      <div class="table-stat">1</div>
-      <div class="table-stat">1</div>
-      <div class="table-pts">7</div>
-      <div class="table-form"><span class="form-dot w">W</span><span class="form-dot w">W</span><span class="form-dot d">D</span><span class="form-dot l">L</span></div>
-    </div>
-
-    <div class="table-row">
-      <div class="table-pos">7 <span class="arrow down">&blacktriangledown;</span></div>
-      <div class="table-team">
-        <div class="table-team-logo">G</div>
-        <div><div class="table-team-name">Team G</div><div class="table-team-sub">11 &middot; &hearts; 189</div></div>
-      </div>
-      <div class="table-stat">5</div>
-      <div class="table-stat">2</div>
-      <div class="table-stat">1</div>
-      <div class="table-stat">2</div>
-      <div class="table-pts">7</div>
-      <div class="table-form"><span class="form-dot w">W</span><span class="form-dot l">L</span><span class="form-dot d">D</span><span class="form-dot w">W</span></div>
-    </div>
-
-    <div class="table-legend">
-      <div class="table-legend-item intl">International qualification</div>
-      <div class="table-legend-item playoff">Playoff spot</div>
     </div>
   </div>
 </section>
@@ -3371,9 +2774,6 @@
   const START_HOUR = 5; // start simulation at 5am instead of midnight (early joggers are already moving)
 
   // ── DOM refs ──
-  const timerText = document.getElementById('mrTimerText');
-  const timerFill = document.getElementById('mrTimerFill');
-  const hourBadge = document.getElementById('mrHourBadge');
   const playheadHome = document.getElementById('mrPlayheadHome');
   const playheadAway = document.getElementById('mrPlayheadAway');
 
@@ -3602,18 +3002,7 @@
   let autoStarted = false;
   let lastRenderTime = 0;
 
-  const stopBtn = document.getElementById('mrStopBtn');
-
-  function formatTime(ms) {
-    const s = Math.floor(ms / 1000);
-    const m = Math.floor(s / 60);
-    const ss = s % 60;
-    return m + ':' + ss.toString().padStart(2, '0');
-  }
-
-  function updateUI() {
-    stopBtn.style.display = animState === 'playing' ? '' : 'none';
-  }
+  function updateUI() {}
 
   function tick(timestamp) {
     if (animState !== 'playing') return;
@@ -3648,16 +3037,6 @@
 
   function renderFrame(progress, now) {
     const currentHour = progress * 24;
-
-    // Update timer
-    timerText.textContent = formatTime(elapsed) + ' / 1:00';
-    timerFill.style.width = (progress * 100) + '%';
-
-    // Display hour shifted by START_HOUR
-    const displayHour = (START_HOUR + currentHour) % 24;
-    const hh = Math.floor(displayHour);
-    const mm = Math.floor((displayHour - hh) * 60);
-    hourBadge.textContent = hh.toString().padStart(2, '0') + ':' + mm.toString().padStart(2, '0');
 
     // Move playheads
     const rulerHome = document.getElementById('mrHourRulerHome');
@@ -3736,10 +3115,6 @@
     updateFooter(homeTeam, 'Home');
     updateFooter(awayTeam, 'Away');
 
-    // Reset timer display
-    timerText.textContent = '0:00 / 1:00';
-    timerFill.style.width = '0%';
-    hourBadge.textContent = START_HOUR.toString().padStart(2, '0') + ':00';
     playheadHome.style.left = '20px';
     playheadAway.style.left = '20px';
     playheadHome.classList.remove('active');
@@ -3800,12 +3175,7 @@
     updateFooter(homeTeam, 'Home');
     updateFooter(awayTeam, 'Away');
     updateVersusScores();
-    timerText.textContent = '1:00 / 1:00';
-    timerFill.style.width = '100%';
-    hourBadge.textContent = START_HOUR.toString().padStart(2, '0') + ':00';
   }
-
-  stopBtn.addEventListener('click', stop);
 
   // ── Commentary audio ──
   const commentaryAudio = document.getElementById('mrCommentary');
