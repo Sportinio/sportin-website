@@ -1644,7 +1644,7 @@
       height: auto;
     }
     /* Versus shirts: scale down to fit */
-    .versus-shirt { max-width: 220px !important; }
+    .versus-shirt { max-width: 220px !important; height: 220px !important; }
     /* Cup centered, never overflows */
     .why-cup-wrap {
       width: 100%;
@@ -1765,7 +1765,8 @@
   .versus-shirt {
     width: 100%;
     max-width: 380px;
-    height: auto;
+    height: 380px;
+    object-fit: contain;
     filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.5));
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -2655,7 +2656,7 @@
       </div>
     </div>
     <div class="versus-team">
-      <img src="/urban-fm-shirt.png" alt="Urban FM team shirt" class="versus-shirt" style="max-width:275px;" />
+      <img src="/urban-fm-shirt.png" alt="Urban FM team shirt" class="versus-shirt" />
     </div>
   </div>
 </section>
