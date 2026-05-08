@@ -102,7 +102,9 @@
       else sideFade = 0.8 + (t - 0.7) / 0.3 * 0.2;
     }
 
-    return Math.max(headerFade, sideFade);
+    var result = Math.max(headerFade, sideFade);
+    if (worldY >= headerBottom) result *= 0.7;
+    return result;
   }
 
   function hslColor(x, y, t) {
