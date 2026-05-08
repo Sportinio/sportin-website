@@ -1770,8 +1770,14 @@
     filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.5));
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
+  .versus-shirt--sportin {
+    transform: scale(1.22);
+  }
   .versus-team:hover .versus-shirt {
     transform: scale(1.04);
+  }
+  .versus-team:hover .versus-shirt--sportin {
+    transform: scale(1.27);
   }
   .versus-index-val {
     font-family: 'Space Grotesk', sans-serif;
@@ -2644,7 +2650,7 @@
   <div class="versus-kicker reveal">Matchday Preview</div>
   <div class="versus-inner reveal" style="--rd:0.15s;">
     <div class="versus-team">
-      <img src="/sportin-shirt.png" alt="SportIn team shirt" class="versus-shirt" />
+      <img src="/sportin-shirt.png" alt="SportIn team shirt" class="versus-shirt versus-shirt--sportin" />
     </div>
     <div class="versus-divider">
       <div class="versus-score">
