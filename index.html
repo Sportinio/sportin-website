@@ -75,7 +75,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Cinzel+Decorative:wght@700;900&family=Anton&family=Bebas+Neue&family=Barlow+Condensed:wght@600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=Anton&family=Bebas+Neue&family=Barlow+Condensed:wght@600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink-0: #06060C;
@@ -1347,10 +1347,37 @@
     background: rgba(7, 81, 251, 0.1);
   }
   .world.lob .world-title {
-    font-family: 'Anton', sans-serif;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
     text-transform: uppercase;
-    color: var(--text);
-    letter-spacing: 0.01em;
+    letter-spacing: 0.08em;
+    line-height: 0.88;
+  }
+  .world.lob .world-title .lob-line1 {
+    display: block;
+    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  }
+  .world.lob .world-title .lob-of {
+    font-size: 0.35em;
+    background: linear-gradient(180deg, #D0D0DC 0%, #A0A0B4 50%, #D0D0DC 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    letter-spacing: 0.2em;
+    margin-left: 0.15em;
+  }
+  .world.lob .world-title .lob-line2 {
+    display: block;
+    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
   }
   .world.lob .world-enter { border-color: rgba(59, 123, 255, 0.5); color: var(--blue-bright); }
   .world.lob .world-enter:hover { background: rgba(7, 81, 251, 0.15); }
@@ -1375,7 +1402,7 @@
     color: #1A0F08;
     letter-spacing: 0.03em;
   }
-  .world.lgr .world-title .le-italic {
+  .world.lgr .world-title .lgr-romania {
     font-family: 'Playfair Display', serif;
     font-style: italic;
     font-weight: 700;
@@ -3098,7 +3125,7 @@
       <div class="world-inner">
         <span class="world-mark">Cup &middot; Every Saturday</span>
         <div>
-          <div class="world-title">League of<br/>Brands</div>
+          <div class="world-title"><span class="lob-line1">League <span class="lob-of">of</span></span><span class="lob-line2">Brands</span></div>
           <div class="world-tagline">Best for: brands that want head-to-head broadcast</div>
         </div>
         <p class="world-desc">Sixteen brand teams. Four groups. Knockout bracket. One silver cup. Every Saturday becomes a matchday, with live leaderboards, social cards, and employee activation baked in. The Champions League format, given to the people behind your brand.</p>
@@ -3111,16 +3138,16 @@
       </div>
     </a>
 
-    <!-- Run 3 Le Grand Run -->
+    <!-- Run 3 Romania Grand Tour -->
     <a class="world lgr reveal-left" style="--rd:0.25s;" href="LGR_01_Homepage.html">
       <span class="world-runtag">Run 03</span>
       <div class="world-inner">
-        <span class="world-mark">Grand Tour &middot; 3 Weeks</span>
+        <span class="world-mark">Distributed Grand Tour &middot; 3 Weeks</span>
         <div>
-          <div class="world-title"><span class="le-italic">Le</span><br/>Grand Run</div>
+          <div class="world-title"><span class="lgr-romania">Le</span> Tour<br/><span class="lgr-romania">De</span> Roumanie</div>
           <div class="world-tagline">Best for: title sponsors &amp; premium brands</div>
         </div>
-        <p class="world-desc">Twenty-one stages. Four jerseys. Eighteen teams. A three-week grand tour with daily broadcast beats. Yellow, green, polka-dot, and white. Each one a sponsorable identity people race to wear.</p>
+        <p class="world-desc">Romania Grand Tour is a three&#8209;week cycling grand tour you ride from wherever you are. Sessions are recorded on the same infrastructure used to track every step and stage, then stitched into one leaderboard, one story, and the same iconic jerseys people race to wear.</p>
         <div class="world-stats">
           <div><div class="ws-val">4</div><div class="ws-lbl">Jersey Sponsorships</div></div>
           <div><div class="ws-val">21</div><div class="ws-lbl">Daily Broadcasts</div></div>
@@ -3342,7 +3369,7 @@
       <ul>
         <li><a href="GoR_01_Overture.html">Run 1 &middot; Game of Run</a></li>
         <li><a href="leagueofbrands">Run 2 &middot; League of Brands</a></li>
-        <li><a href="LGR_01_Homepage.html">Run 3 &middot; Le Grand Run</a></li>
+        <li><a href="LGR_01_Homepage.html">Run 3 &middot; Romania Grand Tour</a></li>
         <li><a href="GPS_01_Homepage.html">Run 4 &middot; Grand Prix Series</a></li>
         <li><a href="#signals">Health Signals</a></li>
       </ul>
