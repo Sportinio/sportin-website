@@ -4380,6 +4380,22 @@
       ctx.fill();
     }
 
+    // Expose sphere bounds for mesh repulsion
+    var maxW = 0;
+    for (var j = 0; j < rendered.length; j++) {
+      var dx = rendered[j].sx - cx, dy = rendered[j].sy - cy;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      if (d > maxW) maxW = d;
+    }
+    var canvasRect = canvas.getBoundingClientRect();
+    var visualR = (maxW / (s / 2)) * (canvasRect.width / 2);
+    if (!window._sphereRepels) window._sphereRepels = {};
+    window._sphereRepels.algo = {
+      cx: canvasRect.left + canvasRect.width / 2,
+      cy: canvasRect.top + canvasRect.height / 2,
+      r: visualR
+    };
+
     time += 0.010 + thinkingIntensity * 0.0072;
     rotY += 0.004 + thinkingIntensity * 0.003;
     requestAnimationFrame(draw);
@@ -4508,6 +4524,22 @@
       ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
       ctx.fill();
     }
+
+    // Expose sphere bounds for mesh repulsion
+    var maxW2 = 0;
+    for (var j = 0; j < rendered.length; j++) {
+      var dx2 = rendered[j].sx - cx, dy2 = rendered[j].sy - cy;
+      var d2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+      if (d2 > maxW2) maxW2 = d2;
+    }
+    var canvasRect2 = canvas.getBoundingClientRect();
+    var visualR2 = (maxW2 / (s / 2)) * (canvasRect2.width / 2);
+    if (!window._sphereRepels) window._sphereRepels = {};
+    window._sphereRepels.commentary = {
+      cx: canvasRect2.left + canvasRect2.width / 2,
+      cy: canvasRect2.top + canvasRect2.height / 2,
+      r: visualR2
+    };
 
     // Speed: faster when voice is active
     time += 0.010 + thinkingIntensity * (isVoice ? 0.0168 : 0.0072);

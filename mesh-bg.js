@@ -9,24 +9,36 @@
   var mouse = { x: -9999, y: -9999 };
   var smoothMouse = { x: -9999, y: -9999 };
   var MOUSE_RADIUS = 180, MOUSE_PUSH = 90;
-  var LINE_ALPHA = 0.08, DOT_ALPHA = 0.15;
+  var LINE_ALPHA = 0.072, DOT_ALPHA = 0.135;
   var docH = 0;
 
-  var MASK_SCALE = 2;
-  var BLUR_RADIUS = 2;
-  var CONTENT_PUSH = 12;
-  var maskW = 0, maskH = 0;
-  var maskAlpha = null, maskGX = null, maskGY = null;
-  var offA = document.createElement('canvas');
-  var offACtx = offA.getContext('2d', { willReadFrequently: true });
-  var lastMaskTime = 0;
-  var MASK_THROTTLE = 200;
-
-  var ALWAYS_INCLUDE = { H1:1, H2:1, H3:1, H4:1, H5:1, H6:1, P:1, IMG:1, SVG:1, VIDEO:1, NAV:1, HEADER:1, FOOTER:1, BLOCKQUOTE:1, PRE:1, TABLE:1, FIGURE:1, PICTURE:1, UL:1, OL:1 };
-  var ALWAYS_EXCLUDE = { SCRIPT:1, STYLE:1, LINK:1, META:1, BR:1, HR:1, NOSCRIPT:1, TEMPLATE:1, HEAD:1 };
+  var headerBottom = 0;
+  var contentLeft = 0, contentRight = 0;
+  var FADE_WIDTH = 120;
 
   function getDocHeight() {
     return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+  }
+
+  function measureLayout() {
+    var hero = document.querySelector('.hero, .hero-scroll, .hero-wrap');
+    if (hero) {
+      var r = hero.getBoundingClientRect();
+      headerBottom = r.bottom + window.scrollY;
+    } else {
+      headerBottom = H;
+    }
+    var maxW = 1280;
+    var wrap = document.querySelector('.wrap, .section-title, .pillars-section');
+    if (wrap) {
+      var wr = wrap.getBoundingClientRect();
+      if (wr.width > 100 && wr.width < W * 0.95) {
+        maxW = wr.width;
+      }
+    }
+    contentLeft = (W - maxW) / 2;
+    contentRight = (W + maxW) / 2;
+    if (contentLeft < 40) { contentLeft = 40; contentRight = W - 40; }
   }
 
   function resize() {
@@ -40,7 +52,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     docH = getDocHeight();
     buildGrid();
-    rebuildMask();
+    measureLayout();
   }
 
   function buildGrid() {
@@ -53,138 +65,44 @@
         points.push({
           ox: offX + c * spacing,
           oy: r * spacing,
-          x: 0, y: 0, ca: 0
+          x: 0, y: 0
         });
       }
     }
   }
 
-  var LEAF_TAGS = { A:1, BUTTON:1, INPUT:1, SELECT:1, TEXTAREA:1, LABEL:1, SPAN:1 };
-  var CONTAINER_TAGS = { DIV:1, SECTION:1, ARTICLE:1, ASIDE:1, MAIN:1, FORM:1 };
+  function sidesFade(px, worldY) {
+    if (worldY < headerBottom) return 1;
 
-  function collectRects() {
-    var rects = [];
-    var els = document.body.getElementsByTagName('*');
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      if (el === canvas) continue;
-      var tag = el.tagName;
-      if (ALWAYS_EXCLUDE[tag]) continue;
-
-      var r = el.getBoundingClientRect();
-      if (r.width < 25 || r.height < 12) continue;
-      if (r.bottom < -30 || r.top > H + 30) continue;
-
-      if (ALWAYS_INCLUDE[tag]) {
-        if (tag === 'NAV' || tag === 'HEADER' || tag === 'FOOTER') {
-          rects.push(r);
-          continue;
-        }
-        if (r.width > W * 0.7 && r.height > 100) continue;
-        rects.push(r);
-        continue;
-      }
-
-      if (CONTAINER_TAGS[tag]) {
-        if (r.width > W * 0.6) continue;
-        if (r.height > 400) continue;
-        if (el.children.length > 2) continue;
-        rects.push(r);
-        continue;
-      }
-
-      if (LEAF_TAGS[tag]) {
-        if (r.width > W * 0.7) continue;
-        rects.push(r);
-        continue;
-      }
-    }
-    return rects;
-  }
-
-  function blurAlpha(data, w, h, rad) {
-    var tmp = new Float32Array(w * h);
-    var diam = rad * 2 + 1;
-    var inv = 1 / diam;
-    for (var y = 0; y < h; y++) {
-      var sum = 0;
-      for (var x = -rad; x <= rad; x++)
-        sum += data[y * w + Math.max(0, Math.min(x, w - 1))];
-      for (var x = 0; x < w; x++) {
-        tmp[y * w + x] = sum * inv;
-        sum += data[y * w + Math.min(x + rad + 1, w - 1)] - data[y * w + Math.max(x - rad, 0)];
-      }
-    }
-    for (var x = 0; x < w; x++) {
-      var sum = 0;
-      for (var y = -rad; y <= rad; y++)
-        sum += tmp[Math.max(0, Math.min(y, h - 1)) * w + x];
-      for (var y = 0; y < h; y++) {
-        data[y * w + x] = sum * inv;
-        sum += tmp[Math.min(y + rad + 1, h - 1) * w + x] - tmp[Math.max(y - rad, 0) * w + x];
-      }
-    }
-  }
-
-  function rebuildMask() {
-    maskW = Math.ceil(W / MASK_SCALE);
-    maskH = Math.ceil(H / MASK_SCALE);
-    if (maskW < 2 || maskH < 2) return;
-    offA.width = maskW;
-    offA.height = maskH;
-    offACtx.clearRect(0, 0, maskW, maskH);
-    offACtx.fillStyle = '#fff';
-
-    var rects = collectRects();
-    var pad = 3;
-    for (var i = 0; i < rects.length; i++) {
-      var r = rects[i];
-      offACtx.fillRect(
-        (r.left - pad) / MASK_SCALE,
-        (r.top - pad) / MASK_SCALE,
-        (r.width + pad * 2) / MASK_SCALE,
-        (r.height + pad * 2) / MASK_SCALE
-      );
+    var transitionH = 200;
+    var headerFade = 1;
+    if (worldY < headerBottom + transitionH) {
+      headerFade = 1 - (worldY - headerBottom) / transitionH;
+    } else {
+      headerFade = 0;
     }
 
-    var imgData = offACtx.getImageData(0, 0, maskW, maskH);
-    var px = imgData.data;
-    maskAlpha = new Float32Array(maskW * maskH);
-    for (var i = 0; i < maskAlpha.length; i++) maskAlpha[i] = px[i * 4 + 3] / 255;
-
-    blurAlpha(maskAlpha, maskW, maskH, BLUR_RADIUS);
-
-    maskGX = new Float32Array(maskW * maskH);
-    maskGY = new Float32Array(maskW * maskH);
-    for (var y = 1; y < maskH - 1; y++) {
-      for (var x = 1; x < maskW - 1; x++) {
-        var idx = y * maskW + x;
-        var gx = maskAlpha[idx - 1] - maskAlpha[idx + 1];
-        var gy = maskAlpha[idx - maskW] - maskAlpha[idx + maskW];
-        var len = Math.sqrt(gx * gx + gy * gy);
-        if (len > 0.001) { gx /= len; gy /= len; }
-        maskGX[idx] = gx;
-        maskGY[idx] = gy;
-      }
+    var sideFade = 0;
+    if (px < contentLeft) {
+      var d = contentLeft - px;
+      var t = Math.min(d / FADE_WIDTH, 1);
+      // Stepped gradient: 0→0.2→0.3→0.6→0.8→1.0
+      if (t < 0.1) sideFade = t / 0.1 * 0.2;
+      else if (t < 0.25) sideFade = 0.2 + (t - 0.1) / 0.15 * 0.1;
+      else if (t < 0.45) sideFade = 0.3 + (t - 0.25) / 0.2 * 0.3;
+      else if (t < 0.7) sideFade = 0.6 + (t - 0.45) / 0.25 * 0.2;
+      else sideFade = 0.8 + (t - 0.7) / 0.3 * 0.2;
+    } else if (px > contentRight) {
+      var d = px - contentRight;
+      var t = Math.min(d / FADE_WIDTH, 1);
+      if (t < 0.1) sideFade = t / 0.1 * 0.2;
+      else if (t < 0.25) sideFade = 0.2 + (t - 0.1) / 0.15 * 0.1;
+      else if (t < 0.45) sideFade = 0.3 + (t - 0.25) / 0.2 * 0.3;
+      else if (t < 0.7) sideFade = 0.6 + (t - 0.45) / 0.25 * 0.2;
+      else sideFade = 0.8 + (t - 0.7) / 0.3 * 0.2;
     }
-    lastMaskTime = performance.now();
-  }
 
-  function sampleMask(sx, sy) {
-    if (!maskAlpha) return 0;
-    var mx = Math.floor(sx / MASK_SCALE);
-    var my = Math.floor(sy / MASK_SCALE);
-    if (mx < 1 || mx >= maskW - 1 || my < 1 || my >= maskH - 1) return 0;
-    return maskAlpha[my * maskW + mx];
-  }
-
-  function sampleGrad(sx, sy) {
-    if (!maskGX) return { x: 0, y: 0 };
-    var mx = Math.floor(sx / MASK_SCALE);
-    var my = Math.floor(sy / MASK_SCALE);
-    if (mx < 1 || mx >= maskW - 1 || my < 1 || my >= maskH - 1) return { x: 0, y: 0 };
-    var idx = my * maskW + mx;
-    return { x: maskGX[idx], y: maskGY[idx] };
+    return Math.max(headerFade, sideFade);
   }
 
   function hslColor(x, y, t) {
@@ -192,6 +110,7 @@
   }
 
   var time = 0;
+  var lastLayoutTime = 0;
 
   function draw() {
     time += 0.008;
@@ -203,7 +122,23 @@
     var mx = smoothMouse.x, my = smoothMouse.y;
 
     var now = performance.now();
-    if (now - lastMaskTime > MASK_THROTTLE) rebuildMask();
+    if (now - lastLayoutTime > 500) {
+      measureLayout();
+      lastLayoutTime = now;
+    }
+
+    // Collect active sphere repellers
+    var spheres = [];
+    var sr = window._sphereRepels;
+    if (sr) {
+      for (var key in sr) {
+        var sp = sr[key];
+        if (sp && sp.r > 0) spheres.push(sp);
+      }
+    }
+    var SPHERE_PAD = 18;
+    var SPHERE_FALLOFF = 40;
+    var SPHERE_PUSH = 20;
 
     var startRow = Math.max(0, Math.floor((scrollY - spacing * 2) / spacing));
     var endRow = Math.min(totalRows, Math.ceil((scrollY + H + spacing * 2) / spacing));
@@ -217,11 +152,25 @@
         var sy = by - scrollY;
 
         var fx = bx, fy = sy;
-        var ca = sampleMask(bx, sy);
-        if (ca > 0.01) {
-          var g = sampleGrad(bx, sy);
-          fx += g.x * ca * CONTENT_PUSH;
-          fy += g.y * ca * CONTENT_PUSH;
+
+        // Sphere repulsion (circular, dynamic radius)
+        for (var si = 0; si < spheres.length; si++) {
+          var sp = spheres[si];
+          var sdx = fx - sp.cx, sdy = fy - sp.cy;
+          var sDist = Math.sqrt(sdx * sdx + sdy * sdy);
+          var edge = sp.r + SPHERE_PAD;
+          if (sDist < edge + SPHERE_FALLOFF && sDist > 0) {
+            if (sDist < edge) {
+              var ang = Math.atan2(sdy, sdx);
+              fx = sp.cx + Math.cos(ang) * (edge + 2);
+              fy = sp.cy + Math.sin(ang) * (edge + 2);
+            } else {
+              var sf = 1 - (sDist - edge) / SPHERE_FALLOFF;
+              var ang = Math.atan2(sdy, sdx);
+              fx += Math.cos(ang) * sf * sf * SPHERE_PUSH;
+              fy += Math.sin(ang) * sf * sf * SPHERE_PUSH;
+            }
+          }
         }
 
         var dx = fx - mx, dy = fy - my;
@@ -235,7 +184,6 @@
 
         p.x = fx;
         p.y = fy;
-        p.ca = ca;
       }
     }
 
@@ -245,12 +193,15 @@
         var p = points[idx];
         if (p.y < -spacing || p.y > H + spacing) continue;
 
+        var worldY = p.y + scrollY;
+        var fade = sidesFade(p.ox, worldY);
+        if (fade < 0.005) continue;
+
         var hue = hslColor(p.ox, p.oy, time);
         var md = Math.sqrt((p.x - mx) * (p.x - mx) + (p.y - my) * (p.y - my));
         var nm = md < MOUSE_RADIUS;
         var mf = nm ? Math.max(0, 1 - Math.pow(1 - md / MOUSE_RADIUS, 0.5)) : 1;
-        var cf = p.ca < 0.3 ? 1 : Math.max(0, 1 - (p.ca - 0.3) * 1.8);
-        var fade = Math.min(mf, cf);
+        fade = Math.min(fade, mf);
 
         if (c < cols - 1 && fade > 0.01) {
           var pr = points[idx + 1];
