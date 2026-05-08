@@ -165,18 +165,13 @@
       radial-gradient(ellipse at 80% 60%, rgba(59, 123, 255, 0.06) 0%, transparent 50%),
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
   }
-  body::before {
-    content: '';
+  #meshCanvas {
     position: fixed;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 80px 80px;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 0;
-    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 80%);
   }
   a { color: inherit; text-decoration: none; }
 
@@ -1770,14 +1765,8 @@
     filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.5));
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .versus-shirt--sportin {
-    transform: scale(1.22);
-  }
   .versus-team:hover .versus-shirt {
     transform: scale(1.04);
-  }
-  .versus-team:hover .versus-shirt--sportin {
-    transform: scale(1.27);
   }
   .versus-index-val {
     font-family: 'Space Grotesk', sans-serif;
@@ -2591,7 +2580,7 @@
 </style>
 </head>
 <body>
-
+<canvas id="meshCanvas"></canvas>
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <!-- NAV -->
@@ -2650,7 +2639,7 @@
   <div class="versus-kicker reveal">Matchday Preview</div>
   <div class="versus-inner reveal" style="--rd:0.15s;">
     <div class="versus-team">
-      <img src="/sportin-shirt.png" alt="SportIn team shirt" class="versus-shirt versus-shirt--sportin" />
+      <img src="/sportin-shirt.png" alt="SportIn team shirt" class="versus-shirt" />
     </div>
     <div class="versus-divider">
       <div class="versus-score">
@@ -4845,6 +4834,7 @@
   update();
 })();
 </script>
+<script src="/mesh-bg.js"></script>
 
 </body>
 </html>

@@ -114,18 +114,13 @@
       radial-gradient(ellipse at 80% 60%, rgba(59, 123, 255, 0.06) 0%, transparent 50%),
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
   }
-  body::before {
-    content: '';
+  #meshCanvas {
     position: fixed;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 80px 80px;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 0;
-    mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 80%);
   }
   a { color: inherit; text-decoration: none; }
 
@@ -737,20 +732,6 @@
   .felt-card { opacity: 1; }
   .felt-card.middle { z-index: 2; }
   .felt-card.side { z-index: 1; }
-  /* Ambient breathing — each card fades between visibility levels on its own phase */
-  .felt-card { animation: feltBreathe 9s ease-in-out infinite; }
-  .felt-card.side[style*="order: 1"] { animation-delay: 0s; }
-  .felt-card.middle { animation-delay: -3s; }
-  .felt-card.side[style*="order: 3"] { animation-delay: -6s; }
-  @keyframes feltBreathe {
-    0%   { opacity: 1; }
-    20%  { opacity: 0.35; }
-    40%  { opacity: 0.8; }
-    60%  { opacity: 0.2; }
-    80%  { opacity: 0.7; }
-    100% { opacity: 1; }
-  }
-  .felt-card:hover { animation-play-state: paused; opacity: 1 !important; }
   .felt-section { overflow: visible; }
   .felt-card:hover {
     transform: translateY(-4px);
@@ -1720,32 +1701,27 @@
   }
   .why-col.diff.them .diff-num {
     color: rgba(255, 59, 92, 0.85);
-    text-shadow: 0 0 32px rgba(255, 59, 92, 0.25);
   }
   .why-col.diff.us .diff-num {
     background: linear-gradient(135deg, #3B7BFF 0%, #0751FB 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 40px rgba(7, 81, 251, 0.4);
   }
   /* Card 3 — SportIn team shirt (Belonging / Rivalry / Identity) */
-  .why-col.diff .diff-hero:has(.diff-shirt) { padding: 0; margin: -10px 0 -16px; }
   .diff-shirt {
     position: relative;
     width: 100%;
-    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: visible;
   }
   .diff-shirt img {
-    height: 220px;
+    height: 160px;
     width: auto;
     max-width: none;
     display: block;
-    filter: drop-shadow(0 16px 32px rgba(7, 81, 251, 0.5));
     animation: shirtFloat 5s ease-in-out infinite;
     position: relative;
     z-index: 2;
@@ -1815,23 +1791,13 @@
     font-size: 14px;
     color: var(--text-3);
     line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .why-col.diff.them { border-color: rgba(255, 59, 92, 0.18); }
-  .why-col.diff.them::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at top, rgba(255, 59, 92, 0.06), transparent 60%);
-    pointer-events: none;
-  }
   .why-col.diff.us { border-color: rgba(7, 81, 251, 0.3); }
-  .why-col.diff.us::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at top, rgba(7, 81, 251, 0.10), transparent 60%);
-    pointer-events: none;
-  }
 
   @media (max-width: 1024px) {
     .why-grid.diff { grid-template-columns: repeat(2, 1fr); }
@@ -2579,6 +2545,7 @@
 </head>
 <body>
 
+<canvas id="meshCanvas"></canvas>
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <nav class="nav">
@@ -3218,7 +3185,7 @@
       <div class="diff-hero">
         <div class="diff-num">20<span class="u">%</span></div>
       </div>
-      <div class="diff-desc">Participation rarely stays above 20%. The kickoff energy fades by week two.</div>
+      <div class="diff-desc">Participation rarely stays above 20%. The energy fades by week two.</div>
     </div>
 
     <!-- Card 2: What SportIn creates -->
@@ -3230,7 +3197,7 @@
       <div class="diff-hero">
         <div class="diff-num">69<span class="u">%</span></div>
       </div>
-      <div class="diff-desc">Participation starts at 69%+ and stays there. Because every week, there&rsquo;s a reason to show up.</div>
+      <div class="diff-desc">Participation starts at 69%+ and stays there. Every week, a reason to show up.</div>
     </div>
 
     <!-- Card 3: What people feel -->
@@ -3246,7 +3213,7 @@
           <img src="sportin-shirt.png" alt="SportIn team shirt"/>
         </div>
       </div>
-      <div class="diff-desc">A logo on the chest, not a notification on the phone. Movement becomes something they carry with pride.</div>
+      <div class="diff-desc">A logo on the chest, not a notification on the phone. They carry it with pride.</div>
     </div>
 
     <!-- Card 4: What business gets back -->
@@ -3288,7 +3255,7 @@
           <div class="rev-label">Recurring Revenue</div>
         </div>
       </div>
-      <div class="diff-desc">Retention. Loyalty. Brand energy. They compound into recurring revenue you can count on, season after season.</div>
+      <div class="diff-desc">Retention, loyalty, and brand energy compound into recurring revenue, season after season.</div>
     </div>
   </div>
 </section>
@@ -3861,6 +3828,8 @@
     });
   });
 </script>
+
+<script src="/mesh-bg.js"></script>
 
 </body>
 </html>
