@@ -186,6 +186,58 @@
   }
   .nav-cta { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
   .nav-cta:hover { transform: translateY(-1px); background: var(--blue-bright); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+  .btn-cta-glow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 36px;
+    background: linear-gradient(135deg, #3b7bff, #6c3bff, #3bb8ff, #3b7bff);
+    background-size: 300% 300%;
+    animation: ctaWave 4s ease-in-out infinite;
+    color: #fff;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .btn-cta-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.12) 30%,
+      rgba(255,255,255,0.18) 50%,
+      rgba(255,255,255,0.12) 70%,
+      rgba(255,255,255,0) 100%);
+    background-size: 200% 100%;
+    animation: ctaShimmer 3s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .btn-cta-glow span { position: relative; z-index: 2; }
+  .btn-cta-glow:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: none;
+  }
+  @keyframes ctaWave {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes ctaShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
 
   /* Wrap */
   .wrap { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 48px; }
@@ -327,21 +379,20 @@
   }
   .partner-logo {
     flex-shrink: 0;
-    width: 160px;
-    height: 60px;
-    /* no tile — logos sit directly on the dark background */
+    width: 180px;
+    height: 70px;
     background: transparent;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 12px;
+    padding: 0 16px;
     transition: opacity 0.3s ease, transform 0.3s ease;
     overflow: visible;
   }
   .partner-logo img {
     max-width: 100%;
-    max-height: 38px;          /* uniform visual height for consistency */
+    max-height: 44px;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -355,6 +406,10 @@
   }
   .partner-logo:hover img {
     opacity: 1;
+  }
+  .partner-logo img[alt="Garmin"],
+  .partner-logo img[alt="Pirelli"] {
+    max-height: 88px;
   }
   /* Pause on hover for accessibility */
   .partners-strip:hover .partners-row { animation-play-state: paused; }
@@ -2041,6 +2096,40 @@
   }
   .store-btn.coming-soon .store-sub { color: var(--text-4); }
   .store-btn.coming-soon .store-name { color: var(--text-2); font-style: italic; }
+  .store-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 28px 14px 16px;
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50px;
+    color: #fff;
+    text-decoration: none;
+    transition: transform 0.15s, background 0.2s, border-color 0.2s;
+  }
+  .store-badge:hover { transform: translateY(-2px); background: #252540; border-color: rgba(255,255,255,0.25); }
+  .store-badge .badge-icon {
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .store-badge .badge-icon svg { width: 22px; height: 22px; }
+  .store-badge .badge-sub {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+    font-weight: 400;
+  }
+  .store-badge .badge-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 1px;
+    letter-spacing: 0.02em;
+  }
 
   /* Contact section — open layout, no card placeholder */
   .contact-section {
@@ -2562,7 +2651,7 @@
     <a href="#why">For You</a>
     <a href="#contact">Contact</a>
   </div>
-  <a class="nav-cta" href="https://app.sportin.io" target="_blank">Open Web App</a>
+  <a class="nav-cta" href="https://calendly.com/sportin" target="_blank">Schedule a Demo</a>
 </nav>
 
 <!-- HERO BANNER -->
@@ -2586,8 +2675,7 @@
   </h1>
   <p class="hero-sub">SportIn brings the emotional structures of professional sport. Leagues, cups, grand tours, championships. Given to the people behind your brand, your club, your community. Movement becomes belonging. Belonging becomes return.</p>
   <div class="hero-cta">
-    <a href="#app" class="btn btn-primary">Launch your season</a>
-    <a href="https://app.sportin.io" class="btn btn-ghost" target="_blank">Open the Web App</a>
+    <a href="https://calendly.com/sportin" class="btn-cta-glow" target="_blank"><span>Schedule a Demo</span></a>
   </div>
 </section>
 
@@ -2659,20 +2747,8 @@
           </button>
         </div>
         <div class="pillar-desc">Every effort deserves a story. SportIn turns movement into commentary, rivalry, momentum, and moments worth sharing.</div>
-        <div class="pillar-anim">
-          <div class="anim-wave" id="aiWave">
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          </div>
-          <button class="wave-overlay" id="aiWaveOverlay" aria-label="Play / pause AI commentary">
-            <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-          </button>
-          <div class="anim-wave-label">AI Commentary &middot; Tap to listen</div>
+        <div class="pillar-anim" style="display:flex;align-items:center;justify-content:center;">
+          <canvas id="aiSphere"></canvas>
         </div>
       </div>
 
@@ -3025,36 +3101,23 @@
 <section class="partners-strip" id="partners" aria-label="Partners">
   <div class="partners-eyebrow">Trusted by brands, clubs &amp; communities</div>
 
-  <!-- Row 1: drifts left -->
+  <!-- Single row: drifts left -->
   <div class="partners-row row-l">
-    <div class="partner-logo"><img src="partners/porsche.png" alt="Porsche"/></div>
-    <div class="partner-logo"><img src="partners/bmw.webp" alt="BMW"/></div>
     <div class="partner-logo"><img src="partners/garmin.png" alt="Garmin"/></div>
     <div class="partner-logo"><img src="partners/google.webp" alt="Google"/></div>
     <div class="partner-logo"><img src="partners/pirelli.png" alt="Pirelli"/></div>
-    <div class="partner-logo"><img src="partners/Banca_Transilvania.png" alt="Banca Transilvania"/></div>
+    <div class="partner-logo"><img src="partners/bosch.png" alt="Bosch"/></div>
+    <div class="partner-logo"><img src="partners/decathlon.svg" alt="Decathlon"/></div>
+    <div class="partner-logo"><img src="partners/carrefour.svg" alt="Carrefour"/></div>
+    <div class="partner-logo"><img src="partners/emag.png" alt="eMAG"/></div>
     <!-- duplicated for seamless loop -->
-    <div class="partner-logo"><img src="partners/porsche.png" alt="Porsche"/></div>
-    <div class="partner-logo"><img src="partners/bmw.webp" alt="BMW"/></div>
     <div class="partner-logo"><img src="partners/garmin.png" alt="Garmin"/></div>
     <div class="partner-logo"><img src="partners/google.webp" alt="Google"/></div>
     <div class="partner-logo"><img src="partners/pirelli.png" alt="Pirelli"/></div>
-    <div class="partner-logo"><img src="partners/Banca_Transilvania.png" alt="Banca Transilvania"/></div>
-  </div>
-
-  <!-- Row 2: drifts right -->
-  <div class="partners-row row-r">
     <div class="partner-logo"><img src="partners/bosch.png" alt="Bosch"/></div>
     <div class="partner-logo"><img src="partners/decathlon.svg" alt="Decathlon"/></div>
     <div class="partner-logo"><img src="partners/carrefour.svg" alt="Carrefour"/></div>
     <div class="partner-logo"><img src="partners/emag.png" alt="eMAG"/></div>
-    <div class="partner-logo"><img src="partners/Raiffeisen_Bank_2023_logo.svg.png" alt="Raiffeisen Bank"/></div>
-    <!-- duplicated -->
-    <div class="partner-logo"><img src="partners/bosch.png" alt="Bosch"/></div>
-    <div class="partner-logo"><img src="partners/decathlon.svg" alt="Decathlon"/></div>
-    <div class="partner-logo"><img src="partners/carrefour.svg" alt="Carrefour"/></div>
-    <div class="partner-logo"><img src="partners/emag.png" alt="eMAG"/></div>
-    <div class="partner-logo"><img src="partners/Raiffeisen_Bank_2023_logo.svg.png" alt="Raiffeisen Bank"/></div>
   </div>
 </section>
 
@@ -3295,20 +3358,24 @@
         <div class="store-name">Open the Web App</div>
       </div>
     </a>
-    <span class="store-btn coming-soon" aria-disabled="true">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      <div>
-        <div class="store-sub">App Store</div>
-        <div class="store-name">Coming Soon</div>
+    <a href="https://apps.apple.com/us/app/sportin-rise-to-the-challenge/id6762152651" class="store-badge" target="_blank">
+      <div class="badge-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
       </div>
-    </span>
-    <span class="store-btn coming-soon" aria-disabled="true">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.49c.18.09.38.14.58.14.2 0 .41-.05.59-.15l8.43-4.87-3.53-3.53-6.07 7.41c-.12.15-.12.36 0 .5l0 .5zM20.16 10.33l-3.59-2.07-3.89 3.74 3.89 3.89 3.59-2.07c.76-.44 1.22-1.24 1.22-2.11v-.27c0-.87-.46-1.67-1.22-2.11zM3.05 2.06L14.47 12 3.76.51C3.56.29 3.31.15 3.05.06v2zM15.73 12.82L4.12 23.47l11.22-6.48-3.61-3.61 4-4.56z"/></svg>
       <div>
-        <div class="store-sub">Google Play</div>
-        <div class="store-name">Coming Soon</div>
+        <div class="badge-sub">Available on the</div>
+        <div class="badge-name">Apple Store</div>
       </div>
-    </span>
+    </a>
+    <a href="https://play.google.com/store/apps/details?id=app.sportin.io&pcampaignid=web_share" class="store-badge" target="_blank">
+      <div class="badge-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 2.2v19.6c0 .7.8 1.1 1.3.7l14.5-9.8c.5-.3.5-1.1 0-1.4L5.3 1.5C4.8 1.1 4 1.5 4 2.2z" fill="#fff"/><path d="M4 2.2L13.8 12 4 21.8V2.2z" fill="#4CAF50"/><path d="M4 2.2l9.8 9.8 4.7-5L5.3 1.5C4.8 1.1 4 1.5 4 2.2z" fill="#F44336"/><path d="M4 21.8l9.8-9.8 4.7 5-13.2 5.5c-.5.4-1.3 0-1.3-.7z" fill="#FFC107"/><path d="M18.5 12l-4.7-5 4.7 5-4.7 5 4.7-5z" fill="#00BCD4"/><path d="M13.8 12l4.7-5 1.3.9c.5.3.5 1.1 0 1.4l-1.3.9L13.8 12z" fill="#2196F3"/><path d="M13.8 12l4.7 5 1.3-.9c.5-.3.5-1.1 0-1.4l-1.3-.9L13.8 12z" fill="#00BCD4"/></svg>
+      </div>
+      <div>
+        <div class="badge-sub">Android App on</div>
+        <div class="badge-name">Google Play</div>
+      </div>
+    </a>
   </div>
 </section>
 
@@ -3503,96 +3570,20 @@
     });
   })();
 
-  // AI Storytelling: play/pause + Web Audio analyzer drives waveform bars
+  // AI Storytelling: play/pause toggle (sphere handles visualization)
   (function setupAiPlayer() {
     const btn = document.getElementById('aiPlayBtn');
     const audio = document.getElementById('aiAudio');
-    const wave = document.getElementById('aiWave');
-    if (!btn || !audio || !wave) return;
-    const bars = Array.from(wave.querySelectorAll('.bar'));
-
-    let audioCtx, analyser, source, dataArr, rafId;
-    function ensureAnalyser() {
-      if (audioCtx) return;
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      try {
-        audioCtx = new Ctx();
-        source = audioCtx.createMediaElementSource(audio);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64; // 32 bins, plenty for our bars
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        dataArr = new Uint8Array(analyser.frequencyBinCount);
-      } catch (e) { /* noop */ }
-    }
-    function tick() {
-      if (!analyser) return;
-      analyser.getByteFrequencyData(dataArr);
-      const n = bars.length;
-      for (let i = 0; i < n; i++) {
-        // map bar i → frequency bin (skip the very lowest few for visual punch)
-        const idx = Math.min(dataArr.length - 1, 2 + Math.floor(i * (dataArr.length - 4) / n));
-        const v = dataArr[idx] / 255; // 0..1
-        const h = 6 + v * 110; // 6..116px
-        bars[i].style.height = h + 'px';
-        bars[i].style.opacity = (0.35 + v * 0.65).toFixed(2);
-      }
-      rafId = requestAnimationFrame(tick);
-    }
-    function stopTick() {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = null;
-      bars.forEach(b => { b.style.height = ''; b.style.opacity = ''; });
-    }
-
-    const overlay = document.getElementById('aiWaveOverlay');
+    if (!btn || !audio) return;
 
     function toggle() {
-      ensureAnalyser();
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      if (audio.paused) {
-        audio.play().catch(() => {});
-      } else {
-        audio.pause();
-      }
+      if (audio.paused) { audio.play().catch(() => {}); }
+      else { audio.pause(); }
     }
-
     btn.addEventListener('click', toggle);
-    if (overlay) overlay.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
-    // Click the waveform area while playing to pause
-    wave.addEventListener('click', () => { if (!audio.paused) audio.pause(); });
-
-    audio.addEventListener('play', () => {
-      btn.classList.add('playing');
-      wave.classList.add('playing');
-      if (overlay) {
-        overlay.classList.add('hidden');
-        overlay.classList.remove('is-paused-from-play');
-      }
-      ensureAnalyser();
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-      if (analyser && !rafId) tick();
-    });
-    audio.addEventListener('pause', () => {
-      btn.classList.remove('playing');
-      wave.classList.remove('playing');
-      stopTick();
-      if (overlay) {
-        overlay.classList.remove('hidden');
-        // Show the pause icon to indicate "paused mid-play"
-        if (audio.currentTime > 0 && !audio.ended) overlay.classList.add('is-paused-from-play');
-      }
-    });
-    audio.addEventListener('ended', () => {
-      btn.classList.remove('playing');
-      wave.classList.remove('playing');
-      stopTick();
-      if (overlay) {
-        overlay.classList.remove('hidden');
-        overlay.classList.remove('is-paused-from-play');
-      }
-    });
+    audio.addEventListener('play', () => { btn.classList.add('playing'); });
+    audio.addEventListener('pause', () => { btn.classList.remove('playing'); });
+    audio.addEventListener('ended', () => { btn.classList.remove('playing'); });
   })();
 
   // FELT cards: ambient breathing only — fully CSS-driven now (see @keyframes feltBreathe).
@@ -3829,7 +3820,112 @@
   });
 </script>
 
-<script src="/mesh-bg.js"></script>
+<script src="mesh-bg.js"></script>
+
+<script>
+(function(){
+  var canvas = document.getElementById('aiSphere');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var SIZE = 240;
+  var pad = 2.0;
+  var s = Math.round(SIZE * pad * dpr);
+  canvas.width = s; canvas.height = s;
+  canvas.style.width = (SIZE * pad) + 'px';
+  canvas.style.height = (SIZE * pad) + 'px';
+  var cx = s/2, cy = s/2, R = SIZE * dpr / 2 * 0.75;
+
+  var stops = [[255,110,0],[255,20,60],[180,15,200],[70,30,255],[0,210,255]];
+  function lerpC(a,b,t){ t=Math.max(0,Math.min(1,t)); return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)]; }
+  function staticColor(y){ var t=(y+1)/2, idx=t*4, lo=Math.floor(idx), hi=Math.min(lo+1,4); return lerpC(stops[lo],stops[hi],idx-lo); }
+
+  var particles = [], LAT = 52;
+  for (var lat=0;lat<=LAT;lat++){
+    var phi=(lat/LAT)*Math.PI, y0=Math.cos(phi), ringR=Math.sin(phi), lonCount=Math.max(1,Math.round(104*ringR));
+    for (var lon=0;lon<lonCount;lon++){
+      var theta=(lon/lonCount)*Math.PI*2;
+      particles.push({phi:phi,theta:theta,x0:ringR*Math.cos(theta),y0:y0,z0:ringR*Math.sin(theta)});
+    }
+  }
+
+  var time=0, rotY=0, smoothAudio=0, audioLevel=0;
+
+  // Connect to aiAudio analyser if available
+  var analyser = null, dataArray = null;
+  var aiAudio = document.getElementById('aiAudio');
+  if (aiAudio) {
+    aiAudio.addEventListener('play', function() {
+      if (!analyser) {
+        try {
+          var ac = new (window.AudioContext||window.webkitAudioContext)();
+          var src = ac.createMediaElementSource(aiAudio);
+          analyser = ac.createAnalyser();
+          analyser.fftSize = 256;
+          dataArray = new Uint8Array(analyser.frequencyBinCount);
+          src.connect(analyser);
+          analyser.connect(ac.destination);
+        } catch(e){}
+      }
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,s,s);
+    // Get audio level from analyser
+    if (analyser && dataArray && aiAudio && !aiAudio.paused) {
+      analyser.getByteFrequencyData(dataArray);
+      var sum=0; for(var k=0;k<dataArray.length;k++) sum+=dataArray[k];
+      audioLevel = (sum/dataArray.length)/255;
+    } else { audioLevel *= 0.95; }
+    smoothAudio += (audioLevel - smoothAudio) * 0.18;
+
+    var isVoice = smoothAudio > 0.01;
+    var level = smoothAudio;
+    var cosY=Math.cos(rotY), sinY=Math.sin(rotY);
+    var rendered=[];
+
+    for(var i=0;i<particles.length;i++){
+      var p=particles[i];
+      var baseW=0.16*Math.sin(p.phi*5+p.theta*2+time)+0.09*Math.sin(p.phi*8-p.theta*3+time*0.85)+0.06*Math.sin(p.phi*3+p.theta*7+time*1.4)+0.04*Math.sin(p.phi*11+p.theta*4-time*0.6);
+      var w=baseW;
+      if(isVoice){
+        var eqDist=Math.abs(p.phi-Math.PI/2), eqSpread=Math.pow(1-eqDist/(Math.PI/2),1.3);
+        w+=level*eqSpread*(0.32*Math.sin(p.theta*3+time*5.5)+0.22*Math.sin(p.theta*5-time*4.8)+0.16*Math.sin(p.theta*8+time*7.2)+0.10*Math.sin(p.theta*13-time*3.5));
+        w+=level*0.6*(0.12*Math.sin(p.phi*7+p.theta*4+time*3.8)+0.08*Math.sin(p.phi*12-p.theta*6+time*6)+0.06*Math.sin(p.phi*4+p.theta*11-time*4.5));
+        var ampV=1+level*1.44+level*(0.5+0.5*Math.sin(time*1.7))*0.96;
+        w*=ampV;
+      }
+      // Soft limit
+      w = 1.5 * Math.tanh(w / 1.5);
+      var r=1+w, x=p.x0*r, y=p.y0*r, z=p.z0*r;
+      var rx=x*cosY+z*sinY, rz=-x*sinY+z*cosY;
+      var activeI=Math.max(0,level);
+      var projR=0.52-activeI*0.12;
+      rendered.push({sx:cx+rx*R*projR/0.75,sy:cy-y*R*projR/0.75,depth:rz,y0:p.y0});
+    }
+    rendered.sort(function(a,b){return a.depth-b.depth});
+
+    var intensity=isVoice?Math.max(0.3,level):0.15;
+    var dotPulse=1+intensity*0.3*Math.sin(time*2.5);
+    var dotR=1.1*dpr*(isVoice?dotPulse+level*0.15:dotPulse);
+
+    for(var j=0;j<rendered.length;j++){
+      var pt=rendered[j], bright=Math.max(0,pt.depth);
+      var alpha=pt.depth<0?0.04+(pt.depth+1)*0.06:0.18+bright*0.72;
+      var c=staticColor(pt.y0);
+      var dr=pt.depth<0?dotR*0.7:dotR*(0.7+bright*0.7);
+      ctx.beginPath(); ctx.arc(pt.sx,pt.sy,dr,0,Math.PI*2);
+      ctx.fillStyle='rgba('+c[0]+','+c[1]+','+c[2]+','+alpha+')'; ctx.fill();
+    }
+    var speedMul=isVoice?0.0168:0.0072;
+    time+=0.010+intensity*speedMul;
+    rotY+=0.004+intensity*(isVoice?0.0036:0.003);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
 
 </body>
 </html>
