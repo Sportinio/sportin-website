@@ -2152,11 +2152,214 @@
     font-weight: 600;
   }
 
+  /* Carousel wrapper */
+  .mr-carousel {
+    position: relative;
+    overflow: hidden;
+  }
+  .mr-carousel-track {
+    display: flex;
+    transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: transform;
+  }
+  .mr-carousel-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+  .mr-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .mr-carousel-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    padding: 0;
+  }
+  .mr-carousel-dot.active {
+    background: var(--blue-bright);
+    transform: scale(1.3);
+  }
+  .mr-carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  /* Matches slide */
+  .mr-match-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    gap: 12px;
+    transition: background 0.2s;
+  }
+  .mr-match-row:last-child { border-bottom: none; }
+  .mr-match-row:hover { background: rgba(255, 255, 255, 0.03); }
+  .mr-match-ft {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-4);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    width: 24px;
+    flex-shrink: 0;
+  }
+  .mr-match-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .mr-match-team.away { justify-content: flex-start; }
+  .mr-match-team.home { justify-content: flex-end; text-align: right; }
+  .mr-match-logo {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-3);
+    letter-spacing: 0.02em;
+  }
+  .mr-match-logo img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .mr-match-name {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mr-match-score {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .mr-match-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    min-width: 32px;
+    text-align: center;
+  }
+  .mr-match-mi {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--blue-bright);
+    vertical-align: super;
+  }
+  .mr-match-dash {
+    font-size: 14px;
+    color: var(--text-4);
+  }
+
+  /* Standings slide */
+  .mr-standings-header {
+    display: grid;
+    grid-template-columns: 28px 1fr 32px 32px 32px 32px 40px 72px;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 4px;
+    align-items: center;
+  }
+  .mr-standings-header span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-4);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+  .mr-standings-header span:nth-child(2) { text-align: left; }
+  .mr-standings-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 32px 32px 32px 32px 40px 72px;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    gap: 4px;
+    align-items: center;
+    transition: background 0.2s;
+  }
+  .mr-standings-row:hover { background: rgba(255, 255, 255, 0.03); }
+  .mr-standings-pos {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .mr-standings-pos.up { color: #22C55E; }
+  .mr-standings-pos.down { color: #EF4444; }
+  .mr-standings-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .mr-standings-team-name {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mr-standings-stat {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    color: var(--text-3);
+    text-align: center;
+  }
+  .mr-standings-pts {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+  }
+  .mr-standings-form {
+    display: flex;
+    gap: 3px;
+    justify-content: flex-end;
+  }
+  .mr-form-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+  }
+  .mr-form-dot.w { background: #22C55E; }
+  .mr-form-dot.d { background: #F59E0B; }
+  .mr-form-dot.l { background: #EF4444; }
+
   @media (max-width: 768px) {
     .match-replay { padding: 0 20px 60px; }
     .mr-grid { grid-template-columns: 1fr; }
     .mr-player-info { width: 70px; }
     .mr-stats { width: 60px; }
+    .mr-standings-header,
+    .mr-standings-row { grid-template-columns: 24px 1fr 28px 28px 28px 28px 36px 60px; padding: 8px 12px; }
+    .mr-match-name { font-size: 11px; }
   }
   @media (max-width: 480px) {
     .match-replay { padding: 0 16px 40px; }
@@ -2707,42 +2910,215 @@
     <div class="section-kicker" style="margin-top: -8px;">LIVE MATCH COMMENTARY by SPORTIN AI</div>
   </div>
 
-  <div class="mr-grid">
-    <div class="mr-panel" id="mrPanelHome">
-      <div class="mr-team-header">
-        <div class="mr-team-name"><span class="mr-team-dot" style="background:#0751FB"></span>SportIn</div>
-        <span class="mr-team-count">8 of 8</span>
+  <div class="mr-carousel" id="mrCarousel">
+    <div class="mr-carousel-track" id="mrCarouselTrack">
+
+      <!-- Slide 1: Live Leaderboard -->
+      <div class="mr-carousel-slide">
+        <div class="mr-grid">
+          <div class="mr-panel" id="mrPanelHome">
+            <div class="mr-team-header">
+              <div class="mr-team-name"><span class="mr-team-dot" style="background:#0751FB"></span>SportIn</div>
+              <span class="mr-team-count">8 of 8</span>
+            </div>
+            <div class="mr-ruler">
+              <span>0 mi</span><span>2 mi</span><span>4 mi</span><span>6 mi</span><span>8 mi</span>
+            </div>
+            <div class="mr-hour-ruler" id="mrHourRulerHome">
+              <div class="mr-playhead" id="mrPlayheadHome"></div>
+            </div>
+            <div class="mr-rows" id="mrRowsHome" style="height:544px;"></div>
+            <div class="mr-footer" id="mrFooterHome">
+              <span class="mr-footer-stat">Total: <strong id="mrTotalStepsHome">0</strong> steps</span>
+              <span class="mr-footer-stat">Avg MI: <strong id="mrAvgMIHome">0.0</strong></span>
+              <span class="mr-footer-stat">24h daily steps</span>
+            </div>
+          </div>
+          <div class="mr-panel" id="mrPanelAway">
+            <div class="mr-team-header">
+              <div class="mr-team-name"><span class="mr-team-dot" style="background:#EF4444"></span>Urban FM</div>
+              <span class="mr-team-count">8 of 8</span>
+            </div>
+            <div class="mr-ruler">
+              <span>0 mi</span><span>2 mi</span><span>4 mi</span><span>6 mi</span><span>8 mi</span>
+            </div>
+            <div class="mr-hour-ruler" id="mrHourRulerAway">
+              <div class="mr-playhead" id="mrPlayheadAway"></div>
+            </div>
+            <div class="mr-rows" id="mrRowsAway" style="height:544px;"></div>
+            <div class="mr-footer" id="mrFooterAway">
+              <span class="mr-footer-stat">Total: <strong id="mrTotalStepsAway">0</strong> steps</span>
+              <span class="mr-footer-stat">Avg MI: <strong id="mrAvgMIAway">0.0</strong></span>
+              <span class="mr-footer-stat">24h daily steps</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="mr-ruler">
-        <span>0 mi</span><span>2 mi</span><span>4 mi</span><span>6 mi</span><span>8 mi</span>
+
+      <!-- Slide 2: Matches (Matchday 4) -->
+      <div class="mr-carousel-slide">
+        <div class="mr-grid">
+          <div class="mr-panel">
+            <div class="mr-team-header">
+              <div class="mr-team-name">Round Robin &mdash; Matchday 4</div>
+              <span class="mr-team-count">8 matches</span>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">Pescaria lui Dragoi</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/pescaria.png" onerror="this.parentNode.textContent='PD'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">8.1<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">6.5<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/pescobar.png" onerror="this.parentNode.textContent='PB'"/></div><span class="mr-match-name">Pescobar</span></div>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">Ramore Fresh Food</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/ramore.png" onerror="this.parentNode.textContent='RF'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">8.3<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">6.4<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/5togo.png" onerror="this.parentNode.textContent='5G'"/></div><span class="mr-match-name">5to go</span></div>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">Coressy</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/coressy.png" onerror="this.parentNode.textContent='CO'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">8.1<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">7.6<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/pescobar.png" onerror="this.parentNode.textContent='PB'"/></div><span class="mr-match-name">Pescobar</span></div>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">Mesopotamia</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/mesopotamia.png" onerror="this.parentNode.textContent='ME'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">7.8<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">7.2<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/granded.png" onerror="this.parentNode.textContent='GR'"/></div><span class="mr-match-name">Granded</span></div>
+            </div>
+          </div>
+          <div class="mr-panel">
+            <div class="mr-team-header">
+              <div class="mr-team-name">Round Robin &mdash; Matchday 3</div>
+              <span class="mr-team-count">7 matches</span>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">Shaorma Baneasa</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/shaorma.png" onerror="this.parentNode.textContent='SB'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">6.9<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">6.9<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/coressy.png" onerror="this.parentNode.textContent='CO'"/></div><span class="mr-match-name">Coressy</span></div>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">Pescobar</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/pescobar.png" onerror="this.parentNode.textContent='PB'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">7.9<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">7.5<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/mesopotamia.png" onerror="this.parentNode.textContent='ME'"/></div><span class="mr-match-name">Mesopotamia</span></div>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">Granded</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/granded.png" onerror="this.parentNode.textContent='GR'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">7.3<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">6.7<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/5togo.png" onerror="this.parentNode.textContent='5G'"/></div><span class="mr-match-name">5to go</span></div>
+            </div>
+            <div class="mr-match-row">
+              <span class="mr-match-ft">FT</span>
+              <div class="mr-match-team home"><span class="mr-match-name">FryDay</span><div class="mr-match-logo"><img src="/leagueofbrands/teams/fryday.png" onerror="this.parentNode.textContent='FD'"/></div></div>
+              <div class="mr-match-score"><span class="mr-match-val">5.8<span class="mr-match-mi">mi</span></span><span class="mr-match-dash">&ndash;</span><span class="mr-match-val">7.1<span class="mr-match-mi">mi</span></span></div>
+              <div class="mr-match-team away"><div class="mr-match-logo"><img src="/leagueofbrands/teams/ramore.png" onerror="this.parentNode.textContent='RF'"/></div><span class="mr-match-name">Ramore Fresh Food</span></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="mr-hour-ruler" id="mrHourRulerHome">
-        <div class="mr-playhead" id="mrPlayheadHome"></div>
+
+      <!-- Slide 3: Standings Table -->
+      <div class="mr-carousel-slide">
+        <div class="mr-grid" style="grid-template-columns:1fr;">
+          <div class="mr-panel">
+            <div class="mr-team-header">
+              <div class="mr-team-name">Standings</div>
+              <span class="mr-team-count">13 Teams</span>
+            </div>
+            <div class="mr-standings-header">
+              <span>#</span><span style="text-align:left;">Team</span><span>PL</span><span>W</span><span>D</span><span>L</span><span>PTS</span><span style="text-align:right;">Form</span>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos up">1</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/ramore.png" onerror="this.parentNode.textContent='RF'"/></div><span class="mr-standings-team-name">Ramore Fresh Food</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">3</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">0</span><span class="mr-standings-pts">10</span>
+              <div class="mr-standings-form"><span class="mr-form-dot w">W</span><span class="mr-form-dot d">D</span><span class="mr-form-dot w">W</span><span class="mr-form-dot w">W</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos up">2</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/coressy.png" onerror="this.parentNode.textContent='CO'"/></div><span class="mr-standings-team-name">Coressy</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">3</span><span class="mr-standings-stat">0</span><span class="mr-standings-stat">1</span><span class="mr-standings-pts">9</span>
+              <div class="mr-standings-form"><span class="mr-form-dot w">W</span><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span><span class="mr-form-dot w">W</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos">3</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/mesopotamia.png" onerror="this.parentNode.textContent='ME'"/></div><span class="mr-standings-team-name">Mesopotamia</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">0</span><span class="mr-standings-pts">8</span>
+              <div class="mr-standings-form"><span class="mr-form-dot d">D</span><span class="mr-form-dot w">W</span><span class="mr-form-dot d">D</span><span class="mr-form-dot w">W</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos up">4</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/pescaria.png" onerror="this.parentNode.textContent='PD'"/></div><span class="mr-standings-team-name">Pescaria lui Dragoi</span></div>
+              <span class="mr-standings-stat">5</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">1</span><span class="mr-standings-pts">8</span>
+              <div class="mr-standings-form"><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span><span class="mr-form-dot d">D</span><span class="mr-form-dot w">W</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos up">5</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/sportin.png" onerror="this.parentNode.textContent='SI'"/></div><span class="mr-standings-team-name">Sportin</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">1</span><span class="mr-standings-pts">7</span>
+              <div class="mr-standings-form"><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span><span class="mr-form-dot w">W</span><span class="mr-form-dot d">D</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos">6</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/urbanfm.png" onerror="this.parentNode.textContent='UF'"/></div><span class="mr-standings-team-name">Urban FM</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">1</span><span class="mr-standings-pts">7</span>
+              <div class="mr-standings-form"><span class="mr-form-dot w">W</span><span class="mr-form-dot w">W</span><span class="mr-form-dot d">D</span><span class="mr-form-dot l">L</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos down">7</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/pescobar.png" onerror="this.parentNode.textContent='PB'"/></div><span class="mr-standings-team-name">Pescobar</span></div>
+              <span class="mr-standings-stat">5</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">2</span><span class="mr-standings-pts">7</span>
+              <div class="mr-standings-form"><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span><span class="mr-form-dot d">D</span><span class="mr-form-dot w">W</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos down">8</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/granded.png" onerror="this.parentNode.textContent='GR'"/></div><span class="mr-standings-team-name">Granded</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">2</span><span class="mr-standings-pts">4</span>
+              <div class="mr-standings-form"><span class="mr-form-dot l">L</span><span class="mr-form-dot d">D</span><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos down">9</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/5togo.png" onerror="this.parentNode.textContent='5G'"/></div><span class="mr-standings-team-name">5to go</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">0</span><span class="mr-standings-stat">3</span><span class="mr-standings-pts">3</span>
+              <div class="mr-standings-form"><span class="mr-form-dot l">L</span><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span><span class="mr-form-dot l">L</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos">10</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/fryday.png" onerror="this.parentNode.textContent='FD'"/></div><span class="mr-standings-team-name">FryDay</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">0</span><span class="mr-standings-stat">3</span><span class="mr-standings-pts">3</span>
+              <div class="mr-standings-form"><span class="mr-form-dot l">L</span><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span><span class="mr-form-dot l">L</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos">11</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/shaorma.png" onerror="this.parentNode.textContent='SB'"/></div><span class="mr-standings-team-name">Shaorma Baneasa</span></div>
+              <span class="mr-standings-stat">4</span><span class="mr-standings-stat">0</span><span class="mr-standings-stat">2</span><span class="mr-standings-stat">2</span><span class="mr-standings-pts">2</span>
+              <div class="mr-standings-form"><span class="mr-form-dot d">D</span><span class="mr-form-dot l">L</span><span class="mr-form-dot d">D</span><span class="mr-form-dot l">L</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos">12</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/provident.png" onerror="this.parentNode.textContent='PV'"/></div><span class="mr-standings-team-name">Provident</span></div>
+              <span class="mr-standings-stat">3</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">1</span><span class="mr-standings-pts">4</span>
+              <div class="mr-standings-form"><span class="mr-form-dot w">W</span><span class="mr-form-dot d">D</span><span class="mr-form-dot l">L</span></div>
+            </div>
+            <div class="mr-standings-row">
+              <span class="mr-standings-pos">13</span>
+              <div class="mr-standings-team"><div class="mr-match-logo"><img src="/leagueofbrands/teams/fry.png" onerror="this.parentNode.textContent='FR'"/></div><span class="mr-standings-team-name">Fry.</span></div>
+              <span class="mr-standings-stat">3</span><span class="mr-standings-stat">1</span><span class="mr-standings-stat">0</span><span class="mr-standings-stat">2</span><span class="mr-standings-pts">3</span>
+              <div class="mr-standings-form"><span class="mr-form-dot l">L</span><span class="mr-form-dot w">W</span><span class="mr-form-dot l">L</span></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="mr-rows" id="mrRowsHome" style="height:544px;"></div>
-      <div class="mr-footer" id="mrFooterHome">
-        <span class="mr-footer-stat">Total: <strong id="mrTotalStepsHome">0</strong> steps</span>
-        <span class="mr-footer-stat">Avg MI: <strong id="mrAvgMIHome">0.0</strong></span>
-        <span class="mr-footer-stat">24h daily steps</span>
-      </div>
+
     </div>
-    <div class="mr-panel" id="mrPanelAway">
-      <div class="mr-team-header">
-        <div class="mr-team-name"><span class="mr-team-dot" style="background:#EF4444"></span>Urban FM</div>
-        <span class="mr-team-count">8 of 8</span>
-      </div>
-      <div class="mr-ruler">
-        <span>0 mi</span><span>2 mi</span><span>4 mi</span><span>6 mi</span><span>8 mi</span>
-      </div>
-      <div class="mr-hour-ruler" id="mrHourRulerAway">
-        <div class="mr-playhead" id="mrPlayheadAway"></div>
-      </div>
-      <div class="mr-rows" id="mrRowsAway" style="height:544px;"></div>
-      <div class="mr-footer" id="mrFooterAway">
-        <span class="mr-footer-stat">Total: <strong id="mrTotalStepsAway">0</strong> steps</span>
-        <span class="mr-footer-stat">Avg MI: <strong id="mrAvgMIAway">0.0</strong></span>
-        <span class="mr-footer-stat">24h daily steps</span>
-      </div>
+    <div class="mr-carousel-dots">
+      <button class="mr-carousel-dot active" data-slide="0" aria-label="Leaderboard"></button>
+      <button class="mr-carousel-dot" data-slide="1" aria-label="Matches"></button>
+      <button class="mr-carousel-dot" data-slide="2" aria-label="Standings"></button>
     </div>
   </div>
 </section>
@@ -4617,6 +4993,65 @@
     }
   });
 })();
+
+// Match Replay Carousel: auto-rotate slides every 5s
+(function() {
+  var track = document.getElementById('mrCarouselTrack');
+  var dots = document.querySelectorAll('.mr-carousel-dot');
+  if (!track || !dots.length) return;
+
+  var current = 0;
+  var total = track.children.length;
+  var interval = 5000;
+  var timer = null;
+  var paused = false;
+
+  function goTo(idx) {
+    current = ((idx % total) + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function(d, i) {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function next() {
+    goTo(current + 1);
+  }
+
+  function startTimer() {
+    stopTimer();
+    timer = setInterval(next, interval);
+  }
+
+  function stopTimer() {
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  // Dot clicks
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      goTo(parseInt(dot.getAttribute('data-slide')) || 0);
+      startTimer(); // reset timer on manual click
+    });
+  });
+
+  // Pause on hover
+  var carousel = document.getElementById('mrCarousel');
+  if (carousel) {
+    carousel.addEventListener('mouseenter', function() { paused = true; stopTimer(); });
+    carousel.addEventListener('mouseleave', function() { paused = false; startTimer(); });
+  }
+
+  // Start when visible
+  var observer = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      if (!paused) startTimer();
+    } else {
+      stopTimer();
+    }
+  }, { threshold: 0.2 });
+  if (carousel) observer.observe(carousel);
+})();
 </script>
 
 <!-- REWARD CARDS SCROLL ANIMATION JS -->
@@ -4754,6 +5189,13 @@
   const section = track.closest('.screens-carousel');
   let ticking = false;
 
+  // Duplicate images for a longer scrollable track
+  const origItems = Array.from(track.children);
+  origItems.forEach(img => {
+    const clone = img.cloneNode(true);
+    track.appendChild(clone);
+  });
+
   function onScroll() {
     if (ticking) return;
     ticking = true;
@@ -4763,7 +5205,7 @@
       const progress = (viewH - rect.top) / (viewH + rect.height);
       const clamped = Math.max(0, Math.min(1, progress));
       const totalScroll = track.scrollWidth - section.offsetWidth;
-      track.style.transform = 'translateX(' + (-clamped * totalScroll * 0.6) + 'px)';
+      track.style.transform = 'translateX(' + (-clamped * totalScroll * 0.5) + 'px)';
       ticking = false;
     });
   }
