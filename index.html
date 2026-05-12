@@ -101,19 +101,116 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+  html {
+    background: #06060C;
+  }
   html, body {
-    background: var(--ink-1);
     color: var(--text);
     font-family: 'Geist', 'Inter', system-ui, sans-serif;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
   body {
-    background:
-      radial-gradient(ellipse at 50% -10%, rgba(7, 81, 251, 0.22) 0%, transparent 55%),
-      radial-gradient(ellipse at 80% 60%, rgba(59, 123, 255, 0.06) 0%, transparent 50%),
-      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+    background: transparent;
   }
+  /* Comet shader bg — desktop only, behind all content. Hidden until past stadium. */
+  #comet-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    display: none;
+    opacity: 0;
+  }
+  @media (min-width: 769px) {
+    #comet-bg { display: block; }
+  }
+
+  /* ============================================
+     GRADIENT LIGHTS — soft glows with subtle scroll parallax
+     ============================================ */
+  .liquid-wrap {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 1s ease;
+    overflow: hidden;
+  }
+  .liquid-wrap.active { opacity: 1; }
+  .glight {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    will-change: transform;
+  }
+  .glight.a {
+    top: 10%; left: -10%;
+    width: 45vw; height: 55vh;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.4), transparent 60%);
+  }
+  .glight.b {
+    top: 35%; right: -8%;
+    width: 40vw; height: 50vh;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.4), transparent 60%);
+  }
+  .glight.c {
+    top: 60%; left: 20%;
+    width: 50vw; height: 55vh;
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.35), transparent 60%);
+  }
+  .glight.d {
+    bottom: -10%; right: 10%;
+    width: 55vw; height: 60vh;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.35), transparent 60%);
+  }
+
+  /* Glass reflection on contact CTA — kicks in when liquid splashes */
+  .app-cta-inner {
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  }
+  .app-cta-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(ellipse at 10% 20%, rgba(99, 102, 241, 0.45), transparent 55%),
+      radial-gradient(ellipse at 90% 25%, rgba(236, 72, 153, 0.4), transparent 55%),
+      radial-gradient(ellipse at 50% 95%, rgba(34, 211, 238, 0.4), transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.4), transparent 55%);
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Glass highlight stripe across top — reflection feel */
+  .app-cta-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg,
+      rgba(255,255,255,0.18) 0%,
+      rgba(255,255,255,0.04) 25%,
+      transparent 50%,
+      rgba(255,255,255,0.04) 75%,
+      rgba(255,255,255,0.12) 100%);
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+  }
+  .app-cta-inner.glass-lit::before,
+  .app-cta-inner.glass-lit::after { opacity: 1; }
+  .app-cta-inner > * { position: relative; z-index: 1; }
   #meshCanvas {
     position: fixed;
     inset: 0;
@@ -126,8 +223,10 @@
 
   /* Nav — floating glass pill (matches hero cover width: 70%) */
   .nav {
-    position: sticky;
+    position: fixed;
     top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 30;
     display: flex;
     align-items: center;
@@ -136,7 +235,6 @@
     padding: 12px 14px 12px 22px;
     width: 56%;
     max-width: calc(100vw - 32px);
-    margin: 18px auto 0;
     border-radius: 999px;
     background: rgba(10, 10, 18, 0.42);
     border: 1px solid rgba(255, 255, 255, 0.09);
@@ -443,8 +541,8 @@
 
   /* Pillars */
   .pillars-section {
-    margin-top: 100px;
-    padding: 0 48px;
+    margin-top: 0;
+    padding: 60px 48px 0;
     max-width: 1280px;
     margin-left: auto;
     margin-right: auto;
@@ -1288,6 +1386,294 @@
     .pillar.expanded { width: 300px; min-height: 500px; padding: 26px 22px; }
     .pillar.expanded .pillar-anim { height: 220px; }
     .pillars-row { gap: 14px; padding: 10px 20px; }
+  }
+
+  /* === ARENA 3D AUDIENCE SECTION === */
+  .arena-scroll-outer {
+    position: relative;
+    height: 400vh; /* 4 viewport heights of scroll distance */
+    margin-top: 0;
+  }
+  .arena-sticky-wrap {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: transparent;
+  }
+  /* Bottom gradient fade so arena blends into content below — clean 20% steps */
+  .arena-sticky-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60vh;
+    background: linear-gradient(to bottom,
+      rgba(6,6,12,0) 0%,
+      rgba(6,6,12,0.2) 20%,
+      rgba(6,6,12,0.4) 40%,
+      rgba(6,6,12,0.6) 60%,
+      rgba(6,6,12,0.8) 80%,
+      rgba(6,6,12,1) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  /* Fade-out overlay OUTSIDE the sticky wrap so it covers the hard edge */
+  .arena-scroll-outer::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to bottom, transparent, #06060C);
+    z-index: 3;
+    pointer-events: none;
+  }
+  #arena-canvas {
+    filter: brightness(1.2) contrast(1.1);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  #arena-confetti {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  #arena-confetti.active { opacity: 1; }
+
+  /* Cinematic vignette — all edges fade to transparent black */
+  .arena-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background:
+      /* Bottom fade — strongest, gradual steps */
+      linear-gradient(to bottom,
+        transparent 0%,
+        transparent 40%,
+        rgba(10,10,18,0.1) 50%,
+        rgba(10,10,18,0.25) 58%,
+        rgba(10,10,18,0.45) 66%,
+        rgba(10,10,18,0.65) 74%,
+        rgba(10,10,18,0.82) 82%,
+        rgba(10,10,18,0.93) 90%,
+        #0A0A12 100%),
+      /* Top fade */
+      linear-gradient(to top,
+        transparent 30%,
+        rgba(10,10,18,0.15) 70%,
+        rgba(10,10,18,0.4) 90%,
+        rgba(10,10,18,0.7) 100%),
+      /* Left fade */
+      linear-gradient(to left,
+        transparent 30%,
+        rgba(10,10,18,0.1) 60%,
+        rgba(10,10,18,0.35) 80%,
+        rgba(10,10,18,0.7) 95%,
+        #0A0A12 100%),
+      /* Right fade */
+      linear-gradient(to right,
+        transparent 30%,
+        rgba(10,10,18,0.1) 60%,
+        rgba(10,10,18,0.35) 80%,
+        rgba(10,10,18,0.7) 95%,
+        #0A0A12 100%);
+  }
+
+  /* Subtle film grain */
+  .arena-grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
+    mix-blend-mode: overlay;
+  }
+
+  /* Intro overlay */
+  .arena-intro-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+    z-index: 10;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    background: radial-gradient(ellipse at 50% 45%, rgba(6,6,12,0.7) 0%, rgba(6,6,12,0.35) 40%, transparent 70%);
+  }
+  .arena-intro-overlay .section-kicker {
+    margin-bottom: 20px;
+  }
+  .arena-intro-overlay .section-title {
+    font-size: clamp(32px, 5vw, 64px);
+    line-height: 1.1;
+  }
+  .arena-intro-overlay .hero-title {
+    font-size: clamp(42px, 7vw, 96px);
+  }
+  .arena-intro-overlay .hero-sub {
+    max-width: 580px;
+  }
+  .arena-intro-overlay .hero-eyebrow {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .arena-intro-sub {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: clamp(15px, 1.5vw, 18px);
+    color: var(--text-3);
+    max-width: 560px;
+    line-height: 1.65;
+    margin-top: 12px;
+  }
+  .arena-scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 48px;
+    color: rgba(255,255,255,0.4);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: arenaHintBob 2.4s ease-in-out infinite;
+  }
+  @keyframes arenaHintBob {
+    0%,100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(6px); opacity: 1; }
+  }
+  .arena-scroll-dot {
+    animation: arenaScrollDot 2.4s ease-in-out infinite;
+  }
+  @keyframes arenaScrollDot {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  /* Cards container — bottom center, holds all 3 cards side by side */
+  .arena-cards-wrap {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 0 32px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  /* Each card: hidden by default, appears one by one */
+  .arena-ov-inner {
+    min-width: 364px;
+    max-width: 416px;
+    background: rgba(6,6,12,0.72);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 28px 28px;
+    backdrop-filter: blur(20px);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    display: none;
+  }
+  .arena-ov-inner.shown { display: block; }
+  .arena-ov-inner.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .arena-ov-kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .arena-ov-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(22px, 2.5vw, 30px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.15;
+    margin: 0 0 14px;
+  }
+  .arena-ov-desc {
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-3);
+    margin: 0 0 24px;
+  }
+  .arena-ov-cta {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--accent, #818CF8);
+    transition: gap 0.3s;
+    gap: 6px;
+  }
+  .arena-ov-cta:hover { gap: 12px; }
+
+  /* Progress dots */
+  .arena-progress {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 11;
+  }
+  .arena-prog-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.4s, transform 0.4s;
+    cursor: pointer;
+  }
+  .arena-prog-dot.active {
+    background: rgba(255,255,255,0.9);
+    transform: scale(1.4);
+  }
+
+  @media (max-width: 768px) {
+    .arena-scroll-outer { height: 450vh; }
+    .arena-cards-wrap { flex-direction: column; bottom: 60px; width: calc(100% - 48px); }
+    .arena-ov-inner { padding: 20px 18px; max-width: 100%; min-width: auto; }
+    .arena-progress { right: 16px; }
+  }
+  @media (max-width: 600px) {
+    .arena-scroll-outer { margin-top: 0; }
   }
 
   /* Two Worlds */
@@ -2178,10 +2564,10 @@
 
   /* Phone Showcase: scroll-driven arc carousel */
   .phone-showcase {
-    margin-top: 60px;
+    margin-top: -120px;
     padding: 150px 0 150px; /* extra vertical room → slower horizontal motion per scroll unit */
     position: relative;
-    z-index: 1;
+    z-index: 2;
     overflow: hidden;
     /* edge fade gradient */
     -webkit-mask-image: linear-gradient(90deg,
@@ -2261,6 +2647,8 @@
 
   /* Footer */
   .footer {
+    position: relative;
+    z-index: 1;
     margin-top: 120px;
     padding: 60px 48px 40px;
     border-top: 1px solid var(--border);
@@ -2476,7 +2864,7 @@
 
   @media (max-width: 1280px) {
     .nav { width: 70%; }
-    .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .contact-row.below { padding-left: 32px; padding-right: 32px; }
+    .audience-section, .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .contact-row.below { padding-left: 32px; padding-right: 32px; }
     .section-title { font-size: 48px; }
     .hero-title { font-size: 88px; }
   }
@@ -2494,7 +2882,7 @@
     .hero-banner-glass { width: 92%; }
 
     /* Sections */
-    .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .stats-strip, .footer { padding-left: 28px; padding-right: 28px; }
+    .audience-section, .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .stats-strip, .footer { padding-left: 28px; padding-right: 28px; }
     .contact-row.below { padding-left: 28px; padding-right: 28px; }
 
     .section-title { font-size: 42px; }
@@ -2548,7 +2936,7 @@
     .hero-cta .btn { width: 100%; text-align: center; justify-content: center; }
 
     /* Sections */
-    .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .stats-strip, .footer { padding-left: 20px; padding-right: 20px; }
+    .audience-section, .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .stats-strip, .footer { padding-left: 20px; padding-right: 20px; }
     .contact-row.below { padding-left: 20px; padding-right: 20px; }
     .section-title { font-size: 34px; }
     .section-intro { font-size: 15px; }
@@ -2608,7 +2996,7 @@
     .hero { padding: 36px 16px 40px; }
 
     /* Sections */
-    .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .stats-strip, .footer, .contact-row.below { padding-left: 16px; padding-right: 16px; }
+    .audience-section, .pillars-section, .worlds-section, .signals-section, .app-cta, .why-section, .example-section, .felt-section, .stats-strip, .footer, .contact-row.below { padding-left: 16px; padding-right: 16px; }
     .section-title { font-size: 28px; }
 
     /* Worlds */
@@ -2635,6 +3023,8 @@
 <body>
 
 <canvas id="meshCanvas"></canvas>
+<!-- Comet shader background (WebGL ink-in-water blob) — desktop only -->
+<canvas id="comet-bg"></canvas>
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <nav class="nav">
@@ -2648,36 +3038,62 @@
     <a href="#pillars">Platform</a>
     <a href="#signals">Reactions</a>
     <a href="#worlds">Live Formats</a>
-    <a href="#why">For You</a>
+    <a href="#audience">For You</a>
     <a href="#contact">Contact</a>
   </div>
   <a class="nav-cta" href="https://calendly.com/sportin" target="_blank">Schedule a Demo</a>
 </nav>
 
-<!-- HERO BANNER -->
-<div class="hero-media">
-  <div class="hero-banner-glass">
-    <img class="hero-banner" src="hero-banner.png" alt="SportIn. To be in the same team means to rise together." />
+<!-- ARENA HERO — 3D stadium is the first visual element -->
+<div class="arena-scroll-outer" id="audience">
+  <div class="arena-sticky-wrap">
+    <!-- Three.js canvas fills the sticky viewport -->
+    <canvas id="arena-canvas"></canvas>
+    <canvas id="arena-confetti"></canvas>
+    <div class="arena-vignette"></div>
+    <div class="arena-grain"></div>
+
+    <!-- Intro overlay (shown at scroll=0) -->
+    <div class="arena-intro-overlay" id="arenaIntro">
+      <div class="section-kicker">BUILT FOR YOU</div>
+      <h2 class="section-title" style="max-width:700px;margin:0 auto 20px;">Turn movement into moments <span class="gradient">people care about.</span></h2>
+      <p class="arena-intro-sub">We give you a plug&#8209;in gamification layer that makes people want to move because the experience feels exciting and meaningful.</p>
+      <div class="arena-scroll-hint">
+        <svg width="20" height="28" viewBox="0 0 20 28" fill="none"><rect x="1" y="1" width="18" height="26" rx="9" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><rect class="arena-scroll-dot" x="8" y="5" width="4" height="6" rx="2" fill="rgba(255,255,255,0.6)"/></svg>
+        <span>Scroll to explore</span>
+      </div>
+    </div>
+
+    <!-- Cards container — all 3 cards appear one by one, centered at bottom -->
+    <div class="arena-cards-wrap" id="arenaCards">
+      <div class="arena-ov-inner" id="arenaCard0">
+        <div class="arena-ov-kicker" style="color:#818CF8;">Brands &amp; Communities</div>
+        <h3 class="arena-ov-title">Turn your company into a team, not just a logo.</h3>
+        <p class="arena-ov-desc">Give your people a jersey, a leaderboard to climb, and a rival to beat. Built around your brand from day one.</p>
+        <a href="/brands" class="arena-ov-cta" style="--accent:#818CF8;">Explore for Brands &rarr;</a>
+      </div>
+      <div class="arena-ov-inner" id="arenaCard1">
+        <div class="arena-ov-kicker" style="color:#F59E0B;">Event Organizers</div>
+        <h3 class="arena-ov-title">Give your running event the energy of a stadium.</h3>
+        <p class="arena-ov-desc">Live rankings, shareable moments, public excitement. Your runners don&rsquo;t just finish, they feel celebrated.</p>
+        <a href="/organizers" class="arena-ov-cta" style="--accent:#F59E0B;">Explore for Organizers &rarr;</a>
+      </div>
+      <div class="arena-ov-inner" id="arenaCard2">
+        <div class="arena-ov-kicker" style="color:#22C55E;">Professional Clubs</div>
+        <h3 class="arena-ov-title">Supporters feel the shirt, not just wear it.</h3>
+        <p class="arena-ov-desc">Story&#8209;driven formats let fans train, compete, and win under your crest. Every kilometer pulls them closer.</p>
+        <a href="/clubs" class="arena-ov-cta" style="--accent:#22C55E;">Explore for Clubs &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Progress dots -->
+    <div class="arena-progress">
+      <div class="arena-prog-dot active" data-idx="0"></div>
+      <div class="arena-prog-dot" data-idx="1"></div>
+      <div class="arena-prog-dot" data-idx="2"></div>
+    </div>
   </div>
 </div>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-eyebrow"><span class="pulse"></span>Built for Heads of Brand &middot; Marketing &middot; Partnerships &middot; Community</div>
-  <h1 class="hero-title">
-    <span class="hero-word" style="--wd:0.30s;">Give</span>
-    <span class="hero-word" style="--wd:0.45s;">them</span>
-    <span class="hero-word" style="--wd:0.60s;">a</span>
-    <span class="hero-word gradient" style="--wd:0.75s;">logo</span><br/>
-    <span class="hero-word" style="--wd:0.88s;">worth</span>
-    <span class="hero-word" style="--wd:1.05s;">running</span>
-    <span class="hero-word" style="--wd:1.18s;">for.</span>
-  </h1>
-  <p class="hero-sub">SportIn brings the emotional structures of professional sport. Leagues, cups, grand tours, championships. Given to the people behind your brand, your club, your community. Movement becomes belonging. Belonging becomes return.</p>
-  <div class="hero-cta">
-    <a href="https://calendly.com/sportin" class="btn-cta-glow" target="_blank"><span>Schedule a Demo</span></a>
-  </div>
-</section>
 
 <!-- PHONE SHOWCASE -->
 <section class="phone-showcase" id="phoneShowcase">
@@ -3924,6 +4340,1492 @@
     requestAnimationFrame(draw);
   }
   draw();
+})();
+</script>
+
+<!-- Three.js arena -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =====================================================
+   SPORTIN 3D ARENA — Scroll-pinned drone experience
+   ===================================================== */
+(function() {
+  'use strict';
+
+  var outer = document.getElementById('audience');
+  var introEl = document.getElementById('arenaIntro');
+  var arenaCards = [
+    document.getElementById('arenaCard0'),
+    document.getElementById('arenaCard1'),
+    document.getElementById('arenaCard2')
+  ];
+  var progDots = document.querySelectorAll('.arena-prog-dot');
+  var canvas = document.getElementById('arena-canvas');
+  if (!outer || !canvas) return;
+
+  /* ---- Stadium crowd MP3 audio ---- */
+  var crowdAudio = new Audio('stadium_crowd.mp3');
+  crowdAudio.loop = true;
+  crowdAudio.volume = 0;
+  var crowdPlaying = false;
+  var crowdTargetVol = 0;
+
+  function setCrowdVolume(vol) {
+    crowdTargetVol = Math.max(0, Math.min(1, vol * 0.6));
+  }
+
+  function resumeAudio() {
+    if (!crowdPlaying) {
+      crowdPlaying = true;
+      crowdAudio.play().catch(function(){});
+    }
+  }
+
+  // Smooth volume ramping
+  setInterval(function() {
+    var diff = crowdTargetVol - crowdAudio.volume;
+    if (Math.abs(diff) > 0.005) {
+      crowdAudio.volume = Math.max(0, Math.min(1, crowdAudio.volume + diff * 0.15));
+    }
+  }, 50);
+
+  /* ---- Three.js setup ---- */
+  var W = window.innerWidth, H = window.innerHeight;
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.setClearColor(0x000000, 0); // transparent — body background shows through
+
+  var scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x0A0A12, 0.0018);
+
+  var camera = new THREE.PerspectiveCamera(55, W / H, 0.5, 600);
+  camera.position.set(0, 80, 120);
+  camera.lookAt(0, 0, 0);
+
+  /* ---- WIREFRAME STADIUM — dense blueprint style ---- */
+
+  // ---- Batched line arrays ----
+  var brightLines = [];
+  var medLines   = [];
+  var dimLines   = [];
+  var accentLines = [];
+  var seatLines  = []; // dedicated seat array for individual seat wireframes
+
+  function pushLine(arr, x1,y1,z1, x2,y2,z2) {
+    arr.push(x1,y1,z1, x2,y2,z2);
+  }
+
+  function pushRing(arr, rx, rz, y, segs) {
+    var n = segs || 120;
+    for (var i = 0; i < n; i++) {
+      var a0 = (i / n) * Math.PI * 2;
+      var a1 = ((i + 1) / n) * Math.PI * 2;
+      pushLine(arr,
+        Math.cos(a0)*rx, y, Math.sin(a0)*rz,
+        Math.cos(a1)*rx, y, Math.sin(a1)*rz
+      );
+    }
+  }
+
+  function ex(rx, a) { return Math.cos(a) * rx; }
+  function ez(rz, a) { return Math.sin(a) * rz; }
+  var PI2 = Math.PI * 2;
+
+  // ====================================================
+  // 1. RUNNING TRACK — 8 lanes, oval, dense
+  // ====================================================
+  var TRACK_RX_IN = 50, TRACK_RZ_IN = 32;
+  var TRACK_RX_OUT = 74, TRACK_RZ_OUT = 50;
+  var TRACK_Y = 0.05;
+
+  // Lane boundary rings (9 lines for 8 lanes)
+  for (var ln = 0; ln <= 8; ln++) {
+    var lt = ln / 8;
+    var lrx = TRACK_RX_IN + lt * (TRACK_RX_OUT - TRACK_RX_IN);
+    var lrz = TRACK_RZ_IN + lt * (TRACK_RZ_OUT - TRACK_RZ_IN);
+    var lArr = (ln === 0 || ln === 8) ? brightLines : medLines;
+    pushRing(lArr, lrx, lrz, TRACK_Y, 160);
+  }
+
+  // Cross-hatching radial lines every 2.5 degrees
+  for (var ti2 = 0; ti2 < 144; ti2++) {
+    var ta = (ti2 / 144) * PI2;
+    pushLine(dimLines,
+      ex(TRACK_RX_IN, ta), TRACK_Y, ez(TRACK_RZ_IN, ta),
+      ex(TRACK_RX_OUT, ta), TRACK_Y, ez(TRACK_RZ_OUT, ta)
+    );
+  }
+
+  // Start/finish lines at 4 cardinal points
+  [0, Math.PI * 0.5, Math.PI, Math.PI * 1.5].forEach(function(sa) {
+    for (var ln2 = 0; ln2 < 8; ln2++) {
+      var t0 = ln2 / 8, t1 = (ln2 + 1) / 8;
+      pushLine(brightLines,
+        ex(TRACK_RX_IN + t0 * (TRACK_RX_OUT - TRACK_RX_IN), sa), TRACK_Y,
+        ez(TRACK_RZ_IN + t0 * (TRACK_RZ_OUT - TRACK_RZ_IN), sa),
+        ex(TRACK_RX_IN + t1 * (TRACK_RX_OUT - TRACK_RX_IN), sa), TRACK_Y,
+        ez(TRACK_RZ_IN + t1 * (TRACK_RZ_OUT - TRACK_RZ_IN), sa)
+      );
+    }
+  });
+
+  // ====================================================
+  // 2. INNER FIELD — oval outlines, markings, center
+  // ====================================================
+  pushRing(medLines, 48, 30, 0.1, 140);
+  pushRing(dimLines, 46, 28, 0.1, 120);
+  pushRing(dimLines, 44, 26, 0.1, 100);
+  // Center cross + diagonals
+  pushLine(dimLines, -46, 0.1, 0, 46, 0.1, 0);
+  pushLine(dimLines, 0, 0.1, -28, 0, 0.1, 28);
+  pushLine(dimLines, -30, 0.1, -18, 30, 0.1, 18);
+  pushLine(dimLines, 30, 0.1, -18, -30, 0.1, 18);
+  // Center circle + rings
+  pushRing(medLines, 10, 10, 0.1, 48);
+  pushRing(dimLines, 15, 15, 0.1, 48);
+  pushRing(dimLines, 5, 5, 0.1, 32);
+  // Field grid
+  for (var fx = -40; fx <= 40; fx += 10) pushLine(dimLines, fx, 0.1, -26, fx, 0.1, 26);
+  for (var fz = -24; fz <= 24; fz += 8) pushLine(dimLines, -44, 0.1, fz, 44, 0.1, fz);
+
+  // ====================================================
+  // 3. SEATING BOWL — 3 tiers with individual seat wireframes
+  // ====================================================
+  var tiers = [
+    { rxS: 76, rzS: 52, rxE: 96,  rzE: 68,  yS: 2,  yE: 18, rows: 16 },
+    { rxS: 98, rzS: 70, rxE: 114, rzE: 82,  yS: 20, yE: 34, rows: 14 },
+    { rxS: 116, rzS: 84, rxE: 128, rzE: 94, yS: 36, yE: 48, rows: 12 }
+  ];
+  var BOWL_SEGS = 140;
+  var bowlRings = [];
+
+  // Helper: add individual seat wireframe at position
+  // Each seat = small rectangle (seat pan) + small rectangle (backrest)
+  // ~8 line segments per seat
+  function addSeat(cx, cy, cz, seatW, seatD, backH, angle) {
+    var s = Math.sin(angle), c = Math.cos(angle);
+    var hw = seatW * 0.5, hd = seatD * 0.5;
+    // Transform local to world: x-axis = tangent, z-axis = radial outward
+    function tr(lx, ly, lz) {
+      return {
+        x: cx + lx * c - lz * s,
+        y: cy + ly,
+        z: cz + lx * s + lz * c
+      };
+    }
+    // Seat pan (horizontal rectangle at cy)
+    var p0 = tr(-hw, 0, -hd), p1 = tr(hw, 0, -hd);
+    var p2 = tr(hw, 0, hd), p3 = tr(-hw, 0, hd);
+    pushLine(seatLines, p0.x, p0.y, p0.z, p1.x, p1.y, p1.z);
+    pushLine(seatLines, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+    pushLine(seatLines, p2.x, p2.y, p2.z, p3.x, p3.y, p3.z);
+    pushLine(seatLines, p3.x, p3.y, p3.z, p0.x, p0.y, p0.z);
+    // Backrest (vertical rectangle behind seat)
+    var b0 = tr(-hw, 0, -hd), b1 = tr(hw, 0, -hd);
+    var b2 = tr(hw, backH, -hd), b3 = tr(-hw, backH, -hd);
+    pushLine(seatLines, b0.x, b0.y, b0.z, b3.x, b3.y, b3.z);
+    pushLine(seatLines, b1.x, b1.y, b1.z, b2.x, b2.y, b2.z);
+    pushLine(seatLines, b2.x, b2.y, b2.z, b3.x, b3.y, b3.z);
+    // Diagonal brace on backrest for visual density
+    pushLine(seatLines, b0.x, b0.y, b0.z, b2.x, b2.y, b2.z);
+  }
+
+  tiers.forEach(function(tier, tierIdx) {
+    // Row horizontal rings
+    for (var row = 0; row <= tier.rows; row++) {
+      var rt = row / tier.rows;
+      var rrx = tier.rxS + rt * (tier.rxE - tier.rxS);
+      var rrz = tier.rzS + rt * (tier.rzE - tier.rzS);
+      var ry = tier.yS + rt * (tier.yE - tier.yS);
+      var rowArr = (row === 0 || row === tier.rows) ? brightLines : medLines;
+      pushRing(rowArr, rrx, rrz, ry, BOWL_SEGS);
+      bowlRings.push({ rx: rrx, rz: rrz, y: ry });
+    }
+
+    // Walkway platform at tier top
+    pushRing(brightLines, tier.rxE + 1, tier.rzE + 0.8, tier.yE + 0.5, BOWL_SEGS);
+
+    // Vertical risers between rows every 3 degrees
+    for (var row2 = 0; row2 < tier.rows; row2++) {
+      var rt0 = row2 / tier.rows, rt1 = (row2 + 1) / tier.rows;
+      var rx0 = tier.rxS + rt0 * (tier.rxE - tier.rxS);
+      var rz0 = tier.rzS + rt0 * (tier.rzE - tier.rzS);
+      var ry0 = tier.yS + rt0 * (tier.yE - tier.yS);
+      var rx1 = tier.rxS + rt1 * (tier.rxE - tier.rxS);
+      var rz1 = tier.rzS + rt1 * (tier.rzE - tier.rzS);
+      var ry1 = tier.yS + rt1 * (tier.yE - tier.yS);
+      for (var ri = 0; ri < 120; ri += 3) {
+        var ra = (ri / 120) * PI2;
+        pushLine(dimLines, ex(rx0, ra), ry0, ez(rz0, ra), ex(rx1, ra), ry1, ez(rz1, ra));
+      }
+    }
+
+    // INDIVIDUAL SEATS — dense placement every ~1.5 degrees, every row
+    var seatAngStep = 1.5;
+    var seatW = 0.8;
+    var rowH = (tier.yE - tier.yS) / tier.rows;
+    var seatD = rowH * 0.35;
+    var backH = rowH * 0.5;
+    for (var row3 = 0; row3 < tier.rows; row3++) {
+      var rt3 = (row3 + 0.5) / tier.rows;
+      var srx = tier.rxS + rt3 * (tier.rxE - tier.rxS);
+      var srz = tier.rzS + rt3 * (tier.rzE - tier.rzS);
+      var sy = tier.yS + rt3 * (tier.yE - tier.yS);
+      for (var sd = 0; sd < 360; sd += seatAngStep) {
+        var sa = (sd / 360) * PI2;
+        var sx = ex(srx, sa), sz = ez(srz, sa);
+        addSeat(sx, sy, sz, seatW, seatD, backH, sa + Math.PI);
+      }
+    }
+
+    // Aisle stairs every 15 degrees
+    var aisleCount = 24;
+    for (var ai = 0; ai < aisleCount; ai++) {
+      var aa = (ai / aisleCount) * PI2;
+      var aisleArr = (ai % 4 === 0) ? brightLines : medLines;
+      for (var row4 = 0; row4 < tier.rows; row4++) {
+        var rt4a = row4 / tier.rows, rt4b = (row4 + 1) / tier.rows;
+        pushLine(aisleArr,
+          ex(tier.rxS + rt4a * (tier.rxE - tier.rxS), aa),
+          tier.yS + rt4a * (tier.yE - tier.yS),
+          ez(tier.rzS + rt4a * (tier.rzE - tier.rzS), aa),
+          ex(tier.rxS + rt4b * (tier.rxE - tier.rxS), aa),
+          tier.yS + rt4b * (tier.yE - tier.yS),
+          ez(tier.rzS + rt4b * (tier.rzE - tier.rzS), aa)
+        );
+      }
+    }
+  });
+
+  // ====================================================
+  // 3b. CONCOURSE WALKWAYS + RAILINGS between tiers
+  // ====================================================
+  for (var ti = 1; ti < tiers.length; ti++) {
+    var tier = tiers[ti];
+    // Platform rings
+    pushRing(brightLines, tier.rxS - 0.5, tier.rzS - 0.3, tier.yS - 1, BOWL_SEGS);
+    pushRing(dimLines, tier.rxS - 2, tier.rzS - 1.5, tier.yS - 1, BOWL_SEGS);
+    // Railing posts every 2 degrees
+    for (var cr = 0; cr < 180; cr++) {
+      var cra = (cr / 180) * PI2;
+      pushLine(dimLines,
+        ex(tier.rxS - 0.5, cra), tier.yS - 1, ez(tier.rzS - 0.3, cra),
+        ex(tier.rxS - 0.5, cra), tier.yS + 0.5, ez(tier.rzS - 0.3, cra)
+      );
+    }
+    // Top railing rail
+    pushRing(medLines, tier.rxS - 0.5, tier.rzS - 0.3, tier.yS + 0.5, BOWL_SEGS);
+  }
+
+  // ====================================================
+  // 3c. RAKER BEAMS — diagonal support under each tier
+  // ====================================================
+  tiers.forEach(function(tier, ti) {
+    var baseY = ti === 0 ? -5 : tiers[ti - 1].yE + 0.5;
+    var baseRx = ti === 0 ? 76 : tiers[ti - 1].rxE + 1;
+    var baseRz = ti === 0 ? 52 : tiers[ti - 1].rzE + 0.8;
+    for (var ri = 0; ri < 360; ri += 5) {
+      var ra = (ri / 360) * PI2;
+      var midRx = tier.rxS + (tier.rxE - tier.rxS) * 0.5;
+      var midRz = tier.rzS + (tier.rzE - tier.rzS) * 0.5;
+      var midY = tier.yS + (tier.yE - tier.yS) * 0.5;
+      pushLine(medLines,
+        ex(baseRx, ra), baseY, ez(baseRz, ra),
+        ex(midRx, ra), midY, ez(midRz, ra)
+      );
+      if (ri % 10 === 0) {
+        pushLine(dimLines,
+          ex(baseRx, ra), baseY, ez(baseRz, ra),
+          ex(tier.rxE, ra), tier.yE, ez(tier.rzE, ra)
+        );
+      }
+    }
+    // Internal bracing rings
+    var mRx = tier.rxS + 0.5 * (tier.rxE - tier.rxS) - 3;
+    var mRz = tier.rzS + 0.5 * (tier.rzE - tier.rzS) - 2;
+    var mY = tier.yS + 0.5 * (tier.yE - tier.yS) - 3;
+    pushRing(dimLines, mRx, mRz, mY, BOWL_SEGS);
+    // Cross-bracing under tier surface
+    for (var xb = 0; xb < 360; xb += 6) {
+      var xba = (xb / 360) * PI2;
+      var xba2 = ((xb + 6) / 360) * PI2;
+      pushLine(dimLines, ex(mRx, xba), mY, ez(mRz, xba), ex(mRx, xba2), mY + 2, ez(mRz, xba2));
+      pushLine(dimLines, ex(mRx, xba2), mY, ez(mRz, xba2), ex(mRx, xba), mY + 2, ez(mRz, xba));
+    }
+  });
+
+  // Radial lines under the bowl for depth
+  for (var radi = 0; radi < 360; radi += 8) {
+    var rada = (radi / 360) * PI2;
+    pushLine(dimLines, ex(50, rada), -4.5, ez(32, rada), ex(76, rada), -4.5, ez(52, rada));
+    if (radi % 16 === 0) {
+      pushLine(dimLines, ex(76, rada), -5, ez(52, rada), ex(132, rada), -5, ez(102, rada));
+    }
+  }
+
+  // ====================================================
+  // 4. ROOF — triangulated space frame (top + bottom chords)
+  // ====================================================
+  var ROOF_RX = 132, ROOF_RZ = 102;
+  var ROOF_SEGS = 140;
+  var ROOF_RINGS = 40;
+  var ROOF_GAP = 4; // vertical gap between top and bottom chords
+  var roofTop = [], roofBot = [];
+
+  function roofProfile(v) {
+    // Parametric shell: rises from facade height, curves inward/upward
+    var h = v * v * 54;
+    var ins = v * v * v * 28;
+    return { h: h, ins: ins };
+  }
+
+  // Build top and bottom chord ring data
+  for (var j = 0; j <= ROOF_RINGS; j++) {
+    var rv = j / ROOF_RINGS;
+    var rp = roofProfile(rv);
+    var rrx2 = ROOF_RX - rp.ins;
+    var rrz2 = ROOF_RZ - rp.ins * (ROOF_RZ / ROOF_RX);
+    var ryTop = rp.h;
+    var ryBot = rp.h - ROOF_GAP;
+    var topRing = [], botRing = [];
+    for (var si4 = 0; si4 <= ROOF_SEGS; si4++) {
+      var ra4 = (si4 / ROOF_SEGS) * PI2;
+      topRing.push({ x: ex(rrx2, ra4), y: ryTop, z: ez(rrz2, ra4) });
+      botRing.push({ x: ex(rrx2, ra4), y: ryBot, z: ez(rrz2, ra4) });
+    }
+    roofTop.push(topRing);
+    roofBot.push(botRing);
+
+    // Top chord horizontal rings
+    var rArr = (j === 0 || j === ROOF_RINGS) ? brightLines : (j % 4 === 0 ? medLines : dimLines);
+    pushRing(rArr, rrx2, rrz2, ryTop, ROOF_SEGS);
+    // Bottom chord rings every 2nd ring
+    if (j % 2 === 0) {
+      pushRing(dimLines, rrx2, rrz2, ryBot, ROOF_SEGS);
+    }
+    // Vertical web members every 4 degrees
+    for (var si5 = 0; si5 < ROOF_SEGS; si5 += 4) {
+      var tPt = topRing[si5], bPt = botRing[si5];
+      pushLine(dimLines, tPt.x, tPt.y, tPt.z, bPt.x, bPt.y, bPt.z);
+    }
+  }
+
+  // Meridian lines every 2 degrees on top chord
+  var ROOF_MER = 2;
+  for (var mi = 0; mi < ROOF_SEGS; mi += ROOF_MER) {
+    var mArr = (mi % 10 === 0) ? medLines : dimLines;
+    for (var j2 = 0; j2 < ROOF_RINGS; j2++) {
+      var pt0 = roofTop[j2][mi], pt1 = roofTop[j2 + 1][mi];
+      pushLine(mArr, pt0.x, pt0.y, pt0.z, pt1.x, pt1.y, pt1.z);
+      // Zigzag diagonal bracing between top and bottom chords
+      if (j2 % 2 === 0 && mi < ROOF_SEGS) {
+        var bPt = roofBot[j2][mi];
+        pushLine(dimLines, pt0.x, pt0.y, pt0.z, bPt.x, bPt.y, bPt.z);
+        if (j2 + 1 <= ROOF_RINGS) {
+          var bPt1 = roofBot[j2 + 1][mi];
+          pushLine(dimLines, bPt.x, bPt.y, bPt.z, pt1.x, pt1.y, pt1.z);
+        }
+      }
+      // Triangulated cross-bracing between meridians
+      if (mi + ROOF_MER <= ROOF_SEGS) {
+        var mi2 = mi + ROOF_MER;
+        pushLine(dimLines,
+          roofTop[j2][mi].x, roofTop[j2][mi].y, roofTop[j2][mi].z,
+          roofTop[j2 + 1][mi2].x, roofTop[j2 + 1][mi2].y, roofTop[j2 + 1][mi2].z
+        );
+        pushLine(dimLines,
+          roofTop[j2][mi2].x, roofTop[j2][mi2].y, roofTop[j2][mi2].z,
+          roofTop[j2 + 1][mi].x, roofTop[j2 + 1][mi].y, roofTop[j2 + 1][mi].z
+        );
+      }
+    }
+  }
+
+  // Inner opening ring — bright accent
+  var innerRP = roofProfile(1);
+  var innerRx = ROOF_RX - innerRP.ins;
+  var innerRz = ROOF_RZ - innerRP.ins * (ROOF_RZ / ROOF_RX);
+  pushRing(accentLines, innerRx, innerRz, innerRP.h, ROOF_SEGS);
+  pushRing(accentLines, innerRx, innerRz, innerRP.h - ROOF_GAP, ROOF_SEGS);
+  // Secondary accent ring slightly inside
+  pushRing(accentLines, innerRx - 2, innerRz - 1.5, innerRP.h + 1, ROOF_SEGS);
+
+  // Connect bowl top to roof base
+  var lastBowlRing = bowlRings[bowlRings.length - 1];
+  var roofBase = roofTop[0];
+  for (var ci2 = 0; ci2 < ROOF_SEGS; ci2 += 2) {
+    var ra5 = (ci2 / ROOF_SEGS) * PI2;
+    pushLine(medLines,
+      ex(lastBowlRing.rx, ra5), lastBowlRing.y, ez(lastBowlRing.rz, ra5),
+      roofBase[ci2].x, roofBase[ci2].y, roofBase[ci2].z
+    );
+  }
+
+  // ====================================================
+  // 5. EXTERIOR FACADE — dense structural grid
+  // ====================================================
+  var FACADE_RX = 132, FACADE_RZ = 102;
+  var FACADE_SEGS = 140;
+  var facadeHeights = [-5, -1, 4, 9, 14, 20, 26, 32, 38, 44];
+  var FACADE_COL_STEP = 2.5; // column every 2.5 degrees
+
+  // Horizontal beam rings at all heights
+  facadeHeights.forEach(function(fh, fi) {
+    var fArr = (fi === 0 || fi === facadeHeights.length - 1) ? brightLines : (fi % 2 === 0 ? medLines : dimLines);
+    pushRing(fArr, FACADE_RX, FACADE_RZ, fh, FACADE_SEGS);
+  });
+  // Outer skin rings
+  for (var ofi = 0; ofi < facadeHeights.length; ofi += 2) {
+    pushRing(dimLines, FACADE_RX + 2, FACADE_RZ + 1.5, facadeHeights[ofi], FACADE_SEGS);
+  }
+
+  // Dense vertical columns + X-bracing
+  var colSegs = Math.floor(360 / FACADE_COL_STEP);
+  for (var ci3 = 0; ci3 < colSegs; ci3++) {
+    var ca = (ci3 * FACADE_COL_STEP / 360) * PI2;
+    var ca2 = ((ci3 + 1) * FACADE_COL_STEP / 360) * PI2;
+    var isMain = (ci3 % 5 === 0);
+    var colArr = isMain ? brightLines : medLines;
+    // Full column
+    pushLine(colArr, ex(FACADE_RX, ca), -5, ez(FACADE_RZ, ca), ex(FACADE_RX, ca), 44, ez(FACADE_RZ, ca));
+    // X-bracing in each bay
+    for (var bi = 0; bi < facadeHeights.length - 1; bi++) {
+      var h1 = facadeHeights[bi], h2 = facadeHeights[bi + 1];
+      pushLine(dimLines, ex(FACADE_RX, ca), h1, ez(FACADE_RZ, ca), ex(FACADE_RX, ca2), h2, ez(FACADE_RZ, ca2));
+      pushLine(dimLines, ex(FACADE_RX, ca2), h1, ez(FACADE_RZ, ca2), ex(FACADE_RX, ca), h2, ez(FACADE_RZ, ca));
+    }
+    // Window rectangles in some panels
+    if (ci3 % 4 === 0) {
+      var wx0 = ex(FACADE_RX * 0.99, ca), wz0 = ez(FACADE_RZ * 0.99, ca);
+      var wx1 = ex(FACADE_RX * 0.99, ca2), wz1 = ez(FACADE_RZ * 0.99, ca2);
+      pushLine(dimLines, wx0, 0, wz0, wx1, 0, wz1);
+      pushLine(dimLines, wx0, 10, wz0, wx1, 10, wz1);
+      pushLine(dimLines, wx0, 0, wz0, wx0, 10, wz0);
+      pushLine(dimLines, wx1, 0, wz1, wx1, 10, wz1);
+      // Mid-bar
+      pushLine(dimLines, wx0, 5, wz0, wx1, 5, wz1);
+    }
+  }
+
+  // Outer apron
+  pushRing(medLines, FACADE_RX + 14, FACADE_RZ + 11, -5, FACADE_SEGS);
+  pushRing(dimLines, FACADE_RX + 14, FACADE_RZ + 11, 0, FACADE_SEGS);
+  for (var ai2 = 0; ai2 < 30; ai2++) {
+    var aa2 = (ai2 / 30) * PI2;
+    pushLine(dimLines, ex(FACADE_RX, aa2), -5, ez(FACADE_RZ, aa2), ex(FACADE_RX + 14, aa2), -5, ez(FACADE_RZ + 11, aa2));
+  }
+
+  // ====================================================
+  // 6. SCOREBOARDS / JUMBOTRONS — 2 suspended wireframe boxes
+  // ====================================================
+  var jumbos = [
+    { cx: 0, cz: 78, rx: 18, ry: 8, rz: 3 },  // long side 1
+    { cx: 0, cz: -78, rx: 18, ry: 8, rz: 3 }   // long side 2
+  ];
+  jumbos.forEach(function(jb) {
+    var x = jb.cx, z = jb.cz, hw = jb.rx, hh = jb.ry, hd = jb.rz;
+    var jy = 42; // suspended height
+    // 12 box edges
+    pushLine(accentLines, x - hw, jy, z - hd, x + hw, jy, z - hd);
+    pushLine(accentLines, x + hw, jy, z - hd, x + hw, jy, z + hd);
+    pushLine(accentLines, x + hw, jy, z + hd, x - hw, jy, z + hd);
+    pushLine(accentLines, x - hw, jy, z + hd, x - hw, jy, z - hd);
+    pushLine(accentLines, x - hw, jy + hh, z - hd, x + hw, jy + hh, z - hd);
+    pushLine(accentLines, x + hw, jy + hh, z - hd, x + hw, jy + hh, z + hd);
+    pushLine(accentLines, x + hw, jy + hh, z + hd, x - hw, jy + hh, z + hd);
+    pushLine(accentLines, x - hw, jy + hh, z + hd, x - hw, jy + hh, z - hd);
+    pushLine(accentLines, x - hw, jy, z - hd, x - hw, jy + hh, z - hd);
+    pushLine(accentLines, x + hw, jy, z - hd, x + hw, jy + hh, z - hd);
+    pushLine(accentLines, x + hw, jy, z + hd, x + hw, jy + hh, z + hd);
+    pushLine(accentLines, x - hw, jy, z + hd, x - hw, jy + hh, z + hd);
+    // Internal screen grid
+    for (var gi = 1; gi < 6; gi++) {
+      var gx = x - hw + (gi / 6) * hw * 2;
+      pushLine(medLines, gx, jy, z - hd, gx, jy + hh, z - hd);
+      pushLine(medLines, gx, jy, z + hd, gx, jy + hh, z + hd);
+    }
+    for (var gj = 1; gj < 3; gj++) {
+      var gy = jy + (gj / 3) * hh;
+      pushLine(medLines, x - hw, gy, z - hd, x + hw, gy, z - hd);
+      pushLine(medLines, x - hw, gy, z + hd, x + hw, gy, z + hd);
+    }
+    // Suspension cables to roof (4 cables from corners)
+    var roofY = 52;
+    pushLine(brightLines, x - hw, jy + hh, z - hd, x - hw * 1.2, roofY, z - hd * 1.5);
+    pushLine(brightLines, x + hw, jy + hh, z - hd, x + hw * 1.2, roofY, z - hd * 1.5);
+    pushLine(brightLines, x - hw, jy + hh, z + hd, x - hw * 1.2, roofY, z + hd * 1.5);
+    pushLine(brightLines, x + hw, jy + hh, z + hd, x + hw * 1.2, roofY, z + hd * 1.5);
+  });
+
+  // ====================================================
+  // 7. STRUCTURAL BASE / UNDERBELLY
+  // ====================================================
+  var SUPPORT_COUNT = 48;
+  for (var sci = 0; sci < SUPPORT_COUNT; sci++) {
+    var sca = (sci / SUPPORT_COUNT) * PI2;
+    var scx = ex(78, sca), scz = ez(54, sca);
+    pushLine(medLines, scx, -5, scz, scx, 2, scz);
+    var sca2 = ((sci + 1) / SUPPORT_COUNT) * PI2;
+    var scx2 = ex(78, sca2), scz2 = ez(54, sca2);
+    pushLine(dimLines, scx, -2, scz, scx2, -2, scz2);
+    pushLine(dimLines, scx, -5, scz, scx2, 2, scz2);
+  }
+
+  // Entrance arches every 30 degrees
+  for (var archi = 0; archi < 12; archi++) {
+    var aa3 = (archi / 12) * PI2;
+    var arx = ex(FACADE_RX - 2, aa3), arz = ez(FACADE_RZ - 2, aa3);
+    pushLine(brightLines, arx - 2.5, -5, arz, arx - 2.5, 10, arz);
+    pushLine(brightLines, arx + 2.5, -5, arz, arx + 2.5, 10, arz);
+    pushLine(medLines, arx - 2.5, 10, arz, arx + 2.5, 10, arz);
+    pushLine(medLines, arx - 2.5, -5, arz, arx + 2.5, -5, arz);
+    pushLine(dimLines, arx - 2.5, 5, arz, arx + 2.5, 5, arz);
+  }
+
+  pushRing(brightLines, FACADE_RX, FACADE_RZ, -5, FACADE_SEGS);
+
+  // Under-tier cross-beams radiating inward
+  for (var ubi = 0; ubi < 48; ubi++) {
+    var uba = (ubi / 48) * PI2;
+    pushLine(dimLines, ex(76, uba), 2, ez(52, uba), ex(FACADE_RX, uba), -5, ez(FACADE_RZ, uba));
+  }
+
+  // ====================================================
+  // 8. FLOODLIGHT TOWERS — 6 lattice towers
+  // ====================================================
+  var floodPos = [
+    [110, 80], [-110, 80], [110, -80], [-110, -80], [0, 98], [0, -98]
+  ];
+  var BW = 2.2, TOWER_H = 64;
+
+  floodPos.forEach(function(fp) {
+    var bx = fp[0], bz = fp[1];
+    // 4 tapered vertical edges
+    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(function(c) {
+      pushLine(brightLines,
+        bx + c[0] * BW, 0, bz + c[1] * BW,
+        bx + c[0] * BW * 0.35, TOWER_H, bz + c[1] * BW * 0.35
+      );
+    });
+    // Horizontal braces every 6 units
+    for (var th = 0; th <= TOWER_H; th += 6) {
+      var f = 1 - (th / TOWER_H) * 0.65;
+      pushLine(medLines, bx - BW * f, th, bz - BW * f, bx + BW * f, th, bz - BW * f);
+      pushLine(medLines, bx + BW * f, th, bz - BW * f, bx + BW * f, th, bz + BW * f);
+      pushLine(medLines, bx + BW * f, th, bz + BW * f, bx - BW * f, th, bz + BW * f);
+      pushLine(medLines, bx - BW * f, th, bz + BW * f, bx - BW * f, th, bz - BW * f);
+    }
+    // X-bracing on all 4 faces
+    for (var th2 = 0; th2 < TOWER_H; th2 += 12) {
+      var f1 = 1 - (th2 / TOWER_H) * 0.65;
+      var f3 = 1 - (Math.min(th2 + 12, TOWER_H) / TOWER_H) * 0.65;
+      var th2e = Math.min(th2 + 12, TOWER_H);
+      // Front + back + left + right
+      pushLine(dimLines, bx - BW * f1, th2, bz - BW * f1, bx + BW * f3, th2e, bz - BW * f3);
+      pushLine(dimLines, bx + BW * f1, th2, bz - BW * f1, bx - BW * f3, th2e, bz - BW * f3);
+      pushLine(dimLines, bx - BW * f1, th2, bz + BW * f1, bx + BW * f3, th2e, bz + BW * f3);
+      pushLine(dimLines, bx + BW * f1, th2, bz + BW * f1, bx - BW * f3, th2e, bz + BW * f3);
+      pushLine(dimLines, bx - BW * f1, th2, bz - BW * f1, bx - BW * f3, th2e, bz + BW * f3);
+      pushLine(dimLines, bx - BW * f1, th2, bz + BW * f1, bx - BW * f3, th2e, bz - BW * f3);
+      pushLine(dimLines, bx + BW * f1, th2, bz - BW * f1, bx + BW * f3, th2e, bz + BW * f3);
+      pushLine(dimLines, bx + BW * f1, th2, bz + BW * f1, bx + BW * f3, th2e, bz - BW * f3);
+    }
+    // Light head — bright wireframe box
+    var hy = TOWER_H + 1, hw = 8, hh = 2.5, hd = 6;
+    // 12 box edges
+    pushLine(accentLines, bx - hw / 2, hy, bz - hd / 2, bx + hw / 2, hy, bz - hd / 2);
+    pushLine(accentLines, bx + hw / 2, hy, bz - hd / 2, bx + hw / 2, hy, bz + hd / 2);
+    pushLine(accentLines, bx + hw / 2, hy, bz + hd / 2, bx - hw / 2, hy, bz + hd / 2);
+    pushLine(accentLines, bx - hw / 2, hy, bz + hd / 2, bx - hw / 2, hy, bz - hd / 2);
+    pushLine(accentLines, bx - hw / 2, hy + hh, bz - hd / 2, bx + hw / 2, hy + hh, bz - hd / 2);
+    pushLine(accentLines, bx + hw / 2, hy + hh, bz - hd / 2, bx + hw / 2, hy + hh, bz + hd / 2);
+    pushLine(accentLines, bx + hw / 2, hy + hh, bz + hd / 2, bx - hw / 2, hy + hh, bz + hd / 2);
+    pushLine(accentLines, bx - hw / 2, hy + hh, bz + hd / 2, bx - hw / 2, hy + hh, bz - hd / 2);
+    pushLine(accentLines, bx - hw / 2, hy, bz - hd / 2, bx - hw / 2, hy + hh, bz - hd / 2);
+    pushLine(accentLines, bx + hw / 2, hy, bz - hd / 2, bx + hw / 2, hy + hh, bz - hd / 2);
+    pushLine(accentLines, bx + hw / 2, hy, bz + hd / 2, bx + hw / 2, hy + hh, bz + hd / 2);
+    pushLine(accentLines, bx - hw / 2, hy, bz + hd / 2, bx - hw / 2, hy + hh, bz + hd / 2);
+    // Internal light grid
+    for (var li = 1; li < 5; li++) {
+      var lx = bx - hw / 2 + (li / 5) * hw;
+      pushLine(accentLines, lx, hy, bz - hd / 2, lx, hy + hh, bz - hd / 2);
+      pushLine(accentLines, lx, hy, bz + hd / 2, lx, hy + hh, bz + hd / 2);
+    }
+    for (var lj = 1; lj < 3; lj++) {
+      var lz = bz - hd / 2 + (lj / 3) * hd;
+      pushLine(accentLines, bx - hw / 2, hy, lz, bx + hw / 2, hy, lz);
+      pushLine(accentLines, bx - hw / 2, hy + hh, lz, bx + hw / 2, hy + hh, lz);
+    }
+  });
+
+  // ====================================================
+  // 9. GROUND PLANE — sparse grid for depth
+  // ====================================================
+  for (var gx = -200; gx <= 200; gx += 12) {
+    var gArr = (gx % 48 === 0) ? medLines : dimLines;
+    pushLine(gArr, gx, -5, -200, gx, -5, 200);
+    pushLine(gArr, -200, -5, gx, 200, -5, gx);
+  }
+  // Radial spokes on ground
+  for (var gr = 0; gr < 360; gr += 12) {
+    var gra = (gr / 360) * PI2;
+    pushLine(dimLines, 0, -5, 0, Math.cos(gra) * 200, -5, Math.sin(gra) * 200);
+  }
+  // Concentric ground rings
+  for (var gcr = 40; gcr <= 180; gcr += 25) {
+    pushRing(dimLines, gcr, gcr, -5, 80);
+  }
+
+  // ====================================================
+  // CREATE LINE SEGMENT DRAW CALLS
+  // ====================================================
+  function makeLineSegments(arr, color, opacity, additive) {
+    if (arr.length === 0) return;
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(arr, 3));
+    var mat = new THREE.LineBasicMaterial({
+      color: color, transparent: true, opacity: opacity,
+      blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+      depthWrite: false
+    });
+    scene.add(new THREE.LineSegments(geo, mat));
+  }
+  // Primary wireframe layers — cyan/blue neon palette
+  makeLineSegments(brightLines, 0x40d0ff, 0.9);
+  makeLineSegments(medLines,    0x2090cc, 0.65);
+  makeLineSegments(dimLines,    0x1060aa, 0.4);
+  makeLineSegments(seatLines,   0x1878bb, 0.5);
+  makeLineSegments(accentLines, 0x60e0ff, 1.0);
+
+  // GLOW PASS — additive blending for bloom effect
+  makeLineSegments(brightLines, 0x40d0ff, 0.2, true);
+  makeLineSegments(accentLines, 0x60e0ff, 0.25, true);
+
+  // ====================================================
+  // CROWD FIGURES — varied real human shapes filling ~70% of seats
+  // Multiple poses, body types, sizes for realism (Phase 1 trigger)
+  // ====================================================
+  var crowdLines = [];
+
+  // Wireframe humanoid figure with VOLUME (closed-shape limbs, body outline)
+  // poseType: 0=seated, 1=arms-up V, 2=fist pump, 3=scarf overhead, 4=arms wide,
+  //           5=waving, 6=jumping, 7=clapping
+  // personType: 0=man, 1=woman, 2=teen, 3=child
+  function addPerson(cx, cy, cz, scale, angle, poseType, personType) {
+    // Person profile — bigger proportions for visible body volume
+    var prof = personType === 0 ? { h:1.0,  hr:0.32, sw:0.60, cw:0.56, ww:0.45, hw:0.50, tm:1.0,  ar:0.14 } // man
+             : personType === 1 ? { h:0.94, hr:0.30, sw:0.50, cw:0.44, ww:0.34, hw:0.55, tm:0.95, ar:0.12 } // woman
+             : personType === 2 ? { h:0.85, hr:0.32, sw:0.45, cw:0.40, ww:0.34, hw:0.42, tm:0.85, ar:0.11 } // teen
+             :                    { h:0.65, hr:0.40, sw:0.38, cw:0.34, ww:0.32, hw:0.36, tm:0.7,  ar:0.10 }; // child
+
+    var s = scale * prof.h;
+    var sin = Math.sin(angle), cos = Math.cos(angle);
+    function pt(dx, dy, dz) {
+      return {
+        x: cx + dx * cos - dz * sin,
+        y: cy + dy,
+        z: cz + dx * sin + dz * cos
+      };
+    }
+    function ln(p1, p2) { pushLine(crowdLines, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z); }
+
+    var standing = (poseType >= 1 && poseType <= 7);
+    // Vertical landmarks
+    var hipY      = standing ? s * 1.05 : s * 0.6;
+    var navelY    = standing ? s * 1.30 : s * 0.85;
+    var waistY    = standing ? s * 1.50 : s * 1.05;
+    var ribY      = standing ? s * 1.75 : s * 1.30;
+    var chestY    = standing ? s * 1.95 : s * 1.50;
+    var shoulderY = standing ? s * 2.20 : s * 1.75;
+    var neckTopY  = standing ? s * 2.35 : s * 1.90;
+    var chinY     = standing ? s * 2.45 : s * 2.00;
+    var headTopY  = chinY + s * prof.hr * 2;
+    var headCy    = (chinY + headTopY) / 2;
+    var headRx    = s * prof.hr;
+    var headRy    = s * prof.hr * 1.15;
+
+    // === HEAD — 10-segment oval (more rounded) ===
+    for (var hi = 0; hi < 10; hi++) {
+      var a1 = (hi / 10) * Math.PI * 2;
+      var a2 = ((hi + 1) / 10) * Math.PI * 2;
+      ln(
+        pt(Math.cos(a1) * headRx, headCy + Math.sin(a1) * headRy, 0),
+        pt(Math.cos(a2) * headRx, headCy + Math.sin(a2) * headRy, 0)
+      );
+    }
+    // Vertical mesh line on head (centerline suggesting 3D form)
+    ln(pt(0, chinY, 0), pt(0, headTopY, 0));
+
+    // === NECK ===
+    var neckW = s * 0.10;
+    ln(pt(-neckW, shoulderY, 0), pt(-neckW, neckTopY, 0));
+    ln(pt( neckW, shoulderY, 0), pt( neckW, neckTopY, 0));
+    ln(pt(-neckW, neckTopY, 0), pt( neckW, neckTopY, 0));
+
+    // === TORSO silhouette (curved) ===
+    var sw = s * prof.sw;
+    var cw = s * prof.cw;
+    var ww = s * prof.ww;
+    var hw = s * prof.hw;
+
+    var lShoulder = pt(-sw, shoulderY, 0);
+    var rShoulder = pt( sw, shoulderY, 0);
+    var lChest    = pt(-cw, chestY, 0);
+    var rChest    = pt( cw, chestY, 0);
+    var lRib      = pt(-cw * 0.92, ribY, 0);
+    var rRib      = pt( cw * 0.92, ribY, 0);
+    var lWaist    = pt(-ww, waistY, 0);
+    var rWaist    = pt( ww, waistY, 0);
+    var lNavel    = pt(-(ww * 0.6 + hw * 0.4), navelY, 0);
+    var rNavel    = pt( (ww * 0.6 + hw * 0.4), navelY, 0);
+    var lHip      = pt(-hw, hipY, 0);
+    var rHip      = pt( hw, hipY, 0);
+
+    // Shoulders to chest to waist to hips — curved silhouette
+    ln(lShoulder, lChest); ln(lChest, lRib); ln(lRib, lWaist); ln(lWaist, lNavel); ln(lNavel, lHip);
+    ln(rShoulder, rChest); ln(rChest, rRib); ln(rRib, rWaist); ln(rWaist, rNavel); ln(rNavel, rHip);
+    // Cross sections (suggest 3D mesh)
+    ln(lShoulder, rShoulder); // shoulder line
+    ln(lChest, rChest);       // pectoral line
+    ln(lWaist, rWaist);       // waist line
+    ln(lHip, rHip);           // hip line
+    // Center spine vertical
+    ln(pt(0, shoulderY, 0), pt(0, hipY, 0));
+
+    // === ARMS — pose-driven, with VOLUME (tube outline) ===
+    var armLen = s * 0.6;
+    var foreLen = s * 0.55;
+    var ar = s * prof.ar; // arm half-width (radius)
+
+    // drawArm: from shoulder anchor → elbow → hand, drawn as a "tube" (two parallel lines)
+    function drawArm(shAnchor, sx, sy, sz, ex, ey, ez, hx, hy, hz) {
+      // Compute perpendicular direction in XY-plane (project onto front/back) for tube thickness
+      function tube(p1, p2) {
+        // direction
+        var dx = p2.x - p1.x, dy = p2.y - p1.y, dz = p2.z - p1.z;
+        var len = Math.sqrt(dx*dx + dz*dz) || 0.01;
+        // Perpendicular in XZ plane (rotated 90°)
+        var px = -dz / len, pz = dx / len;
+        var off = ar;
+        var a1 = { x: p1.x + px * off, y: p1.y, z: p1.z + pz * off };
+        var a2 = { x: p1.x - px * off, y: p1.y, z: p1.z - pz * off };
+        var b1 = { x: p2.x + px * off, y: p2.y, z: p2.z + pz * off };
+        var b2 = { x: p2.x - px * off, y: p2.y, z: p2.z - pz * off };
+        // Outline lines (the two sides of the tube)
+        ln(a1, b1);
+        ln(a2, b2);
+        // Caps to close the tube
+        ln(a1, a2); ln(b1, b2);
+      }
+      var sh = pt(sx, sy, sz);
+      var el = pt(ex, ey, ez);
+      var hd = pt(hx, hy, hz);
+      tube(sh, el);
+      tube(el, hd);
+      // Hand (small square)
+      var hr_ = ar * 1.2;
+      ln(pt(hx - hr_, hy, hz), pt(hx + hr_, hy, hz));
+      ln(pt(hx, hy - hr_, hz), pt(hx, hy + hr_, hz));
+    }
+
+    // drawLeg: same tube approach for legs
+    function drawLeg(hAnchor, kx, ky, kz, fx_, fy_, fz_) {
+      var lr = ar * 1.25; // leg slightly thicker than arm
+      function tubeLeg(p1, p2) {
+        var dx = p2.x - p1.x, dz = p2.z - p1.z;
+        var len = Math.sqrt(dx*dx + dz*dz) || 0.01;
+        var px = -dz / len, pz = dx / len;
+        var a1 = { x: p1.x + px * lr, y: p1.y, z: p1.z + pz * lr };
+        var a2 = { x: p1.x - px * lr, y: p1.y, z: p1.z - pz * lr };
+        var b1 = { x: p2.x + px * lr, y: p2.y, z: p2.z + pz * lr };
+        var b2 = { x: p2.x - px * lr, y: p2.y, z: p2.z - pz * lr };
+        ln(a1, b1); ln(a2, b2);
+        ln(a1, a2); ln(b1, b2);
+      }
+      var knee = pt(kx, ky, kz);
+      var foot = pt(fx_, fy_, fz_);
+      tubeLeg(hAnchor, knee);
+      tubeLeg(knee, foot);
+    }
+
+    // Each drawArm call: (anchor, shoulderX,Y,Z, elbowX,Y,Z, handX,Y,Z) in LOCAL coords
+    if (poseType === 0) {
+      // Seated — relaxed arms hanging down
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw, shoulderY - armLen * 0.9, 0, -sw * 0.85, shoulderY - armLen - foreLen, 0);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw, shoulderY - armLen * 0.9, 0,  sw * 0.85, shoulderY - armLen - foreLen, 0);
+    } else if (poseType === 1) {
+      // V arms up
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw - s * 0.05, shoulderY + armLen * 0.7, 0, -sw - s * 0.2, shoulderY + (armLen + foreLen) * 0.95, 0);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw + s * 0.05, shoulderY + armLen * 0.7, 0,  sw + s * 0.2, shoulderY + (armLen + foreLen) * 0.95, 0);
+    } else if (poseType === 2) {
+      // Fist pump
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw, shoulderY - armLen * 0.9, 0, -sw * 0.8, shoulderY - armLen - foreLen * 0.8, 0);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw + s * 0.15, shoulderY + armLen * 0.3, 0,  sw + s * 0.1, shoulderY + (armLen + foreLen) * 0.85, 0);
+    } else if (poseType === 3) {
+      // Scarf overhead
+      var lh = pt(-s * 0.18, shoulderY + (armLen + foreLen) * 0.9, s * 0.2);
+      var rh = pt( s * 0.18, shoulderY + (armLen + foreLen) * 0.9, s * 0.2);
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw - s * 0.1, shoulderY + armLen * 0.7, s * 0.1, -s * 0.18, shoulderY + (armLen + foreLen) * 0.9, s * 0.2);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw + s * 0.1, shoulderY + armLen * 0.7, s * 0.1,  s * 0.18, shoulderY + (armLen + foreLen) * 0.9, s * 0.2);
+      ln(lh, rh);
+      ln(pt(-s * 0.3, shoulderY + armLen * 1.4, s * 0.15), pt(s * 0.3, shoulderY + armLen * 1.4, s * 0.15));
+    } else if (poseType === 4) {
+      // Arms wide
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw - s * 0.35, shoulderY + armLen * 0.1, 0, -sw - s * 0.65, shoulderY + armLen * 0.2, 0);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw + s * 0.35, shoulderY + armLen * 0.1, 0,  sw + s * 0.65, shoulderY + armLen * 0.2, 0);
+    } else if (poseType === 5) {
+      // Waving — right arm up
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw, shoulderY - armLen, 0, -sw * 0.85, shoulderY - armLen - foreLen * 0.8, 0);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw + s * 0.15, shoulderY + armLen * 0.6, 0,  sw + s * 0.3, shoulderY + (armLen + foreLen) * 0.85, 0);
+    } else if (poseType === 6) {
+      // Jumping — both arms up straight
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw - s * 0.1, shoulderY + (armLen + foreLen) * 0.5, 0, -sw - s * 0.1, shoulderY + (armLen + foreLen) * 0.95, 0);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw + s * 0.1, shoulderY + (armLen + foreLen) * 0.5, 0,  sw + s * 0.1, shoulderY + (armLen + foreLen) * 0.95, 0);
+    } else if (poseType === 7) {
+      // Clapping — both arms in front, hands together
+      drawArm(lShoulder, -sw, shoulderY, 0, -sw * 0.6, shoulderY + armLen * 0.1, s * 0.2, -s * 0.05, shoulderY + armLen * 0.3, s * 0.45);
+      drawArm(rShoulder,  sw, shoulderY, 0,  sw * 0.6, shoulderY + armLen * 0.1, s * 0.2,  s * 0.05, shoulderY + armLen * 0.3, s * 0.45);
+    }
+
+    // === LEGS — with volume ===
+    var thighScale = prof.tm;
+    if (standing) {
+      var kneeY = hipY - s * 0.7 * thighScale;
+      var footY = hipY - s * 1.35 * thighScale;
+      drawLeg(lHip, -hw * 0.85, kneeY, 0, -hw * 0.85, footY, s * 0.15);
+      drawLeg(rHip,  hw * 0.85, kneeY, 0,  hw * 0.85, footY, s * 0.15);
+      // Feet
+      ln(pt(-hw * 1.0, footY, s * 0.0), pt(-hw * 0.7, footY, s * 0.5));
+      ln(pt( hw * 0.7, footY, s * 0.0), pt( hw * 1.0, footY, s * 0.5));
+    } else {
+      // Seated — thighs forward
+      var kneeF = s * 0.8 * thighScale;
+      drawLeg(lHip, -hw * 0.85, hipY + s * 0.05, kneeF, -hw * 0.85, hipY - s * 0.85, kneeF * 0.6);
+      drawLeg(rHip,  hw * 0.85, hipY + s * 0.05, kneeF,  hw * 0.85, hipY - s * 0.85, kneeF * 0.6);
+    }
+  }
+
+  function crowdRand(a, b) { return ((a * 1237 + b * 7919 + 3571) % 997) / 997; }
+
+  // Place crowd: every ~3 degrees, 70% fill, varied poses & body types
+  tiers.forEach(function(tier, tierIdx) {
+    for (var row = 1; row < tier.rows; row++) {
+      var rt = row / tier.rows;
+      var rrx = tier.rxS + rt * (tier.rxE - tier.rxS);
+      var rrz = tier.rzS + rt * (tier.rzE - tier.rzS);
+      var ry  = tier.yS  + rt * (tier.yE  - tier.yS);
+
+      for (var deg = 0; deg < 360; deg += 3) {
+        var rnd = crowdRand(deg, row + tierIdx * 100);
+        if (rnd > 0.7) continue; // 70% fill
+
+        var a = (deg / 360) * Math.PI * 2;
+        var fx = Math.cos(a) * rrx;
+        var fz = Math.sin(a) * rrz;
+        var faceAngle = a - Math.PI / 2;
+        var baseScale = tierIdx === 0 ? 0.55 : (tierIdx === 1 ? 0.5 : 0.45);
+        var personVariation = 0.85 + crowdRand(deg + 31, row + tierIdx * 13) * 0.3;
+        var scale = baseScale * personVariation;
+        var poseRand = crowdRand(deg + 7, row * 3 + tierIdx * 50);
+        var poseType;
+        if (poseRand < 0.30) poseType = 0;
+        else if (poseRand < 0.55) poseType = 1;
+        else if (poseRand < 0.68) poseType = 2;
+        else if (poseRand < 0.76) poseType = 3;
+        else if (poseRand < 0.84) poseType = 4;
+        else if (poseRand < 0.90) poseType = 5;
+        else if (poseRand < 0.95) poseType = 6;
+        else poseType = 7;
+        var typeRand = crowdRand(deg + 17, row * 5 + tierIdx * 70);
+        var personType;
+        if (typeRand < 0.40) personType = 0;
+        else if (typeRand < 0.78) personType = 1;
+        else if (typeRand < 0.92) personType = 2;
+        else personType = 3;
+
+        addPerson(fx, ry, fz, scale, faceAngle, poseType, personType);
+      }
+    }
+  });
+
+  // Render crowd as its own LineSegments with controllable opacity
+  var crowdMaterial = new THREE.LineBasicMaterial({
+    color: 0xc0f0ff,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false
+  });
+  var crowdGeo = new THREE.BufferGeometry();
+  crowdGeo.setAttribute('position', new THREE.Float32BufferAttribute(crowdLines, 3));
+  var crowdMesh = new THREE.LineSegments(crowdGeo, crowdMaterial);
+  scene.add(crowdMesh);
+
+  // Expose crowd material so we can fade it in/out from scroll handler
+  window.__arenaCrowdMaterial = crowdMaterial;
+
+  /* ---- Camera path keyframes ---- */
+  // progress 0→1 maps to drone path through arena
+  var camPath = [
+    // t=0: high outside, looking in
+    { pos: new THREE.Vector3(0, 80, 160),  look: new THREE.Vector3(0, 5, 0) },
+    // t=0.2: entering over stands
+    { pos: new THREE.Vector3(-60, 55, 110), look: new THREE.Vector3(0, 2, 0) },
+    // t=0.4: sweeping over track level
+    { pos: new THREE.Vector3(-80, 28, 30),  look: new THREE.Vector3(0, 4, 0) },
+    // t=0.55: low pass over field (brands)
+    { pos: new THREE.Vector3(20, 15, -20),  look: new THREE.Vector3(0, 8, 40) },
+    // t=0.7: circling (organizers)
+    { pos: new THREE.Vector3(80, 30, -60),  look: new THREE.Vector3(0, 5, 0) },
+    // t=0.85: back straight (clubs)
+    { pos: new THREE.Vector3(30, 22, 90),   look: new THREE.Vector3(0, 8, 0) },
+    // t=1.0: pull back high
+    { pos: new THREE.Vector3(0, 70, 140),   look: new THREE.Vector3(0, 0, 0) },
+  ];
+
+  function lerpV3(a, b, t) {
+    return new THREE.Vector3(
+      a.x + (b.x - a.x) * t,
+      a.y + (b.y - a.y) * t,
+      a.z + (b.z - a.z) * t
+    );
+  }
+  function smoothstep(t) {
+    return t * t * (3 - 2 * t);
+  }
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  function getCamAtProgress(p) {
+    var n = camPath.length - 1;
+    var scaled = p * n;
+    var idx = Math.min(Math.floor(scaled), n - 1);
+    var frac = smoothstep(scaled - idx);
+    var kA = camPath[idx], kB = camPath[idx + 1];
+    return {
+      pos: lerpV3(kA.pos, kB.pos, frac),
+      look: lerpV3(kA.look, kB.look, frac)
+    };
+  }
+
+  /* ---- Scroll state ---- */
+  var scrollProgress = 0;
+  var currentPhase = -1; // -1 = intro, 0/1/2 = overlays
+  var rafId = null;
+  var isVisible = false;
+
+  function updateScroll() {
+    var rect = outer.getBoundingClientRect();
+    var totalH = outer.offsetHeight;
+    // scrolled = how far outer top has gone above viewport top
+    var scrolled = -rect.top;
+    scrollProgress = Math.max(0, Math.min(1, scrolled / (totalH - window.innerHeight)));
+
+    // Phase logic:
+    // 0–15%: intro
+    // 15–45%: brands overlay (phase 0)
+    // 45–70%: organizers overlay (phase 1)
+    // 70–95%: clubs overlay (phase 2)
+    // 95–100%: fade all
+
+    var p = scrollProgress;
+
+    // Intro opacity
+    var introAlpha = p < 0.10 ? 1 : Math.max(0, 1 - (p - 0.10) / 0.08);
+    introEl.style.opacity = introAlpha;
+    introEl.style.pointerEvents = introAlpha > 0.1 ? 'auto' : 'none';
+
+    // Cards appear one by one (cumulative — never disappear once shown)
+    // Card 0 (Brands): appears at 15%
+    // Card 1 (Organizers): appears at 40%
+    // Card 2 (Clubs): appears at 60%
+    var cardThresholds = [0.15, 0.45, 0.72];
+    // Determine which cards should be visible
+    var shouldShow = arenaCards.map(function(card, idx) {
+      return p >= cardThresholds[idx];
+    });
+    var changed = arenaCards.some(function(card, idx) {
+      return shouldShow[idx] !== card.classList.contains('shown');
+    });
+
+    if (changed) {
+      // FLIP: record positions of currently visible cards BEFORE layout change
+      var oldPositions = arenaCards.map(function(card) {
+        return card.classList.contains('shown') ? card.getBoundingClientRect().left : null;
+      });
+
+      // Apply new visibility state
+      arenaCards.forEach(function(card, idx) {
+        if (shouldShow[idx]) {
+          if (!card.classList.contains('shown')) {
+            card.classList.add('shown');
+            card.offsetHeight;
+            requestAnimationFrame(function(){ card.classList.add('visible'); });
+          }
+        } else {
+          card.classList.remove('visible');
+          card.classList.remove('shown');
+        }
+      });
+
+      // FLIP: for cards that were already visible, animate from old → new position
+      arenaCards.forEach(function(card, idx) {
+        if (oldPositions[idx] !== null && card.classList.contains('shown')) {
+          var newLeft = card.getBoundingClientRect().left;
+          var deltaX = oldPositions[idx] - newLeft;
+          if (Math.abs(deltaX) > 1) {
+            card.style.transition = 'none';
+            card.style.transform = 'translateX(' + deltaX + 'px)';
+            card.offsetHeight; // force reflow
+            requestAnimationFrame(function() {
+              card.style.transition = 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease';
+              card.style.transform = 'translateX(0)';
+            });
+          }
+        }
+      });
+    }
+
+    // Progress dots track which card just appeared
+    var activePhase = -1;
+    for (var pi = cardThresholds.length - 1; pi >= 0; pi--) {
+      if (p >= cardThresholds[pi]) { activePhase = pi; break; }
+    }
+    progDots.forEach(function(dot, idx) {
+      if (idx <= activePhase) dot.classList.add('active');
+      else dot.classList.remove('active');
+    });
+
+    // Audio — starts when Brands overlay appears, fades out at end of stadium
+    if (p > 0.12 && p < 0.95) {
+      resumeAudio();
+      var vol;
+      if (p < 0.20) vol = (p - 0.12) / 0.08;
+      else if (p > 0.80) vol = (0.95 - p) / 0.15;
+      else vol = 1;
+      setCrowdVolume(vol);
+    } else {
+      setCrowdVolume(0);
+    }
+
+    // ====== PHASE TRIGGERS ======
+    // Phase 1 ONLY (Brands card, 12%–45%): crowd appears + confetti
+    // Phase 2 (Organizers card, 45%–72%): TBD
+    // Phase 3 (Clubs card, 72%–95%): TBD
+    var inPhase1 = p > 0.12 && p < 0.45;
+    if (window.__arenaCrowdMaterial) {
+      var targetCrowdOpacity = inPhase1 ? 0.95 : 0;
+      var cm = window.__arenaCrowdMaterial;
+      cm.opacity += (targetCrowdOpacity - cm.opacity) * 0.08;
+    }
+    if (window.__arenaConfetti) {
+      window.__arenaConfetti.setActive(inPhase1);
+    }
+  }
+
+  /* ---- Intersection Observer to start/stop rendering ---- */
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      isVisible = e.isIntersecting;
+      if (isVisible) {
+        startRender();
+      } else {
+        stopRender();
+        setCrowdVolume(0);
+        if (crowdPlaying) { crowdAudio.pause(); crowdPlaying = false; }
+      }
+    });
+  }, { threshold: 0 });
+  observer.observe(outer);
+
+  window.addEventListener('scroll', updateScroll, { passive: true });
+  window.addEventListener('resize', function() {
+    W = window.innerWidth; H = window.innerHeight;
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+    renderer.setSize(W, H);
+  });
+
+  /* ---- Render loop ---- */
+  var lastT = 0;
+  function render(ts) {
+    rafId = requestAnimationFrame(render);
+    updateScroll();
+
+    var dt = (ts - lastT) / 1000;
+    lastT = ts;
+
+    // Ambient slow rotation of entire scene for living 3D feel
+    var ambientAngle = ts * 0.00003;
+    scene.rotation.y = Math.sin(ambientAngle) * 0.04;
+
+    // Camera from path
+    var cam = getCamAtProgress(scrollProgress);
+    camera.position.lerp(cam.pos, 0.06);
+    var lookTarget = cam.look;
+    // Make camera look at target smoothly
+    var currentLook = new THREE.Vector3();
+    camera.getWorldDirection(currentLook);
+    var dir = lookTarget.clone().sub(camera.position).normalize();
+    var blended = currentLook.lerp(dir, 0.06);
+    camera.lookAt(camera.position.clone().add(blended.multiplyScalar(10)));
+
+    // Subtle fog density based on scroll
+    scene.fog.density = 0.004 + (1 - scrollProgress) * 0.002;
+
+    renderer.render(scene, camera);
+  }
+
+  function startRender() {
+    if (!rafId) {
+      lastT = performance.now();
+      rafId = requestAnimationFrame(render);
+    }
+  }
+  function stopRender() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  // Start render immediately if already visible
+  updateScroll();
+  startRender();
+
+  // Cleanup on page hide
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) { stopRender(); }
+    else if (isVisible) { startRender(); }
+  });
+
+})();
+</script>
+
+<!-- Confetti particle system for arena Phase 1 -->
+<script>
+(function() {
+  var canvas = document.getElementById('arena-confetti');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 0;
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var active = false;
+  var particles = [];
+  var COLORS = ['#FF3B5C', '#F59E0B', '#22C55E', '#3B82F6', '#A855F7', '#22D3EE', '#FFFFFF'];
+
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  function spawn() {
+    particles.push({
+      x: Math.random() * W,
+      y: -20,
+      vx: (Math.random() - 0.5) * 2,
+      vy: 1 + Math.random() * 2.5,
+      r: 3 + Math.random() * 4,
+      rot: Math.random() * Math.PI * 2,
+      spin: (Math.random() - 0.5) * 0.2,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      life: 1
+    });
+  }
+  function tick() {
+    requestAnimationFrame(tick);
+    ctx.clearRect(0, 0, W, H);
+    if (active && particles.length < 220) {
+      for (var s = 0; s < 3; s++) spawn();
+    }
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.03; // gravity
+      p.rot += p.spin;
+      if (p.y > H + 20) { particles.splice(i, 1); continue; }
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.85;
+      ctx.fillRect(-p.r, -p.r * 0.4, p.r * 2, p.r * 0.8);
+      ctx.restore();
+    }
+  }
+
+  window.__arenaConfetti = {
+    setActive: function(on) {
+      if (on === active) return;
+      active = on;
+      canvas.classList.toggle('active', on);
+    }
+  };
+
+  resize();
+  window.addEventListener('resize', resize);
+  tick();
+})();
+</script>
+
+<!-- Gradient lights — scroll-based parallax movement -->
+<script>
+(function() {
+  var wrap = document.getElementById('liquidWrap');
+  var pillars = document.getElementById('pillars');
+  var contact = document.getElementById('contact');
+  if (!wrap || !pillars) return;
+
+  var lights = wrap.querySelectorAll('.glight');
+  var contactCard = contact ? contact.querySelector('.app-cta-inner') : null;
+  var active = false;
+  var lastScroll = 0;
+  var smoothScroll = 0;
+
+  function update() {
+    var pillarsTop = pillars.getBoundingClientRect().top + window.scrollY;
+    var viewportMid = window.scrollY + window.innerHeight / 2;
+    var shouldBeActive = viewportMid >= pillarsTop - 400;
+    if (shouldBeActive !== active) {
+      active = shouldBeActive;
+      wrap.classList.toggle('active', shouldBeActive);
+    }
+    lastScroll = window.scrollY;
+
+    if (contactCard) {
+      var rect = contact.getBoundingClientRect();
+      var p = 0;
+      if (rect.top < window.innerHeight) {
+        p = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / window.innerHeight));
+      }
+      contactCard.classList.toggle('glass-lit', p > 0.35);
+    }
+  }
+
+  function tick() {
+    requestAnimationFrame(tick);
+    smoothScroll += (lastScroll - smoothScroll) * 0.08;
+    for (var i = 0; i < lights.length; i++) {
+      var el = lights[i];
+      var speed = parseFloat(el.dataset.speed) || 0.2;
+      // Each light shifts vertically and horizontally based on scroll
+      var dy = smoothScroll * speed;
+      var dx = Math.sin(smoothScroll * 0.001 + i) * 30 * speed;
+      el.style.transform = 'translate(' + dx + 'px, ' + dy + 'px)';
+    }
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+  tick();
+})();
+</script>
+
+<!-- Comet ink-in-water background shader (Part 1) — desktop only, DPR=1 -->
+<script>
+(function() {
+  if (window.innerWidth <= 768) return; // mobile: skip entirely
+  var canvas = document.getElementById('comet-bg');
+  if (!canvas) return;
+  var gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: false });
+  if (!gl) { console.warn('[comet-bg] WebGL not supported'); return; }
+
+  var VS = [
+    'attribute vec2 a_position;',
+    'void main() { gl_Position = vec4(a_position, 0.0, 1.0); }'
+  ].join('\n');
+
+  var FS = [
+    'precision highp float;',
+    'uniform vec2 u_resolution;',
+    'uniform float u_time;',
+    'uniform float u_scrollY;',
+    'uniform float u_driftX;',
+    'uniform float u_driftY;',
+    'uniform float u_idlePulse;',
+    'uniform float u_shape;',  // 0.85..1.25 — vertical stretch factor
+
+    'vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }',
+
+    'float snoise(vec2 v) {',
+    '  const vec4 C = vec4(0.211324865405187, 0.366025403784439,',
+    '                      -0.577350269189626, 0.024390243902439);',
+    '  vec2 i  = floor(v + dot(v, C.yy));',
+    '  vec2 x0 = v - i + dot(i, C.xx);',
+    '  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);',
+    '  vec4 x12 = x0.xyxy + C.xxzz;',
+    '  x12.xy -= i1;',
+    '  i = mod(i, 289.0);',
+    '  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));',
+    '  vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);',
+    '  m = m*m; m = m*m;',
+    '  vec3 x = 2.0 * fract(p * C.www) - 1.0;',
+    '  vec3 h = abs(x) - 0.5;',
+    '  vec3 ox = floor(x + 0.5);',
+    '  vec3 a0 = x - ox;',
+    '  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);',
+    '  vec3 g;',
+    '  g.x  = a0.x  * x0.x  + h.x  * x0.y;',
+    '  g.yz = a0.yz * x12.xz + h.yz * x12.yw;',
+    '  return 130.0 * dot(m, g);',
+    '}',
+
+    'vec3 hueShift(vec3 color, float angle) {',
+    '  const vec3 k = vec3(0.57735, 0.57735, 0.57735);',
+    '  float c = cos(angle);',
+    '  return color * c + cross(k, color) * sin(angle) + k * dot(k, color) * (1.0 - c);',
+    '}',
+
+    'void main() {',
+    '  vec2 uv = gl_FragCoord.xy / u_resolution.xy;',
+    '  vec2 p = uv * 2.0 - 1.0;',
+    '  p.x *= u_resolution.x / u_resolution.y;',
+
+    '  // Large wide blob — radius ~0.7 → spans roughly 70% of screen width when horizontally stretched',
+    '  float baseRadius = 0.7 * u_idlePulse;',
+
+    '  vec2 center = vec2(u_driftX * 0.5, u_driftY * 0.35);',
+    '  vec2 q = p - center;',
+
+    '  // Lower-frequency, higher-amplitude noise for a water-like wobble at this scale',
+    '  float t = u_time * 0.4;',
+    '  vec2 nq = q;',
+    '  float n1 = snoise(q * 0.9 + vec2(t * 0.6, 0.0));',
+    '  float n2 = snoise(q * 1.4 + vec2(0.0, t * 0.8));',
+    '  nq += vec2(n1, n2) * 0.22;',
+
+    '  // Horizontal stretch + strong vertical compression — wide flat water shape',
+    '  // X stretched (divide by 1.8), Y compressed 70% (multiply by ~3.3) so blob is short',
+    '  vec2 shapedQ = vec2(nq.x / (1.8 * u_shape), nq.y * 3.3 / u_shape);',
+    '  float headDist = length(shapedQ);',
+    '  float head = smoothstep(baseRadius * 1.2, 0.0, headDist);',
+
+    '  // Color hue shifts with scroll position',
+    '  vec3 baseColor = vec3(0.55, 0.25, 0.95);',
+    '  float hueAngle = u_scrollY * 0.0015 + u_time * 0.05;',
+    '  vec3 color = hueShift(baseColor, hueAngle);',
+
+    '  color += vec3(1.0, 0.4, 0.8) * smoothstep(baseRadius * 0.5, 0.0, headDist) * 0.5;',
+
+    '  vec3 outCol = color * head * 0.95;',
+
+    '  // Output proper alpha so the grid below shows through where there is no blob',
+    '  // Now 70% transparent (0.85 → 0.425 → 0.3)',
+    '  gl_FragColor = vec4(outCol, head * 0.3);',
+    '}'
+  ].join('\n');
+
+  function compile(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error('[comet-bg] shader compile error:', gl.getShaderInfoLog(s));
+      return null;
+    }
+    return s;
+  }
+
+  var vs = compile(gl.VERTEX_SHADER, VS);
+  var fs = compile(gl.FRAGMENT_SHADER, FS);
+  if (!vs || !fs) return;
+
+  var program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error('[comet-bg] program link error:', gl.getProgramInfoLog(program));
+    return;
+  }
+  gl.useProgram(program);
+
+  // Fullscreen quad
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  var posLoc = gl.getAttribLocation(program, 'a_position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  var uRes = gl.getUniformLocation(program, 'u_resolution');
+  var uTime = gl.getUniformLocation(program, 'u_time');
+  var uScrollY = gl.getUniformLocation(program, 'u_scrollY');
+  var uDriftX = gl.getUniformLocation(program, 'u_driftX');
+  var uDriftY = gl.getUniformLocation(program, 'u_driftY');
+  var uIdlePulse = gl.getUniformLocation(program, 'u_idlePulse');
+  var uShape = gl.getUniformLocation(program, 'u_shape');
+
+  // DPR capped at 1.0 per spec
+  function resize() {
+    var dpr = 1.0;
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Idle-only state — only tracks scrollY (for color hue shift) and gate visibility past stadium
+  var state = { scrollY: 0, visible: 0 };
+  var arenaOuter = document.querySelector('.arena-scroll-outer');
+
+  function onScroll() {
+    state.scrollY = window.scrollY;
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  var startT = performance.now();
+  function tick() {
+    requestAnimationFrame(tick);
+    var elapsed = (performance.now() - startT) / 1000;
+
+    // Gate: only show after we've scrolled past the stadium section
+    // Fade in over ~30vh as we exit the arena
+    if (arenaOuter) {
+      var arenaRect = arenaOuter.getBoundingClientRect();
+      var arenaBottomFromViewportTop = arenaRect.bottom; // px below top of viewport
+      // When arena bottom enters viewport (= bottom <= innerHeight) start fading in.
+      // Fully visible once arena bottom has scrolled off the top of viewport.
+      var viewportH = window.innerHeight;
+      var fadeRange = viewportH * 0.4;
+      // arenaBottomFromViewportTop large positive = stadium below viewport, comet hidden
+      // arenaBottomFromViewportTop = 0 means stadium just ended at top
+      var t = (viewportH - arenaBottomFromViewportTop) / fadeRange;
+      var target = Math.max(0, Math.min(1, t));
+      state.visible += (target - state.visible) * 0.12;
+    } else {
+      state.visible = 1;
+    }
+    canvas.style.opacity = state.visible.toFixed(3);
+
+    // Drift: noise-driven slow wander (previous version, more visible motion)
+    var driftT = elapsed * 0.08;
+    var driftX = Math.sin(driftT * 1.3) * 0.6 + Math.sin(driftT * 0.7) * 0.3;
+    var driftY = Math.cos(driftT * 1.1) * 0.3 + Math.cos(driftT * 0.5) * 0.2;
+
+    // Idle pulse: subtle scale breathing (~1.5s period)
+    var pulse = 1.0 + Math.sin(elapsed * 4.2) * 0.08;
+
+    // Shape variation: long-period oscillation between taller (1.15) and slimmer (0.88)
+    // Period ~12 seconds → calm, organic breathing of the silhouette as the blob travels
+    var shape = 1.02 + Math.sin(elapsed * 0.52) * 0.13;
+
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.uniform1f(uTime, elapsed);
+    gl.uniform1f(uScrollY, state.scrollY);
+    gl.uniform1f(uDriftX, driftX);
+    gl.uniform1f(uDriftY, driftY);
+    gl.uniform1f(uIdlePulse, pulse);
+    gl.uniform1f(uShape, shape);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+  tick();
 })();
 </script>
 
