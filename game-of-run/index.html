@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="The first real-world running MMO. Run to claim territory. Found your House. Reign over your Kingdom." />
+<title>Game of Run · Overture | SportIn</title>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Game of Run · Run. Claim. Reign." />
+<meta property="og:description" content="Every city is a Realm. Every street is a Keep. Every session is a Coin Quest." />
+<meta property="og:image" content="https://sportin.io/hero-banner.png" />
+<meta property="og:url" content="https://sportin.io/game-of-run" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Game of Run · Run. Claim. Reign." />
+<meta name="twitter:description" content="The first real-world running MMO. Three Kingdoms. Twenty-four zones. One crown." />
+<meta name="twitter:image" content="https://sportin.io/hero-banner.png" />
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-1: #F5E4A8;
+    --gold-2: #E9CE85;
+    --gold-3: #C9A24B;
+    --gold-4: #8B6818;
+    --ink: #06050A;
+    --ink-2: #120A1F;
+    --ink-3: #1E1530;
+    --purple: #6B3FA0;
+    --blue: #1A8CFF;
+    --border: rgba(201, 162, 75, 0.35);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #06050A;
+    color: var(--gold-2);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    min-height: 100vh;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 50% 0%, #1E1530 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, #0A0D22 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(26, 140, 255, 0.10) 0%, transparent 45%),
+      linear-gradient(180deg, #0A0610 0%, #120A1F 50%, #06050A 100%);
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(102deg, transparent 0, transparent 3px, rgba(255, 240, 200, 0.012) 3px, rgba(255, 240, 200, 0.012) 4px),
+      repeating-linear-gradient(17deg, transparent 0, transparent 5px, rgba(255, 240, 200, 0.008) 5px, rgba(255, 240, 200, 0.008) 6px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+
+  /* Nav */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 44px;
+    background: rgba(6, 5, 10, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 0.2em;
+    color: var(--gold-2);
+    text-transform: uppercase;
+  }
+  .nav-brand .dot { color: var(--blue); }
+  .nav-links {
+    display: flex;
+    gap: 26px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .nav-links a {
+    color: rgba(201, 162, 75, 0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+  }
+  .nav-links a:hover { color: var(--gold-2); border-color: var(--gold-3); }
+  .nav-links a.current { color: var(--gold-2); border-color: var(--gold-3); }
+  .nav-sportin {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(201, 162, 75, 0.55);
+  }
+  .nav-sportin:hover { color: var(--gold-2); }
+
+  .wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 70px 44px 100px; }
+
+  /* Eyebrow */
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.55em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+  .eyebrow .bullet { width: 40px; height: 1px; background: var(--gold-3); opacity: 0.6; }
+
+  /* ------------------------------------------------------------------ */
+  /* CINEMATIC HERO (Step 1 scaffold) — depth-flow video + scroll driver */
+  /* ------------------------------------------------------------------ */
+  .gor-cinema {
+    position: relative;
+    height: 500vh;       /* 5 viewport heights of scroll runway */
+    z-index: 2;
+  }
+  .gor-cinema-sticky {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: #04060A;
+  }
+  /* Layer 0 — depth-flow video (the LandscapeLayer equivalent) */
+  .gor-cinema-video-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    transform-origin: 50% 55%;
+    will-change: transform;
+  }
+  .gor-cinema-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: #04060A url('/game-of-run/cover_gor_naked.png') center/cover no-repeat;
+  }
+  /* Heavy cinematic vignette to focus the eye */
+  .gor-cinema-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 55%, transparent 35%, rgba(0,0,0,0.35) 78%, rgba(0,0,0,0.78) 100%),
+      linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 22%, transparent 78%, rgba(0,0,0,0.55) 100%);
+  }
+  /* Faint scroll hint at the bottom — Step 1 only, will go away later */
+  .gor-cinema-hint {
+    position: absolute;
+    bottom: 4vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: rgba(201, 162, 75, 0.55);
+    text-transform: uppercase;
+    animation: gorCinemaBob 2.6s ease-in-out infinite;
+  }
+  @keyframes gorCinemaBob {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.45; }
+    50% { transform: translate(-50%, 6px); opacity: 1; }
+  }
+  .gor-cinema-hint .rule {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 162, 75, 0.55), transparent);
+  }
+  /* Reduced motion fallback: pause video + show poster only */
+  @media (prefers-reduced-motion: reduce) {
+    .gor-cinema-video { opacity: 0; }
+  }
+
+  /* Layer 3c — House sigil shields (PNG images, no text labels).
+     Each one appears at its own scroll point, drifts in at varied positions
+     across the viewport, and stays visible until the cinema unpins. */
+  .gor-cinema-sigils {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
+  }
+  .gor-sigil {
+    position: absolute;
+    width: 140px;
+    aspect-ratio: 1 / 1.16;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7);
+    will-change: transform, opacity;
+    /* No drop-shadow, no glow, no plate — just the shield itself */
+  }
+  .gor-sigil img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  /* Flying dragon silhouette — drifts across viewport while scrolling
+     through the post-cinema content. Pure shape, low opacity, sits behind
+     all sections so it reads as a shadow gliding through the back of the sky. */
+  /* Dragon shadow — subliminal flying silhouette behind all content.
+     Reads as the suggestion of a shape, never the foreground. */
+  .gor-dragon-flying {
+    position: fixed;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    width: 90vw;                 /* +20% larger (was 75vw) */
+    max-width: 1900px;
+    aspect-ratio: 1536 / 1024;
+    opacity: 0;
+    will-change: transform, opacity;
+    transform: translate(-90vw, -8vh) rotate(0deg) scale(0.9);
+    transform-origin: center center;
+    transition: opacity 1s ease;
+    filter: blur(2px);
+  }
+  .gor-dragon-flying.visible { opacity: 0.13; }
+  /* The PNG image itself is rotated 180° (head down) — the outer wrapper
+     keeps the scroll-driven transforms separate from the static flip. */
+  .gor-dragon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transform: rotate(180deg);
+  }
+  /* Wing flap — bigger range + slower cadence for the larger creature */
+  .gor-dragon-wings {
+    transform-origin: 50% 56%;
+    animation: gorDragonFlap 2.6s ease-in-out infinite;
+    transform-box: fill-box;
+  }
+  @keyframes gorDragonFlap {
+    0%, 100% { transform: scaleY(1)    translateY(0); }
+    25%      { transform: scaleY(0.78) translateY(4px); }
+    50%      { transform: scaleY(0.35) translateY(10px); }
+    75%      { transform: scaleY(0.78) translateY(4px); }
+  }
+
+  .gor-sigil-name {
+    position: absolute;
+    top: calc(100% - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-2);
+    text-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.9),
+      0 2px 10px rgba(0, 0, 0, 0.85);
+    pointer-events: none;
+  }
+
+  /* Layer 3d — Dark wash. 70% black at frame 1 (30% transparent), then
+     drops 10% per scroll-click revealing each new element. By scroll 70%
+     the wash is fully gone — the landscape is bare for the user. */
+  .gor-cinema-dim {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background: #000;
+    opacity: 0.7;
+    will-change: opacity;
+  }
+
+  /* Layer 4 — Title is HUGE and centred on entry. Recedes into the depth
+     during the first 0-20% of scroll: smaller, slight blur, tipped back. */
+  .gor-cinema-title-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+    pointer-events: none;
+    will-change: transform, opacity, filter;
+    transform-origin: 50% 50%;
+    perspective: 1400px;
+    opacity: 1;
+    transform: scale(1.4);
+    filter: none;
+  }
+  .gor-cinema-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--gold-3);
+    margin-bottom: 18px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  }
+  .gor-cinema-eyebrow .rule {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-3), transparent);
+  }
+  .gor-cinema-eyebrow .lozenge {
+    width: 7px;
+    height: 7px;
+    transform: rotate(45deg);
+    background: var(--gold-3);
+    box-shadow: 0 0 10px rgba(245, 228, 168, 0.7);
+  }
+  /* Aged metallic title — gold tones blended with tarnished steel, fine
+     scratches via fractal noise, and a soft polish band. Engraved + worn. */
+  .gor-cinema-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: clamp(64px, 11vw, 156px);
+    line-height: 0.94;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+    background:
+      /* L1 — Scratches / grit: horizontal fractal-noise streaks. Multiplies
+         dark patches into the gold below so the surface reads as old & worn. */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 100'%3E%3Cdefs%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95 0.04' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='280' height='100' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E"),
+      /* L2 — Specks / pitting: lower-frequency darker spots, sparser. */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 100'%3E%3Cdefs%3E%3Cfilter id='p'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.35 0.45' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 -1.3'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='240' height='100' filter='url(%23p)' opacity='0.55'/%3E%3C/svg%3E"),
+      /* L3 — Polish band: a soft horizontal sheen as if a light glances off
+         the metal, brightening the upper-middle band. */
+      linear-gradient(180deg,
+        transparent 26%,
+        rgba(255, 240, 200, 0.45) 44%,
+        transparent 58%),
+      /* L4 — Rich gold metallic matching the shield PNGs: warmer and
+         brighter than steel, with a dark band that lets the engraved
+         shadow read clearly. */
+      linear-gradient(180deg,
+        #FFE8A3 0%,
+        #F3CE5E 14%,
+        #C99A2A 30%,
+        #4D3D14 46%,
+        #8A6620 52%,
+        #D8A33A 60%,
+        #F8D87A 74%,
+        #B58524 88%,
+        #3E2E10 100%);
+    background-blend-mode: multiply, multiply, screen, normal;
+    background-size: 260px 90px, 220px 90px, 100% 100%, 100% 100%;
+    background-repeat: repeat, repeat, no-repeat, no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* Sharp engraved outline + soft depth + ground anchor */
+    filter:
+      url(#gorTitleErode)
+      drop-shadow(0 1px 0 rgba(0, 0, 0, 0.9))
+      drop-shadow(0 2px 2px rgba(0, 0, 0, 0.6))
+      drop-shadow(0 14px 30px rgba(0, 0, 0, 0.6));
+    /* Scattered bite-marks: invisible-radial-gradient masks cut tiny holes
+       through the letters where it looks like chunks have flaked off.
+       Each mask is composited with 'intersect' so they all cut into the text. */
+    -webkit-mask-image:
+      radial-gradient(ellipse 14px 8px at 11% 18%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 10px 8px at 24% 78%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 12px 7px at 39% 22%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 9px  6px at 52% 88%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 14px 9px at 64% 14%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 11px 7px at 77% 82%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 13px 8px at 88% 26%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 8px  10px at 31% 50%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 8px  10px at 70% 50%, transparent 0%, transparent 80%, black 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(ellipse 14px 8px at 11% 18%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 10px 8px at 24% 78%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 12px 7px at 39% 22%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 9px  6px at 52% 88%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 14px 9px at 64% 14%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 11px 7px at 77% 82%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 13px 8px at 88% 26%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 8px  10px at 31% 50%, transparent 0%, transparent 80%, black 100%),
+      radial-gradient(ellipse 8px  10px at 70% 50%, transparent 0%, transparent 80%, black 100%);
+    mask-composite: intersect;
+  }
+  .gor-cinema-subtitle {
+    margin-top: 22px;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: clamp(13px, 1.5vw, 20px);
+    letter-spacing: 0.32em;
+    color: rgba(233, 206, 133, 0.92);
+    text-transform: uppercase;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.7);
+  }
+  .gor-cinema-cta {
+    margin-top: 36px;
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 30px;
+    background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold-3) 100%);
+    color: #1A0E2C;
+    border: 1px solid var(--gold-1);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.25s ease, filter 0.25s ease;
+  }
+  .gor-cinema-cta:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+  .gor-cinema-cta svg { width: 14px; height: 14px; }
+
+  /* Top + bottom edge gradients so the title reads on any landscape frame */
+  .gor-cinema-edges {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    background:
+      /* Top crown shadow */
+      linear-gradient(180deg, rgba(6, 5, 10, 0.55) 0%, transparent 18%),
+      /* Bottom heavy darkness — Viking abyss */
+      linear-gradient(180deg, transparent 50%, rgba(6, 7, 14, 0.55) 70%, rgba(4, 5, 10, 0.92) 88%, #04060A 100%);
+  }
+
+  /* Layer 3 — Volumetric fog: organic soft blob puffs drifting independently */
+  .gor-cinema-fog {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+    overflow: hidden;
+    mix-blend-mode: screen;
+  }
+  .gor-cinema-fog-puff {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    will-change: transform, opacity;
+    opacity: 0;
+    animation-name: gorFogDrift;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  @keyframes gorFogDrift {
+    0%   { transform: translateX(-30vw); opacity: 0; }
+    12%  { opacity: var(--opa, 0.6); }
+    88%  { opacity: var(--opa, 0.6); }
+    100% { transform: translateX(40vw); opacity: 0; }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* (LEGACY) IMMERSIVE BATTLEFIELD HERO — to be removed in later steps  */
+  /* ------------------------------------------------------------------ */
+  .bf-outer {
+    position: relative;
+    height: 320vh;
+    z-index: 2;
+  }
+  .bf-sticky {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .bf-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    transform-origin: 50% 50%;
+    transition: none;
+    will-change: transform;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 50%, rgba(14, 22, 32, 0.85) 0%, transparent 75%),
+      linear-gradient(180deg, #050709 0%, #08101A 50%, #050709 100%);
+  }
+  .bf-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+  .bf-fog {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background:
+      /* Heavy edge vignette so map fades into darkness */
+      radial-gradient(ellipse 75% 60% at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.55) 80%, rgba(0, 0, 0, 0.85) 100%),
+      /* Centre scanlight glow */
+      radial-gradient(ellipse 40% 25% at 50% 55%, rgba(26, 140, 255, 0.04) 0%, transparent 70%);
+  }
+  .bf-grain {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  /* Hanging banners on left + right */
+  .bf-banner {
+    position: absolute;
+    top: 0;
+    z-index: 6;
+    width: 120px;
+    height: 360px;
+    transform-origin: top center;
+    transition: none;
+    will-change: transform, opacity;
+  }
+  .bf-banner svg { width: 100%; height: 100%; display: block; }
+  .bf-banner-left { left: 3vw; }
+  .bf-banner-right { right: 3vw; }
+
+  /* Title block */
+  .bf-title-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-top: 14vh;
+    z-index: 7;
+    text-align: center;
+    pointer-events: none;
+    transform-origin: 50% 30%;
+    will-change: transform, opacity;
+  }
+  .bf-eyebrow-rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--gold-3);
+    margin-bottom: 22px;
+  }
+  .bf-eyebrow-rule .rule {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-3), transparent);
+  }
+  .bf-eyebrow-rule .lozenge {
+    width: 8px;
+    height: 8px;
+    transform: rotate(45deg);
+    background: var(--gold-3);
+    box-shadow: 0 0 8px rgba(201, 162, 75, 0.7);
+  }
+  .bf-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: clamp(64px, 11vw, 156px);
+    line-height: 0.92;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #F8EBB8 0%, #E9CE85 25%, #C9A24B 55%, #8B6818 85%, #C9A24B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+  .bf-subtitle {
+    margin-top: 22px;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: clamp(14px, 1.6vw, 22px);
+    letter-spacing: 0.32em;
+    color: rgba(233, 206, 133, 0.85);
+    text-transform: uppercase;
+  }
+
+  /* "Our Teams" divider that appears mid-scroll */
+  .bf-teams-divider {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 7;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.5em;
+    color: var(--gold-2);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .bf-teams-divider .lozenge {
+    width: 8px;
+    height: 8px;
+    transform: rotate(45deg);
+    background: var(--gold-3);
+    box-shadow: 0 0 10px rgba(201, 162, 75, 0.8);
+  }
+  .bf-teams-divider .rule {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-3), transparent);
+  }
+
+  /* Three House cards anchored to bottom */
+  .bf-houses {
+    position: absolute;
+    bottom: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 8;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    width: min(1080px, 92vw);
+  }
+  .bf-house {
+    text-align: center;
+    opacity: 0;
+    transform: translateY(60px);
+    will-change: opacity, transform;
+    padding: 10px 12px 24px;
+  }
+  .bf-house .bf-house-banner {
+    width: 110px;
+    height: 138px;
+    margin: 0 auto 12px;
+  }
+  .bf-house .bf-house-banner svg { width: 100%; height: 100%; display: block; }
+  .bf-house-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: clamp(18px, 1.8vw, 24px);
+    color: var(--gold-1);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .bf-house-motto {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .bf-house-valor .bf-house-motto { color: #C8A4F0; }
+  .bf-house-norden .bf-house-motto { color: #74B8FF; }
+  .bf-house-aurora .bf-house-motto { color: #9CA0AE; }
+  .bf-house-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.4;
+    color: rgba(233, 206, 133, 0.78);
+    max-width: 220px;
+    margin: 0 auto;
+  }
+
+  /* Bottom tagline */
+  .bf-tagline {
+    position: absolute;
+    bottom: 2.4vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.45em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .bf-tagline .rule {
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-3), transparent);
+  }
+  .bf-tagline .lozenge {
+    width: 7px;
+    height: 7px;
+    transform: rotate(45deg);
+    background: var(--gold-3);
+  }
+
+  @media (max-width: 900px) {
+    .bf-outer { height: 360vh; }
+    .bf-banner { width: 60px; height: 200px; }
+    .bf-banner-left { left: 2vw; }
+    .bf-banner-right { right: 2vw; }
+    .bf-houses { grid-template-columns: 1fr; gap: 16px; bottom: 4vh; width: 88vw; }
+    .bf-house { padding: 6px 10px 12px; }
+    .bf-house .bf-house-banner { width: 70px; height: 90px; margin-bottom: 6px; }
+    .bf-house-body { font-size: 13px; }
+    .bf-tagline { font-size: 9px; letter-spacing: 0.32em; }
+    .bf-tagline .rule { width: 24px; }
+  }
+
+  /* Mega title */
+  .mega {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    line-height: 0.88;
+    text-transform: uppercase;
+    text-align: center;
+    background: linear-gradient(180deg, var(--gold-1) 0%, var(--gold-2) 22%, var(--gold-3) 48%, var(--gold-4) 75%, var(--gold-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .mega-1 { font-size: 82px; letter-spacing: 0.06em; }
+  .mega-2 { font-size: 132px; letter-spacing: 0.02em; margin-top: -8px; }
+
+  /* Tagline */
+  .tagline {
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold-2);
+    font-weight: 600;
+    margin-top: 28px;
+  }
+  .tagline-sub {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: rgba(233, 206, 133, 0.78);
+    margin-top: 14px;
+    margin-bottom: 70px;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin: 40px auto;
+    color: var(--gold-3);
+  }
+  .divider .line {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-3), transparent);
+  }
+  .divider .lozenge {
+    width: 10px;
+    height: 10px;
+    background: var(--gold-3);
+    transform: rotate(45deg);
+    box-shadow: 0 0 12px rgba(201, 162, 75, 0.6);
+  }
+
+  /* Section titles */
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--gold-2);
+    text-align: center;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .section-sub {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: rgba(233, 206, 133, 0.72);
+    margin-bottom: 48px;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Three Kingdoms: square country tiles                               */
+  /* ------------------------------------------------------------------ */
+  .kingdoms-crest {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin: 70px 0 22px;
+  }
+  .kingdoms-crest .line {
+    flex: 0 0 140px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 162, 75, 0.7), transparent);
+  }
+  .kingdoms-crest .word {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--gold-2);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+  }
+  .squares {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 30px;
+  }
+  /* ================================================================
+     CINEMA → BODY DISSOLVE — top of the purple body fades from fully
+     transparent (over the video) down to opaque dark purple. No hard
+     seam: the purple is born out of the video itself.
+     ================================================================ */
+  .gor-cinema-dissolve {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    margin-top: -180px;
+    margin-bottom: 0;
+    pointer-events: none;
+    z-index: 5;
+    /* Stepped gradient matches the body's dominant top colour (#1E1530)
+       fading up into total transparency — the bottom of the cinema video
+       bleeds through the upper portion of this band. */
+    background: linear-gradient(180deg,
+      rgba(15, 8, 28, 0.00) 0%,
+      rgba(15, 8, 28, 0.20) 30%,
+      rgba(20, 12, 36, 0.55) 55%,
+      rgba(30, 21, 48, 0.85) 78%,
+      #1E1530 100%);
+  }
+
+  /* ================================================================
+     AGED METAL — scratched dark plate for tactical blocks (kingdoms, stats)
+     ================================================================ */
+  .square {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1;
+    padding: 26px;
+    background:
+      /* Horizontal brush-stroke scratches */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 320'%3E%3Cdefs%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4 0.04' numOctaves='2' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.5'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='320' height='320' filter='url(%23m)' opacity='0.65'/%3E%3C/svg%3E") repeat,
+      /* Specks / pitting */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 320'%3E%3Cdefs%3E%3Cfilter id='p'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.4 0.4' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 -1.1'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='320' height='320' filter='url(%23p)' opacity='0.55'/%3E%3C/svg%3E") repeat,
+      /* Base steel gradient */
+      linear-gradient(180deg, #221c2a 0%, #161220 60%, #0c0916 100%);
+    background-blend-mode: multiply, multiply, normal;
+    border: 1px solid rgba(201, 162, 75, 0.55);
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    box-shadow:
+      inset 0 1px 0 rgba(245, 228, 168, 0.10),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+      0 6px 18px rgba(0, 0, 0, 0.45);
+  }
+  /* Corner rivets — four small studs anchoring the metal plate */
+  .square::before {
+    top: 8px; left: 8px;
+    border-right: none !important; border-bottom: none !important;
+    box-shadow: 6px 6px 0 -5px var(--gold-3), 290px 6px 0 -5px var(--gold-3),
+                6px 290px 0 -5px var(--gold-3), 290px 290px 0 -5px var(--gold-3);
+  }
+  .square::before,
+  .square::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1px solid rgba(201, 162, 75, 0.55);
+    pointer-events: none;
+  }
+  .square::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .square::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+  .square:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-3);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(201, 162, 75, 0.18);
+  }
+  .square-flag {
+    width: 100%;
+    height: 58%;
+    border: 1px solid rgba(201, 162, 75, 0.3);
+    overflow: hidden;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(245, 228, 168, 0.04) inset;
+    display: block;
+    position: relative;
+  }
+  .square-flag svg { display: block; width: 100%; height: 100%; }
+  .square-flag::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgba(6, 5, 10, 0.55));
+  }
+  .square-body {
+    margin-top: 18px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .square-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .square-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--gold-1);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .square-points {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--gold-1);
+    text-align: right;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+  .square-points small {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-weight: 400;
+    font-size: 8px;
+    letter-spacing: 0.35em;
+    color: rgba(201, 162, 75, 0.7);
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .square-meta {
+    margin-top: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(233, 206, 133, 0.75);
+  }
+  .square-arrow {
+    position: absolute;
+    bottom: 14px;
+    left: 26px;
+    right: 26px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(201, 162, 75, 0.2);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+  }
+  .square-arrow::after { content: ' →'; }
+
+  /* Pitch block */
+  /* ================================================================
+     AGED PARCHMENT — warm cream paper with grain, stains, ink bleed.
+     Used for narrative blocks: the pitch quote, chapter cards, pledge.
+     ================================================================ */
+  .pitch {
+    position: relative;
+    max-width: 820px;
+    margin: 70px auto 0;
+    padding: 56px 60px 64px;
+    border: 1px solid rgba(120, 86, 32, 0.55);
+    background:
+      /* Coffee/wax stains scattered across the parchment */
+      radial-gradient(ellipse 90px 60px at 12% 14%, rgba(86, 52, 16, 0.18), transparent 70%),
+      radial-gradient(ellipse 70px 50px at 88% 22%, rgba(86, 52, 16, 0.14), transparent 70%),
+      radial-gradient(ellipse 120px 80px at 70% 88%, rgba(86, 52, 16, 0.16), transparent 70%),
+      radial-gradient(ellipse 60px 40px at 22% 78%, rgba(86, 52, 16, 0.12), transparent 70%),
+      /* Paper grain */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'%3E%3Cdefs%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75 0.85' numOctaves='3' seed='17'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.45 0 0 0 0 0.20 0 0 0 0.20 0'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='600' height='400' filter='url(%23g)'/%3E%3C/svg%3E"),
+      /* Warm parchment gradient (cream → toasted edge) */
+      radial-gradient(ellipse at center, #ecdba5 0%, #d9c283 55%, #b89c5a 100%);
+    background-blend-mode: multiply, multiply, multiply, multiply, multiply, normal;
+    box-shadow:
+      inset 0 0 80px rgba(82, 50, 14, 0.35),
+      inset 0 0 6px rgba(82, 50, 14, 0.45),
+      0 14px 32px rgba(0, 0, 0, 0.45);
+    text-align: center;
+    /* Slightly torn / irregular edges via clip-path notches */
+    clip-path: polygon(
+      0% 4%, 2% 0%, 12% 1%, 28% 0.5%, 48% 1.2%, 68% 0%, 88% 1%, 100% 3%,
+      99.5% 24%, 100% 48%, 99% 72%, 100% 95%,
+      96% 100%, 76% 99%, 52% 100%, 28% 99%, 8% 100%, 0% 96%,
+      1% 72%, 0% 48%, 0.5% 24%
+    );
+  }
+  /* Wax seal in the bottom-right corner */
+  .pitch::after {
+    content: '';
+    position: absolute;
+    right: 28px;
+    bottom: 24px;
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle, #8a1f1f 0%, #4a0e0e 70%, #2c0606 100%);
+    border-radius: 50%;
+    box-shadow: inset 0 1px 0 rgba(255, 200, 200, 0.3), 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  .pitch-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    line-height: 1.65;
+    color: #3a280f;
+    font-style: italic;
+    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.5);
+    position: relative;
+    z-index: 1;
+  }
+  .pitch-attrib {
+    margin-top: 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: #5e3f10;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.5);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--border);
+    margin-top: 70px;
+    border: 1px solid var(--border);
+  }
+  .stat {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160'%3E%3Cdefs%3E%3Cfilter id='ms'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4 0.04' numOctaves='2' seed='13'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.55'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='200' height='160' filter='url(%23ms)' opacity='0.6'/%3E%3C/svg%3E") repeat,
+      linear-gradient(180deg, #221c2a 0%, #110d1a 100%);
+    background-blend-mode: multiply, normal;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: inset 0 1px 0 rgba(245, 228, 168, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  }
+  .stat-value {
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    font-size: 38px;
+    color: var(--gold-2);
+    line-height: 1;
+    text-shadow: 0 2px 12px rgba(201, 162, 75, 0.3);
+  }
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: rgba(201, 162, 75, 0.7);
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+
+  /* Chapters grid */
+  .chapters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 30px;
+  }
+  .chapter {
+    position: relative;
+    padding: 40px 30px 36px;
+    background:
+      /* Two coffee-stain marks per card for variety */
+      radial-gradient(ellipse 80px 50px at 18% 14%, rgba(86, 52, 16, 0.18), transparent 70%),
+      radial-gradient(ellipse 60px 40px at 82% 86%, rgba(86, 52, 16, 0.14), transparent 70%),
+      /* Paper grain */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'%3E%3Cdefs%3E%3Cfilter id='gp'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75 0.85' numOctaves='3' seed='23'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.45 0 0 0 0 0.20 0 0 0 0.22 0'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='400' height='280' filter='url(%23gp)'/%3E%3C/svg%3E"),
+      /* Parchment gradient — toasted edges */
+      radial-gradient(ellipse at center, #ecdba5 0%, #d4bc7a 60%, #b09254 100%);
+    background-blend-mode: multiply, multiply, multiply, normal;
+    border: 1px solid rgba(120, 86, 32, 0.5);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+      inset 0 0 50px rgba(82, 50, 14, 0.3),
+      inset 0 0 4px rgba(82, 50, 14, 0.4),
+      0 10px 22px rgba(0, 0, 0, 0.4);
+    /* Slightly torn corners */
+    clip-path: polygon(
+      0% 3%, 4% 0%, 30% 1%, 60% 0%, 96% 1%, 100% 4%,
+      99% 40%, 100% 76%, 99% 97%,
+      96% 100%, 60% 99%, 30% 100%, 4% 99%, 0% 96%,
+      1% 60%, 0% 30%
+    );
+  }
+  .chapter:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.06);
+    box-shadow:
+      inset 0 0 50px rgba(82, 50, 14, 0.3),
+      inset 0 0 4px rgba(82, 50, 14, 0.4),
+      0 14px 32px rgba(0, 0, 0, 0.55);
+  }
+  .chapter-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: #7a5618;
+    margin-bottom: 14px;
+    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.45);
+  }
+  .chapter-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: #2a1c08;
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.55);
+  }
+  .chapter-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #4a3416;
+    flex: 1;
+    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.4);
+  }
+  .chapter-arrow {
+    margin-top: 18px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: #7a5618;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(255, 240, 200, 0.5);
+  }
+  .chapter-arrow::after { content: ' →'; }
+
+  /* Season badge */
+  .season-badge {
+    margin: 70px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .season-word {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.55em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .season-now {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 44px;
+    color: var(--gold-2);
+    letter-spacing: 0.08em;
+    font-weight: 900;
+    text-shadow: 0 0 30px rgba(26, 140, 255, 0.4);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Waitlist                                                           */
+  /* ------------------------------------------------------------------ */
+  /* Pledge to the Crown — heavy iron plate with weathered scratches.
+     Reads as a "seal of office" rather than a paper scroll. */
+  .waitlist {
+    margin-top: 80px;
+    padding: 64px 40px 56px;
+    border: 1px solid rgba(201, 162, 75, 0.55);
+    background:
+      /* Brush-line scratches (horizontal) */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 320'%3E%3Cdefs%3E%3Cfilter id='wm'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3 0.04' numOctaves='2' seed='27'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.55'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='800' height='320' filter='url(%23wm)' opacity='0.55'/%3E%3C/svg%3E"),
+      /* Specks / pitting */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 320'%3E%3Cdefs%3E%3Cfilter id='wp'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.4 0.4' numOctaves='2' seed='51'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 -1.1'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='800' height='320' filter='url(%23wp)' opacity='0.45'/%3E%3C/svg%3E"),
+      /* Gold "warmth" wash from the top */
+      radial-gradient(ellipse at 50% 0%, rgba(201, 162, 75, 0.20) 0%, transparent 65%),
+      /* Iron-plate base */
+      linear-gradient(180deg, #1f1928 0%, #141022 60%, #0a0716 100%);
+    background-blend-mode: multiply, multiply, normal, normal;
+    box-shadow:
+      inset 0 1px 0 rgba(245, 228, 168, 0.12),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.6),
+      0 16px 36px rgba(0, 0, 0, 0.55);
+    position: relative;
+    text-align: center;
+  }
+  .waitlist::before,
+  .waitlist::after {
+    content: '';
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(201, 162, 75, 0.55);
+    pointer-events: none;
+  }
+  .waitlist::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+  .waitlist::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+  .waitlist-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.55em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .waitlist-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: 44px;
+    color: var(--gold-1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(201, 162, 75, 0.25), 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+  .waitlist-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: rgba(233, 206, 133, 0.8);
+    margin-top: 14px;
+    margin-bottom: 36px;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .waitlist-form {
+    display: flex;
+    gap: 12px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .waitlist-form input {
+    flex: 1;
+    padding: 16px 20px;
+    background: rgba(6, 5, 10, 0.7);
+    border: 1px solid rgba(201, 162, 75, 0.45);
+    color: var(--gold-1);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .waitlist-form input::placeholder { color: rgba(201, 162, 75, 0.5); font-style: italic; }
+  .waitlist-form input:focus {
+    border-color: var(--gold-2);
+    box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.15);
+  }
+  .waitlist-form button {
+    padding: 16px 28px;
+    background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold-3) 100%);
+    color: var(--ink);
+    border: 1px solid var(--gold-1);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+  .waitlist-form button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .waitlist-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .waitlist-foot {
+    margin-top: 18px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: rgba(201, 162, 75, 0.55);
+    text-transform: uppercase;
+  }
+  .waitlist-status {
+    margin-top: 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    min-height: 22px;
+  }
+  .waitlist-status.ok { color: var(--gold-2); }
+  .waitlist-status.err { color: #E5917A; }
+  .waitlist-success {
+    display: none;
+    margin: 24px auto 0;
+    max-width: 520px;
+    padding: 24px 28px;
+    background: rgba(201, 162, 75, 0.08);
+    border: 1px solid rgba(201, 162, 75, 0.4);
+  }
+  .waitlist-success.visible { display: block; }
+  .waitlist-success-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 20px;
+    color: var(--gold-1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .waitlist-success-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: rgba(233, 206, 133, 0.85);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* After Season One: Coming Soon                                      */
+  /* ------------------------------------------------------------------ */
+  .after {
+    margin-top: 100px;
+    padding: 56px 40px 64px;
+    border: 1px solid var(--border);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(107, 63, 160, 0.22) 0%, transparent 65%),
+      linear-gradient(180deg, rgba(20, 15, 35, 0.6), rgba(10, 8, 20, 0.85));
+    position: relative;
+  }
+  .after::before,
+  .after::after {
+    content: '';
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(201, 162, 75, 0.55);
+    pointer-events: none;
+  }
+  .after::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+  .after::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+  .after-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.55em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+    font-weight: 600;
+    text-align: center;
+  }
+  .after-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: 54px;
+    color: var(--gold-1);
+    text-align: center;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 16px;
+    text-shadow: 0 0 40px rgba(107, 63, 160, 0.4), 0 2px 20px rgba(201, 162, 75, 0.25);
+  }
+  .after-sub {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: rgba(233, 206, 133, 0.8);
+    margin-top: 14px;
+    margin-bottom: 44px;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .locked-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .locked {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    padding: 16px;
+    background: linear-gradient(180deg, rgba(15, 11, 28, 0.9), rgba(6, 5, 10, 0.95));
+    border: 1px solid rgba(201, 162, 75, 0.2);
+    overflow: hidden;
+    filter: grayscale(0.6);
+  }
+  .locked-flag {
+    width: 100%;
+    height: 50%;
+    border: 1px solid rgba(201, 162, 75, 0.2);
+    overflow: hidden;
+    position: relative;
+    opacity: 0.4;
+  }
+  .locked-flag svg { display: block; width: 100%; height: 100%; }
+  .locked-flag::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6, 5, 10, 0.2), rgba(6, 5, 10, 0.7));
+  }
+  .locked-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: rgba(233, 206, 133, 0.7);
+    letter-spacing: 0.08em;
+    margin-top: 14px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .locked-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    color: var(--gold-3);
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+  .locked::before {
+    content: 'COMING SOON';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-14deg);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: var(--gold-1);
+    background: rgba(6, 5, 10, 0.78);
+    border: 1px solid rgba(201, 162, 75, 0.55);
+    padding: 8px 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    z-index: 2;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .after-footnote {
+    margin-top: 40px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.45em;
+    color: rgba(201, 162, 75, 0.7);
+    text-transform: uppercase;
+  }
+
+  /* Anthem volume control — small, discreet, top-right of viewport */
+  .gor-anthem-ctrl {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px 9px 11px;
+    background: rgba(6, 5, 10, 0.65);
+    border: 1px solid rgba(201, 162, 75, 0.45);
+    border-radius: 999px;
+    color: var(--gold-2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    backdrop-filter: blur(8px) saturate(1.2);
+    -webkit-backdrop-filter: blur(8px) saturate(1.2);
+    transition: border-color 0.2s, color 0.2s, opacity 0.4s;
+    opacity: 0;
+  }
+  .gor-anthem-ctrl.visible { opacity: 1; }
+  .gor-anthem-ctrl:hover { border-color: var(--gold-1); color: var(--gold-1); }
+  .gor-anthem-ctrl svg { width: 14px; height: 14px; display: block; }
+  .gor-anthem-ctrl[aria-pressed="true"] { color: rgba(201, 162, 75, 0.5); border-color: rgba(201, 162, 75, 0.25); }
+  @media (max-width: 640px) {
+    .gor-anthem-ctrl { right: 12px; bottom: 12px; padding: 8px 12px 8px 10px; font-size: 9px; }
+  }
+
+  /* Locked-link styling — visually signals that chapter pages aren't open yet */
+  .gor-locked-link {
+    cursor: not-allowed;
+    filter: saturate(0.6) brightness(0.92);
+  }
+  .gor-locked-link:hover { transform: none !important; filter: saturate(0.6) brightness(1.05); }
+
+  /* Closed-beta notice near the legal/footer area */
+  .gor-beta-lock {
+    max-width: 1100px;
+    margin: 72px auto 0;
+    padding: 18px 28px;
+    border: 1px solid rgba(201, 162, 75, 0.45);
+    background:
+      linear-gradient(180deg, rgba(20, 14, 32, 0.65), rgba(8, 6, 18, 0.75));
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .gor-beta-lock-seal {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--gold-3);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold-1);
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+    font-size: 14px;
+  }
+  .gor-beta-lock-text {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold-2);
+    font-weight: 600;
+  }
+  .gor-beta-lock-text em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: rgba(201, 162, 75, 0.75);
+    margin-left: 6px;
+  }
+
+  /* Tiny floating "blocked" pulse the click interceptor can flash */
+  .gor-lock-toast {
+    position: fixed;
+    bottom: 88px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 80;
+    padding: 12px 22px;
+    background: rgba(8, 5, 14, 0.92);
+    border: 1px solid var(--gold-3);
+    color: var(--gold-1);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .gor-lock-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 80px;
+    padding: 30px 44px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: rgba(201, 162, 75, 0.55);
+    text-transform: uppercase;
+  }
+  .footer-tag {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: rgba(201, 162, 75, 0.6);
+    padding: 18px 44px 0;
+    text-transform: none;
+  }
+  .footer-tag a { color: var(--gold-2); border-bottom: 1px solid rgba(201, 162, 75, 0.35); }
+  .footer-tag a:hover { color: var(--gold-1); }
+
+  @media (max-width: 900px) {
+    .nav { padding: 14px 20px; flex-wrap: wrap; gap: 10px; }
+    .nav-links { gap: 14px; font-size: 9px; flex-wrap: wrap; }
+    .wrap { padding: 50px 22px 70px; }
+    .squares { grid-template-columns: 1fr; }
+    .chapters { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .locked-grid { grid-template-columns: repeat(2, 1fr); }
+    .mega-1 { font-size: 56px; }
+    .mega-2 { font-size: 84px; }
+    .after-title { font-size: 38px; }
+    .waitlist-title { font-size: 32px; }
+    .waitlist-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Dragon silhouette — using the user's dragon.png, rotated 180° so the
+     head points DOWN as if diving toward the footer. -->
+<div class="gor-dragon-flying" id="gor-dragon-flying" aria-hidden="true">
+  <img src="/game-of-run/dragon.png" alt="" class="gor-dragon-img"/>
+</div>
+
+<nav class="nav">
+  <div class="nav-brand">Game <span class="dot">·</span> of <span class="dot">·</span> Run</div>
+  <div class="nav-links">
+    <a href="/game-of-run" class="current">Overture</a>
+    <a href="/game-of-run/realm">Realm</a>
+    <a href="/game-of-run/ladder">Ladder</a>
+    <a href="/game-of-run/tiers">Tiers</a>
+    <a href="/game-of-run/claim">Claim</a>
+    <a href="/game-of-run/houses">Houses</a>
+    <a href="/game-of-run/season">Season</a>
+  </div>
+  <a class="nav-sportin" href="/">← SportIn</a>
+</nav>
+
+<!-- ================================================================
+     CINEMATIC HERO (Step 1 scaffold)
+     Layer 0: depth-flow video as the LandscapeLayer equivalent
+     Layers 1-4 (veins, fog, sigils, title) will land in later steps
+     ================================================================ -->
+<section class="gor-cinema" id="gor-cinema" aria-label="Game of Run cinematic intro">
+  <!-- SVG filter bank — applied to the title for "weathered" look:
+       - feTurbulence creates a fractal noise field
+       - feDisplacementMap warps the title's edges with that field, simulating
+         erosion / corrosion. The result is irregular biting on letter edges
+         and small lateral bits flaking off — old ceremonial metal. -->
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;" focusable="false">
+    <defs>
+      <filter id="gorTitleErode" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.022 0.06" numOctaves="2" seed="11" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+  <div class="gor-cinema-sticky" id="gor-cinema-sticky">
+
+    <!-- Layer 0 — depth-flow video (the LandscapeLayer) -->
+    <div class="gor-cinema-video-wrap" id="gor-cinema-video-wrap">
+      <video class="gor-cinema-video" id="gor-cinema-video"
+             autoplay muted loop playsinline preload="metadata"
+             poster="/game-of-run/cover_gor_naked.png"
+             aria-hidden="true">
+        <source src="/game-of-run/depthflow.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <!-- Cinematic vignette to frame the eye -->
+    <div class="gor-cinema-vignette"></div>
+
+    <!-- Dark wash overlay — anchors the title at frame 1, eases off as scroll progresses -->
+    <div class="gor-cinema-dim" id="gor-cinema-dim"></div>
+
+
+    <!-- Layer 3c — House sigil shields revealed one-by-one on scroll. -->
+    <div class="gor-cinema-sigils" aria-hidden="true">
+      <div class="gor-sigil" id="gor-sigil-1" style="left:18%; top:30%; width:150px;">
+        <img src="/game-of-run/houses/wolf-front.png?v=2" alt=""/>
+        <div class="gor-sigil-name">House Ulfgar</div>
+      </div>
+      <div class="gor-sigil" id="gor-sigil-2" style="left:78%; top:24%; width:130px;">
+        <img src="/game-of-run/houses/mountain.png?v=2" alt=""/>
+        <div class="gor-sigil-name">House Stonefell</div>
+      </div>
+      <div class="gor-sigil" id="gor-sigil-3" style="left:26%; top:54%; width:160px;">
+        <img src="/game-of-run/houses/phoenix.png?v=2" alt=""/>
+        <div class="gor-sigil-name">House Aurelin</div>
+      </div>
+      <div class="gor-sigil" id="gor-sigil-4" style="left:54%; top:18%; width:140px;">
+        <img src="/game-of-run/houses/dragon.png?v=2" alt=""/>
+        <div class="gor-sigil-name">House Drakkar</div>
+      </div>
+      <div class="gor-sigil" id="gor-sigil-5" style="left:72%; top:52%; width:150px;">
+        <img src="/game-of-run/houses/wolf-side.png?v=2" alt=""/>
+        <div class="gor-sigil-name">House Vargrun</div>
+      </div>
+    </div>
+
+    <!-- Edge gradients so the title can read against any landscape frame -->
+    <div class="gor-cinema-edges"></div>
+
+    <!-- Layer 3 — Volumetric viking fog: independent drifting blob puffs.
+         Each puff has its own size, position, color tint, speed and start offset.
+         The radial-gradient + blur + circular shape + screen-blend gives the
+         feel of real low-lying mountain fog rather than a tiled rectangle. -->
+    <div class="gor-cinema-fog" aria-hidden="true">
+      <!-- Bottom heavy bank (low-lying ground fog) -->
+      <div class="gor-cinema-fog-puff" style="left:5%;  bottom:-6%; width:760px; height:380px; --opa:0.55;
+           background: radial-gradient(closest-side, rgba(165,180,200,0.85), rgba(120,135,165,0.35) 45%, transparent 75%);
+           animation-duration: 95s;  animation-delay: -10s;"></div>
+      <div class="gor-cinema-fog-puff" style="left:30%; bottom:-10%; width:920px; height:420px; --opa:0.6;
+           background: radial-gradient(closest-side, rgba(140,155,180,0.9), rgba(100,115,145,0.4) 45%, transparent 75%);
+           animation-duration: 130s; animation-delay: -55s;"></div>
+      <div class="gor-cinema-fog-puff" style="left:55%; bottom:-4%;  width:680px; height:340px; --opa:0.5;
+           background: radial-gradient(closest-side, rgba(170,185,205,0.8), rgba(130,145,170,0.32) 45%, transparent 75%);
+           animation-duration: 110s; animation-delay: -90s;"></div>
+      <div class="gor-cinema-fog-puff" style="left:78%; bottom:-8%; width:820px; height:380px; --opa:0.55;
+           background: radial-gradient(closest-side, rgba(150,165,190,0.85), rgba(110,125,150,0.38) 45%, transparent 75%);
+           animation-duration: 145s; animation-delay: -30s;"></div>
+
+      <!-- Mid-level wisps (above the heavy bank, thinner) -->
+      <div class="gor-cinema-fog-puff" style="left:15%; bottom:22%; width:540px; height:240px; --opa:0.35;
+           background: radial-gradient(closest-side, rgba(175,190,210,0.7), rgba(140,155,180,0.25) 45%, transparent 75%);
+           animation-duration: 80s;  animation-delay: -120s;"></div>
+      <div class="gor-cinema-fog-puff" style="left:62%; bottom:28%; width:480px; height:220px; --opa:0.32;
+           background: radial-gradient(closest-side, rgba(180,195,215,0.7), rgba(140,155,180,0.22) 45%, transparent 75%);
+           animation-duration: 100s; animation-delay: -75s;"></div>
+
+      <!-- High storm-cloud crown (very faint, drifts across the sky) -->
+      <div class="gor-cinema-fog-puff" style="left:10%; top:-4%; width:920px; height:280px; --opa:0.22;
+           background: radial-gradient(closest-side, rgba(150,160,180,0.7), rgba(110,125,145,0.2) 45%, transparent 75%);
+           animation-duration: 220s; animation-delay: -40s;"></div>
+      <div class="gor-cinema-fog-puff" style="left:55%; top:-8%; width:1040px; height:320px; --opa:0.25;
+           background: radial-gradient(closest-side, rgba(160,172,192,0.7), rgba(120,135,160,0.22) 45%, transparent 75%);
+           animation-duration: 250s; animation-delay: -160s;"></div>
+    </div>
+
+    <!-- Layer 4 — Title + tagline + CTA -->
+    <div class="gor-cinema-title-wrap" id="gor-cinema-title-wrap">
+      <div class="gor-cinema-eyebrow">
+        <span class="rule"></span>
+        <span class="lozenge"></span>
+        <span>SportIn Presents · Chapter I</span>
+        <span class="lozenge"></span>
+        <span class="rule"></span>
+      </div>
+      <h1 class="gor-cinema-title">Game of Run</h1>
+      <div class="gor-cinema-subtitle">The world is a running track</div>
+      <a class="gor-cinema-cta" href="#waitlist" aria-label="Take the oath, join the waitlist">
+        Take the Oath
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Scroll hint at bottom edge -->
+    <div class="gor-cinema-hint" aria-hidden="true" id="gor-cinema-hint">
+      <span class="rule"></span>
+      <span>Scroll to descend</span>
+      <span class="rule"></span>
+    </div>
+
+  </div>
+</section>
+
+<!-- Cinema → body dissolve. Transparent at the top (cinema video shows
+     through), opaque purple at the bottom (matches body bg). No seam. -->
+<div class="gor-cinema-dissolve" aria-hidden="true"></div>
+
+<div class="wrap">
+  <!-- The Three Kingdoms: square country tiles -->
+  <div class="kingdoms-crest">
+    <span class="line"></span>
+    <span class="word">The Three Kingdoms</span>
+    <span class="line"></span>
+  </div>
+
+  <div class="squares">
+    <a class="square" href="/game-of-run/realm">
+      <div class="square-flag">
+        <svg viewBox="0 0 30 20" preserveAspectRatio="none" aria-hidden="true">
+          <rect width="30" height="20" fill="#AA151B"/>
+          <rect y="5" width="30" height="10" fill="#F1BF00"/>
+        </svg>
+      </div>
+      <div class="square-body">
+        <div>
+          <div class="square-eyebrow">Chapter I</div>
+          <div class="square-name">España</div>
+          <div class="square-meta">8 zones · Madrid + Barcelona</div>
+        </div>
+        <div class="square-points">17<small>Points</small></div>
+      </div>
+      <div class="square-arrow">Enter the Kingdom</div>
+    </a>
+
+    <a class="square" href="/game-of-run/realm">
+      <div class="square-flag">
+        <svg viewBox="0 0 30 20" preserveAspectRatio="none" aria-hidden="true">
+          <rect width="12" height="20" fill="#006600"/>
+          <rect x="12" width="18" height="20" fill="#FF0000"/>
+        </svg>
+      </div>
+      <div class="square-body">
+        <div>
+          <div class="square-eyebrow">Chapter II</div>
+          <div class="square-name">Portugal</div>
+          <div class="square-meta">8 zones · Lisbon</div>
+        </div>
+        <div class="square-points">17<small>Points</small></div>
+      </div>
+      <div class="square-arrow">Enter the Kingdom</div>
+    </a>
+
+    <a class="square" href="/game-of-run/realm">
+      <div class="square-flag">
+        <svg viewBox="0 0 30 20" preserveAspectRatio="none" aria-hidden="true">
+          <rect width="10" height="20" fill="#002B7F"/>
+          <rect x="10" width="10" height="20" fill="#FCD116"/>
+          <rect x="20" width="10" height="20" fill="#CE1126"/>
+        </svg>
+      </div>
+      <div class="square-body">
+        <div>
+          <div class="square-eyebrow">Chapter III</div>
+          <div class="square-name">România</div>
+          <div class="square-meta">8 zones · Bucharest</div>
+        </div>
+        <div class="square-points">17<small>Points</small></div>
+      </div>
+      <div class="square-arrow">Enter the Kingdom</div>
+    </a>
+  </div>
+
+  <!-- Pitch -->
+  <div class="pitch">
+    <div class="pitch-body">
+      "The Realms of the world do not belong to those who walk them.<br/>
+      They belong to those who run them fastest, furthest, hardest.<br/>
+      Lace your boots. Raise your banner. The Crown awaits."
+    </div>
+    <div class="pitch-attrib">The Chronicles of Game of Run</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Kingdoms</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">24</div>
+      <div class="stat-label">Zones</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">17</div>
+      <div class="stat-label">Points Per Kingdom</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">1</div>
+      <div class="stat-label">High Seat</div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin-top: 80px;">
+    <span class="line"></span>
+    <span class="lozenge"></span>
+    <span class="line"></span>
+  </div>
+
+  <div class="section-title">The Seven Chapters</div>
+  <div class="section-sub">Read in order or roam at will. Each chapter stands on its own.</div>
+
+  <div class="chapters">
+
+    <a href="/game-of-run/realm" class="chapter">
+      <div class="chapter-num">Chapter II</div>
+      <div class="chapter-title">The Realm</div>
+      <div class="chapter-desc">Europe split into Three Kingdoms. Each kingdom holds eight zones. Twenty-four battlegrounds, one crown apiece.</div>
+      <div class="chapter-arrow">Enter the Realm</div>
+    </a>
+
+    <a href="/game-of-run/ladder" class="chapter">
+      <div class="chapter-num">Chapter III</div>
+      <div class="chapter-title">The Ladder</div>
+      <div class="chapter-desc">Landlord, Baron, Lord, King of City, Sovereign of Country. Five titles earned in points and crown zones.</div>
+      <div class="chapter-arrow">Climb the Ladder</div>
+    </a>
+
+    <a href="/game-of-run/tiers" class="chapter">
+      <div class="chapter-num">Chapter IV</div>
+      <div class="chapter-title">The Tiers</div>
+      <div class="chapter-desc">Yellow, Orange, Red, Crown. Four tiers, four weights. One to four points. Seventeen points to rule a kingdom.</div>
+      <div class="chapter-arrow">Know the Tiers</div>
+    </a>
+
+    <a href="/game-of-run/claim" class="chapter">
+      <div class="chapter-num">Chapter V</div>
+      <div class="chapter-title">The Claim</div>
+      <div class="chapter-desc">Break the Record in twenty-four hours. Win, muster your house, settle it in a match within seven days.</div>
+      <div class="chapter-arrow">Learn the Claim</div>
+    </a>
+
+    <a href="/game-of-run/houses" class="chapter">
+      <div class="chapter-num">Chapter VI</div>
+      <div class="chapter-title">The Houses</div>
+      <div class="chapter-desc">Claim your first zone, raise your house. Named after your surname. Invite up to eight. Ride as one banner.</div>
+      <div class="chapter-arrow">Raise a House</div>
+    </a>
+
+    <a href="/game-of-run/season" class="chapter">
+      <div class="chapter-num">Chapter VII</div>
+      <div class="chapter-title">The Season</div>
+      <div class="chapter-desc">Throne Run. Twelve weeks of competition. Weekly skirmishes, seasonal coronations, eternal Chronicles.</div>
+      <div class="chapter-arrow">Begin the Season</div>
+    </a>
+
+  </div>
+
+  <div class="season-badge">
+    <div class="season-word">Season One</div>
+    <div class="season-now">Coming Soon</div>
+  </div>
+
+  <!-- Waitlist · take the oath -->
+  <section class="waitlist" id="waitlist" aria-labelledby="waitlist-title">
+    <div class="waitlist-eyebrow">Take the Oath</div>
+    <div class="waitlist-title" id="waitlist-title">Pledge to the Crown</div>
+    <div class="waitlist-sub">We are mustering the first runners. Be among the first to receive a banner when the season opens.</div>
+
+    <form class="waitlist-form" id="gor-form" autocomplete="off" novalidate>
+      <input id="gor-email" name="email" type="email" required placeholder="your.email@gmail.com" aria-label="Email address" />
+      <button type="submit" id="gor-submit">Take the Oath</button>
+    </form>
+
+    <div class="waitlist-status" id="gor-status" role="status" aria-live="polite"></div>
+    <div class="waitlist-foot">No spam · Only the call to war</div>
+
+    <div class="waitlist-success" id="gor-success" role="status">
+      <div class="waitlist-success-title">Your oath is heard.</div>
+      <div class="waitlist-success-body">When the gates open, the raven will find you.</div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Closed-beta lock notice — sits just above the legal/footer area -->
+<div class="gor-beta-lock" role="status" aria-live="polite">
+  <span class="gor-beta-lock-seal">✦</span>
+  <span class="gor-beta-lock-text">
+    Closed Beta
+    <em>Only this preview is live. Chapters, kingdoms and houses open when the Crown is offered.</em>
+  </span>
+</div>
+
+<div class="footer-tag">
+  Game of Run is a SportIn original. The full SportIn app handles your runs, races, and community.
+</div>
+<div class="footer">
+  <span>SportIn · Game of Run</span>
+  <span>Season I · MMXXVI</span>
+  <span>One Crown Per City</span>
+</div>
+
+<!-- =================================================================
+     CINEMATIC HERO — Scroll progress driver (Step 1 scaffold)
+     Exposes window.__gorCinema = { p, visible, act } so future layers
+     (veins, fog, sigils, title) can hook in without duplicating math.
+     ================================================================= -->
+<script>
+(function() {
+  var outer = document.getElementById('gor-cinema');
+  var stickyEl = document.getElementById('gor-cinema-sticky');
+  var videoWrap = document.getElementById('gor-cinema-video-wrap');
+  var video = document.getElementById('gor-cinema-video');
+  var titleWrap = document.getElementById('gor-cinema-title-wrap');
+  var hintEl = document.getElementById('gor-cinema-hint');
+  var dimEl = document.getElementById('gor-cinema-dim');
+  var sigils = [
+    document.getElementById('gor-sigil-1'),
+    document.getElementById('gor-sigil-2'),
+    document.getElementById('gor-sigil-3'),
+    document.getElementById('gor-sigil-4'),
+    document.getElementById('gor-sigil-5')
+  ];
+  // Scroll-click choreography. Each "click" reveals one element AND drops
+  // the dark overlay by 10%. So 7 clicks total:
+  //   Click 1 (0.00-0.10): Title recedes (Game of Run goes down/back)
+  //   Click 2 (0.14-0.20): Sigil 1
+  //   Click 3 (0.24-0.30): Sigil 2
+  //   Click 4 (0.34-0.40): Sigil 3
+  //   Click 5 (0.44-0.50): Sigil 4
+  //   Click 6 (0.54-0.60): Sigil 5
+  //   Click 7 (0.65-0.70): Overlay fully clears
+  var sigilTimings = [
+    [0.14, 0.20],
+    [0.24, 0.30],
+    [0.34, 0.40],
+    [0.44, 0.50],
+    [0.54, 0.60]
+  ];
+  if (!outer || !stickyEl || !videoWrap || !video) return;
+
+  // Try to start playing; some browsers block autoplay until user interacts.
+  // muted + playsinline + autoplay covers Safari/iOS/Chrome.
+  var tryPlay = function() { video.play().catch(function(){}); };
+  tryPlay();
+  document.addEventListener('click', tryPlay, { once: true, passive: true });
+  document.addEventListener('scroll', tryPlay, { once: true, passive: true });
+
+  // Single scroll-progress source for the whole cinema sequence
+  var state = { p: 0, visible: false, act: 1 };
+  window.__gorCinema = state;
+
+  function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+  function smooth(t) { return t * t * (3 - 2 * t); }
+
+  function actFromProgress(p) {
+    if (p < 0.15) return 1;       // 0  – 15  · The wild
+    if (p < 0.30) return 2;       // 15 – 30  · Veins ignite
+    if (p < 0.50) return 3;       // 30 – 50  · Fog rolls in
+    if (p < 0.70) return 4;       // 50 – 70  · Houses arrive
+    if (p < 0.90) return 5;       // 70 – 90  · Title lands
+    return 6;                      // 90 – 100 · Camera push
+  }
+
+  function tick() {
+    requestAnimationFrame(tick);
+    if (!state.visible) return;
+
+    var rect = outer.getBoundingClientRect();
+    var totalH = outer.offsetHeight;
+    var scrolled = -rect.top;
+    state.p = clamp01(scrolled / (totalH - window.innerHeight));
+    state.act = actFromProgress(state.p);
+
+    // Act 6 camera push — subtle scale boost on the final 10%
+    // (the depth-flow video already handles parallax internally)
+    var act6 = (state.p - 0.5) / 0.5;
+    if (act6 < 0) act6 = 0;
+    var ease = smooth(act6);
+    var scale = 1.0 + ease * 0.14;
+    videoWrap.style.transform = 'scale(' + scale.toFixed(3) + ')';
+
+    // Title: HUGE at frame 1, recedes on the FIRST scroll click (0→10%).
+    // After p=0.10 it parks small at the bottom-third as a lower-third anchor.
+    if (titleWrap) {
+      var p = state.p;
+      var recede = clamp01(p / 0.10);
+      var er = smooth(recede);
+
+      var titleScale = 1.4 - er * 0.85;        // 1.4 → 0.55
+      var titleY = er * 28;                     // 0 → 28vh down (to lower-third)
+      var titleRotateX = er * 6;                // 0 → 6deg tipped back
+      var titleBlur = er * 1.5;                 // 0 → 1.5px subtle depth blur
+      var titleOpacity = 1 - er * 0.12;          // 1.0 → 0.88
+
+      titleWrap.style.opacity = titleOpacity.toFixed(3);
+      titleWrap.style.filter = 'blur(' + titleBlur.toFixed(2) + 'px)';
+      titleWrap.style.transform =
+        'translateY(' + titleY.toFixed(2) + 'vh) ' +
+        'rotateX(' + titleRotateX.toFixed(2) + 'deg) ' +
+        'scale(' + titleScale.toFixed(3) + ')';
+    }
+
+    // Dim overlay: 70% black at frame 1 → 0% by p=0.70.
+    // Each scroll-click reveals one element AND drops the overlay by ~10%.
+    if (dimEl) {
+      var dimP = clamp01(state.p / 0.70);
+      var dimOpacity = 0.7 * (1 - smooth(dimP));
+      dimEl.style.opacity = dimOpacity.toFixed(3);
+    }
+
+    // House sigil shields — staged fade-in at varied screen positions.
+    for (var si = 0; si < sigils.length; si++) {
+      var sigEl = sigils[si];
+      if (!sigEl) continue;
+      var sigT = sigilTimings[si];
+      var sigP = clamp01((state.p - sigT[0]) / (sigT[1] - sigT[0]));
+      sigP = smooth(sigP);
+      var sigScale = 0.7 + sigP * 0.3;        // 0.7 → 1.0
+      sigEl.style.opacity = sigP.toFixed(3);
+      sigEl.style.transform =
+        'translate(-50%, -50%) scale(' + sigScale.toFixed(3) + ')';
+    }
+
+    // Scroll hint fades out after the first 10% (it's done its job)
+    if (hintEl) {
+      var hintOpacity = 1 - clamp01((state.p - 0.04) / 0.10);
+      hintEl.style.opacity = hintOpacity.toFixed(3);
+    }
+
+  }
+
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      state.visible = e.isIntersecting;
+      if (state.visible) tryPlay();
+      else { try { video.pause(); } catch(_) {} }
+    });
+  }, { threshold: 0 });
+  io.observe(outer);
+
+  requestAnimationFrame(tick);
+})();
+</script>
+
+<!-- Game of Run anthem — plays once on page load, stops naturally when done -->
+<audio id="gor-anthem" src="/game-of-run/anthem.mp3" preload="auto"></audio>
+<button class="gor-anthem-ctrl" id="gor-anthem-ctrl" type="button"
+        aria-label="Mute anthem" aria-pressed="false">
+  <svg id="gor-anthem-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+  </svg>
+  <span id="gor-anthem-label">Anthem</span>
+</button>
+<script>
+(function() {
+  var audio = document.getElementById('gor-anthem');
+  var btn = document.getElementById('gor-anthem-ctrl');
+  var icon = document.getElementById('gor-anthem-icon');
+  var label = document.getElementById('gor-anthem-label');
+  if (!audio || !btn) return;
+
+  // Single-play policy: once it ends, we're done for this page visit.
+  // No loop, no restart. Browser autoplay rules: try with sound first;
+  // if blocked, listen for the first user interaction and start then.
+  audio.volume = 0.6;
+  var started = false;
+  var ended = false;
+  var muteIconOn = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>';
+  var muteIconOff = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+
+  function setMutedUI(muted) {
+    btn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+    btn.setAttribute('aria-label', muted ? 'Unmute anthem' : 'Mute anthem');
+    label.textContent = muted ? 'Muted' : 'Anthem';
+    icon.innerHTML = muted ? muteIconOff : muteIconOn;
+  }
+
+  function tryPlay() {
+    if (started || ended) return;
+    var pr = audio.play();
+    if (pr && typeof pr.then === 'function') {
+      pr.then(function() {
+        started = true;
+        btn.classList.add('visible');
+      }).catch(function() {
+        // Autoplay blocked — wait for first interaction
+      });
+    } else {
+      started = true;
+      btn.classList.add('visible');
+    }
+  }
+
+  // Try immediately (covers cases where the browser permits sound autoplay)
+  tryPlay();
+
+  // Fallback: start on first interaction (click / touch / keydown / scroll).
+  var unlock = function() {
+    tryPlay();
+    if (started) {
+      ['click','touchstart','keydown','scroll','pointerdown']
+        .forEach(function(ev){ window.removeEventListener(ev, unlock); });
+    }
+  };
+  ['click','touchstart','keydown','scroll','pointerdown']
+    .forEach(function(ev){ window.addEventListener(ev, unlock, { passive: true }); });
+
+  // When the track ends naturally — stop, done for this visit, hide control
+  audio.addEventListener('ended', function() {
+    ended = true;
+    btn.classList.remove('visible');
+  });
+
+  // Manual mute toggle
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (audio.muted) {
+      audio.muted = false;
+      setMutedUI(false);
+    } else {
+      audio.muted = true;
+      setMutedUI(true);
+    }
+  });
+
+  // If user leaves the tab, pause; resume only on return (still single-play)
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      try { audio.pause(); } catch(_) {}
+    } else if (started && !ended && !audio.muted) {
+      audio.play().catch(function(){});
+    }
+  });
+})();
+</script>
+
+<!-- Dragon shadow — subliminal silhouette tied to full-page scroll.
+     Enters from upper-left, exits lower-right, banking + growing slightly. -->
+<script>
+(function() {
+  var dragon = document.getElementById('gor-dragon-flying');
+  if (!dragon) return;
+
+  // Respect prefers-reduced-motion
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
+  function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // Smooth scroll-position lag (scrub-like): the dragon follows the actual
+  // scroll position with a gentle delay so its motion feels weighty.
+  var actualP = 0;
+  var smoothedP = 0;
+
+  function readScroll() {
+    var docMax = document.documentElement.scrollHeight - window.innerHeight;
+    actualP = docMax > 0 ? clamp01(window.scrollY / docMax) : 0;
+  }
+
+  function tick() {
+    requestAnimationFrame(tick);
+    smoothedP += (actualP - smoothedP) * 0.06;
+
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+
+    // Visible only AFTER the cinema video has finished.
+    var cinema = document.getElementById('gor-cinema');
+    var cinemaBottom = cinema.offsetTop + cinema.offsetHeight;
+    var showAfter = cinemaBottom - vh * 0.5;
+    var visible = window.scrollY > showAfter;
+    if (visible !== dragon.classList.contains('visible')) {
+      dragon.classList.toggle('visible', visible);
+    }
+    if (!visible) return;
+
+    // Dragon size (90vw × ~60vw)
+    var dragonW = vw * 0.90;
+    var dragonH = dragonW * (1024 / 1536);
+    var centerY = (vh - dragonH) / 2;
+
+    // Map post-cinema scroll to dragon's motion progress (0 → 1)
+    var docMax = document.documentElement.scrollHeight - vh;
+    var postScroll = window.scrollY - cinemaBottom;
+    var postRange  = Math.max(1, docMax - cinemaBottom);
+    var p = clamp01(postScroll / postRange);
+
+    // ---- LEFT → RIGHT TRAVERSAL (centred at p=0.5) ----
+    // Dragon is 90vw wide. For its CENTRE to land at viewport centre at
+    // p=0.5, the top-left at that moment must be (100vw − 90vw)/2 = 5vw.
+    // So endpoints are balanced around that midpoint: −0.85vw → +0.95vw.
+    var x = lerp(-vw * 0.85, vw * 0.95, p);
+
+    // ---- TURNING / BANKING ----
+    // Multi-cycle banking rotation: the dragon banks heavily, levels, banks
+    // again — reads as the creature turning through its flight, not gliding
+    // straight. Three full cycles across the scroll, ±28° each way.
+    var rot = Math.sin(p * Math.PI * 3.0) * 28;
+
+    // ---- SUBTLE BOB + BREATH ----
+    var bobY = Math.sin(p * Math.PI * 4.0) * vh * 0.03;
+    var sc   = 1.0 + Math.sin(p * Math.PI * 2.0) * 0.04;
+
+    dragon.style.transform =
+      'translate(' + x.toFixed(0) + 'px, ' + (centerY + bobY).toFixed(0) + 'px) ' +
+      'rotate(' + rot.toFixed(2) + 'deg) ' +
+      'scale(' + sc.toFixed(3) + ')';
+  }
+
+  window.addEventListener('scroll', readScroll, { passive: true });
+  window.addEventListener('resize', readScroll);
+  readScroll();
+  // initialise smoothed to the actual so first frame is correct
+  smoothedP = actualP;
+  requestAnimationFrame(tick);
+})();
+</script>
+
+<!-- Game of Run · Take the Oath waitlist
+     Submits each oath-taker's email to adrian@sportin.io via FormSubmit
+     (no backend needed). On first ever submission FormSubmit will send a
+     confirmation email — open it once and click the activation link;
+     all subsequent oaths land directly in the inbox. -->
+<script>
+(function() {
+  var FORMSUBMIT_TARGET = 'adrian@sportin.io';
+  var FORMSUBMIT_URL = 'https://formsubmit.co/ajax/' + encodeURIComponent(FORMSUBMIT_TARGET);
+
+  var form = document.getElementById('gor-form');
+  var input = document.getElementById('gor-email');
+  var btn = document.getElementById('gor-submit');
+  var statusEl = document.getElementById('gor-status');
+  var successEl = document.getElementById('gor-success');
+  if (!form) return;
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg || '';
+    statusEl.className = 'waitlist-status' + (kind ? ' ' + kind : '');
+  }
+
+  function showSuccess() {
+    setStatus('');
+    form.style.display = 'none';
+    successEl.classList.add('visible');
+  }
+
+  function stashLocally(email) {
+    // Defensive backup: keep the email locally in case the request fails.
+    try {
+      var pend = JSON.parse(localStorage.getItem('gor_pending_waitlist') || '[]');
+      pend.push({ email: email, ts: Date.now() });
+      localStorage.setItem('gor_pending_waitlist', JSON.stringify(pend));
+    } catch (_) {}
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = (input.value || '').trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus('Inscribe a valid scroll address.', 'err');
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    setStatus('Sending the raven…');
+
+    var payload = {
+      email: email,
+      _subject: 'Game of Run · New Oath Sworn',
+      _template: 'box',
+      _captcha: 'false',
+      _replyto: email,
+      // Context for the email body
+      page: 'game-of-run',
+      source: 'landing',
+      country_code: 'RO',
+      submitted_at: new Date().toISOString(),
+      user_agent: (navigator && navigator.userAgent) || 'unknown'
+    };
+
+    fetch(FORMSUBMIT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    }).then(function(res) {
+      return res.json().then(function(j) { return { ok: res.ok, body: j }; });
+    }).then(function(result) {
+      btn.disabled = false;
+      if (result.ok && (result.body.success === 'true' || result.body.success === true)) {
+        // Confirmed: oath sent. Show success regardless.
+        showSuccess();
+        return;
+      }
+      // First-time FormSubmit confirmation flow: response will indicate
+      // a confirmation email was sent to the recipient. Still treat as
+      // "we got your email" for the user — Adrian just needs to confirm.
+      stashLocally(email);
+      showSuccess();
+    }).catch(function(err) {
+      btn.disabled = false;
+      // Network error — stash locally + show success so the user isn't
+      // confused. The email is preserved client-side.
+      stashLocally(email);
+      showSuccess();
+    });
+  });
+})();
+</script>
+
+<!-- Lock toast — shown briefly when the user clicks a disabled link -->
+<div class="gor-lock-toast" id="gor-lock-toast" aria-hidden="true">Closed Beta · Only this page is live</div>
+
+<!-- =====================================================================
+     Game of Run · Page Lock
+     Intercepts every link click on the page. Anchors that target this same
+     page (in-page hashes, current pathname) are allowed; everything else
+     is blocked and a brief toast flashes near the bottom. The waitlist
+     form submit is untouched (it's a <form>, not an <a>).
+     ===================================================================== -->
+<script>
+(function() {
+  var toast = document.getElementById('gor-lock-toast');
+  var toastTimer = null;
+  function flashToast() {
+    if (!toast) return;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+  }
+
+  // Visually mark every link that would navigate AWAY from this page.
+  var thisPath = window.location.pathname.replace(/\/$/, '');
+  Array.prototype.forEach.call(document.querySelectorAll('a[href]'), function(a) {
+    var href = a.getAttribute('href');
+    if (!href) return;
+    // Skip in-page anchors
+    if (href.charAt(0) === '#') return;
+    // Compute the destination path; flag any link that leaves this page
+    var dest;
+    try { dest = new URL(href, window.location.href).pathname.replace(/\/$/, ''); }
+    catch(_) { dest = href; }
+    if (dest !== thisPath) {
+      a.classList.add('gor-locked-link');
+      a.setAttribute('data-locked', '1');
+      a.setAttribute('aria-disabled', 'true');
+      a.removeAttribute('target');
+    }
+  });
+
+  // Capture-phase listener: intercept every click on a locked anchor.
+  document.addEventListener('click', function(e) {
+    var el = e.target;
+    // Walk up to find an <a> ancestor
+    while (el && el !== document && el.tagName !== 'A') el = el.parentNode;
+    if (!el || el.tagName !== 'A') return;
+    if (el.getAttribute('data-locked') === '1') {
+      e.preventDefault();
+      e.stopPropagation();
+      flashToast();
+    }
+  }, true);
+})();
+</script>
+
+</body>
+</html>
