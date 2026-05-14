@@ -215,12 +215,12 @@
   }
   .gor-sigil {
     position: absolute;
-    width: 140px;
-    aspect-ratio: 1 / 1.16;
+    width: 300px;
+    aspect-ratio: 3 / 2;
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.7);
     will-change: transform, opacity;
-    /* No drop-shadow, no glow, no plate — just the shield itself */
+    filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.65));
   }
   .gor-sigil img {
     width: 100%;
@@ -1724,25 +1724,20 @@
 
     <!-- Layer 3c — House sigil shields revealed one-by-one on scroll. -->
     <div class="gor-cinema-sigils" aria-hidden="true">
-      <div class="gor-sigil" id="gor-sigil-1" style="left:18%; top:30%; width:150px;">
-        <img src="/game-of-run/houses/wolf-front.png?v=2" alt=""/>
-        <div class="gor-sigil-name">House Ulfgar</div>
+      <div class="gor-sigil" id="gor-sigil-1" style="left:18%; top:28%; width:300px;">
+        <img src="/game-of-run/houses/emag.png?v=3" alt="House eMag"/>
       </div>
-      <div class="gor-sigil" id="gor-sigil-2" style="left:78%; top:24%; width:130px;">
-        <img src="/game-of-run/houses/mountain.png?v=2" alt=""/>
-        <div class="gor-sigil-name">House Stonefell</div>
+      <div class="gor-sigil" id="gor-sigil-2" style="left:78%; top:28%; width:300px;">
+        <img src="/game-of-run/houses/decathlon.png?v=3" alt="House Decathlon"/>
       </div>
-      <div class="gor-sigil" id="gor-sigil-3" style="left:26%; top:54%; width:160px;">
+      <div class="gor-sigil" id="gor-sigil-3" style="left:26%; top:62%; width:280px; display:none;">
         <img src="/game-of-run/houses/phoenix.png?v=2" alt=""/>
-        <div class="gor-sigil-name">House Aurelin</div>
       </div>
-      <div class="gor-sigil" id="gor-sigil-4" style="left:54%; top:18%; width:140px;">
+      <div class="gor-sigil" id="gor-sigil-4" style="left:54%; top:18%; width:280px; display:none;">
         <img src="/game-of-run/houses/dragon.png?v=2" alt=""/>
-        <div class="gor-sigil-name">House Drakkar</div>
       </div>
-      <div class="gor-sigil" id="gor-sigil-5" style="left:72%; top:52%; width:150px;">
+      <div class="gor-sigil" id="gor-sigil-5" style="left:72%; top:62%; width:280px; display:none;">
         <img src="/game-of-run/houses/wolf-side.png?v=2" alt=""/>
-        <div class="gor-sigil-name">House Vargrun</div>
       </div>
     </div>
 
