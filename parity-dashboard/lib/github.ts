@@ -1,22 +1,17 @@
 import type { DashboardData, FeatureRow, FeatureStatus, PRRef, PRStatus } from "./types";
-import { getConfig } from "./config";
+import { getConfig, type Config } from "./config";
 
 const GH_GRAPHQL = "https://api.github.com/graphql";
 
 /**
- * Convention (Option A — tracking issues):
+ * Convention:
  *   - Every feature is a GitHub Issue in <org>/<FEATURES_REPO> with label "feature".
- *   - PRs in <org>/<IOS_REPO> and <org>/<ANDROID_REPO> reference the Issue using
- *     "Closes #N", "Fixes #N", or a cross-link. GitHub records these as
- *     CROSS_REFERENCED_EVENT timeline items on the Issue.
- *   - Priority is set via label on the Issue: "P0", "P1", or "P2".
+ *   - PRs reference the Issue via "Closes #N", "Fixes #N", or a Development link.
+ *   - Priority label on the Issue: "P0", "P1", or "P2".
  *
- * For each feature, we pair the PRs by repo (iOS vs Android) and derive a
- * FeatureStatus per platform:
- *   merged       any merged PR
- *   in_review    open non-draft PR
- *   in_progress  draft PR
- *   not_started  no PR
+ * In split-mode the PR's repo determines the platform.
+ * In single-mode we look at the files the PR touched to decide whether it's
+ * an iOS PR, an Android PR, or both.
  */
 
 const QUERY = /* GraphQL */ `
@@ -45,15 +40,7 @@ const QUERY = /* GraphQL */ `
                 source {
                   __typename
                   ... on PullRequest {
-                    number
-                    title
-                    url
-                    isDraft
-                    merged
-                    mergedAt
-                    updatedAt
-                    closed
-                    state
+                    number title url isDraft merged mergedAt updatedAt closed state
                     author { login }
                     repository { name owner { login } }
                   }
@@ -63,15 +50,7 @@ const QUERY = /* GraphQL */ `
                 subject {
                   __typename
                   ... on PullRequest {
-                    number
-                    title
-                    url
-                    isDraft
-                    merged
-                    mergedAt
-                    updatedAt
-                    closed
-                    state
+                    number title url isDraft merged mergedAt updatedAt closed state
                     author { login }
                     repository { name owner { login } }
                   }
@@ -122,7 +101,7 @@ function priorityFromLabels(labels: string[]): "P0" | "P1" | "P2" | null {
   return null;
 }
 
-async function githubFetch(token: string, body: object) {
+async function githubFetch<T>(token: string, body: object): Promise<T> {
   const res = await fetch(GH_GRAPHQL, {
     method: "POST",
     headers: {
@@ -140,11 +119,69 @@ async function githubFetch(token: string, body: object) {
   if (json.errors) {
     throw new Error("GitHub GraphQL: " + JSON.stringify(json.errors));
   }
-  return json.data;
+  return json.data as T;
+}
+
+async function githubRest<T>(token: string, path: string): Promise<T> {
+  const res = await fetch(`https://api.github.com${path}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "User-Agent": "sportin-parity-dashboard",
+    },
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) {
+    throw new Error(`GitHub REST ${res.status}: ${await res.text()}`);
+  }
+  return (await res.json()) as T;
+}
+
+/**
+ * Single-mode: list files touched by a PR and classify by path prefix.
+ * Cached for 60s via the fetch revalidate option.
+ */
+async function classifyPRPaths(
+  token: string,
+  owner: string,
+  repo: string,
+  number: number,
+  iosPrefix: string,
+  androidPrefix: string,
+): Promise<{ ios: boolean; android: boolean }> {
+  type GHFile = { filename: string };
+  const files = await githubRest<GHFile[]>(
+    token,
+    `/repos/${owner}/${repo}/pulls/${number}/files?per_page=100`,
+  );
+
+  let ios = false;
+  let android = false;
+  const iosLc = iosPrefix.toLowerCase();
+  const andLc = androidPrefix.toLowerCase();
+  for (const f of files) {
+    const lc = f.filename.toLowerCase();
+    if (lc.startsWith(iosLc) || lc.includes("/" + iosLc)) ios = true;
+    if (lc.startsWith(andLc) || lc.includes("/" + andLc)) android = true;
+    if (ios && android) break;
+  }
+  return { ios, android };
+}
+
+function makeRef(pr: GHPullRequest): PRRef {
+  return {
+    number: pr.number,
+    title: pr.title,
+    url: pr.url,
+    status: classifyPR(pr),
+    mergedAt: pr.mergedAt,
+    updatedAt: pr.updatedAt,
+    author: pr.author?.login || null,
+  };
 }
 
 export async function fetchDashboard(): Promise<DashboardData> {
-  const cfg = getConfig();
+  const cfg: Config = getConfig();
   if (cfg.missing.length) {
     throw new Error(`Missing env vars: ${cfg.missing.join(", ")}`);
   }
@@ -152,8 +189,26 @@ export async function fetchDashboard(): Promise<DashboardData> {
   const features: FeatureRow[] = [];
   let cursor: string | null = null;
 
+  type IssuesResponse = {
+    repository: {
+      issues: {
+        pageInfo: { hasNextPage: boolean; endCursor: string };
+        nodes: Array<{
+          number: number;
+          title: string;
+          url: string;
+          createdAt: string;
+          updatedAt: string;
+          closed: boolean;
+          labels: { nodes: Array<{ name: string }> };
+          timelineItems: { nodes: Array<{ __typename: string; source?: GHPullRequest; subject?: GHPullRequest }> };
+        }>;
+      };
+    };
+  };
+
   for (let page = 0; page < 5; page++) {
-    const data = await githubFetch(cfg.token, {
+    const data: IssuesResponse = await githubFetch<IssuesResponse>(cfg.token, {
       query: QUERY,
       variables: { org: cfg.org, repo: cfg.featuresRepo, label: cfg.featureLabel, cursor },
     });
@@ -164,46 +219,50 @@ export async function fetchDashboard(): Promise<DashboardData> {
     for (const issue of issues.nodes) {
       const labels: string[] = (issue.labels?.nodes || []).map((l: { name: string }) => l.name);
 
-      const iosPRs: PRRef[] = [];
-      const androidPRs: PRRef[] = [];
-
+      // Collect distinct PRs first; we'll classify after.
+      const seenPRs = new Map<string, GHPullRequest>();
       for (const ev of issue.timelineItems?.nodes || []) {
         const pr: GHPullRequest | undefined =
           ev.__typename === "CrossReferencedEvent" ? ev.source : ev.subject;
         if (!pr || pr.__typename !== "PullRequest") continue;
         if (pr.repository.owner.login.toLowerCase() !== cfg.org.toLowerCase()) continue;
-
-        const ref: PRRef = {
-          number: pr.number,
-          title: pr.title,
-          url: pr.url,
-          status: classifyPR(pr),
-          mergedAt: pr.mergedAt,
-          updatedAt: pr.updatedAt,
-          author: pr.author?.login || null,
-        };
-
-        if (pr.repository.name === cfg.iosRepo) iosPRs.push(ref);
-        else if (pr.repository.name === cfg.androidRepo) androidPRs.push(ref);
+        seenPRs.set(`${pr.repository.name}#${pr.number}`, pr);
       }
 
-      // De-duplicate PRs by number (a PR can produce both Cross-ref + Connected events).
-      const uniq = (arr: PRRef[]) => {
-        const map = new Map<number, PRRef>();
-        for (const p of arr) {
-          const prev = map.get(p.number);
-          if (!prev) map.set(p.number, p);
+      const iosPRs: PRRef[] = [];
+      const androidPRs: PRRef[] = [];
+
+      for (const pr of seenPRs.values()) {
+        if (cfg.mode === "split") {
+          if (pr.repository.name === cfg.iosRepo) iosPRs.push(makeRef(pr));
+          else if (pr.repository.name === cfg.androidRepo) androidPRs.push(makeRef(pr));
+        } else if (cfg.mode === "single" && pr.repository.name === cfg.mobileRepo) {
+          try {
+            const { ios, android } = await classifyPRPaths(
+              cfg.token,
+              cfg.org,
+              cfg.mobileRepo!,
+              pr.number,
+              cfg.iosPath || "ios/",
+              cfg.androidPath || "android/",
+            );
+            const ref = makeRef(pr);
+            if (ios) iosPRs.push(ref);
+            if (android) androidPRs.push(ref);
+            // If neither matched (e.g. shared infra PR), don't count toward either.
+          } catch {
+            // ignore individual PR failures
+          }
         }
-        return Array.from(map.values());
-      };
+      }
 
       features.push({
         number: issue.number,
         title: issue.title,
         url: issue.url,
         priority: priorityFromLabels(labels),
-        ios: { status: statusFromPRs(uniq(iosPRs)), prs: uniq(iosPRs) },
-        android: { status: statusFromPRs(uniq(androidPRs)), prs: uniq(androidPRs) },
+        ios: { status: statusFromPRs(iosPRs), prs: iosPRs },
+        android: { status: statusFromPRs(androidPRs), prs: androidPRs },
         createdAt: issue.createdAt,
         updatedAt: issue.updatedAt,
         closed: issue.closed,
@@ -214,8 +273,7 @@ export async function fetchDashboard(): Promise<DashboardData> {
     cursor = issues.pageInfo.endCursor;
   }
 
-  // Drift: iOS-merged but Android-not-merged (and vice versa). Closed/done features
-  // (merged on both) don't count toward drift.
+  // Drift counts: one platform merged, the other not.
   let iosAhead = 0;
   let androidAhead = 0;
   for (const f of features) {
@@ -223,7 +281,7 @@ export async function fetchDashboard(): Promise<DashboardData> {
     if (f.android.status === "merged" && f.ios.status !== "merged") androidAhead++;
   }
 
-  // Sort: drift items first, then by priority, then by updated date.
+  // Drift first, then priority, then recent.
   const priWeight = (p: string | null) => (p === "P0" ? 0 : p === "P1" ? 1 : p === "P2" ? 2 : 3);
   const driftWeight = (f: FeatureRow) =>
     f.ios.status === "merged" && f.android.status !== "merged"
@@ -233,7 +291,6 @@ export async function fetchDashboard(): Promise<DashboardData> {
         : f.ios.status === "merged" && f.android.status === "merged"
           ? 2
           : 1;
-
   features.sort((a, b) => {
     const d = driftWeight(a) - driftWeight(b);
     if (d) return d;
@@ -242,6 +299,13 @@ export async function fetchDashboard(): Promise<DashboardData> {
     return b.updatedAt.localeCompare(a.updatedAt);
   });
 
+  const iosLabel =
+    cfg.mode === "split" ? `${cfg.org}/${cfg.iosRepo}` : `${cfg.org}/${cfg.mobileRepo}:${cfg.iosPath}`;
+  const androidLabel =
+    cfg.mode === "split"
+      ? `${cfg.org}/${cfg.androidRepo}`
+      : `${cfg.org}/${cfg.mobileRepo}:${cfg.androidPath}`;
+
   return {
     features,
     iosAhead,
@@ -249,8 +313,8 @@ export async function fetchDashboard(): Promise<DashboardData> {
     fetchedAt: new Date().toISOString(),
     config: {
       featuresRepo: `${cfg.org}/${cfg.featuresRepo}`,
-      iosRepo: `${cfg.org}/${cfg.iosRepo}`,
-      androidRepo: `${cfg.org}/${cfg.androidRepo}`,
+      iosRepo: iosLabel,
+      androidRepo: androidLabel,
       iosAheadLimit: cfg.iosAheadLimit,
     },
   };
