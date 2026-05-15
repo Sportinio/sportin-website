@@ -31,6 +31,7 @@ export interface DashboardData {
   iosAhead: number;
   androidAhead: number;
   fetchedAt: string;
+  warnings: string[];
   config: {
     featuresRepo: string;
     iosRepo: string;

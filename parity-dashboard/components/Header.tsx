@@ -34,6 +34,19 @@ export function Header({ data }: { data: DashboardData }) {
         </div>
       ) : null}
 
+      {data.warnings.length ? (
+        <details className="rounded-lg border border-warn/40 bg-warn/5 px-4 py-3 text-sm text-warn">
+          <summary className="cursor-pointer font-semibold">
+            {data.warnings.length} warning{data.warnings.length === 1 ? "" : "s"} (click to expand)
+          </summary>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-xs">
+            {data.warnings.map((w, i) => (
+              <li key={i}>{w}</li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
+
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Total features" value={String(data.features.length)} />
         <Stat

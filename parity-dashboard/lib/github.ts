@@ -187,6 +187,7 @@ export async function fetchDashboard(): Promise<DashboardData> {
   }
 
   const features: FeatureRow[] = [];
+  const warnings: string[] = [];
   let cursor: string | null = null;
 
   type IssuesResponse = {
@@ -249,10 +250,25 @@ export async function fetchDashboard(): Promise<DashboardData> {
             const ref = makeRef(pr);
             if (ios) iosPRs.push(ref);
             if (android) androidPRs.push(ref);
-            // If neither matched (e.g. shared infra PR), don't count toward either.
-          } catch {
-            // ignore individual PR failures
+            if (!ios && !android) {
+              // PR touched neither ios/ nor android/. Could be shared infra or
+              // wrong path config. Surface this for visibility.
+              warnings.push(
+                `PR #${pr.number} ("${pr.title.slice(0, 40)}…") touched neither ${cfg.iosPath} nor ${cfg.androidPath} — check path config.`,
+              );
+            }
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            warnings.push(`PR #${pr.number} files unreadable: ${msg.slice(0, 200)}`);
+            // Fall back: include the PR on both platforms so it's at least visible.
+            const ref = makeRef(pr);
+            iosPRs.push(ref);
+            androidPRs.push(ref);
           }
+        } else if (cfg.mode === "single") {
+          warnings.push(
+            `PR #${pr.number} is in ${pr.repository.name}, not the configured MOBILE_REPO (${cfg.mobileRepo}).`,
+          );
         }
       }
 
@@ -311,6 +327,7 @@ export async function fetchDashboard(): Promise<DashboardData> {
     iosAhead,
     androidAhead,
     fetchedAt: new Date().toISOString(),
+    warnings: warnings.slice(0, 20), // cap to avoid blowing up the UI
     config: {
       featuresRepo: `${cfg.org}/${cfg.featuresRepo}`,
       iosRepo: iosLabel,
