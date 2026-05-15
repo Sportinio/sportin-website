@@ -36,6 +36,9 @@ export interface Config {
   mobileRepo?: string;
   iosPath?: string;
   androidPath?: string;
+  // branch awareness
+  mainBranch: string;
+  devBranch: string;
   missing: string[];
 }
 
@@ -75,6 +78,8 @@ export function getConfig(): Config {
     mobileRepo: mobileRepo || undefined,
     iosPath: process.env.IOS_PATH || "ios/",
     androidPath: process.env.ANDROID_PATH || "android/",
+    mainBranch: process.env.MAIN_BRANCH || "main",
+    devBranch: process.env.DEV_BRANCH || "dev",
     missing,
   };
 }

@@ -12,6 +12,7 @@ const config: Config = {
         text: "#E8E8F0",
         muted: "#8A8AA0",
         ok: "#22C55E",
+        staged: "#06B6D4",
         warn: "#F5C24A",
         bad: "#EF4444",
       },

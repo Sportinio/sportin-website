@@ -1,4 +1,4 @@
-import type { DashboardData, FeatureRow, FeatureStatus, PRRef, PRStatus } from "./types";
+import type { DashboardData, FeatureRow, FeatureStatus, PRRef, PRStatus, PlatformBucket } from "./types";
 import { getConfig, type Config } from "./config";
 
 const GH_GRAPHQL = "https://api.github.com/graphql";
@@ -41,6 +41,7 @@ const QUERY = /* GraphQL */ `
                   __typename
                   ... on PullRequest {
                     number title url isDraft merged mergedAt updatedAt closed state
+                    mergeCommit { oid }
                     author { login }
                     repository { name owner { login } }
                   }
@@ -51,6 +52,7 @@ const QUERY = /* GraphQL */ `
                   __typename
                   ... on PullRequest {
                     number title url isDraft merged mergedAt updatedAt closed state
+                    mergeCommit { oid }
                     author { login }
                     repository { name owner { login } }
                   }
@@ -75,8 +77,101 @@ interface GHPullRequest {
   updatedAt: string;
   closed: boolean;
   state: "OPEN" | "CLOSED" | "MERGED";
+  mergeCommit: { oid: string } | null;
   author: { login: string } | null;
   repository: { name: string; owner: { login: string } };
+}
+
+/** Last N commit SHAs reachable from each branch. Used to test whether a
+ * PR's merge commit has landed in main or only in dev. */
+async function fetchBranchShas(
+  token: string,
+  org: string,
+  repo: string,
+  mainBranch: string,
+  devBranch: string,
+): Promise<{ main: Set<string>; dev: Set<string>; mainTip: string | null; devTip: string | null }> {
+  type BranchQuery = {
+    repository: {
+      main: { target: { history: { nodes: Array<{ oid: string }> } } } | null;
+      dev: { target: { history: { nodes: Array<{ oid: string }> } } } | null;
+    };
+  };
+  const Q = /* GraphQL */ `
+    query Branches($org: String!, $repo: String!, $main: String!, $dev: String!) {
+      repository(owner: $org, name: $repo) {
+        main: ref(qualifiedName: $main) {
+          target { ... on Commit { history(first: 200) { nodes { oid } } } }
+        }
+        dev: ref(qualifiedName: $dev) {
+          target { ... on Commit { history(first: 200) { nodes { oid } } } }
+        }
+      }
+    }
+  `;
+  try {
+    const data = await githubFetch<BranchQuery>(token, {
+      query: Q,
+      variables: {
+        org,
+        repo,
+        main: `refs/heads/${mainBranch}`,
+        dev: `refs/heads/${devBranch}`,
+      },
+    });
+    const mainNodes = data.repository?.main?.target?.history?.nodes || [];
+    const devNodes = data.repository?.dev?.target?.history?.nodes || [];
+    return {
+      main: new Set(mainNodes.map((n) => n.oid)),
+      dev: new Set(devNodes.map((n) => n.oid)),
+      mainTip: mainNodes[0]?.oid || null,
+      devTip: devNodes[0]?.oid || null,
+    };
+  } catch {
+    return { main: new Set(), dev: new Set(), mainTip: null, devTip: null };
+  }
+}
+
+/** Latest tag pointing at a commit in main, if any. */
+async function fetchLatestRelease(
+  token: string,
+  org: string,
+  repo: string,
+): Promise<{ tag: string; date: string } | null> {
+  type TagsQuery = {
+    repository: {
+      refs: {
+        nodes: Array<{
+          name: string;
+          target: { committedDate?: string; target?: { committedDate?: string } };
+        }>;
+      };
+    };
+  };
+  const Q = /* GraphQL */ `
+    query Tags($org: String!, $repo: String!) {
+      repository(owner: $org, name: $repo) {
+        refs(refPrefix: "refs/tags/", first: 30, orderBy: { field: TAG_COMMIT_DATE, direction: DESC }) {
+          nodes {
+            name
+            target {
+              ... on Commit { committedDate }
+              ... on Tag { target { ... on Commit { committedDate } } }
+            }
+          }
+        }
+      }
+    }
+  `;
+  try {
+    const data = await githubFetch<TagsQuery>(token, { query: Q, variables: { org, repo } });
+    const node = data.repository?.refs?.nodes?.[0];
+    if (!node) return null;
+    const date = node.target.committedDate || node.target.target?.committedDate || "";
+    return { tag: node.name, date };
+  } catch {
+    return null;
+  }
 }
 
 function classifyPR(pr: GHPullRequest): PRStatus {
@@ -168,7 +263,16 @@ async function classifyPRPaths(
   return { ios, android };
 }
 
-function makeRef(pr: GHPullRequest): PRRef {
+function makeRef(
+  pr: GHPullRequest,
+  branchShas: { main: Set<string>; dev: Set<string> },
+  mainName: string,
+  devName: string,
+): PRRef {
+  const sha = pr.mergeCommit?.oid || null;
+  const branches: string[] = [];
+  if (sha && branchShas.main.has(sha)) branches.push(mainName);
+  if (sha && branchShas.dev.has(sha)) branches.push(devName);
   return {
     number: pr.number,
     title: pr.title,
@@ -177,7 +281,16 @@ function makeRef(pr: GHPullRequest): PRRef {
     mergedAt: pr.mergedAt,
     updatedAt: pr.updatedAt,
     author: pr.author?.login || null,
+    mergeCommitSha: sha,
+    branches,
   };
+}
+
+function bucketFromPRs(prs: PRRef[], mainName: string): PlatformBucket {
+  const status = statusFromPRs(prs);
+  const released = prs.some((p) => p.status === "merged" && p.branches.includes(mainName));
+  const staged = prs.some((p) => p.status === "merged" && !p.branches.includes(mainName));
+  return { status, prs, released, staged };
 }
 
 export async function fetchDashboard(): Promise<DashboardData> {
@@ -189,6 +302,17 @@ export async function fetchDashboard(): Promise<DashboardData> {
   const features: FeatureRow[] = [];
   const warnings: string[] = [];
   let cursor: string | null = null;
+
+  // Fetch branch SHAs once (single repo in single-mode; in split-mode skip).
+  const branchScopeRepo =
+    cfg.mode === "single" ? cfg.mobileRepo! : cfg.iosRepo || cfg.androidRepo || "";
+  const branchShas = branchScopeRepo
+    ? await fetchBranchShas(cfg.token, cfg.org, branchScopeRepo, cfg.mainBranch, cfg.devBranch)
+    : { main: new Set<string>(), dev: new Set<string>(), mainTip: null, devTip: null };
+
+  const latestRelease = branchScopeRepo
+    ? await fetchLatestRelease(cfg.token, cfg.org, branchScopeRepo)
+    : null;
 
   type IssuesResponse = {
     repository: {
@@ -235,8 +359,8 @@ export async function fetchDashboard(): Promise<DashboardData> {
 
       for (const pr of seenPRs.values()) {
         if (cfg.mode === "split") {
-          if (pr.repository.name === cfg.iosRepo) iosPRs.push(makeRef(pr));
-          else if (pr.repository.name === cfg.androidRepo) androidPRs.push(makeRef(pr));
+          if (pr.repository.name === cfg.iosRepo) iosPRs.push(makeRef(pr, branchShas, cfg.mainBranch, cfg.devBranch));
+          else if (pr.repository.name === cfg.androidRepo) androidPRs.push(makeRef(pr, branchShas, cfg.mainBranch, cfg.devBranch));
         } else if (cfg.mode === "single" && pr.repository.name === cfg.mobileRepo) {
           try {
             const { ios, android } = await classifyPRPaths(
@@ -247,12 +371,10 @@ export async function fetchDashboard(): Promise<DashboardData> {
               cfg.iosPath || "ios/",
               cfg.androidPath || "android/",
             );
-            const ref = makeRef(pr);
+            const ref = makeRef(pr, branchShas, cfg.mainBranch, cfg.devBranch);
             if (ios) iosPRs.push(ref);
             if (android) androidPRs.push(ref);
             if (!ios && !android) {
-              // PR touched neither ios/ nor android/. Could be shared infra or
-              // wrong path config. Surface this for visibility.
               warnings.push(
                 `PR #${pr.number} ("${pr.title.slice(0, 40)}…") touched neither ${cfg.iosPath} nor ${cfg.androidPath} — check path config.`,
               );
@@ -260,8 +382,7 @@ export async function fetchDashboard(): Promise<DashboardData> {
           } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
             warnings.push(`PR #${pr.number} files unreadable: ${msg.slice(0, 200)}`);
-            // Fall back: include the PR on both platforms so it's at least visible.
-            const ref = makeRef(pr);
+            const ref = makeRef(pr, branchShas, cfg.mainBranch, cfg.devBranch);
             iosPRs.push(ref);
             androidPRs.push(ref);
           }
@@ -277,8 +398,8 @@ export async function fetchDashboard(): Promise<DashboardData> {
         title: issue.title,
         url: issue.url,
         priority: priorityFromLabels(labels),
-        ios: { status: statusFromPRs(iosPRs), prs: iosPRs },
-        android: { status: statusFromPRs(androidPRs), prs: androidPRs },
+        ios: bucketFromPRs(iosPRs, cfg.mainBranch),
+        android: bucketFromPRs(androidPRs, cfg.mainBranch),
         createdAt: issue.createdAt,
         updatedAt: issue.updatedAt,
         closed: issue.closed,
@@ -292,9 +413,18 @@ export async function fetchDashboard(): Promise<DashboardData> {
   // Drift counts: one platform merged, the other not.
   let iosAhead = 0;
   let androidAhead = 0;
+  let releasedCount = 0;
+  let stagedCount = 0;
   for (const f of features) {
     if (f.ios.status === "merged" && f.android.status !== "merged") iosAhead++;
     if (f.android.status === "merged" && f.ios.status !== "merged") androidAhead++;
+    if (f.ios.released && f.android.released) releasedCount++;
+    else if (
+      (f.ios.released || f.ios.staged) &&
+      (f.android.released || f.android.staged)
+    ) {
+      stagedCount++;
+    }
   }
 
   // Drift first, then priority, then recent.
@@ -326,13 +456,18 @@ export async function fetchDashboard(): Promise<DashboardData> {
     features,
     iosAhead,
     androidAhead,
+    releasedCount,
+    stagedCount,
     fetchedAt: new Date().toISOString(),
-    warnings: warnings.slice(0, 20), // cap to avoid blowing up the UI
+    warnings: warnings.slice(0, 20),
+    latestRelease,
     config: {
       featuresRepo: `${cfg.org}/${cfg.featuresRepo}`,
       iosRepo: iosLabel,
       androidRepo: androidLabel,
       iosAheadLimit: cfg.iosAheadLimit,
+      mainBranch: cfg.mainBranch,
+      devBranch: cfg.devBranch,
     },
   };
 }

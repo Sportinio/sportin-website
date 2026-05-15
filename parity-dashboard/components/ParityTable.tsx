@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { DashboardData, FeatureRow, FeatureStatus, PRRef } from "@/lib/types";
+import type { DashboardData, FeatureRow, FeatureStatus, PRRef, PlatformBucket } from "@/lib/types";
 
 // ── Column definitions ────────────────────────────────────────────────
 
@@ -32,18 +32,20 @@ const STALE_MS = 5 * 24 * 60 * 60 * 1000; // 5 days
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
-const STATUS_COLOR: Record<FeatureStatus, string> = {
-  merged: "bg-ok",
-  in_review: "bg-warn",
-  in_progress: "bg-warn/60",
-  not_started: "bg-bad",
-};
-const STATUS_LABEL: Record<FeatureStatus, string> = {
-  merged: "Merged",
-  in_review: "Open PR",
-  in_progress: "Draft",
-  not_started: "Not started",
-};
+/** Color for the status dot. We split "merged" into two visual states based
+ * on the bucket: released (in main) → green, staged (only in dev) → cyan. */
+function dotColor(b: PlatformBucket): string {
+  if (b.status === "merged") return b.released ? "bg-ok" : "bg-staged";
+  if (b.status === "in_review") return "bg-warn";
+  if (b.status === "in_progress") return "bg-warn/60";
+  return "bg-bad";
+}
+function dotLabel(b: PlatformBucket): string {
+  if (b.status === "merged") return b.released ? "Released to main" : "Staged in dev";
+  if (b.status === "in_review") return "Open PR";
+  if (b.status === "in_progress") return "Draft";
+  return "Not started";
+}
 const PR_COLOR: Record<PRRef["status"], string> = {
   merged: "text-ok",
   open: "text-warn",
@@ -173,21 +175,34 @@ function HoverPopover({
   );
 }
 
+function BranchBadge({ name, kind }: { name: string; kind: "main" | "dev" }) {
+  const color = kind === "main"
+    ? "border-ok/40 bg-ok/15 text-ok"
+    : "border-staged/40 bg-staged/15 text-staged";
+  return (
+    <span className={`inline-flex items-center rounded border px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${color}`}>
+      {name}
+    </span>
+  );
+}
+
 function PRPopoverContent({
-  status, prs, platform,
-}: { status: FeatureStatus; prs: PRRef[]; platform: string }) {
+  bucket, platform, mainBranch, devBranch,
+}: { bucket: PlatformBucket; platform: string; mainBranch: string; devBranch: string }) {
   return (
     <>
       <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted">
         <span>{platform}</span>
-        <span>{STATUS_LABEL[status]}</span>
+        <span>{dotLabel(bucket)}</span>
       </div>
-      {prs.length === 0 ? (
+      {bucket.prs.length === 0 ? (
         <p className="text-muted">No pull request yet for this platform.</p>
       ) : (
         <ul className="space-y-2">
-          {prs.map((pr) => {
+          {bucket.prs.map((pr) => {
             const stale = isStalePR(pr);
+            const inMain = pr.branches.includes(mainBranch);
+            const inDev = pr.branches.includes(devBranch);
             return (
               <li key={pr.url}>
                 <a
@@ -199,10 +214,17 @@ function PRPopoverContent({
                 >
                   #{pr.number} {pr.title}
                 </a>
-                <div className="mt-0.5 flex items-center gap-2 text-[10px] text-muted">
+                <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[10px] text-muted">
                   <span>{pr.status}</span>
                   {pr.author ? <span>· {pr.author}</span> : null}
                   {stale ? <span className="text-bad">· stale</span> : null}
+                  {pr.status === "merged" ? (
+                    <>
+                      {inMain ? <BranchBadge name={mainBranch} kind="main" /> : null}
+                      {inDev && !inMain ? <BranchBadge name={devBranch} kind="dev" /> : null}
+                      {!inMain && !inDev ? <span className="italic">unreachable</span> : null}
+                    </>
+                  ) : null}
                   <span className="ml-auto">{timeAgo(pr.updatedAt)}</span>
                 </div>
               </li>
@@ -235,13 +257,15 @@ function StalePopoverContent({ prs }: { prs: PRRef[] }) {
   );
 }
 
-function StatusCell({ status, prs, platform }: { status: FeatureStatus; prs: PRRef[]; platform: string }) {
+function StatusCell({
+  bucket, platform, mainBranch, devBranch,
+}: { bucket: PlatformBucket; platform: string; mainBranch: string; devBranch: string }) {
   return (
-    <HoverPopover content={<PRPopoverContent status={status} prs={prs} platform={platform} />}>
+    <HoverPopover content={<PRPopoverContent bucket={bucket} platform={platform} mainBranch={mainBranch} devBranch={devBranch} />}>
       {(handlers) => (
         <div ref={handlers.ref} className="flex items-center justify-center" onMouseEnter={handlers.onMouseEnter} onMouseLeave={handlers.onMouseLeave}>
-          <span className={`inline-block h-2.5 w-2.5 rounded-full ${STATUS_COLOR[status]}`} />
-          {prs.length > 0 ? <span className="ml-1.5 text-[10px] text-muted">{prs.length}</span> : null}
+          <span className={`inline-block h-2.5 w-2.5 rounded-full ${dotColor(bucket)}`} title={dotLabel(bucket)} />
+          {bucket.prs.length > 0 ? <span className="ml-1.5 text-[10px] text-muted">{bucket.prs.length}</span> : null}
         </div>
       )}
     </HoverPopover>
@@ -567,7 +591,7 @@ export function ParityTable({ data }: { data: DashboardData }) {
           </div>
         ) : (
           visible.map((f) => (
-            <FeatureRowView key={f.number} f={f} gridTemplate={gridTemplate} cols={cols} />
+            <FeatureRowView key={f.number} f={f} gridTemplate={gridTemplate} cols={cols} mainBranch={data.config.mainBranch} devBranch={data.config.devBranch} />
           ))
         )}
       </div>
@@ -576,8 +600,8 @@ export function ParityTable({ data }: { data: DashboardData }) {
 }
 
 function FeatureRowView({
-  f, gridTemplate, cols,
-}: { f: FeatureRow; gridTemplate: string; cols: ColDef[] }) {
+  f, gridTemplate, cols, mainBranch, devBranch,
+}: { f: FeatureRow; gridTemplate: string; cols: ColDef[]; mainBranch: string; devBranch: string }) {
   const drift = driftOf(f);
   const stale = stalePRs(f);
   return (
@@ -607,9 +631,9 @@ function FeatureRowView({
               </div>
             );
           case "ios":
-            return <div key={c.key} className={base}><StatusCell status={f.ios.status} prs={f.ios.prs} platform="iOS" /></div>;
+            return <div key={c.key} className={base}><StatusCell bucket={f.ios} platform="iOS" mainBranch={mainBranch} devBranch={devBranch} /></div>;
           case "android":
-            return <div key={c.key} className={base}><StatusCell status={f.android.status} prs={f.android.prs} platform="Android" /></div>;
+            return <div key={c.key} className={base}><StatusCell bucket={f.android} platform="Android" mainBranch={mainBranch} devBranch={devBranch} /></div>;
           case "drift":
             return <div key={c.key} className={base}><DriftCell kind={drift} /></div>;
           case "stale":
