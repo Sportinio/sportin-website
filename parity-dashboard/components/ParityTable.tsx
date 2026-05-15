@@ -260,12 +260,28 @@ function StalePopoverContent({ prs }: { prs: PRRef[] }) {
 function StatusCell({
   bucket, platform, mainBranch, devBranch,
 }: { bucket: PlatformBucket; platform: string; mainBranch: string; devBranch: string }) {
+  // Compact branch label next to the dot, always visible.
+  let badge: { text: string; color: string } | null = null;
+  if (bucket.status === "merged") {
+    if (bucket.released) badge = { text: mainBranch, color: "text-ok" };
+    else if (bucket.staged) badge = { text: devBranch, color: "text-staged" };
+  } else if (bucket.status === "in_review") {
+    badge = { text: "PR", color: "text-warn" };
+  } else if (bucket.status === "in_progress") {
+    badge = { text: "draft", color: "text-warn/70" };
+  }
+
   return (
     <HoverPopover content={<PRPopoverContent bucket={bucket} platform={platform} mainBranch={mainBranch} devBranch={devBranch} />}>
       {(handlers) => (
-        <div ref={handlers.ref} className="flex items-center justify-center" onMouseEnter={handlers.onMouseEnter} onMouseLeave={handlers.onMouseLeave}>
+        <div ref={handlers.ref} className="flex items-center justify-center gap-1.5" onMouseEnter={handlers.onMouseEnter} onMouseLeave={handlers.onMouseLeave}>
           <span className={`inline-block h-2.5 w-2.5 rounded-full ${dotColor(bucket)}`} title={dotLabel(bucket)} />
-          {bucket.prs.length > 0 ? <span className="ml-1.5 text-[10px] text-muted">{bucket.prs.length}</span> : null}
+          {badge ? (
+            <span className={`text-[10px] font-semibold uppercase tracking-wider ${badge.color}`}>
+              {badge.text}
+            </span>
+          ) : null}
+          {bucket.prs.length > 0 ? <span className="text-[10px] text-muted">·{bucket.prs.length}</span> : null}
         </div>
       )}
     </HoverPopover>
@@ -365,6 +381,28 @@ function FilterChip({
       {children}
       {typeof count === "number" ? <span className="opacity-75">{count}</span> : null}
     </button>
+  );
+}
+
+function Legend({ mainBranch, devBranch }: { mainBranch: string; devBranch: string }) {
+  const items: { dot: string; label: string; sub: string; color: string }[] = [
+    { dot: "bg-ok", label: mainBranch, sub: "released to production", color: "text-ok" },
+    { dot: "bg-staged", label: devBranch, sub: "merged to dev, awaiting release", color: "text-staged" },
+    { dot: "bg-warn", label: "PR", sub: "open pull request", color: "text-warn" },
+    { dot: "bg-warn/60", label: "draft", sub: "draft pull request", color: "text-warn/70" },
+    { dot: "bg-bad", label: "—", sub: "not started", color: "text-muted" },
+  ];
+  return (
+    <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-lg border border-border bg-surface/40 px-3 py-2 text-[11px]">
+      <span className="text-[10px] uppercase tracking-wider text-muted">Legend</span>
+      {items.map((it) => (
+        <span key={it.label} className="inline-flex items-center gap-1.5">
+          <span className={`inline-block h-2.5 w-2.5 rounded-full ${it.dot}`} />
+          <span className={`font-semibold uppercase tracking-wider ${it.color}`}>{it.label}</span>
+          <span className="text-muted">{it.sub}</span>
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -553,6 +591,8 @@ export function ParityTable({ data }: { data: DashboardData }) {
         totalShown={visible.length}
         totalAll={data.features.length}
       />
+
+      <Legend mainBranch={data.config.mainBranch} devBranch={data.config.devBranch} />
 
       <div className="overflow-x-auto rounded-xl border border-border bg-surface">
         {/* Header */}
