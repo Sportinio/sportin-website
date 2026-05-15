@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { DashboardData, FeatureRow, FeatureStatus, PRRef } from "@/lib/types";
 
 // ── Column definitions ────────────────────────────────────────────────
@@ -100,16 +101,83 @@ function priorityChip(p: string | null) {
   );
 }
 
-// ── Hover popover ─────────────────────────────────────────────────────
+// ── Hover popover (portal-rendered, fixed-positioned) ─────────────────
 
-function PRPopover({
+const POPOVER_WIDTH = 288; // px (w-72)
+
+/**
+ * Wraps a trigger element with hover-driven popover behavior.
+ * The popover is portal-mounted at document.body so it escapes any
+ * overflow:hidden parents. Position is computed from the trigger's
+ * bounding rect and clamped to viewport edges.
+ */
+function HoverPopover({
+  children,
+  content,
+}: {
+  children: (props: {
+    ref: React.Ref<HTMLDivElement>;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
+  }) => React.ReactNode;
+  content: React.ReactNode;
+}) {
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => setMounted(true), []);
+
+  function compute() {
+    const el = triggerRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    let left = r.left + r.width / 2 - POPOVER_WIDTH / 2;
+    const maxLeft = window.innerWidth - POPOVER_WIDTH - 8;
+    if (left > maxLeft) left = maxLeft;
+    if (left < 8) left = 8;
+    setPos({ top: r.bottom + 6, left });
+  }
+
+  function open() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    compute();
+  }
+  function scheduleClose() {
+    closeTimer.current = setTimeout(() => setPos(null), 120);
+  }
+
+  return (
+    <>
+      {children({
+        ref: triggerRef,
+        onMouseEnter: open,
+        onMouseLeave: scheduleClose,
+      })}
+      {mounted && pos
+        ? createPortal(
+            <div
+              style={{ position: "fixed", top: pos.top, left: pos.left, width: POPOVER_WIDTH }}
+              className="z-[100] rounded-lg border border-border bg-surface2 p-3 text-left text-xs shadow-2xl"
+              onMouseEnter={() => closeTimer.current && clearTimeout(closeTimer.current)}
+              onMouseLeave={scheduleClose}
+              role="dialog"
+            >
+              {content}
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
+  );
+}
+
+function PRPopoverContent({
   status, prs, platform,
 }: { status: FeatureStatus; prs: PRRef[]; platform: string }) {
   return (
-    <div
-      className="pointer-events-auto absolute left-1/2 top-full z-50 mt-2 w-72 -translate-x-1/2 rounded-lg border border-border bg-surface2 p-3 text-left text-xs shadow-xl"
-      role="dialog"
-    >
+    <>
       <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted">
         <span>{platform}</span>
         <span>{STATUS_LABEL[status]}</span>
@@ -142,13 +210,13 @@ function PRPopover({
           })}
         </ul>
       )}
-    </div>
+    </>
   );
 }
 
-function StalePopover({ prs }: { prs: PRRef[] }) {
+function StalePopoverContent({ prs }: { prs: PRRef[] }) {
   return (
-    <div className="pointer-events-auto absolute right-0 top-full z-50 mt-2 w-72 rounded-lg border border-border bg-surface2 p-3 text-left text-xs shadow-xl">
+    <>
       <div className="mb-2 text-[10px] uppercase tracking-wider text-bad">Stale PRs · open &gt; 5 days</div>
       <ul className="space-y-2">
         {prs.map((pr) => (
@@ -163,18 +231,20 @@ function StalePopover({ prs }: { prs: PRRef[] }) {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }
 
 function StatusCell({ status, prs, platform }: { status: FeatureStatus; prs: PRRef[]; platform: string }) {
-  const [open, setOpen] = useState(false);
   return (
-    <div className="relative flex items-center justify-center" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <span className={`inline-block h-2.5 w-2.5 rounded-full ${STATUS_COLOR[status]}`} />
-      {prs.length > 0 ? <span className="ml-1.5 text-[10px] text-muted">{prs.length}</span> : null}
-      {open ? <PRPopover status={status} prs={prs} platform={platform} /> : null}
-    </div>
+    <HoverPopover content={<PRPopoverContent status={status} prs={prs} platform={platform} />}>
+      {(handlers) => (
+        <div ref={handlers.ref} className="flex items-center justify-center" onMouseEnter={handlers.onMouseEnter} onMouseLeave={handlers.onMouseLeave}>
+          <span className={`inline-block h-2.5 w-2.5 rounded-full ${STATUS_COLOR[status]}`} />
+          {prs.length > 0 ? <span className="ml-1.5 text-[10px] text-muted">{prs.length}</span> : null}
+        </div>
+      )}
+    </HoverPopover>
   );
 }
 
@@ -189,15 +259,17 @@ function DriftCell({ kind }: { kind: DriftKind }) {
 }
 
 function StaleCell({ stale }: { stale: PRRef[] }) {
-  const [open, setOpen] = useState(false);
   if (!stale.length) return <span className="text-muted/40 text-xs">—</span>;
   return (
-    <div className="relative flex items-center justify-center" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <span className="inline-flex items-center gap-1 rounded border border-bad/40 bg-bad/10 px-1.5 py-0.5 text-[10px] font-semibold text-bad">
-        ⚠ {stale.length}
-      </span>
-      {open ? <StalePopover prs={stale} /> : null}
-    </div>
+    <HoverPopover content={<StalePopoverContent prs={stale} />}>
+      {(handlers) => (
+        <div ref={handlers.ref} className="flex items-center justify-center" onMouseEnter={handlers.onMouseEnter} onMouseLeave={handlers.onMouseLeave}>
+          <span className="inline-flex items-center gap-1 rounded border border-bad/40 bg-bad/10 px-1.5 py-0.5 text-[10px] font-semibold text-bad">
+            ⚠ {stale.length}
+          </span>
+        </div>
+      )}
+    </HoverPopover>
   );
 }
 
