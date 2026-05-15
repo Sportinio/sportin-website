@@ -1,6 +1,6 @@
 import { fetchDashboard } from "@/lib/github";
 import { Header } from "@/components/Header";
-import { ParityGrid } from "@/components/ParityGrid";
+import { ParityTable } from "@/components/ParityTable";
 
 // Revalidate cache every 60 seconds. Manual refresh still works (hard reload).
 export const revalidate = 60;
@@ -29,7 +29,7 @@ export default async function Page() {
       ) : data ? (
         <>
           <Header data={data} />
-          <ParityGrid data={data} />
+          <ParityTable data={data} />
           <footer className="mt-8 text-center text-[11px] text-muted">
             Convention: open an issue in <code>{data.config.featuresRepo}</code> with label{" "}
             <code>feature</code> for each new feature. Reference it from PRs with{" "}
