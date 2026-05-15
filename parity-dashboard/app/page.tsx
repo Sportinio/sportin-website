@@ -1,6 +1,7 @@
 import { fetchDashboard } from "@/lib/github";
 import { Header } from "@/components/Header";
 import { ParityTable } from "@/components/ParityTable";
+import { NavTabs } from "@/components/NavTabs";
 
 // Revalidate cache every 60 seconds. Manual refresh still works (hard reload).
 export const revalidate = 60;
@@ -17,6 +18,7 @@ export default async function Page() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
+      <NavTabs />
       {error ? (
         <div className="rounded-xl border border-bad/40 bg-bad/10 p-6">
           <h1 className="text-lg font-semibold text-bad">Dashboard error</h1>
