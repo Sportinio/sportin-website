@@ -9,7 +9,7 @@ const STATUS_COLOR: Record<PRRef["status"], string> = {
 
 export function PRList({ prs }: { prs: PRRef[] }) {
   if (!prs.length) {
-    return <span className="text-xs text-muted">—</span>;
+    return null;
   }
   return (
     <ul className="space-y-1">
