@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Social Templates & Media Kit — League of Brands | SportIn</title>
+<title>Social Templates — League of Brands | SportIn</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <style>
@@ -34,772 +34,441 @@
   }
 
   /* ── PAGE LAYOUT ── */
-  .page-header {
-    text-align: center;
-    padding: 60px 24px 40px;
-  }
+  .page-header { text-align: center; padding: 60px 24px 40px; }
   .page-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 16px;
+    font-size: 12px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--blue-bright); margin-bottom: 16px;
   }
   .page-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 12px;
+    font-size: 36px; font-weight: 700; margin-bottom: 12px;
   }
   .page-sub {
-    color: var(--text-3);
-    font-size: 16px;
-    max-width: 560px;
-    margin: 0 auto;
-    line-height: 1.6;
+    color: var(--text-3); font-size: 16px;
+    max-width: 560px; margin: 0 auto; line-height: 1.6;
   }
-
   .section-heading {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-    padding: 40px 24px 8px;
-    max-width: 1200px;
-    margin: 0 auto;
+    font-size: 24px; font-weight: 700;
+    padding: 40px 24px 8px; max-width: 1200px; margin: 0 auto;
   }
   .section-desc {
-    color: var(--text-3);
-    font-size: 14px;
-    padding: 0 24px 32px;
-    max-width: 1200px;
-    margin: 0 auto;
+    color: var(--text-3); font-size: 14px;
+    padding: 0 24px 32px; max-width: 1200px; margin: 0 auto;
   }
-
   .templates-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 40px;
-    padding: 0 24px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
+    gap: 40px; padding: 0 24px 60px;
+    max-width: 1200px; margin: 0 auto;
   }
-
-  .template-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .template-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .template-wrap { display: flex; flex-direction: column; gap: 16px; }
+  .template-info { display: flex; justify-content: space-between; align-items: center; }
   .template-name {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-3);
+    font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-3);
   }
-  .template-size {
-    font-size: 11px;
-    color: var(--text-4);
-  }
-
+  .template-size { font-size: 11px; color: var(--text-4); }
   .download-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: var(--blue);
-    color: white;
-    border: none;
-    border-radius: 10px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; background: var(--blue); color: white;
+    border: none; border-radius: 10px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+    font-size: 14px; font-weight: 600; cursor: pointer;
     transition: background 0.2s, transform 0.15s;
   }
   .download-btn:hover { background: var(--blue-bright); transform: translateY(-1px); }
   .download-btn svg { width: 16px; height: 16px; }
-
-  .download-row {
-    display: flex;
-    gap: 8px;
+  .download-row { display: flex; gap: 8px; }
+  .divider {
+    max-width: 1200px; margin: 20px auto;
+    padding: 0 24px; border: none; border-top: 1px solid var(--border);
   }
-  .download-btn.ghost {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-  }
-  .download-btn.ghost:hover { background: var(--surface); border-color: var(--border-strong); }
 
-  /* ── CARD CANVAS (1080x1080) ── */
+  /* ═══ CARD BASE ═══ */
   .card {
-    width: 540px;
-    height: 540px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 12px;
-    flex-shrink: 0;
+    width: 540px; height: 540px;
+    position: relative; overflow: hidden;
+    border-radius: 12px; flex-shrink: 0;
+  }
+  .card-landscape {
+    width: 540px; height: 304px;
+    position: relative; overflow: hidden;
+    border-radius: 12px; flex-shrink: 0;
   }
 
-  /* ── CARD 1: LEAGUE IS COMING ── */
-  .card-coming {
-    background:
-      radial-gradient(ellipse at 50% 30%, rgba(7,81,251,0.35) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 80%, rgba(59,123,255,0.12) 0%, transparent 50%),
-      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px;
-  }
-  .card-coming .sportin-logo {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 32px;
-    opacity: 0.6;
-  }
-  .card-coming .pre-label {
+  /* Shared elements */
+  .card-watermark {
+    display: flex; align-items: center; gap: 8px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 20px;
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-4);
   }
-  .card-coming .hero-title {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    text-transform: uppercase;
-    line-height: 0.88;
-    margin-bottom: 8px;
+  .card-watermark svg { width: 16px; height: 16px; opacity: 0.4; }
+  .card-cup {
+    filter: drop-shadow(0 16px 48px rgba(7,81,251,0.25)) drop-shadow(0 4px 16px rgba(0,0,0,0.6));
   }
-  .card-coming .hero-line1 {
-    font-size: 36px;
-    display: block;
-    color: #C8C8D8;
+
+  /* ═══ CARD 1: CUP REVEAL ═══ */
+  .card-cup-reveal {
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(7,81,251,0.3) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 80%, rgba(245,228,168,0.06) 0%, transparent 40%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 40px;
   }
-  .card-coming .hero-line2 {
-    font-size: 44px;
-    display: block;
-    color: var(--blue-bright);
+  .card-cup-reveal .cup-img {
+    width: 160px; height: auto; margin-bottom: 32px;
+  }
+  .card-cup-reveal .title {
+    font-family: 'Cinzel', serif; font-weight: 900;
+    text-transform: uppercase; line-height: 0.88; margin-bottom: 20px;
+  }
+  .card-cup-reveal .t-line1 {
+    font-size: 30px; display: block; color: #C8C8D8;
+  }
+  .card-cup-reveal .t-line2 {
+    font-size: 38px; display: block; color: var(--blue-bright);
     filter: drop-shadow(0 2px 12px rgba(7,81,251,0.5));
   }
-  .card-coming .hero-sub {
+  .card-cup-reveal .subtitle {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    color: var(--text-3);
+    font-size: 14px; color: var(--text-3); line-height: 1.5;
+  }
+  .card-cup-reveal .badge {
     margin-top: 24px;
-    line-height: 1.5;
-  }
-  .card-coming .season-badge {
-    margin-top: 32px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-4);
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
     padding: 8px 20px;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(245,228,168,0.2);
     border-radius: 100px;
   }
 
-  /* ── CARD 2: MATCHDAY (vs layout) ── */
-  .card-matchday {
+  /* ═══ CARD 2: COMING SOON ═══ */
+  .card-coming-soon {
     background:
-      radial-gradient(ellipse at 30% 50%, rgba(7,81,251,0.2) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 50%, rgba(239,68,68,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 30%, rgba(7,81,251,0.35) 0%, transparent 55%),
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 36px;
-    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 48px;
   }
-  .card-matchday .match-label {
+  .card-coming-soon .cup-img {
+    width: 130px; height: auto; margin-bottom: 28px;
+  }
+  .card-coming-soon .pre {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 8px;
-  }
-  .card-matchday .match-round {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    color: var(--text-3);
-    margin-bottom: 28px;
-  }
-  .card-matchday .vs-row {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    margin-bottom: 28px;
-  }
-  .card-matchday .vs-team {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    width: 160px;
-  }
-  .card-matchday .vs-team-logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: var(--surface-2);
-    border: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 24px;
-    color: var(--text-3);
-    overflow: hidden;
-  }
-  .card-matchday .vs-team-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .card-matchday .vs-team-name {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-  }
-  .card-matchday .vs-badge {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 28px;
-    color: #C0C0D0;
-  }
-  .card-matchday .match-meta {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--text-4);
-    text-transform: uppercase;
-    padding: 8px 16px;
-    border: 1px solid var(--border);
-    border-radius: 100px;
-  }
-  .card-matchday .match-bottom {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-top: 20px;
-  }
-  .card-matchday .bottom-logo {
-    width: 18px;
-    height: 18px;
-    opacity: 0.4;
-  }
-  .card-matchday .bottom-text {
-    font-size: 10px;
-    color: var(--text-4);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  /* ── CARD 3: STANDINGS ── */
-  .card-standings {
-    background:
-      radial-gradient(ellipse at 50% 20%, rgba(7,81,251,0.25) 0%, transparent 55%),
-      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    padding: 36px;
-  }
-  .card-standings .st-top {
-    text-align: center;
-    margin-bottom: 24px;
-  }
-  .card-standings .st-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 6px;
-  }
-  .card-standings .st-title {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 22px;
-    text-transform: uppercase;
-    color: #D0D0E0;
-  }
-  .card-standings .st-table {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .card-standings .st-header {
-    display: grid;
-    grid-template-columns: 28px 1fr 36px 36px 36px 44px;
-    gap: 4px;
-    padding: 6px 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-4);
-    border-bottom: 1px solid var(--border);
-  }
-  .card-standings .st-row {
-    display: grid;
-    grid-template-columns: 28px 1fr 36px 36px 36px 44px;
-    gap: 4px;
-    padding: 7px 10px;
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 12px;
-  }
-  .card-standings .st-row:nth-child(2) { /* 1st place highlight */
-    background: rgba(245,228,168,0.06);
-    border-left: 2px solid var(--gold);
-  }
-  .card-standings .st-pos {
-    font-family: 'IBM Plex Mono', monospace;
-    font-weight: 600;
-    font-size: 11px;
-    color: var(--text-3);
-  }
-  .card-standings .st-row:nth-child(2) .st-pos { color: var(--gold); }
-  .card-standings .st-team {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .card-standings .st-val {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-2);
-    text-align: center;
-  }
-  .card-standings .st-pts {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--text);
-    text-align: center;
-  }
-  .card-standings .st-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: auto;
-    padding-top: 12px;
-  }
-
-  /* ── CARD 4: SEASON ANNOUNCE ── */
-  .card-season {
-    background:
-      radial-gradient(ellipse at 50% 60%, rgba(7,81,251,0.3) 0%, transparent 55%),
-      radial-gradient(ellipse at 20% 20%, rgba(245,228,168,0.08) 0%, transparent 40%),
-      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px;
-  }
-  .card-season .cup-img {
-    width: 120px;
-    height: auto;
-    margin-bottom: 28px;
-    filter: drop-shadow(0 12px 40px rgba(7,81,251,0.3));
-  }
-  .card-season .season-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 16px;
-  }
-  .card-season .season-title {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 34px;
-    text-transform: uppercase;
-    line-height: 0.9;
-    margin-bottom: 6px;
-    color: #D0D0E0;
-  }
-  .card-season .season-sub-title {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 40px;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    filter: drop-shadow(0 2px 12px rgba(7,81,251,0.5));
+    font-size: 10px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--blue-bright);
     margin-bottom: 20px;
   }
-  .card-season .season-dates {
+  .card-coming-soon .big-text {
+    font-family: 'Cinzel', serif; font-weight: 900;
+    font-size: 48px; text-transform: uppercase;
+    color: #FFFFFF; line-height: 0.9;
+    letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .card-coming-soon .date {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    color: var(--text-2);
-    margin-bottom: 8px;
+    font-size: 16px; color: var(--text-2); margin-bottom: 6px;
   }
-  .card-season .season-format {
-    font-size: 13px;
-    color: var(--text-4);
-    line-height: 1.5;
-  }
-  .card-season .season-url {
-    margin-top: 28px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--blue-bright);
-    letter-spacing: 0.1em;
-    padding: 8px 20px;
-    border: 1px solid rgba(7,81,251,0.3);
-    border-radius: 100px;
+  .card-coming-soon .format {
+    font-size: 13px; color: var(--text-4); line-height: 1.5;
   }
 
-  /* ── CARD 5: JOIN CTA ── */
-  .card-join {
+  /* ═══ CARD 3: BRAND CTA ═══ */
+  .card-brand-cta {
     background:
       radial-gradient(ellipse at 50% 40%, rgba(7,81,251,0.4) 0%, transparent 55%),
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 44px;
   }
-  .card-join .join-label {
+  .card-brand-cta .pre {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 28px;
-  }
-  .card-join .join-lines {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 24px;
-  }
-  .card-join .join-line {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 38px;
-    text-transform: uppercase;
-    line-height: 1;
-    letter-spacing: 0.04em;
-  }
-  .card-join .join-line-white {
-    color: #FFFFFF;
-  }
-  .card-join .join-line-silver {
-    color: #B0B0C0;
-  }
-  .card-join .join-line-blue {
-    color: var(--blue-bright);
-    filter: drop-shadow(0 0 20px rgba(7,81,251,0.4));
-  }
-  .card-join .join-desc {
-    font-size: 14px;
-    color: var(--text-3);
-    line-height: 1.6;
-    max-width: 380px;
+    font-size: 10px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--blue-bright);
     margin-bottom: 32px;
   }
-  .card-join .join-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 32px;
-    background: var(--blue);
-    color: white;
+  .card-brand-cta .lines { display: flex; flex-direction: column; gap: 6px; margin-bottom: 28px; }
+  .card-brand-cta .line {
+    font-family: 'Cinzel', serif; font-weight: 900;
+    font-size: 38px; text-transform: uppercase;
+    line-height: 1; letter-spacing: 0.04em;
+  }
+  .card-brand-cta .l-white { color: #FFFFFF; }
+  .card-brand-cta .l-silver { color: #B0B0C0; }
+  .card-brand-cta .l-blue { color: var(--blue-bright); filter: drop-shadow(0 0 20px rgba(7,81,251,0.4)); }
+  .card-brand-cta .desc {
+    font-size: 14px; color: var(--text-3);
+    line-height: 1.6; max-width: 380px; margin-bottom: 32px;
+  }
+  .card-brand-cta .cta-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; background: var(--blue); color: white;
     border-radius: 12px;
     font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 0.02em;
+    font-weight: 700; font-size: 16px;
   }
-  .card-join .join-url {
+  .card-brand-cta .url {
     margin-top: 20px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-4);
+    font-size: 11px; color: var(--text-4);
   }
 
-  /* ── MEDIA KIT CARDS (landscape 1200x675) ── */
-  .card-landscape {
-    width: 540px;
-    height: 304px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 12px;
-    flex-shrink: 0;
+  /* ═══ CARD 4: FORMAT TEASER ═══ */
+  .card-format {
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(7,81,251,0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 70%, rgba(245,228,168,0.05) 0%, transparent 40%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+    display: flex; flex-direction: column;
+    padding: 44px;
+  }
+  .card-format .pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--blue-bright);
+    margin-bottom: 12px;
+  }
+  .card-format .title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 24px; margin-bottom: 28px;
+  }
+  .card-format .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 14px; margin-bottom: 24px;
+  }
+  .card-format .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 14px; text-align: center;
+  }
+  .card-format .stat-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 28px; color: var(--blue-bright);
+  }
+  .card-format .stat-label {
+    font-size: 9px; color: var(--text-4);
+    text-transform: uppercase; letter-spacing: 0.12em;
+    margin-top: 6px; font-family: 'IBM Plex Mono', monospace;
+  }
+  .card-format .features {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+  }
+  .card-format .feat {
+    font-size: 11px; color: var(--text-3);
+    padding: 7px 14px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 100px;
+    font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.05em;
+  }
+  .card-format .bottom {
+    margin-top: auto; display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .card-format .date-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold);
+    padding: 7px 16px;
+    border: 1px solid rgba(245,228,168,0.2);
+    border-radius: 100px;
   }
 
+  /* ═══ CARD 5: COUNTDOWN ═══ */
+  .card-countdown {
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(7,81,251,0.35) 0%, transparent 50%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 44px;
+  }
+  .card-countdown .pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--blue-bright);
+    margin-bottom: 16px;
+  }
+  .card-countdown .cup-img {
+    width: 100px; height: auto; margin-bottom: 28px;
+  }
+  .card-countdown .season-label {
+    font-family: 'Cinzel', serif; font-weight: 900;
+    font-size: 20px; text-transform: uppercase;
+    color: #C8C8D8; margin-bottom: 4px;
+  }
+  .card-countdown .season-big {
+    font-family: 'Cinzel', serif; font-weight: 900;
+    font-size: 26px; text-transform: uppercase;
+    color: var(--blue-bright); margin-bottom: 28px;
+    filter: drop-shadow(0 0 16px rgba(7,81,251,0.4));
+  }
+  .card-countdown .boxes {
+    display: flex; gap: 14px; margin-bottom: 28px;
+  }
+  .card-countdown .box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 20px;
+    min-width: 80px; text-align: center;
+  }
+  .card-countdown .box-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 32px; color: #FFFFFF;
+  }
+  .card-countdown .box-unit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-4); margin-top: 4px;
+  }
+  .card-countdown .cta-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px; color: var(--text-3);
+    margin-bottom: 16px; line-height: 1.5;
+  }
+
+  /* ═══ MK: COVER ═══ */
   .card-mk-cover {
     background:
       radial-gradient(ellipse at 50% 30%, rgba(7,81,251,0.35) 0%, transparent 55%),
       radial-gradient(ellipse at 80% 70%, rgba(245,228,168,0.08) 0%, transparent 40%),
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 28px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 28px;
   }
   .card-mk-cover .mk-pre {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 14px;
+    font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
   }
   .card-mk-cover .mk-title {
-    font-family: 'Cinzel', serif;
-    font-weight: 900;
-    font-size: 28px;
-    text-transform: uppercase;
-    line-height: 0.9;
+    font-family: 'Cinzel', serif; font-weight: 900;
+    font-size: 28px; text-transform: uppercase; line-height: 0.9;
   }
-  .card-mk-cover .mk-line1 {
-    display: block;
-    color: #C8C8D8;
-  }
+  .card-mk-cover .mk-line1 { display: block; color: #C8C8D8; }
   .card-mk-cover .mk-line2 {
-    font-size: 34px;
-    display: block;
-    color: var(--blue-bright);
+    font-size: 34px; display: block; color: var(--blue-bright);
     filter: drop-shadow(0 2px 8px rgba(7,81,251,0.5));
   }
   .card-mk-cover .mk-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px;
-    color: var(--text-3);
-    margin-top: 16px;
-    line-height: 1.5;
+    font-size: 12px; color: var(--text-3);
+    margin-top: 16px; line-height: 1.5;
   }
   .card-mk-cover .mk-footer {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding-top: 16px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-4);
+    margin-top: auto; display: flex; align-items: center; gap: 24px;
+    padding-top: 16px; font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-4);
   }
 
-  /* Media Kit - Info Slide */
-  .card-mk-info {
-    background:
-      radial-gradient(ellipse at 30% 40%, rgba(7,81,251,0.2) 0%, transparent 50%),
-      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    padding: 28px 32px;
-  }
-  .card-mk-info .mk-info-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 12px;
-  }
-  .card-mk-info .mk-info-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    margin-bottom: 18px;
-  }
-  .card-mk-info .mk-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 18px;
-  }
-  .card-mk-info .mk-stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
-  }
-  .card-mk-info .mk-stat-val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    color: var(--blue-bright);
-  }
-  .card-mk-info .mk-stat-label {
-    font-size: 9px;
-    color: var(--text-4);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-top: 4px;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-  .card-mk-info .mk-features {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .card-mk-info .mk-feat {
-    font-size: 10px;
-    color: var(--text-3);
-    padding: 5px 12px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 0.05em;
-  }
-
-  /* Media Kit - What You Get */
+  /* ═══ MK: WHAT YOU GET ═══ */
   .card-mk-benefits {
     background:
       radial-gradient(ellipse at 70% 40%, rgba(7,81,251,0.2) 0%, transparent 50%),
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    padding: 28px 32px;
+    display: flex; flex-direction: column; padding: 28px 32px;
   }
   .card-mk-benefits .mk-b-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 10px;
+    font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--blue-bright); margin-bottom: 10px;
   }
   .card-mk-benefits .mk-b-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    margin-bottom: 18px;
+    font-weight: 700; font-size: 20px; margin-bottom: 18px;
   }
   .card-mk-benefits .mk-b-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    flex: 1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1;
   }
   .card-mk-benefits .mk-b-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
   }
   .card-mk-benefits .mk-b-item-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    margin-bottom: 4px;
+    font-weight: 600; font-size: 12px; margin-bottom: 4px;
   }
   .card-mk-benefits .mk-b-item-desc {
-    font-size: 9px;
-    color: var(--text-3);
-    line-height: 1.4;
+    font-size: 9px; color: var(--text-3); line-height: 1.4;
   }
 
-  /* Media Kit - Timeline */
+  /* ═══ MK: TIMELINE ═══ */
   .card-mk-timeline {
     background:
       radial-gradient(ellipse at 50% 60%, rgba(7,81,251,0.15) 0%, transparent 50%),
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
-    display: flex;
-    flex-direction: column;
-    padding: 28px 32px;
+    display: flex; flex-direction: column; padding: 28px 32px;
   }
   .card-mk-timeline .mk-t-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--blue-bright);
-    margin-bottom: 10px;
+    font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--blue-bright); margin-bottom: 10px;
   }
   .card-mk-timeline .mk-t-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-weight: 700; font-size: 20px; margin-bottom: 20px;
   }
-  .mk-timeline-row {
-    display: flex;
-    align-items: stretch;
-    gap: 12px;
-    flex: 1;
-  }
+  .mk-timeline-row { display: flex; align-items: stretch; gap: 12px; flex: 1; }
   .mk-t-phase {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; display: flex; flex-direction: column;
   }
-  .mk-t-phase.active {
-    border-color: var(--blue);
-    background: rgba(7,81,251,0.08);
-  }
+  .mk-t-phase.active { border-color: var(--blue); background: rgba(7,81,251,0.08); }
   .mk-t-month {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-4);
-    margin-bottom: 6px;
+    font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-4); margin-bottom: 6px;
   }
   .mk-t-phase-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    margin-bottom: 6px;
+    font-weight: 700; font-size: 13px; margin-bottom: 6px;
   }
-  .mk-t-desc {
-    font-size: 9px;
-    color: var(--text-3);
-    line-height: 1.4;
-  }
+  .mk-t-desc { font-size: 9px; color: var(--text-3); line-height: 1.4; }
 
-  /* ── SVG logo inline ── */
-  .logo-svg {
-    display: inline-block;
+  /* ═══ MK: HOW IT WORKS ═══ */
+  .card-mk-how {
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(7,81,251,0.2) 0%, transparent 50%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+    display: flex; flex-direction: column; padding: 28px 32px;
   }
-
-  /* ── Divider ── */
-  .divider {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 24px;
-    border: none;
-    border-top: 1px solid var(--border);
+  .card-mk-how .mk-h-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--blue-bright); margin-bottom: 10px;
   }
+  .card-mk-how .mk-h-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 20px; margin-bottom: 18px;
+  }
+  .mk-steps {
+    display: flex; flex-direction: column; gap: 10px; flex: 1;
+  }
+  .mk-step {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .mk-step-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 18px; color: var(--blue-bright);
+    min-width: 24px;
+  }
+  .mk-step-content { flex: 1; }
+  .mk-step-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 12px; margin-bottom: 3px;
+  }
+  .mk-step-desc { font-size: 9px; color: var(--text-3); line-height: 1.4; }
 
   @media (max-width: 600px) {
     .card, .card-landscape { width: 100%; height: auto; aspect-ratio: 1 / 1; }
@@ -810,195 +479,166 @@
 </head>
 <body>
 
-<!-- PAGE HEADER -->
 <div class="page-header">
   <div class="page-label">League of Brands</div>
   <div class="page-title">Social Templates & Media Kit</div>
-  <p class="page-sub">Download ready-to-share social media graphics and brand partner materials. Click any download button to save as PNG.</p>
+  <p class="page-sub">Teaser templates for the upcoming competition. Click any download button to save as PNG for social media.</p>
 </div>
 
-<!-- ═══════════ SOCIAL TEMPLATES ═══════════ -->
-<div class="section-heading">Social Media Templates</div>
+<!-- ═══════════ SOCIAL TEASERS ═══════════ -->
+<div class="section-heading">Teaser Templates</div>
 <div class="section-desc">Square format (1080 &times; 1080) — optimized for Instagram, LinkedIn, and Facebook.</div>
 
 <div class="templates-grid">
 
-  <!-- 1. LEAGUE IS COMING -->
+  <!-- 1. CUP REVEAL -->
   <div class="template-wrap">
     <div class="template-info">
-      <span class="template-name">Announcement</span>
+      <span class="template-name">Cup Reveal</span>
       <span class="template-size">1080 &times; 1080</span>
     </div>
-    <div class="card card-coming" id="card-coming">
-      <svg class="sportin-logo" viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M68.06 1.18c.42.93.22 1.22-3.3 4.69-1.68 1.66-4.96 4.89-7.28 7.19-2.32 2.29-5.93 5.83-8.02 7.86l-4.4 4.25c-6.33 6.21-7.68 7.52-10.82 10.56-1.83 1.77-3.85 3.72-4.47 4.32-.63.6-2.15 2.09-3.39 3.3-1.23 1.21-2.47 2.38-2.74 2.59-1.29.98-3.06 1.4-4.57 1.08-.87-.22-1.73-.66-2.64-1.58-.82-.83-3.87-4.97-5.22-6.39-.37-.39-1.1-1.16-1.64-1.72-2.77-2.88-3.05-3.22-3.51-4.27-.86-1.9-.89-4.66-.1-6.4.41-.88.83-1.47 2.89-4.07 1.18-1.42 2.51-2.77 2.65-2.94.6-.73 2.77-3.47 3.2-4.04.26-.35.78-1.01 1.14-1.48.37-.47 1.15-1.46 1.73-2.2 2-2.62 2.4-3.05 3.56-3.84 1.16-.78 2.33-1.3 3.6-1.59.53-.14 2.4-.16 17.31-.18C60.22-.02 61.43-.01 61.86.15c.55.17.99.49 1.15.84z" fill="white"/>
-        <path d="M74.3 47.9c.18 1.01-.31 4.33-.64 4.92-.07.1-.13.28-.13.35 0 .33-1.04 1.84-2.92 4.25-1.07 1.36-2.48 3.18-3.04 3.86-1.73 2.23-5.93 8.55-7.12 9.98-.34.42-1.25 1.54-1.91 2.28-1.47 1.9-2.31 2.76-3.4 3.46-1.31.86-2.51 1.35-4.22 1.74-.57.17-1.78.18-17.51.15C15.57 79 14.66 79 14.3 78.82c-.97-.49-1.1-1.72-.32-2.67.49-.57 10.84-10.99 26.43-25.53 9.9-10.08 13.08-12.98 13.43-13.2.33-.2.72-.34 1.2-.44 1.1-.23 1.45-.22 2.09.02.9.23 1.27.5 2.4 1.72.58.62 1.67 1.77 2.17 2.28 1.14 1.16 1.94 2.03 3.79 4.03.65.69 1.64 1.74 2.04 2.17 2.37 2.53 2.85 3.11 3.18 3.81.38.81.6 1.34.75 2.04.06.28.13.68.15.81z" fill="white"/>
-      </svg>
-      <div class="pre-label">SportIn &middot; Season I &middot; 2026</div>
-      <div class="hero-title">
-        <span class="hero-line1">League of</span>
-        <span class="hero-line2">Brands</span>
+    <div class="card card-cup-reveal" id="card-cup">
+      <img src="/leagueofbrands/lob_cup.png" alt="League Cup" class="cup-img card-cup"/>
+      <div class="title">
+        <span class="t-line1">League of</span>
+        <span class="t-line2">Brands</span>
       </div>
-      <div class="hero-sub">The first national brand competition<br/>built on movement.</div>
-      <div class="season-badge">July &mdash; November 2026</div>
+      <div class="subtitle">The first national brand competition<br/>built on movement.</div>
+      <div class="badge">Season I &middot; 2026</div>
     </div>
     <div class="download-row">
-      <button class="download-btn" onclick="downloadCard('card-coming', 'lob-announcement', 2)">
+      <button class="download-btn" onclick="downloadCard('card-cup', 'lob-cup-reveal', 2)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PNG
       </button>
     </div>
   </div>
 
-  <!-- 2. MATCHDAY: Mesopotamia vs Coressy -->
+  <!-- 2. COMING SOON -->
   <div class="template-wrap">
     <div class="template-info">
-      <span class="template-name">Matchday</span>
+      <span class="template-name">Coming Soon</span>
       <span class="template-size">1080 &times; 1080</span>
     </div>
-    <div class="card card-matchday" id="card-match1">
-      <div class="match-label">League of Brands &middot; Season I</div>
-      <div class="match-round">Round Robin &mdash; Matchday 5</div>
-      <div class="vs-row">
-        <div class="vs-team">
-          <div class="vs-team-logo">ME</div>
-          <div class="vs-team-name">Mesopotamia</div>
-        </div>
-        <div class="vs-badge">VS</div>
-        <div class="vs-team">
-          <div class="vs-team-logo">CO</div>
-          <div class="vs-team-name">Coressy</div>
-        </div>
-      </div>
-      <div class="match-meta">Saturday &middot; 24h Match &middot; Movement Index</div>
-      <div class="match-bottom">
-        <svg class="bottom-logo" viewBox="0 0 75 79" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M68.06 1.18c.42.93.22 1.22-3.3 4.69-1.68 1.66-4.96 4.89-7.28 7.19-2.32 2.29-5.93 5.83-8.02 7.86l-4.4 4.25c-6.33 6.21-7.68 7.52-10.82 10.56-1.83 1.77-3.85 3.72-4.47 4.32-.63.6-2.15 2.09-3.39 3.3-1.23 1.21-2.47 2.38-2.74 2.59-1.29.98-3.06 1.4-4.57 1.08-.87-.22-1.73-.66-2.64-1.58-.82-.83-3.87-4.97-5.22-6.39-.37-.39-1.1-1.16-1.64-1.72-2.77-2.88-3.05-3.22-3.51-4.27-.86-1.9-.89-4.66-.1-6.4.41-.88.83-1.47 2.89-4.07 1.18-1.42 2.51-2.77 2.65-2.94.6-.73 2.77-3.47 3.2-4.04.26-.35.78-1.01 1.14-1.48.37-.47 1.15-1.46 1.73-2.2 2-2.62 2.4-3.05 3.56-3.84 1.16-.78 2.33-1.3 3.6-1.59.53-.14 2.4-.16 17.31-.18C60.22-.02 61.43-.01 61.86.15c.55.17.99.49 1.15.84z"/><path d="M74.3 47.9c.18 1.01-.31 4.33-.64 4.92-.07.1-.13.28-.13.35 0 .33-1.04 1.84-2.92 4.25-1.07 1.36-2.48 3.18-3.04 3.86-1.73 2.23-5.93 8.55-7.12 9.98-.34.42-1.25 1.54-1.91 2.28-1.47 1.9-2.31 2.76-3.4 3.46-1.31.86-2.51 1.35-4.22 1.74-.57.17-1.78.18-17.51.15C15.57 79 14.66 79 14.3 78.82c-.97-.49-1.1-1.72-.32-2.67.49-.57 10.84-10.99 26.43-25.53 9.9-10.08 13.08-12.98 13.43-13.2.33-.2.72-.34 1.2-.44 1.1-.23 1.45-.22 2.09.02.9.23 1.27.5 2.4 1.72.58.62 1.67 1.77 2.17 2.28 1.14 1.16 1.94 2.03 3.79 4.03.65.69 1.64 1.74 2.04 2.17 2.37 2.53 2.85 3.11 3.18 3.81.38.81.6 1.34.75 2.04.06.28.13.68.15.81z"/></svg>
-        <span class="bottom-text">sportin.io/leagueofbrands</span>
-      </div>
+    <div class="card card-coming-soon" id="card-soon">
+      <img src="/leagueofbrands/lob_cup.png" alt="League Cup" class="cup-img card-cup"/>
+      <div class="pre">SportIn &middot; League of Brands</div>
+      <div class="big-text">Coming<br/>Soon</div>
+      <div class="date">July &mdash; November 2026</div>
+      <div class="format">Brands compete through their people.<br/>One league. One cup. One champion.</div>
     </div>
     <div class="download-row">
-      <button class="download-btn" onclick="downloadCard('card-match1', 'lob-matchday-mesopotamia-vs-coressy', 2)">
+      <button class="download-btn" onclick="downloadCard('card-soon', 'lob-coming-soon', 2)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PNG
       </button>
     </div>
   </div>
 
-  <!-- 3. MATCHDAY: Pescobar vs 5to go -->
+  <!-- 3. BRAND CTA -->
   <div class="template-wrap">
     <div class="template-info">
-      <span class="template-name">Matchday</span>
+      <span class="template-name">Register CTA</span>
       <span class="template-size">1080 &times; 1080</span>
     </div>
-    <div class="card card-matchday" id="card-match2">
-      <div class="match-label">League of Brands &middot; Season I</div>
-      <div class="match-round">Round Robin &mdash; Matchday 7</div>
-      <div class="vs-row">
-        <div class="vs-team">
-          <div class="vs-team-logo">PB</div>
-          <div class="vs-team-name">Pescobar</div>
-        </div>
-        <div class="vs-badge">VS</div>
-        <div class="vs-team">
-          <div class="vs-team-logo">5G</div>
-          <div class="vs-team-name">5to go</div>
-        </div>
+    <div class="card card-brand-cta" id="card-cta">
+      <div class="pre">Open Registration &middot; Season I</div>
+      <div class="lines">
+        <div class="line l-white">Your Brand.</div>
+        <div class="line l-silver">Your Team.</div>
+        <div class="line l-blue">Your League.</div>
       </div>
-      <div class="match-meta">Saturday &middot; 24h Match &middot; Movement Index</div>
-      <div class="match-bottom">
-        <svg class="bottom-logo" viewBox="0 0 75 79" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M68.06 1.18c.42.93.22 1.22-3.3 4.69-1.68 1.66-4.96 4.89-7.28 7.19-2.32 2.29-5.93 5.83-8.02 7.86l-4.4 4.25c-6.33 6.21-7.68 7.52-10.82 10.56-1.83 1.77-3.85 3.72-4.47 4.32-.63.6-2.15 2.09-3.39 3.3-1.23 1.21-2.47 2.38-2.74 2.59-1.29.98-3.06 1.4-4.57 1.08-.87-.22-1.73-.66-2.64-1.58-.82-.83-3.87-4.97-5.22-6.39-.37-.39-1.1-1.16-1.64-1.72-2.77-2.88-3.05-3.22-3.51-4.27-.86-1.9-.89-4.66-.1-6.4.41-.88.83-1.47 2.89-4.07 1.18-1.42 2.51-2.77 2.65-2.94.6-.73 2.77-3.47 3.2-4.04.26-.35.78-1.01 1.14-1.48.37-.47 1.15-1.46 1.73-2.2 2-2.62 2.4-3.05 3.56-3.84 1.16-.78 2.33-1.3 3.6-1.59.53-.14 2.4-.16 17.31-.18C60.22-.02 61.43-.01 61.86.15c.55.17.99.49 1.15.84z"/><path d="M74.3 47.9c.18 1.01-.31 4.33-.64 4.92-.07.1-.13.28-.13.35 0 .33-1.04 1.84-2.92 4.25-1.07 1.36-2.48 3.18-3.04 3.86-1.73 2.23-5.93 8.55-7.12 9.98-.34.42-1.25 1.54-1.91 2.28-1.47 1.9-2.31 2.76-3.4 3.46-1.31.86-2.51 1.35-4.22 1.74-.57.17-1.78.18-17.51.15C15.57 79 14.66 79 14.3 78.82c-.97-.49-1.1-1.72-.32-2.67.49-.57 10.84-10.99 26.43-25.53 9.9-10.08 13.08-12.98 13.43-13.2.33-.2.72-.34 1.2-.44 1.1-.23 1.45-.22 2.09.02.9.23 1.27.5 2.4 1.72.58.62 1.67 1.77 2.17 2.28 1.14 1.16 1.94 2.03 3.79 4.03.65.69 1.64 1.74 2.04 2.17 2.37 2.53 2.85 3.11 3.18 3.81.38.81.6 1.34.75 2.04.06.28.13.68.15.81z"/></svg>
-        <span class="bottom-text">sportin.io/leagueofbrands</span>
-      </div>
+      <div class="desc">Register your brand for the first national competition built on movement. Weekly matches, AI-powered commentary, and a championship trophy.</div>
+      <div class="cta-pill">Register Your Brand &rarr;</div>
+      <div class="url">sportin.io/leagueofbrands</div>
     </div>
     <div class="download-row">
-      <button class="download-btn" onclick="downloadCard('card-match2', 'lob-matchday-pescobar-vs-5togo', 2)">
+      <button class="download-btn" onclick="downloadCard('card-cta', 'lob-register-cta', 2)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PNG
       </button>
     </div>
   </div>
 
-  <!-- 4. SEASON I ANNOUNCE -->
+  <!-- 4. FORMAT TEASER -->
   <div class="template-wrap">
     <div class="template-info">
-      <span class="template-name">Season Announce</span>
+      <span class="template-name">The Format</span>
       <span class="template-size">1080 &times; 1080</span>
     </div>
-    <div class="card card-season" id="card-season">
-      <img src="/leagueofbrands/lob_cup.png" alt="League Cup" class="cup-img"/>
-      <div class="season-num">The National Brand League</div>
-      <div class="season-title">Season I</div>
-      <div class="season-sub-title">Begins</div>
-      <div class="season-dates">July &mdash; November 2026</div>
-      <div class="season-format">13 brands &middot; Weekly matches &middot; One cup<br/>Movement Index &middot; AI Commentary &middot; SafeGuard</div>
-      <div class="season-url">sportin.io/leagueofbrands</div>
-    </div>
-    <div class="download-row">
-      <button class="download-btn" onclick="downloadCard('card-season', 'lob-season-announce', 2)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download PNG
-      </button>
-    </div>
-  </div>
-
-  <!-- 5. JOIN CTA -->
-  <div class="template-wrap">
-    <div class="template-info">
-      <span class="template-name">Join CTA</span>
-      <span class="template-size">1080 &times; 1080</span>
-    </div>
-    <div class="card card-join" id="card-join">
-      <div class="join-label">Open Registration &middot; Season I</div>
-      <div class="join-lines">
-        <div class="join-line join-line-white">Your Brand.</div>
-        <div class="join-line join-line-silver">Your Team.</div>
-        <div class="join-line join-line-blue">Your League.</div>
-      </div>
-      <div class="join-desc">Register your brand for the first national competition built on movement. Weekly matches, AI-powered commentary, and a championship trophy.</div>
-      <div class="join-cta">Register Your Brand &rarr;</div>
-      <div class="join-url">sportin.io/leagueofbrands</div>
-    </div>
-    <div class="download-row">
-      <button class="download-btn" onclick="downloadCard('card-join', 'lob-join-cta', 2)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download PNG
-      </button>
-    </div>
-  </div>
-
-  <!-- 6. STANDINGS -->
-  <div class="template-wrap">
-    <div class="template-info">
-      <span class="template-name">Standings</span>
-      <span class="template-size">1080 &times; 1080</span>
-    </div>
-    <div class="card card-standings" id="card-standings">
-      <div class="st-top">
-        <div class="st-label">League of Brands &middot; Season I</div>
-        <div class="st-title">Standings</div>
-      </div>
-      <div class="st-table">
-        <div class="st-header">
-          <span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>Pts</span>
+    <div class="card card-format" id="card-format">
+      <div class="pre">League of Brands &middot; Season I</div>
+      <div class="title">The Format</div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-val">13</div>
+          <div class="stat-label">Brands</div>
         </div>
-        <div class="st-row"><span class="st-pos">1</span><span class="st-team">Ramore Fresh Food</span><span class="st-val">6</span><span class="st-val">5</span><span class="st-val">1</span><span class="st-pts">16</span></div>
-        <div class="st-row"><span class="st-pos">2</span><span class="st-team">Coressy</span><span class="st-val">6</span><span class="st-val">5</span><span class="st-val">0</span><span class="st-pts">15</span></div>
-        <div class="st-row"><span class="st-pos">3</span><span class="st-team">Mesopotamia</span><span class="st-val">6</span><span class="st-val">4</span><span class="st-val">1</span><span class="st-pts">13</span></div>
-        <div class="st-row"><span class="st-pos">4</span><span class="st-team">Pescaria lui Dragoi</span><span class="st-val">6</span><span class="st-val">4</span><span class="st-val">0</span><span class="st-pts">12</span></div>
-        <div class="st-row"><span class="st-pos">5</span><span class="st-team">SportIn</span><span class="st-val">6</span><span class="st-val">3</span><span class="st-val">2</span><span class="st-pts">11</span></div>
-        <div class="st-row"><span class="st-pos">6</span><span class="st-team">Urban FM</span><span class="st-val">6</span><span class="st-val">3</span><span class="st-val">1</span><span class="st-pts">10</span></div>
-        <div class="st-row"><span class="st-pos">7</span><span class="st-team">Pescobar</span><span class="st-val">6</span><span class="st-val">3</span><span class="st-val">0</span><span class="st-pts">9</span></div>
-        <div class="st-row"><span class="st-pos">8</span><span class="st-team">Granded</span><span class="st-val">6</span><span class="st-val">2</span><span class="st-val">1</span><span class="st-pts">7</span></div>
-        <div class="st-row"><span class="st-pos">9</span><span class="st-team">5to go</span><span class="st-val">6</span><span class="st-val">2</span><span class="st-val">0</span><span class="st-pts">6</span></div>
-        <div class="st-row"><span class="st-pos">10</span><span class="st-team">FryDay</span><span class="st-val">6</span><span class="st-val">1</span><span class="st-val">1</span><span class="st-pts">4</span></div>
+        <div class="stat">
+          <div class="stat-val">20</div>
+          <div class="stat-label">Matchdays</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">24h</div>
+          <div class="stat-label">Per Match</div>
+        </div>
       </div>
-      <div class="st-bottom">
-        <svg style="width:16px;height:16px;opacity:0.4" viewBox="0 0 75 79" fill="white"><path d="M68.06 1.18c.42.93.22 1.22-3.3 4.69-1.68 1.66-4.96 4.89-7.28 7.19-2.32 2.29-5.93 5.83-8.02 7.86l-4.4 4.25c-6.33 6.21-7.68 7.52-10.82 10.56-1.83 1.77-3.85 3.72-4.47 4.32-.63.6-2.15 2.09-3.39 3.3-1.23 1.21-2.47 2.38-2.74 2.59-1.29.98-3.06 1.4-4.57 1.08-.87-.22-1.73-.66-2.64-1.58-.82-.83-3.87-4.97-5.22-6.39-.37-.39-1.1-1.16-1.64-1.72-2.77-2.88-3.05-3.22-3.51-4.27-.86-1.9-.89-4.66-.1-6.4.41-.88.83-1.47 2.89-4.07 1.18-1.42 2.51-2.77 2.65-2.94.6-.73 2.77-3.47 3.2-4.04.26-.35.78-1.01 1.14-1.48.37-.47 1.15-1.46 1.73-2.2 2-2.62 2.4-3.05 3.56-3.84 1.16-.78 2.33-1.3 3.6-1.59.53-.14 2.4-.16 17.31-.18C60.22-.02 61.43-.01 61.86.15c.55.17.99.49 1.15.84z"/><path d="M74.3 47.9c.18 1.01-.31 4.33-.64 4.92-.07.1-.13.28-.13.35 0 .33-1.04 1.84-2.92 4.25-1.07 1.36-2.48 3.18-3.04 3.86-1.73 2.23-5.93 8.55-7.12 9.98-.34.42-1.25 1.54-1.91 2.28-1.47 1.9-2.31 2.76-3.4 3.46-1.31.86-2.51 1.35-4.22 1.74-.57.17-1.78.18-17.51.15C15.57 79 14.66 79 14.3 78.82c-.97-.49-1.1-1.72-.32-2.67.49-.57 10.84-10.99 26.43-25.53 9.9-10.08 13.08-12.98 13.43-13.2.33-.2.72-.34 1.2-.44 1.1-.23 1.45-.22 2.09.02.9.23 1.27.5 2.4 1.72.58.62 1.67 1.77 2.17 2.28 1.14 1.16 1.94 2.03 3.79 4.03.65.69 1.64 1.74 2.04 2.17 2.37 2.53 2.85 3.11 3.18 3.81.38.81.6 1.34.75 2.04.06.28.13.68.15.81z"/></svg>
-        <span style="font-size:9px;color:var(--text-4);font-family:'IBM Plex Mono',monospace;letter-spacing:0.15em;text-transform:uppercase">sportin.io/leagueofbrands</span>
+      <div class="features">
+        <span class="feat">Round Robin</span>
+        <span class="feat">Movement Index</span>
+        <span class="feat">AI Commentary</span>
+        <span class="feat">SafeGuard</span>
+        <span class="feat">Live Standings</span>
+      </div>
+      <div class="bottom">
+        <div class="date-badge">Jul &mdash; Nov 2026</div>
+        <div class="card-watermark">
+          <svg viewBox="0 0 75 79" fill="white"><path d="M68.06 1.18c.42.93.22 1.22-3.3 4.69-1.68 1.66-4.96 4.89-7.28 7.19-2.32 2.29-5.93 5.83-8.02 7.86l-4.4 4.25c-6.33 6.21-7.68 7.52-10.82 10.56-1.83 1.77-3.85 3.72-4.47 4.32-.63.6-2.15 2.09-3.39 3.3-1.23 1.21-2.47 2.38-2.74 2.59-1.29.98-3.06 1.4-4.57 1.08-.87-.22-1.73-.66-2.64-1.58-.82-.83-3.87-4.97-5.22-6.39-.37-.39-1.1-1.16-1.64-1.72-2.77-2.88-3.05-3.22-3.51-4.27-.86-1.9-.89-4.66-.1-6.4.41-.88.83-1.47 2.89-4.07 1.18-1.42 2.51-2.77 2.65-2.94.6-.73 2.77-3.47 3.2-4.04.26-.35.78-1.01 1.14-1.48.37-.47 1.15-1.46 1.73-2.2 2-2.62 2.4-3.05 3.56-3.84 1.16-.78 2.33-1.3 3.6-1.59.53-.14 2.4-.16 17.31-.18C60.22-.02 61.43-.01 61.86.15c.55.17.99.49 1.15.84z"/><path d="M74.3 47.9c.18 1.01-.31 4.33-.64 4.92-.07.1-.13.28-.13.35 0 .33-1.04 1.84-2.92 4.25-1.07 1.36-2.48 3.18-3.04 3.86-1.73 2.23-5.93 8.55-7.12 9.98-.34.42-1.25 1.54-1.91 2.28-1.47 1.9-2.31 2.76-3.4 3.46-1.31.86-2.51 1.35-4.22 1.74-.57.17-1.78.18-17.51.15C15.57 79 14.66 79 14.3 78.82c-.97-.49-1.1-1.72-.32-2.67.49-.57 10.84-10.99 26.43-25.53 9.9-10.08 13.08-12.98 13.43-13.2.33-.2.72-.34 1.2-.44 1.1-.23 1.45-.22 2.09.02.9.23 1.27.5 2.4 1.72.58.62 1.67 1.77 2.17 2.28 1.14 1.16 1.94 2.03 3.79 4.03.65.69 1.64 1.74 2.04 2.17 2.37 2.53 2.85 3.11 3.18 3.81.38.81.6 1.34.75 2.04.06.28.13.68.15.81z"/></svg>
+          <span>sportin.io</span>
+        </div>
       </div>
     </div>
     <div class="download-row">
-      <button class="download-btn" onclick="downloadCard('card-standings', 'lob-standings', 2)">
+      <button class="download-btn" onclick="downloadCard('card-format', 'lob-format-teaser', 2)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download PNG
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. COUNTDOWN -->
+  <div class="template-wrap">
+    <div class="template-info">
+      <span class="template-name">Countdown</span>
+      <span class="template-size">1080 &times; 1080</span>
+    </div>
+    <div class="card card-countdown" id="card-countdown">
+      <div class="pre">League of Brands</div>
+      <img src="/leagueofbrands/lob_cup.png" alt="League Cup" class="cup-img card-cup"/>
+      <div class="season-label">Season I</div>
+      <div class="season-big">Kicks Off In</div>
+      <div class="boxes">
+        <div class="box">
+          <div class="box-val" id="cd-days">43</div>
+          <div class="box-unit">Days</div>
+        </div>
+        <div class="box">
+          <div class="box-val" id="cd-hrs">12</div>
+          <div class="box-unit">Hours</div>
+        </div>
+        <div class="box">
+          <div class="box-val" id="cd-min">08</div>
+          <div class="box-unit">Minutes</div>
+        </div>
+      </div>
+      <div class="cta-text">Register your brand before the season begins.</div>
+      <div class="card-watermark">
+        <svg viewBox="0 0 75 79" fill="white"><path d="M68.06 1.18c.42.93.22 1.22-3.3 4.69-1.68 1.66-4.96 4.89-7.28 7.19-2.32 2.29-5.93 5.83-8.02 7.86l-4.4 4.25c-6.33 6.21-7.68 7.52-10.82 10.56-1.83 1.77-3.85 3.72-4.47 4.32-.63.6-2.15 2.09-3.39 3.3-1.23 1.21-2.47 2.38-2.74 2.59-1.29.98-3.06 1.4-4.57 1.08-.87-.22-1.73-.66-2.64-1.58-.82-.83-3.87-4.97-5.22-6.39-.37-.39-1.1-1.16-1.64-1.72-2.77-2.88-3.05-3.22-3.51-4.27-.86-1.9-.89-4.66-.1-6.4.41-.88.83-1.47 2.89-4.07 1.18-1.42 2.51-2.77 2.65-2.94.6-.73 2.77-3.47 3.2-4.04.26-.35.78-1.01 1.14-1.48.37-.47 1.15-1.46 1.73-2.2 2-2.62 2.4-3.05 3.56-3.84 1.16-.78 2.33-1.3 3.6-1.59.53-.14 2.4-.16 17.31-.18C60.22-.02 61.43-.01 61.86.15c.55.17.99.49 1.15.84z"/><path d="M74.3 47.9c.18 1.01-.31 4.33-.64 4.92-.07.1-.13.28-.13.35 0 .33-1.04 1.84-2.92 4.25-1.07 1.36-2.48 3.18-3.04 3.86-1.73 2.23-5.93 8.55-7.12 9.98-.34.42-1.25 1.54-1.91 2.28-1.47 1.9-2.31 2.76-3.4 3.46-1.31.86-2.51 1.35-4.22 1.74-.57.17-1.78.18-17.51.15C15.57 79 14.66 79 14.3 78.82c-.97-.49-1.1-1.72-.32-2.67.49-.57 10.84-10.99 26.43-25.53 9.9-10.08 13.08-12.98 13.43-13.2.33-.2.72-.34 1.2-.44 1.1-.23 1.45-.22 2.09.02.9.23 1.27.5 2.4 1.72.58.62 1.67 1.77 2.17 2.28 1.14 1.16 1.94 2.03 3.79 4.03.65.69 1.64 1.74 2.04 2.17 2.37 2.53 2.85 3.11 3.18 3.81.38.81.6 1.34.75 2.04.06.28.13.68.15.81z"/></svg>
+        <span>sportin.io/leagueofbrands</span>
+      </div>
+    </div>
+    <div class="download-row">
+      <button class="download-btn" onclick="downloadCard('card-countdown', 'lob-countdown', 2)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PNG
       </button>
@@ -1010,7 +650,7 @@
 <!-- ═══════════ MEDIA KIT ═══════════ -->
 <hr class="divider"/>
 <div class="section-heading">Brand Partner Media Kit</div>
-<div class="section-desc">Landscape format (1200 &times; 675) — share with brands joining the competition. Includes cover, competition overview, benefits, and season timeline.</div>
+<div class="section-desc">Landscape format (1200 &times; 675) — share with brands joining the competition.</div>
 
 <div class="templates-grid">
 
@@ -1043,39 +683,48 @@
     </div>
   </div>
 
-  <!-- MK 2: Competition Overview -->
+  <!-- MK 2: How It Works -->
   <div class="template-wrap">
     <div class="template-info">
-      <span class="template-name">Competition Overview</span>
+      <span class="template-name">How It Works</span>
       <span class="template-size">1200 &times; 675</span>
     </div>
-    <div class="card-landscape card-mk-info" id="mk-info">
-      <div class="mk-info-label">League of Brands &middot; Competition Overview</div>
-      <div class="mk-info-title">How It Works</div>
-      <div class="mk-stats">
-        <div class="mk-stat">
-          <div class="mk-stat-val">13</div>
-          <div class="mk-stat-label">Brands</div>
+    <div class="card-landscape card-mk-how" id="mk-how">
+      <div class="mk-h-label">League of Brands &middot; How It Works</div>
+      <div class="mk-h-title">Four Steps to Compete</div>
+      <div class="mk-steps">
+        <div class="mk-step">
+          <div class="mk-step-num">1</div>
+          <div class="mk-step-content">
+            <div class="mk-step-title">Register Your Brand</div>
+            <div class="mk-step-desc">Sign up on sportin.io and create your team profile.</div>
+          </div>
         </div>
-        <div class="mk-stat">
-          <div class="mk-stat-val">20</div>
-          <div class="mk-stat-label">Matchdays</div>
+        <div class="mk-step">
+          <div class="mk-step-num">2</div>
+          <div class="mk-step-content">
+            <div class="mk-step-title">Build Your Roster</div>
+            <div class="mk-step-desc">Invite employees and connect their fitness devices.</div>
+          </div>
         </div>
-        <div class="mk-stat">
-          <div class="mk-stat-val">24h</div>
-          <div class="mk-stat-label">Per Match</div>
+        <div class="mk-step">
+          <div class="mk-step-num">3</div>
+          <div class="mk-step-content">
+            <div class="mk-step-title">Compete on Match Days</div>
+            <div class="mk-step-desc">Every Saturday, your team goes head-to-head in a 24-hour match.</div>
+          </div>
         </div>
-      </div>
-      <div class="mk-features">
-        <span class="mk-feat">Round Robin Format</span>
-        <span class="mk-feat">Movement Index Scoring</span>
-        <span class="mk-feat">AI Commentary</span>
-        <span class="mk-feat">SafeGuard Anti-Cheat</span>
-        <span class="mk-feat">Real-Time Standings</span>
+        <div class="mk-step">
+          <div class="mk-step-num">4</div>
+          <div class="mk-step-content">
+            <div class="mk-step-title">Win the League</div>
+            <div class="mk-step-desc">Climb the standings and compete for the championship trophy.</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="download-row">
-      <button class="download-btn" onclick="downloadCard('mk-info', 'lob-mediakit-overview', 2)">
+      <button class="download-btn" onclick="downloadCard('mk-how', 'lob-mediakit-how-it-works', 2)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download PNG
       </button>
@@ -1118,7 +767,7 @@
     </div>
   </div>
 
-  <!-- MK 4: Season Timeline -->
+  <!-- MK 4: Timeline -->
   <div class="template-wrap">
     <div class="template-info">
       <span class="template-name">Season Timeline</span>
@@ -1140,7 +789,7 @@
         </div>
         <div class="mk-t-phase">
           <div class="mk-t-month">Oct &mdash; Nov</div>
-          <div class="mk-t-phase-name">Playoffs & Final</div>
+          <div class="mk-t-phase-name">Playoffs &amp; Final</div>
           <div class="mk-t-desc">Top teams advance. Championship match crowns the Season I winner.</div>
         </div>
       </div>
@@ -1158,13 +807,31 @@
 <div style="height: 60px;"></div>
 
 <script>
+// Live countdown to July 1, 2026
+(function updateCountdown() {
+  const target = new Date('2026-07-01T00:00:00');
+  const now = new Date();
+  const diff = target - now;
+  if (diff > 0) {
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hrs = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const min = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const d = document.getElementById('cd-days');
+    const h = document.getElementById('cd-hrs');
+    const m = document.getElementById('cd-min');
+    if (d) d.textContent = days;
+    if (h) h.textContent = String(hrs).padStart(2, '0');
+    if (m) m.textContent = String(min).padStart(2, '0');
+  }
+  setTimeout(updateCountdown, 60000);
+})();
+
 async function downloadCard(id, filename, scale = 2) {
   const el = document.getElementById(id);
   const btn = event.currentTarget;
   const origText = btn.innerHTML;
   btn.innerHTML = 'Generating...';
   btn.disabled = true;
-
   try {
     const canvas = await html2canvas(el, {
       scale: scale,
@@ -1173,7 +840,6 @@ async function downloadCard(id, filename, scale = 2) {
       allowTaint: true,
       logging: false,
     });
-
     const link = document.createElement('a');
     link.download = filename + '.png';
     link.href = canvas.toDataURL('image/png');
@@ -1182,7 +848,6 @@ async function downloadCard(id, filename, scale = 2) {
     console.error('Download failed:', err);
     alert('Download failed. Try again.');
   }
-
   btn.innerHTML = origText;
   btn.disabled = false;
 }
