@@ -89,7 +89,8 @@
 
   /* ═══ CARD BASE ═══ */
   .card {
-    width: 540px; height: 540px;
+    width: 540px; height: 405px;
+    aspect-ratio: 4 / 3;
     position: relative; overflow: hidden;
     border-radius: 12px; flex-shrink: 0;
   }
@@ -119,10 +120,10 @@
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    text-align: center; padding: 32px 36px;
+    text-align: center; padding: 24px 36px;
   }
   .card-cup-reveal .cup-img {
-    width: 120px; height: auto; margin-bottom: 20px;
+    width: 100px; height: auto; margin-bottom: 14px;
   }
   .card-cup-reveal .title {
     font-family: 'Cinzel', serif; font-weight: 900;
@@ -140,7 +141,7 @@
     font-size: 13px; color: var(--text-3); line-height: 1.5;
   }
   .card-cup-reveal .badge {
-    margin-top: 16px;
+    margin-top: 12px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px; letter-spacing: 0.2em;
     text-transform: uppercase; color: var(--gold);
@@ -156,10 +157,10 @@
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    text-align: center; padding: 36px 40px;
+    text-align: center; padding: 28px 40px;
   }
   .card-coming-soon .cup-img {
-    width: 100px; height: auto; margin-bottom: 18px;
+    width: 88px; height: auto; margin-bottom: 14px;
   }
   .card-coming-soon .pre {
     font-family: 'IBM Plex Mono', monospace;
@@ -288,16 +289,16 @@
       linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    text-align: center; padding: 32px 36px;
+    text-align: center; padding: 24px 36px;
   }
   .card-countdown .pre {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px; letter-spacing: 0.3em;
     text-transform: uppercase; color: var(--blue-bright);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .card-countdown .cup-img {
-    width: 76px; height: auto; margin-bottom: 16px;
+    width: 64px; height: auto; margin-bottom: 12px;
   }
   .card-countdown .season-label {
     font-family: 'Cinzel', serif; font-weight: 900;
@@ -471,7 +472,8 @@
   .mk-step-desc { font-size: 8px; color: var(--text-3); line-height: 1.35; }
 
   @media (max-width: 600px) {
-    .card, .card-landscape { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+    .card, .card-landscape { width: 100%; height: auto; }
+    .card { aspect-ratio: 4 / 3; }
     .card-landscape { aspect-ratio: 16 / 9; }
     .templates-grid { grid-template-columns: 1fr; padding: 0 16px 40px; }
   }
@@ -487,7 +489,7 @@
 
 <!-- ═══════════ SOCIAL TEASERS ═══════════ -->
 <div class="section-heading">Teaser Templates</div>
-<div class="section-desc">Square format (1080 &times; 1080) — optimized for Instagram, LinkedIn, and Facebook.</div>
+<div class="section-desc">4:3 format (1080 &times; 810) — optimized for Instagram, LinkedIn, and Facebook.</div>
 
 <div class="templates-grid">
 
@@ -495,7 +497,7 @@
   <div class="template-wrap">
     <div class="template-info">
       <span class="template-name">Cup Reveal</span>
-      <span class="template-size">1080 &times; 1080</span>
+      <span class="template-size">1080 &times; 810</span>
     </div>
     <div class="card card-cup-reveal" id="card-cup">
       <img src="/leagueofbrands/lob_cup.png" alt="League Cup" class="cup-img card-cup"/>
@@ -518,7 +520,7 @@
   <div class="template-wrap">
     <div class="template-info">
       <span class="template-name">Coming Soon</span>
-      <span class="template-size">1080 &times; 1080</span>
+      <span class="template-size">1080 &times; 810</span>
     </div>
     <div class="card card-coming-soon" id="card-soon">
       <img src="/leagueofbrands/lob_cup.png" alt="League Cup" class="cup-img card-cup"/>
@@ -539,7 +541,7 @@
   <div class="template-wrap">
     <div class="template-info">
       <span class="template-name">Register CTA</span>
-      <span class="template-size">1080 &times; 1080</span>
+      <span class="template-size">1080 &times; 810</span>
     </div>
     <div class="card card-brand-cta" id="card-cta">
       <div class="pre">Open Registration &middot; Season I</div>
@@ -564,7 +566,7 @@
   <div class="template-wrap">
     <div class="template-info">
       <span class="template-name">The Format</span>
-      <span class="template-size">1080 &times; 1080</span>
+      <span class="template-size">1080 &times; 810</span>
     </div>
     <div class="card card-format" id="card-format">
       <div class="pre">League of Brands &middot; Season I</div>
@@ -610,7 +612,7 @@
   <div class="template-wrap">
     <div class="template-info">
       <span class="template-name">Countdown</span>
-      <span class="template-size">1080 &times; 1080</span>
+      <span class="template-size">1080 &times; 810</span>
     </div>
     <div class="card card-countdown" id="card-countdown">
       <div class="pre">League of Brands</div>
