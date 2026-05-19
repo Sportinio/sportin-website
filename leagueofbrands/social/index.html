@@ -182,18 +182,12 @@
   .card-coming .hero-line1 {
     font-size: 36px;
     display: block;
-    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #C8C8D8;
   }
   .card-coming .hero-line2 {
     font-size: 44px;
     display: block;
-    background: linear-gradient(135deg, var(--blue), var(--blue-bright));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--blue-bright);
     filter: drop-shadow(0 2px 12px rgba(7,81,251,0.5));
   }
   .card-coming .hero-sub {
@@ -284,10 +278,7 @@
     font-family: 'Cinzel', serif;
     font-weight: 900;
     font-size: 28px;
-    background: linear-gradient(180deg, #FFFFFF 0%, #A0A0B4 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #C0C0D0;
   }
   .card-matchday .match-meta {
     font-family: 'IBM Plex Mono', monospace;
@@ -345,10 +336,7 @@
     font-weight: 900;
     font-size: 22px;
     text-transform: uppercase;
-    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #D0D0E0;
   }
   .card-standings .st-table {
     flex: 1;
@@ -452,20 +440,14 @@
     text-transform: uppercase;
     line-height: 0.9;
     margin-bottom: 6px;
-    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #D0D0E0;
   }
   .card-season .season-sub-title {
     font-family: 'Cinzel', serif;
     font-weight: 900;
     font-size: 40px;
     text-transform: uppercase;
-    background: linear-gradient(135deg, var(--blue), var(--blue-bright));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--blue-bright);
     filter: drop-shadow(0 2px 12px rgba(7,81,251,0.5));
     margin-bottom: 20px;
   }
@@ -509,19 +491,31 @@
     letter-spacing: 0.25em;
     text-transform: uppercase;
     color: var(--blue-bright);
+    margin-bottom: 28px;
+  }
+  .card-join .join-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     margin-bottom: 24px;
   }
-  .card-join .join-big {
+  .card-join .join-line {
     font-family: 'Cinzel', serif;
     font-weight: 900;
-    font-size: 42px;
+    font-size: 38px;
     text-transform: uppercase;
-    line-height: 0.9;
-    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 20px;
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .card-join .join-line-white {
+    color: #FFFFFF;
+  }
+  .card-join .join-line-silver {
+    color: #B0B0C0;
+  }
+  .card-join .join-line-blue {
+    color: var(--blue-bright);
+    filter: drop-shadow(0 0 20px rgba(7,81,251,0.4));
   }
   .card-join .join-desc {
     font-size: 14px;
@@ -589,18 +583,12 @@
   }
   .card-mk-cover .mk-line1 {
     display: block;
-    background: linear-gradient(180deg, #FFFFFF 0%, #D0D0DC 40%, #A0A0B4 60%, #D0D0DC 80%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #C8C8D8;
   }
   .card-mk-cover .mk-line2 {
     font-size: 34px;
     display: block;
-    background: linear-gradient(135deg, var(--blue), var(--blue-bright));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--blue-bright);
     filter: drop-shadow(0 2px 8px rgba(7,81,251,0.5));
   }
   .card-mk-cover .mk-sub {
@@ -961,7 +949,11 @@
     </div>
     <div class="card card-join" id="card-join">
       <div class="join-label">Open Registration &middot; Season I</div>
-      <div class="join-big">Your Brand.<br/>Your Team.<br/>Your League.</div>
+      <div class="join-lines">
+        <div class="join-line join-line-white">Your Brand.</div>
+        <div class="join-line join-line-silver">Your Team.</div>
+        <div class="join-line join-line-blue">Your League.</div>
+      </div>
       <div class="join-desc">Register your brand for the first national competition built on movement. Weekly matches, AI-powered commentary, and a championship trophy.</div>
       <div class="join-cta">Register Your Brand &rarr;</div>
       <div class="join-url">sportin.io/leagueofbrands</div>
