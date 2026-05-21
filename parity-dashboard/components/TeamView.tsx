@@ -377,13 +377,15 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
       </div>
 
       <p className="mt-3 text-[10px] leading-relaxed text-muted/80">
-        <strong className="text-muted">Estimate model</strong> (AI-assisted baseline —
-        Claude/Kiro/Cursor assumed in normal workflow): per-commit base time from LoC
-        (5LoC→3m, 50→20m, 150→40m, 500→1h 40m, 1500+→6h) × type multiplier
-        (<code>fix</code> 0.8, <code>feat</code> 1.1, <code>docs/chore</code> 0.6).
-        Commits that explicitly co-author an AI get an extra ×0.55 (heavy-AI commits).
-        For a fully-manual team, set <code>ESTIMATE_SCALE=1.7</code> in env. Content-based,
-        not timing-based — batched pushes don't distort it.
+        <strong className="text-muted">Estimate model</strong> (vibe-coding baseline —
+        AI generates code, human prompts/reviews/integrates): per-commit base time
+        from LoC (5→2m, 50→10m, 150→20m, 500→35m, 1500→1h 10m, big→2h 30m max)
+        × type multiplier (<code>fix</code> 0.8, <code>feat</code> 1.1,
+        <code>chore</code> 0.6). Extra ×0.7 if the message mentions parity/port/mirror
+        (replication work — design already done). Extra ×0.7 if an AI co-author is
+        explicitly tagged. Cap is 2.5h even on huge diffs because review time, not
+        typing, is the bottleneck. Tune with <code>ESTIMATE_SCALE</code> env var
+        (1.7 = manual-coding baseline). Content-based, not timing-based.
       </p>
     </div>
   );

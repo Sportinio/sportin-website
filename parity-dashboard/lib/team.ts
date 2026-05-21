@@ -201,13 +201,17 @@ function dayKey(iso: string) {
  * Intentionally simple — meant to give an order-of-magnitude signal that's
  * harder to game than push timing. NOT a precise measurement.
  *
- * Calibrated for AI-ASSISTED development (Claude, Kiro, Cursor, Copilot).
- * Base times assume the developer is prompting + reviewing AI-generated
- * code rather than typing every line. For a fully manual team, set
- * ESTIMATE_SCALE to ~1.7 in env to undo this assumption.
+ * Calibrated for a "vibe-coding" team where AI tools (Claude, Kiro, Cursor,
+ * Copilot) are the default — the human prompts, reviews, integrates, and
+ * commits, while the model writes the bulk of the code. Replication work
+ * (porting an existing implementation across platforms) is also accounted
+ * for: even large commits should land under 2-3h.
  *
- * If a commit's message explicitly tags an AI co-author, an additional
- * deeper discount applies — those are heavy-AI commits.
+ * Explicit AI co-author tags get an additional small discount on top of
+ * the baseline (those are typically near-direct model output).
+ *
+ * Tune via env: ESTIMATE_SCALE=1.7 reverts to a manual-coding baseline;
+ * ESTIMATE_SCALE=0.5 is even more aggressive.
  */
 const ESTIMATE_SCALE = (() => {
   const v = parseFloat(process.env.ESTIMATE_SCALE || "1");
@@ -222,16 +226,17 @@ function estimateCommitMinutes(
 ): number {
   const loc = additions + deletions;
 
-  // AI-assisted baseline. Roughly: a senior dev using Kiro/Claude effectively
-  // produces ~3× the LoC per hour vs typing manually.
+  // Vibe-coding baseline. Reflects: prompt → AI generates → human reviews
+  // and integrates. Even big diffs land in under a couple of hours because
+  // the bottleneck is human review, not typing speed.
   let minutes: number;
-  if (loc < 5) minutes = 3;
-  else if (loc < 20) minutes = 10;
-  else if (loc < 50) minutes = 20;
-  else if (loc < 150) minutes = 40;
-  else if (loc < 500) minutes = 100;
-  else if (loc < 1500) minutes = 200;
-  else minutes = 360;
+  if (loc < 5) minutes = 2;
+  else if (loc < 20) minutes = 5;
+  else if (loc < 50) minutes = 10;
+  else if (loc < 150) minutes = 20;
+  else if (loc < 500) minutes = 35;
+  else if (loc < 1500) minutes = 70;
+  else minutes = 150; // hard cap at 2h 30m even for huge diffs
 
   const head = message.toLowerCase().split("\n")[0];
   if (/^(docs|chore|style|build|ci)[:(]/.test(head)) minutes *= 0.6;
@@ -239,10 +244,14 @@ function estimateCommitMinutes(
   else if (/^feat[:(]/.test(head)) minutes *= 1.1;
   else if (/^(refactor|perf|test)[:(]/.test(head)) minutes *= 1.0;
 
-  // Extra discount when the commit message explicitly co-authors an AI tool.
-  // Those commits are typically the heaviest AI usage — most of the code
-  // came straight from the model with light human review.
-  if (aiAssisted) minutes *= 0.55;
+  // Replication/parity discount — commits that explicitly note porting from
+  // another platform are even cheaper because the design work is already done.
+  if (/\b(parity|port|mirror|match\s+ios|from\s+ios|android\s+parity)\b/i.test(head)) {
+    minutes *= 0.7;
+  }
+
+  // Explicit AI co-author tag → an extra discount on top of the baseline.
+  if (aiAssisted) minutes *= 0.7;
 
   minutes *= ESTIMATE_SCALE;
 
