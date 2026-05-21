@@ -5,11 +5,12 @@ export interface RawCommit {
   oid: string;
   message: string;
   committedDate: string; // ISO
+  authoredDate: string;  // ISO — may differ from committedDate when history is rewritten
   additions: number;
   deletions: number;
   author: string; // login or fallback name
   aiAssisted: boolean;
-  branch: string;
+  branches: string[]; // branches we saw this OID on
 }
 
 export interface DayStat {
@@ -21,6 +22,12 @@ export interface DayStat {
   lastAt: string | null;
   activeMinutes: number; // last - first per day, capped at 8h
   aiAssistedCommits: number;
+  /** Max commits within any rolling 10-minute window. ≥3 = strong burst signal. */
+  maxBurst: number;
+  /** Time (minutes) covered by the largest burst — small numbers + many commits = suspicious. */
+  burstSpanMinutes: number;
+  /** Branches touched this day. */
+  branches: string[];
 }
 
 export interface AuthorStats {
@@ -37,6 +44,8 @@ export interface AuthorStats {
   byDay: Record<string, DayStat>;
   lastSeenAt: string | null;
   firstSeenAt: string | null;
+  /** All branches this author has touched in the range. */
+  branchesTouched: string[];
 }
 
 export interface TeamData {
@@ -50,20 +59,37 @@ export interface TeamData {
   };
   warnings: string[];
   fetchedAt: string;
+  /** Repo we scanned. */
+  repo: string;
+  /** Branch names that were scanned. */
+  branchesScanned: string[];
 }
 
 const GH_GRAPHQL = "https://api.github.com/graphql";
 
-interface BranchHistory {
-  nodes: Array<{
-    oid: string;
-    message: string;
-    committedDate: string;
-    additions: number;
-    deletions: number;
-    author: { name?: string; email?: string; user?: { login?: string } | null } | null;
-  }>;
+interface CommitNode {
+  oid: string;
+  message: string;
+  committedDate: string;
+  authoredDate: string;
+  additions: number;
+  deletions: number;
+  author: {
+    name?: string;
+    email?: string;
+    user?: { login?: string } | null;
+  } | null;
 }
+
+const BRANCHES_QUERY = /* GraphQL */ `
+  query Branches($org: String!, $repo: String!) {
+    repository(owner: $org, name: $repo) {
+      refs(refPrefix: "refs/heads/", first: 100) {
+        nodes { name }
+      }
+    }
+  }
+`;
 
 const COMMITS_QUERY = /* GraphQL */ `
   query Commits($org: String!, $repo: String!, $branch: String!, $since: GitTimestamp!) {
@@ -76,6 +102,7 @@ const COMMITS_QUERY = /* GraphQL */ `
                 oid
                 message
                 committedDate
+                authoredDate
                 additions
                 deletions
                 author {
@@ -92,13 +119,11 @@ const COMMITS_QUERY = /* GraphQL */ `
   }
 `;
 
-async function fetchBranchCommits(
+async function gh<T>(
   token: string,
-  org: string,
-  repo: string,
-  branch: string,
-  since: string,
-): Promise<BranchHistory["nodes"]> {
+  query: string,
+  variables: Record<string, unknown>,
+): Promise<T | null> {
   try {
     const res = await fetch(GH_GRAPHQL, {
       method: "POST",
@@ -107,18 +132,45 @@ async function fetchBranchCommits(
         "Content-Type": "application/json",
         "User-Agent": "sportin-parity-dashboard",
       },
-      body: JSON.stringify({
-        query: COMMITS_QUERY,
-        variables: { org, repo, branch: `refs/heads/${branch}`, since },
-      }),
+      body: JSON.stringify({ query, variables }),
       next: { revalidate: 60 },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return null;
     const json = await res.json();
-    return json.data?.repository?.ref?.target?.history?.nodes || [];
+    if (json.errors) return null;
+    return json.data as T;
   } catch {
-    return [];
+    return null;
   }
+}
+
+async function fetchAllBranchNames(
+  token: string,
+  org: string,
+  repo: string,
+): Promise<string[]> {
+  const data = await gh<{
+    repository: { refs: { nodes: { name: string }[] } };
+  }>(token, BRANCHES_QUERY, { org, repo });
+  return data?.repository.refs.nodes.map((n) => n.name) || [];
+}
+
+async function fetchBranchCommits(
+  token: string,
+  org: string,
+  repo: string,
+  branch: string,
+  since: string,
+): Promise<CommitNode[]> {
+  const data = await gh<{
+    repository: { ref: { target: { history: { nodes: CommitNode[] } } } | null };
+  }>(token, COMMITS_QUERY, {
+    org,
+    repo,
+    branch: `refs/heads/${branch}`,
+    since,
+  });
+  return data?.repository?.ref?.target?.history?.nodes || [];
 }
 
 function dayKey(iso: string) {
@@ -134,8 +186,30 @@ function detectAI(message: string): boolean {
     lc.includes("co-authored-by: github copilot") ||
     lc.includes("🤖 generated with") ||
     lc.includes("generated with claude code") ||
-    lc.includes("[skip ci]") && lc.includes("automated") // weak signal
+    (lc.includes("[skip ci]") && lc.includes("automated"))
   );
+}
+
+/**
+ * Sliding-window count: maximum number of commits within any 10-minute window.
+ * 3+ commits in a window strongly suggests batched landings rather than real work.
+ */
+function computeBurst(times: number[]): { maxBurst: number; burstSpanMs: number } {
+  if (times.length === 0) return { maxBurst: 0, burstSpanMs: 0 };
+  const sorted = [...times].sort((a, b) => a - b);
+  const window = 10 * 60 * 1000;
+  let max = 1;
+  let burstSpan = 0;
+  let left = 0;
+  for (let right = 0; right < sorted.length; right++) {
+    while (sorted[right] - sorted[left] > window) left++;
+    const count = right - left + 1;
+    if (count > max) {
+      max = count;
+      burstSpan = sorted[right] - sorted[left];
+    }
+  }
+  return { maxBurst: max, burstSpanMs: burstSpan };
 }
 
 export async function fetchTeam(days = 30): Promise<TeamData> {
@@ -148,49 +222,63 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
       authors: [],
       dayRange: { from: "", to: "", days },
       totals: { commits: 0, additions: 0, deletions: 0, aiAssistedCommits: 0 },
-      warnings: ["Team page requires GITHUB_TOKEN, GITHUB_ORG, and a configured mobile repo."],
+      warnings: [
+        "Team page requires GITHUB_TOKEN, GITHUB_ORG, and a configured mobile repo.",
+      ],
       fetchedAt: new Date().toISOString(),
+      repo: "",
+      branchesScanned: [],
     };
   }
 
   const sinceDate = new Date(Date.now() - days * 86400000);
   const since = sinceDate.toISOString();
 
-  // Pull from main + dev. Each branch's history covers everything that merged
-  // into it, so this captures the bulk of activity. (Direct-to-feature-branch
-  // commits that never merged are not counted — by design.)
-  const [mainNodes, devNodes] = await Promise.all([
-    fetchBranchCommits(cfg.token, cfg.org, repo, cfg.mainBranch, since),
-    fetchBranchCommits(cfg.token, cfg.org, repo, cfg.devBranch, since),
-  ]);
+  // Scan every branch — catches WIP pushed to feature branches that hasn't
+  // merged yet. Without this, locally-merged-and-rebased work appears as a
+  // single batch on the merge day even when it took multiple days.
+  const branches = await fetchAllBranchNames(cfg.token, cfg.org, repo);
+  if (branches.length === 0) {
+    warnings.push(`No branches found in ${cfg.org}/${repo}.`);
+  }
+
+  const branchResults = await Promise.all(
+    branches.map(async (b) => ({
+      branch: b,
+      nodes: await fetchBranchCommits(cfg.token, cfg.org, repo, b, since),
+    })),
+  );
 
   const seen = new Map<string, RawCommit>();
-  function intake(nodes: BranchHistory["nodes"], branch: string) {
+  for (const { branch, nodes } of branchResults) {
     for (const n of nodes) {
-      if (seen.has(n.oid)) continue;
-      const login = n.author?.user?.login || n.author?.name || n.author?.email || "unknown";
+      const existing = seen.get(n.oid);
+      if (existing) {
+        if (!existing.branches.includes(branch)) existing.branches.push(branch);
+        continue;
+      }
+      const login =
+        n.author?.user?.login || n.author?.name || n.author?.email || "unknown";
       seen.set(n.oid, {
         oid: n.oid,
         message: n.message,
         committedDate: n.committedDate,
+        authoredDate: n.authoredDate,
         additions: n.additions,
         deletions: n.deletions,
         author: login,
         aiAssisted: detectAI(n.message),
-        branch,
+        branches: [branch],
       });
     }
   }
-  intake(mainNodes, cfg.mainBranch);
-  intake(devNodes, cfg.devBranch);
 
   if (seen.size === 0) {
     warnings.push(
-      `No commits found in the last ${days} days on ${cfg.mainBranch} or ${cfg.devBranch} of ${cfg.org}/${repo}.`,
+      `No commits found in the last ${days} days across ${branches.length} branches of ${cfg.org}/${repo}.`,
     );
   }
 
-  // Aggregate by author.
   const byAuthor = new Map<string, RawCommit[]>();
   for (const c of seen.values()) {
     const arr = byAuthor.get(c.author) ?? [];
@@ -202,31 +290,40 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
   for (const [author, list] of byAuthor.entries()) {
     list.sort((a, b) => a.committedDate.localeCompare(b.committedDate));
 
-    const byDay = new Map<string, RawCommit[]>();
+    const byDayMap = new Map<string, RawCommit[]>();
     for (const c of list) {
       const k = dayKey(c.committedDate);
-      const arr = byDay.get(k) ?? [];
+      const arr = byDayMap.get(k) ?? [];
       arr.push(c);
-      byDay.set(k, arr);
+      byDayMap.set(k, arr);
     }
 
     const dayStats: Record<string, DayStat> = {};
     let totalActive = 0;
     let activeDays = 0;
-    for (const [date, commits] of byDay.entries()) {
+    for (const [date, commits] of byDayMap.entries()) {
       commits.sort((a, b) => a.committedDate.localeCompare(b.committedDate));
       const firstAt = commits[0].committedDate;
       const lastAt = commits[commits.length - 1].committedDate;
-      const spanMs = Math.max(0, new Date(lastAt).getTime() - new Date(firstAt).getTime());
+      const spanMs = Math.max(
+        0,
+        new Date(lastAt).getTime() - new Date(firstAt).getTime(),
+      );
       let activeMin = Math.round(spanMs / 60000);
-      // single-commit day: assume ~10 min of work to be fair
       if (commits.length === 1) activeMin = 10;
-      // cap at 8h to filter out overnight outliers (anomaly cleanup)
       activeMin = Math.min(activeMin, 8 * 60);
 
       const additions = commits.reduce((a, c) => a + c.additions, 0);
       const deletions = commits.reduce((a, c) => a + c.deletions, 0);
-      const aiAssistedCommits = commits.reduce((a, c) => a + (c.aiAssisted ? 1 : 0), 0);
+      const aiAssistedCommits = commits.reduce(
+        (a, c) => a + (c.aiAssisted ? 1 : 0),
+        0,
+      );
+      const times = commits.map((c) => new Date(c.committedDate).getTime());
+      const { maxBurst, burstSpanMs } = computeBurst(times);
+      const dayBranches = Array.from(
+        new Set(commits.flatMap((c) => c.branches)),
+      ).sort();
 
       dayStats[date] = {
         date,
@@ -237,6 +334,9 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
         lastAt,
         activeMinutes: activeMin,
         aiAssistedCommits,
+        maxBurst,
+        burstSpanMinutes: Math.round(burstSpanMs / 60000),
+        branches: dayBranches,
       };
       totalActive += activeMin;
       activeDays++;
@@ -244,7 +344,13 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
 
     const additions = list.reduce((a, c) => a + c.additions, 0);
     const deletions = list.reduce((a, c) => a + c.deletions, 0);
-    const aiAssistedCommits = list.reduce((a, c) => a + (c.aiAssisted ? 1 : 0), 0);
+    const aiAssistedCommits = list.reduce(
+      (a, c) => a + (c.aiAssisted ? 1 : 0),
+      0,
+    );
+    const branchesTouched = Array.from(
+      new Set(list.flatMap((c) => c.branches)),
+    ).sort();
 
     authors.push({
       author,
@@ -256,10 +362,12 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
       activeDays,
       totalActiveMinutes: totalActive,
       avgActiveMinutesPerDay: activeDays > 0 ? Math.round(totalActive / activeDays) : 0,
-      avgCommitSize: list.length > 0 ? Math.round((additions + deletions) / list.length) : 0,
+      avgCommitSize:
+        list.length > 0 ? Math.round((additions + deletions) / list.length) : 0,
       byDay: dayStats,
       lastSeenAt: list[list.length - 1]?.committedDate || null,
       firstSeenAt: list[0]?.committedDate || null,
+      branchesTouched,
     });
   }
 
@@ -278,16 +386,17 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
     totals.aiAssistedCommits += a.aiAssistedCommits;
   }
 
-  const today = new Date();
   return {
     authors,
     dayRange: {
       from: sinceDate.toISOString().slice(0, 10),
-      to: today.toISOString().slice(0, 10),
+      to: new Date().toISOString().slice(0, 10),
       days,
     },
     totals,
     warnings,
     fetchedAt: new Date().toISOString(),
+    repo,
+    branchesScanned: branches,
   };
 }

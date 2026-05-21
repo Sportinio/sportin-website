@@ -35,7 +35,30 @@ function weekday(date: string) {
 }
 
 function timeLabel(iso: string) {
-  return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function isWeekend(date: string): boolean {
+  const d = new Date(date + "T12:00:00").getDay();
+  return d === 0 || d === 6;
+}
+
+// Burst suspicion classifier. We treat ≥3 commits within 10 minutes as a
+// "batched landing" signal. Stronger when burstSpan is very small.
+function burstVerdict(stat: DayStat): {
+  label: string;
+  level: "ok" | "warn" | "bad";
+} {
+  if (stat.maxBurst >= 5 && stat.burstSpanMinutes <= 5) {
+    return { label: "Batched landing", level: "bad" };
+  }
+  if (stat.maxBurst >= 3 && stat.burstSpanMinutes <= 10) {
+    return { label: "Tight cluster", level: "warn" };
+  }
+  return { label: "Spread out", level: "ok" };
 }
 
 // ── Activity heatmap (last N days) ────────────────────────────────────
@@ -100,9 +123,10 @@ function DayBar({ date, stat }: { date: string; stat?: DayStat }) {
       </div>
     );
   }
-  // Position the bar based on commit time within 0–24h window.
-  const firstH = new Date(stat.firstAt!).getHours() + new Date(stat.firstAt!).getMinutes() / 60;
-  const lastH = new Date(stat.lastAt!).getHours() + new Date(stat.lastAt!).getMinutes() / 60;
+  const firstH =
+    new Date(stat.firstAt!).getHours() + new Date(stat.firstAt!).getMinutes() / 60;
+  const lastH =
+    new Date(stat.lastAt!).getHours() + new Date(stat.lastAt!).getMinutes() / 60;
   const left = (firstH / 24) * 100;
   const width = Math.max(1, ((lastH - firstH) / 24) * 100);
   return (
@@ -122,18 +146,198 @@ function DayBar({ date, stat }: { date: string; stat?: DayStat }) {
   );
 }
 
+// ── 7-day audit panel — designed for verifying paid-hours claims ─────
+
+function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
+  const audit = days.map((d) => {
+    const stat = author.byDay[d];
+    const weekend = isWeekend(d);
+    return { date: d, stat, weekend };
+  });
+
+  // Workdays = non-weekend days in range. The user pays for 8h × workdays.
+  const workdays = audit.filter((a) => !a.weekend).length;
+  const claimedHours = workdays * 8;
+
+  // Real work signal: sum of active minutes on workdays only, MINUS days where
+  // we have strong batching evidence (those minutes are unreliable).
+  let signalMinutes = 0;
+  let suspiciousDays = 0;
+  let zeroCommitWorkdays = 0;
+  for (const a of audit) {
+    if (a.weekend) continue;
+    if (!a.stat) {
+      zeroCommitWorkdays++;
+      continue;
+    }
+    const v = burstVerdict(a.stat);
+    if (v.level === "bad") {
+      suspiciousDays++;
+      // Don't count batched landings as work signal — the timestamps
+      // describe the landing, not the work.
+      continue;
+    }
+    if (v.level === "warn") suspiciousDays++;
+    signalMinutes += a.stat.activeMinutes;
+  }
+
+  const signalHours = signalMinutes / 60;
+  const coverage = claimedHours > 0 ? signalHours / claimedHours : 0;
+
+  let verdict: { label: string; color: string; explainer: string };
+  if (coverage >= 0.6 && suspiciousDays <= 1 && zeroCommitWorkdays <= 1) {
+    verdict = {
+      label: "Looks consistent with claimed hours",
+      color: "text-ok",
+      explainer:
+        "Code lands across spread-out windows on most workdays — typical of someone actually working at the times the commits happened.",
+    };
+  } else if (zeroCommitWorkdays >= 2 || suspiciousDays >= 2 || coverage < 0.3) {
+    verdict = {
+      label: "Cannot verify claimed hours",
+      color: "text-bad",
+      explainer:
+        "Multiple workdays have either zero pushed commits or batched landings (many commits in minutes). Either work is happening locally and being pushed in bursts, or it's not happening.",
+    };
+  } else {
+    verdict = {
+      label: "Partially verifiable",
+      color: "text-warn",
+      explainer:
+        "Some workdays look real, others are bursts or empty. Worth a 1:1 conversation rather than a conclusion from the data alone.",
+    };
+  }
+
+  return (
+    <div className="mt-5 rounded-lg border border-border bg-bg/40 p-4">
+      <div className="mb-3 flex items-baseline justify-between gap-3">
+        <h4 className="text-sm font-semibold text-text">7-day audit</h4>
+        <span className={`text-xs font-semibold ${verdict.color}`}>{verdict.label}</span>
+      </div>
+
+      <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Metric
+          label="Workdays in range"
+          value={`${workdays}`}
+        />
+        <Metric
+          label="Claimed hours (8h × wd)"
+          value={`${claimedHours}h`}
+        />
+        <Metric
+          label="Visible work signal"
+          value={fmtMinutes(signalMinutes)}
+          warn={coverage < 0.6 && coverage >= 0.3}
+          danger={coverage < 0.3}
+        />
+        <Metric
+          label="Coverage of claim"
+          value={pct(coverage)}
+          warn={coverage < 0.6 && coverage >= 0.3}
+          danger={coverage < 0.3}
+        />
+      </div>
+
+      <p className="mb-3 text-[11px] leading-relaxed text-muted">{verdict.explainer}</p>
+
+      <div className="space-y-1.5">
+        {audit.map(({ date, stat, weekend }) => (
+          <AuditRow key={date} date={date} stat={stat} weekend={weekend} />
+        ))}
+      </div>
+
+      <p className="mt-3 text-[10px] leading-relaxed text-muted/80">
+        Heuristics: ≥3 commits within 10 minutes = "tight cluster"; ≥5 within 5 minutes
+        = "batched landing". Batched landings are excluded from work signal because the
+        timestamps reflect when code was pushed, not when it was written. Local work that
+        never pushes is invisible.
+      </p>
+    </div>
+  );
+}
+
+function AuditRow({
+  date,
+  stat,
+  weekend,
+}: {
+  date: string;
+  stat?: DayStat;
+  weekend: boolean;
+}) {
+  const flag = stat ? burstVerdict(stat) : null;
+  const flagColor =
+    flag?.level === "bad"
+      ? "bg-bad/20 text-bad"
+      : flag?.level === "warn"
+        ? "bg-warn/20 text-warn"
+        : "bg-ok/15 text-ok";
+
+  return (
+    <div
+      className={`grid grid-cols-[55px_45px_1fr_70px_90px_110px] items-center gap-3 rounded px-2 py-1.5 text-[11px] ${
+        weekend ? "opacity-50" : ""
+      }`}
+    >
+      <span className="font-mono text-muted">{date.slice(5)}</span>
+      <span className={weekend ? "text-muted/60" : "text-muted"}>
+        {weekday(date)}
+        {weekend && <span className="ml-1 text-[9px]">·wk</span>}
+      </span>
+
+      {stat ? (
+        <span className="truncate text-text/80">
+          {timeLabel(stat.firstAt!)} → {timeLabel(stat.lastAt!)}
+          {stat.branches.length > 0 && (
+            <span className="ml-2 text-muted/70">
+              ({stat.branches.slice(0, 2).join(", ")}
+              {stat.branches.length > 2 ? ` +${stat.branches.length - 2}` : ""})
+            </span>
+          )}
+        </span>
+      ) : (
+        <span className="italic text-muted/60">
+          {weekend ? "weekend · no commits" : "no commits"}
+        </span>
+      )}
+
+      <span className="text-right text-text/70">
+        {stat ? `${stat.commits}c` : "—"}
+      </span>
+      <span className="text-right text-text/70">
+        {stat ? fmtMinutes(stat.activeMinutes) : "—"}
+      </span>
+      {stat && flag ? (
+        <span
+          className={`rounded px-1.5 py-0.5 text-center text-[10px] font-semibold ${flagColor}`}
+          title={
+            stat.maxBurst >= 2
+              ? `${stat.maxBurst} commits within ${stat.burstSpanMinutes}m`
+              : `single commit`
+          }
+        >
+          {flag.label}
+        </span>
+      ) : (
+        <span />
+      )}
+    </div>
+  );
+}
+
 // ── Author card ───────────────────────────────────────────────────────
 
 function AuthorCard({
   author,
   days,
   rangeDays,
+  showAudit,
 }: {
   author: AuthorStats;
   days: string[];
   rangeDays: number;
+  showAudit: boolean;
 }) {
-  // Compute last-7-day stats for the recent-trend line.
   const last7 = days.slice(-7);
   const last7Stats = last7.reduce(
     (acc, d) => {
@@ -150,10 +354,9 @@ function AuthorCard({
     { commits: 0, additions: 0, deletions: 0, activeMinutes: 0, activeDays: 0 },
   );
 
-  const expectedWorkdays = Math.min(rangeDays, 22); // assume ~22 workdays in a month
+  const expectedWorkdays = Math.min(rangeDays, 22);
   const workdayRatio = author.activeDays / expectedWorkdays;
-  const expectedActivePerDay = 4 * 60; // 4h is the "real coding" benchmark
-  const activeRatio = author.avgActiveMinutesPerDay / expectedActivePerDay;
+  const expectedActivePerDay = 4 * 60;
 
   return (
     <div className="rounded-xl border border-border bg-surface p-5">
@@ -165,9 +368,20 @@ function AuthorCard({
             {author.lastSeenAt
               ? new Date(author.lastSeenAt).toLocaleDateString() +
                 " " +
-                new Date(author.lastSeenAt).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+                new Date(author.lastSeenAt).toLocaleTimeString(undefined, {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
               : "never"}
           </p>
+          {author.branchesTouched.length > 0 && (
+            <p className="mt-0.5 text-[10px] text-muted/70">
+              Branches: {author.branchesTouched.slice(0, 4).join(", ")}
+              {author.branchesTouched.length > 4
+                ? ` +${author.branchesTouched.length - 4}`
+                : ""}
+            </p>
+          )}
         </div>
         {author.aiAssistedPct >= 0.4 ? (
           <span className="inline-flex items-center rounded border border-staged/40 bg-staged/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-staged">
@@ -187,7 +401,10 @@ function AuthorCard({
           label="Avg active / day"
           value={fmtMinutes(author.avgActiveMinutesPerDay)}
           danger={author.avgActiveMinutesPerDay < 60}
-          warn={author.avgActiveMinutesPerDay >= 60 && author.avgActiveMinutesPerDay < expectedActivePerDay}
+          warn={
+            author.avgActiveMinutesPerDay >= 60 &&
+            author.avgActiveMinutesPerDay < expectedActivePerDay
+          }
         />
         <Metric label="Avg commit size" value={`${fmtNum(author.avgCommitSize)} LoC`} />
       </div>
@@ -195,8 +412,16 @@ function AuthorCard({
       <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         <Metric label={`Last 7d commits`} value={String(last7Stats.commits)} />
         <Metric label={`Last 7d active`} value={fmtMinutes(last7Stats.activeMinutes)} />
-        <Metric label="LoC added" value={`+${fmtNum(author.additions)}`} accent="ok" />
-        <Metric label="LoC removed" value={`-${fmtNum(author.deletions)}`} accent="bad" />
+        <Metric
+          label="LoC added"
+          value={`+${fmtNum(author.additions)}`}
+          accent="ok"
+        />
+        <Metric
+          label="LoC removed"
+          value={`-${fmtNum(author.deletions)}`}
+          accent="bad"
+        />
       </div>
 
       <div className="mt-5">
@@ -216,13 +441,25 @@ function AuthorCard({
         </div>
         <ActiveTimeBars author={author} days={days} />
       </div>
+
+      {showAudit && <AuditPanel author={author} days={last7} />}
     </div>
   );
 }
 
 function Metric({
-  label, value, danger, warn, accent,
-}: { label: string; value: string; danger?: boolean; warn?: boolean; accent?: "ok" | "bad" }) {
+  label,
+  value,
+  danger,
+  warn,
+  accent,
+}: {
+  label: string;
+  value: string;
+  danger?: boolean;
+  warn?: boolean;
+  accent?: "ok" | "bad";
+}) {
   const color = danger
     ? "text-bad"
     : warn
@@ -243,7 +480,7 @@ function Metric({
 // ── Main ──────────────────────────────────────────────────────────────
 
 export function TeamView({ data }: { data: TeamData }) {
-  const [range, setRange] = useState<7 | 14 | 30>(30);
+  const [range, setRange] = useState<7 | 14 | 30>(7);
   const allDays = useMemo(() => lastNDays(range), [range]);
 
   return (
@@ -252,12 +489,13 @@ export function TeamView({ data }: { data: TeamData }) {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Team Activity</h1>
           <p className="text-sm text-muted">
-            Commit activity on main + dev. Aggregated per author. Shared between you and Vlad so the
-            numbers are visible to everyone on the team.
+            Commit activity across <span className="font-mono text-text">{data.branchesScanned.length}</span>{" "}
+            branches of {data.repo}. Aggregated per author. 7-day audit panel surfaces
+            batched landings and zero-commit workdays.
           </p>
           <p className="mt-1 text-[11px] text-muted/80">
-            Active window = first commit → last commit on each day (capped at 8h). Approximates working
-            time but doesn't capture thinking, debugging, or AI-prompting that didn't land in commits.
+            Active window = first commit → last commit on each day (capped at 8h). Truly
+            local commits (never pushed) cannot be detected — git's design.
           </p>
         </div>
 
@@ -286,8 +524,15 @@ export function TeamView({ data }: { data: TeamData }) {
       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
         <Metric label="Authors" value={String(data.authors.length)} />
         <Metric label={`Commits · ${range}d`} value={fmtNum(data.totals.commits)} />
-        <Metric label="LoC added" value={`+${fmtNum(data.totals.additions)}`} accent="ok" />
-        <Metric label="AI-assisted commits" value={`${data.totals.aiAssistedCommits} / ${data.totals.commits}`} />
+        <Metric
+          label="LoC added"
+          value={`+${fmtNum(data.totals.additions)}`}
+          accent="ok"
+        />
+        <Metric
+          label="AI-assisted commits"
+          value={`${data.totals.aiAssistedCommits} / ${data.totals.commits}`}
+        />
       </div>
 
       <div className="space-y-4">
@@ -297,13 +542,20 @@ export function TeamView({ data }: { data: TeamData }) {
           </div>
         ) : (
           data.authors.map((a) => (
-            <AuthorCard key={a.author} author={a} days={allDays} rangeDays={range} />
+            <AuthorCard
+              key={a.author}
+              author={a}
+              days={allDays}
+              rangeDays={range}
+              showAudit={range === 7}
+            />
           ))
         )}
       </div>
 
       <footer className="mt-8 text-center text-[11px] text-muted">
-        Range: {data.dayRange.from} → {data.dayRange.to} · {data.dayRange.days} days · fetched{" "}
+        Range: {data.dayRange.from} → {data.dayRange.to} · {data.dayRange.days} days ·{" "}
+        {data.branchesScanned.length} branches scanned · fetched{" "}
         {new Date(data.fetchedAt).toLocaleTimeString()}
       </footer>
     </>
