@@ -195,10 +195,10 @@ function CommitList({ commits }: { commits: CommitSummary[] }) {
       </div>
     );
   }
-  // Show in chronological order — earliest first within the day.
   const sorted = [...commits].sort((a, b) =>
     a.committedDate.localeCompare(b.committedDate),
   );
+  const dayTotal = sorted.reduce((a, c) => a + c.estimatedMinutes, 0);
   return (
     <div className="ml-[88px] mr-[120px] mt-1 mb-2 space-y-1 rounded-md border border-border/60 bg-surface2/40 p-2">
       {sorted.map((c) => (
@@ -209,8 +209,8 @@ function CommitList({ commits }: { commits: CommitSummary[] }) {
           <span className="w-12 shrink-0 font-mono text-muted/80">
             {timeLabel(c.committedDate)}
           </span>
-          <span className="w-16 shrink-0 font-mono text-muted/60" title={c.oid}>
-            {c.oid.slice(0, 8)}
+          <span className="w-14 shrink-0 font-mono text-muted/60" title={c.oid}>
+            {c.oid.slice(0, 7)}
           </span>
           <span className="flex-1 text-text/90">
             {firstLine(c.message)}
@@ -220,18 +220,28 @@ function CommitList({ commits }: { commits: CommitSummary[] }) {
               </span>
             )}
           </span>
-          <span className="shrink-0 text-[10px] text-muted/70">
+          <span className="shrink-0 w-20 text-right text-[10px] text-muted/70">
             <span className="text-ok/90">+{c.additions}</span>
             <span className="ml-1 text-bad/80">-{c.deletions}</span>
           </span>
+          <span
+            className="shrink-0 w-14 text-right text-[10px] font-semibold text-staged"
+            title="Estimated work time"
+          >
+            ~{fmtMinutes(c.estimatedMinutes)}
+          </span>
           {c.branches.length > 0 && (
-            <span className="shrink-0 max-w-[160px] truncate text-[10px] text-muted/60">
+            <span className="shrink-0 max-w-[140px] truncate text-[10px] text-muted/60">
               {c.branches[0]}
               {c.branches.length > 1 ? ` +${c.branches.length - 1}` : ""}
             </span>
           )}
         </div>
       ))}
+      <div className="flex items-center justify-end gap-2 border-t border-border/40 pt-1.5 text-[10px] text-muted">
+        <span>Day estimate:</span>
+        <span className="font-semibold text-staged">~{fmtMinutes(dayTotal)}</span>
+      </div>
     </div>
   );
 }
@@ -250,14 +260,21 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
     return { date: d, stat, weekend };
   });
 
-  // Workdays = non-weekend days in the original 7-day range. The user pays
-  // for 8h × workdays regardless of whether they're hidden from the table.
+  // Workdays in the original range. Claim = 8h × workdays.
   const workdays = days.filter((d) => !isWeekend(d)).length;
   const claimedHours = workdays * 8;
 
-  // Real work signal: sum of active minutes on workdays only, MINUS days where
-  // we have strong batching evidence (those minutes are unreliable).
-  let signalMinutes = 0;
+  // Estimated work signal: sum the per-commit estimates across the whole
+  // range (workdays + any weekend pushes). This is the headline metric
+  // because it depends on commit *content*, not push timing.
+  const estimatedMinutes = audit.reduce(
+    (a, e) => a + (e.stat?.estimatedMinutes || 0),
+    0,
+  );
+  const estimatedHours = estimatedMinutes / 60;
+  const coverage = claimedHours > 0 ? estimatedHours / claimedHours : 0;
+
+  // Secondary signals (kept for context, not for the headline verdict).
   let suspiciousDays = 0;
   let zeroCommitWorkdays = 0;
   for (const a of audit) {
@@ -267,40 +284,32 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
       continue;
     }
     const v = burstVerdict(a.stat);
-    if (v.level === "bad") {
-      suspiciousDays++;
-      // Don't count batched landings as work signal — the timestamps
-      // describe the landing, not the work.
-      continue;
-    }
-    if (v.level === "warn") suspiciousDays++;
-    signalMinutes += a.stat.activeMinutes;
+    if (v.level === "bad" || v.level === "warn") suspiciousDays++;
   }
 
-  const signalHours = signalMinutes / 60;
-  const coverage = claimedHours > 0 ? signalHours / claimedHours : 0;
-
+  // Verdict thresholds on coverage (estimated work ÷ claimed hours):
+  //   ≥ 70%   → consistent
+  //   40-70%  → partial
+  //   < 40%   → cannot verify
   let verdict: { label: string; color: string; explainer: string };
-  if (coverage >= 0.6 && suspiciousDays <= 1 && zeroCommitWorkdays <= 1) {
+  if (coverage >= 0.7) {
     verdict = {
       label: "Looks consistent with claimed hours",
       color: "text-ok",
       explainer:
-        "Code lands across spread-out windows on most workdays — typical of someone actually working at the times the commits happened.",
+        "Estimated work content (from commit sizes and types) is within range of the claimed hours. Push timing doesn't matter for this — only what landed in the codebase does.",
     };
-  } else if (zeroCommitWorkdays >= 2 || suspiciousDays >= 2 || coverage < 0.3) {
+  } else if (coverage < 0.4) {
     verdict = {
       label: "Cannot verify claimed hours",
       color: "text-bad",
-      explainer:
-        "Multiple workdays have either zero pushed commits or batched landings (many commits in minutes). Either work is happening locally and being pushed in bursts, or it's not happening.",
+      explainer: `Estimated work output (~${fmtMinutes(estimatedMinutes)}) is well below the ${claimedHours}h being paid for. Either there's substantial unpushed work, or the work isn't happening at the claimed rate.`,
     };
   } else {
     verdict = {
       label: "Partially verifiable",
       color: "text-warn",
-      explainer:
-        "Some workdays look real, others are bursts or empty. Worth a 1:1 conversation rather than a conclusion from the data alone.",
+      explainer: `Estimated work output (~${fmtMinutes(estimatedMinutes)}) covers ${pct(coverage)} of the ${claimedHours}h claim. Some workdays look real, others may have unpushed work or be light. Worth a 1:1 conversation.`,
     };
   }
 
@@ -312,27 +321,37 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Metric label="Workdays in range" value={`${workdays}`} />
+        <Metric label="Claimed (8h × wd)" value={`${claimedHours}h`} />
         <Metric
-          label="Workdays in range"
-          value={`${workdays}`}
-        />
-        <Metric
-          label="Claimed hours (8h × wd)"
-          value={`${claimedHours}h`}
-        />
-        <Metric
-          label="Visible work signal"
-          value={fmtMinutes(signalMinutes)}
-          warn={coverage < 0.6 && coverage >= 0.3}
-          danger={coverage < 0.3}
+          label="Estimated work"
+          value={fmtMinutes(estimatedMinutes)}
+          warn={coverage < 0.7 && coverage >= 0.4}
+          danger={coverage < 0.4}
         />
         <Metric
           label="Coverage of claim"
           value={pct(coverage)}
-          warn={coverage < 0.6 && coverage >= 0.3}
-          danger={coverage < 0.3}
+          warn={coverage < 0.7 && coverage >= 0.4}
+          danger={coverage < 0.4}
         />
       </div>
+      {(suspiciousDays > 0 || zeroCommitWorkdays > 0) && (
+        <p className="mb-3 text-[10px] text-muted/80">
+          Context (not used for verdict):{" "}
+          {zeroCommitWorkdays > 0 && (
+            <span className="text-warn">
+              {zeroCommitWorkdays} zero-commit workday{zeroCommitWorkdays === 1 ? "" : "s"}
+            </span>
+          )}
+          {zeroCommitWorkdays > 0 && suspiciousDays > 0 && " · "}
+          {suspiciousDays > 0 && (
+            <span className="text-warn">
+              {suspiciousDays} day{suspiciousDays === 1 ? "" : "s"} with batched/clustered pushes
+            </span>
+          )}
+        </p>
+      )}
 
       <p className="mb-3 text-[11px] leading-relaxed text-muted">{verdict.explainer}</p>
 
@@ -358,10 +377,12 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
       </div>
 
       <p className="mt-3 text-[10px] leading-relaxed text-muted/80">
-        Heuristics: ≥3 commits within 10 minutes = "tight cluster"; ≥5 within 5 minutes
-        = "batched landing". Batched landings are excluded from work signal because the
-        timestamps reflect when code was pushed, not when it was written. Click any row
-        to expand the commit list for that day. Local work that never pushes is invisible.
+        <strong className="text-muted">Estimate model:</strong> per-commit base time
+        from LoC (5LoC→5m, 50→30m, 150→1h, 500→2.5h, 1500+→8h) × type multiplier
+        (<code>fix</code> 0.8, <code>feat</code> 1.1, <code>docs/chore</code> 0.6) ×
+        0.7 if AI-co-authored. Coarse and intentionally fuzzy — content-based, not
+        timing-based, so batched pushes don't distort it. Click any row to see the
+        commit list with per-commit estimates.
       </p>
     </div>
   );
@@ -396,7 +417,7 @@ function AuditRow({
         type="button"
         onClick={canExpand ? onToggle : undefined}
         disabled={!canExpand}
-        className={`grid w-full grid-cols-[55px_45px_1fr_70px_90px_110px_16px] items-center gap-3 rounded px-2 py-1.5 text-left text-[11px] ${
+        className={`grid w-full grid-cols-[55px_45px_1fr_55px_75px_75px_100px_16px] items-center gap-2 rounded px-2 py-1.5 text-left text-[11px] ${
           weekend ? "opacity-60" : ""
         } ${canExpand ? "transition hover:bg-surface2/40" : "cursor-default"}`}
       >
@@ -423,8 +444,17 @@ function AuditRow({
         <span className="text-right text-text/70">
           {stat ? `${stat.commits}c` : "—"}
         </span>
-        <span className="text-right text-text/70">
+        <span
+          className="text-right text-text/70"
+          title="Active push window — first to last commit landed"
+        >
           {stat ? fmtMinutes(stat.activeMinutes) : "—"}
+        </span>
+        <span
+          className="text-right font-semibold text-staged"
+          title="Estimated work time from commit content"
+        >
+          {stat ? `~${fmtMinutes(stat.estimatedMinutes)}` : "—"}
         </span>
         {stat && flag ? (
           <span
@@ -520,13 +550,8 @@ function AuthorCard({
           danger={workdayRatio < 0.5}
         />
         <Metric
-          label="Avg active / day"
-          value={fmtMinutes(author.avgActiveMinutesPerDay)}
-          danger={author.avgActiveMinutesPerDay < 60}
-          warn={
-            author.avgActiveMinutesPerDay >= 60 &&
-            author.avgActiveMinutesPerDay < expectedActivePerDay
-          }
+          label={`Estimated work · ${rangeDays}d`}
+          value={fmtMinutes(author.estimatedMinutes)}
         />
         <Metric label="Avg commit size" value={`${fmtNum(author.avgCommitSize)} LoC`} />
       </div>

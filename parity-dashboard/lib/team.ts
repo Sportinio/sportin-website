@@ -22,6 +22,8 @@ export interface CommitSummary {
   deletions: number;
   branches: string[];
   aiAssisted: boolean;
+  /** Heuristic estimate of how long this commit took to write, in minutes. */
+  estimatedMinutes: number;
 }
 
 export interface DayStat {
@@ -41,6 +43,8 @@ export interface DayStat {
   branches: string[];
   /** Per-commit list for click-to-expand inspection. */
   commitList: CommitSummary[];
+  /** Sum of per-commit work estimates (minutes). Independent of push timing. */
+  estimatedMinutes: number;
 }
 
 export interface AuthorStats {
@@ -59,6 +63,8 @@ export interface AuthorStats {
   firstSeenAt: string | null;
   /** All branches this author has touched in the range. */
   branchesTouched: string[];
+  /** Sum of per-commit work estimates across the range. Headline trust metric. */
+  estimatedMinutes: number;
 }
 
 export interface TeamData {
@@ -188,6 +194,43 @@ async function fetchBranchCommits(
 
 function dayKey(iso: string) {
   return iso.slice(0, 10);
+}
+
+/**
+ * Heuristic: estimate how long a commit took to write, based on size and type.
+ * Intentionally simple — meant to give an order-of-magnitude signal that's
+ * harder to game than push timing. NOT a precise measurement.
+ *
+ * Base curve from LoC changed, then adjusted by commit type and AI assistance.
+ */
+function estimateCommitMinutes(
+  additions: number,
+  deletions: number,
+  message: string,
+  aiAssisted: boolean,
+): number {
+  const loc = additions + deletions;
+
+  let minutes: number;
+  if (loc < 5) minutes = 5;
+  else if (loc < 20) minutes = 15;
+  else if (loc < 50) minutes = 30;
+  else if (loc < 150) minutes = 60;
+  else if (loc < 500) minutes = 150;
+  else if (loc < 1500) minutes = 300;
+  else minutes = 480;
+
+  const head = message.toLowerCase().split("\n")[0];
+  if (/^(docs|chore|style|build|ci)[:(]/.test(head)) minutes *= 0.6;
+  else if (/^fix[:(]/.test(head)) minutes *= 0.8;
+  else if (/^feat[:(]/.test(head)) minutes *= 1.1;
+  else if (/^(refactor|perf|test)[:(]/.test(head)) minutes *= 1.0;
+
+  // AI-authored commits land faster (less typing, scaffolding by the model)
+  // but still cost review/integration time. ~30% net discount is conservative.
+  if (aiAssisted) minutes *= 0.7;
+
+  return Math.round(minutes);
 }
 
 function detectAI(message: string): boolean {
@@ -347,7 +390,17 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
         deletions: c.deletions,
         branches: c.branches,
         aiAssisted: c.aiAssisted,
+        estimatedMinutes: estimateCommitMinutes(
+          c.additions,
+          c.deletions,
+          c.message,
+          c.aiAssisted,
+        ),
       }));
+      const dayEstimated = commitList.reduce(
+        (a, c) => a + c.estimatedMinutes,
+        0,
+      );
 
       dayStats[date] = {
         date,
@@ -362,6 +415,7 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
         burstSpanMinutes: Math.round(burstSpanMs / 60000),
         branches: dayBranches,
         commitList,
+        estimatedMinutes: dayEstimated,
       };
       totalActive += activeMin;
       activeDays++;
@@ -376,6 +430,10 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
     const branchesTouched = Array.from(
       new Set(list.flatMap((c) => c.branches)),
     ).sort();
+    const authorEstimated = Object.values(dayStats).reduce(
+      (a, d) => a + d.estimatedMinutes,
+      0,
+    );
 
     authors.push({
       author,
@@ -393,6 +451,7 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
       lastSeenAt: list[list.length - 1]?.committedDate || null,
       firstSeenAt: list[0]?.committedDate || null,
       branchesTouched,
+      estimatedMinutes: authorEstimated,
     });
   }
 
