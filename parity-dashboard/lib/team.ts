@@ -201,8 +201,19 @@ function dayKey(iso: string) {
  * Intentionally simple — meant to give an order-of-magnitude signal that's
  * harder to game than push timing. NOT a precise measurement.
  *
- * Base curve from LoC changed, then adjusted by commit type and AI assistance.
+ * Calibrated for AI-ASSISTED development (Claude, Kiro, Cursor, Copilot).
+ * Base times assume the developer is prompting + reviewing AI-generated
+ * code rather than typing every line. For a fully manual team, set
+ * ESTIMATE_SCALE to ~1.7 in env to undo this assumption.
+ *
+ * If a commit's message explicitly tags an AI co-author, an additional
+ * deeper discount applies — those are heavy-AI commits.
  */
+const ESTIMATE_SCALE = (() => {
+  const v = parseFloat(process.env.ESTIMATE_SCALE || "1");
+  return Number.isFinite(v) && v > 0 ? v : 1;
+})();
+
 function estimateCommitMinutes(
   additions: number,
   deletions: number,
@@ -211,14 +222,16 @@ function estimateCommitMinutes(
 ): number {
   const loc = additions + deletions;
 
+  // AI-assisted baseline. Roughly: a senior dev using Kiro/Claude effectively
+  // produces ~3× the LoC per hour vs typing manually.
   let minutes: number;
-  if (loc < 5) minutes = 5;
-  else if (loc < 20) minutes = 15;
-  else if (loc < 50) minutes = 30;
-  else if (loc < 150) minutes = 60;
-  else if (loc < 500) minutes = 150;
-  else if (loc < 1500) minutes = 300;
-  else minutes = 480;
+  if (loc < 5) minutes = 3;
+  else if (loc < 20) minutes = 10;
+  else if (loc < 50) minutes = 20;
+  else if (loc < 150) minutes = 40;
+  else if (loc < 500) minutes = 100;
+  else if (loc < 1500) minutes = 200;
+  else minutes = 360;
 
   const head = message.toLowerCase().split("\n")[0];
   if (/^(docs|chore|style|build|ci)[:(]/.test(head)) minutes *= 0.6;
@@ -226,11 +239,14 @@ function estimateCommitMinutes(
   else if (/^feat[:(]/.test(head)) minutes *= 1.1;
   else if (/^(refactor|perf|test)[:(]/.test(head)) minutes *= 1.0;
 
-  // AI-authored commits land faster (less typing, scaffolding by the model)
-  // but still cost review/integration time. ~30% net discount is conservative.
-  if (aiAssisted) minutes *= 0.7;
+  // Extra discount when the commit message explicitly co-authors an AI tool.
+  // Those commits are typically the heaviest AI usage — most of the code
+  // came straight from the model with light human review.
+  if (aiAssisted) minutes *= 0.55;
 
-  return Math.round(minutes);
+  minutes *= ESTIMATE_SCALE;
+
+  return Math.max(1, Math.round(minutes));
 }
 
 function detectAI(message: string): boolean {

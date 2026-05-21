@@ -377,12 +377,13 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
       </div>
 
       <p className="mt-3 text-[10px] leading-relaxed text-muted/80">
-        <strong className="text-muted">Estimate model:</strong> per-commit base time
-        from LoC (5LoC→5m, 50→30m, 150→1h, 500→2.5h, 1500+→8h) × type multiplier
-        (<code>fix</code> 0.8, <code>feat</code> 1.1, <code>docs/chore</code> 0.6) ×
-        0.7 if AI-co-authored. Coarse and intentionally fuzzy — content-based, not
-        timing-based, so batched pushes don't distort it. Click any row to see the
-        commit list with per-commit estimates.
+        <strong className="text-muted">Estimate model</strong> (AI-assisted baseline —
+        Claude/Kiro/Cursor assumed in normal workflow): per-commit base time from LoC
+        (5LoC→3m, 50→20m, 150→40m, 500→1h 40m, 1500+→6h) × type multiplier
+        (<code>fix</code> 0.8, <code>feat</code> 1.1, <code>docs/chore</code> 0.6).
+        Commits that explicitly co-author an AI get an extra ×0.55 (heavy-AI commits).
+        For a fully-manual team, set <code>ESTIMATE_SCALE=1.7</code> in env. Content-based,
+        not timing-based — batched pushes don't distort it.
       </p>
     </div>
   );
