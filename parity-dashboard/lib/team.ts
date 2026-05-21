@@ -226,17 +226,19 @@ function estimateCommitMinutes(
 ): number {
   const loc = additions + deletions;
 
-  // Vibe-coding baseline. Reflects: prompt → AI generates → human reviews
-  // and integrates. Even big diffs land in under a couple of hours because
-  // the bottleneck is human review, not typing speed.
+  // Vibe-coding review-time-only baseline. Reflects: prompt → AI generates
+  // → human reviews and integrates. Big diffs land in under an hour because
+  // the bottleneck is reading, not typing. LoC is a weak proxy for time here
+  // (you can generate 5000 LoC in 30 minutes), so the upper end is capped
+  // hard.
   let minutes: number;
-  if (loc < 5) minutes = 2;
-  else if (loc < 20) minutes = 5;
-  else if (loc < 50) minutes = 10;
-  else if (loc < 150) minutes = 20;
-  else if (loc < 500) minutes = 35;
-  else if (loc < 1500) minutes = 70;
-  else minutes = 150; // hard cap at 2h 30m even for huge diffs
+  if (loc < 5) minutes = 1;
+  else if (loc < 20) minutes = 3;
+  else if (loc < 50) minutes = 5;
+  else if (loc < 150) minutes = 10;
+  else if (loc < 500) minutes = 20;
+  else if (loc < 1500) minutes = 40;
+  else minutes = 60; // hard cap — even a 5000-line AI commit is review time
 
   const head = message.toLowerCase().split("\n")[0];
   if (/^(docs|chore|style|build|ci)[:(]/.test(head)) minutes *= 0.6;
@@ -244,13 +246,21 @@ function estimateCommitMinutes(
   else if (/^feat[:(]/.test(head)) minutes *= 1.1;
   else if (/^(refactor|perf|test)[:(]/.test(head)) minutes *= 1.0;
 
-  // Replication/parity discount — commits that explicitly note porting from
-  // another platform are even cheaper because the design work is already done.
-  if (/\b(parity|port|mirror|match\s+ios|from\s+ios|android\s+parity)\b/i.test(head)) {
+  // Replication/parity discount. For this team, ANY commit scoped to
+  // `(android)` is implicit iOS-parity work — the design effort is paid
+  // for, only the port remains. Same for explicit parity/port/mirror.
+  if (
+    /\((android|ios)\)/i.test(head) ||
+    /\b(parity|port|mirror|match\s+ios|from\s+ios)\b/i.test(head)
+  ) {
     minutes *= 0.7;
   }
 
-  // Explicit AI co-author tag → an extra discount on top of the baseline.
+  // Baseline AI-team discount (always applied — vibe coding is the norm).
+  minutes *= 0.85;
+
+  // Extra discount when an AI co-author is *explicitly* tagged in the
+  // message (compounds with the baseline).
   if (aiAssisted) minutes *= 0.7;
 
   minutes *= ESTIMATE_SCALE;

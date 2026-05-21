@@ -377,15 +377,15 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
       </div>
 
       <p className="mt-3 text-[10px] leading-relaxed text-muted/80">
-        <strong className="text-muted">Estimate model</strong> (vibe-coding baseline —
-        AI generates code, human prompts/reviews/integrates): per-commit base time
-        from LoC (5→2m, 50→10m, 150→20m, 500→35m, 1500→1h 10m, big→2h 30m max)
-        × type multiplier (<code>fix</code> 0.8, <code>feat</code> 1.1,
-        <code>chore</code> 0.6). Extra ×0.7 if the message mentions parity/port/mirror
-        (replication work — design already done). Extra ×0.7 if an AI co-author is
-        explicitly tagged. Cap is 2.5h even on huge diffs because review time, not
-        typing, is the bottleneck. Tune with <code>ESTIMATE_SCALE</code> env var
-        (1.7 = manual-coding baseline). Content-based, not timing-based.
+        <strong className="text-muted">Estimate model</strong> (vibe-coding,
+        review-time-only): base time from LoC (5→1m, 50→5m, 150→10m, 500→20m,
+        1500→40m, big→1h max) × type multiplier (<code>fix</code> 0.8,
+        <code>feat</code> 1.1, <code>chore</code> 0.6) × 0.85 (team-AI baseline)
+        × 0.7 if commit is scoped to <code>(android)</code> or mentions
+        parity/port/mirror (replication work) × 0.7 again if an AI co-author is
+        explicitly tagged. Cap is 1h on huge diffs — LoC is a weak time proxy
+        when the model writes it. Tune with <code>ESTIMATE_SCALE</code> env var
+        (e.g. 0.5 = even more aggressive; 1.7 = manual-coding baseline).
       </p>
     </div>
   );
