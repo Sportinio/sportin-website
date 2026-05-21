@@ -307,7 +307,7 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
   return (
     <div className="mt-5 rounded-lg border border-border bg-bg/40 p-4">
       <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h4 className="text-sm font-semibold text-text">7-day audit</h4>
+        <h4 className="text-sm font-semibold text-text">{days.length}-day audit</h4>
         <span className={`text-xs font-semibold ${verdict.color}`}>{verdict.label}</span>
       </div>
 
@@ -455,12 +455,10 @@ function AuthorCard({
   author,
   days,
   rangeDays,
-  showAudit,
 }: {
   author: AuthorStats;
   days: string[];
   rangeDays: number;
-  showAudit: boolean;
 }) {
   const last7 = days.slice(-7);
   const last7Stats = last7.reduce(
@@ -566,7 +564,7 @@ function AuthorCard({
         <ActiveTimeBars author={author} days={days} />
       </div>
 
-      {showAudit && <AuditPanel author={author} days={last7} />}
+      <AuditPanel author={author} days={days} />
     </div>
   );
 }
@@ -604,7 +602,7 @@ function Metric({
 // ── Main ──────────────────────────────────────────────────────────────
 
 export function TeamView({ data }: { data: TeamData }) {
-  const [range, setRange] = useState<7 | 14 | 30>(7);
+  const [range, setRange] = useState<7 | 14 | 30>(14);
   const allDays = useMemo(() => lastNDays(range), [range]);
 
   return (
@@ -614,8 +612,8 @@ export function TeamView({ data }: { data: TeamData }) {
           <h1 className="text-2xl font-semibold tracking-tight">Team Activity</h1>
           <p className="text-sm text-muted">
             Commit activity across <span className="font-mono text-text">{data.branchesScanned.length}</span>{" "}
-            branches of {data.repo}. Aggregated per author. 7-day audit panel surfaces
-            batched landings and zero-commit workdays.
+            branches of {data.repo}. Aggregated per author. Audit panel scales to the
+            selected range and surfaces batched landings and zero-commit workdays.
           </p>
           <p className="mt-1 text-[11px] text-muted/80">
             Active window = first commit → last commit on each day (capped at 8h). Truly
@@ -671,7 +669,6 @@ export function TeamView({ data }: { data: TeamData }) {
               author={a}
               days={allDays}
               rangeDays={range}
-              showAudit={range === 7}
             />
           ))
         )}
