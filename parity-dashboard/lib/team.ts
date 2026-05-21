@@ -13,6 +13,17 @@ export interface RawCommit {
   branches: string[]; // branches we saw this OID on
 }
 
+export interface CommitSummary {
+  oid: string;
+  message: string;
+  committedDate: string;
+  authoredDate: string;
+  additions: number;
+  deletions: number;
+  branches: string[];
+  aiAssisted: boolean;
+}
+
 export interface DayStat {
   date: string;        // YYYY-MM-DD
   commits: number;
@@ -28,6 +39,8 @@ export interface DayStat {
   burstSpanMinutes: number;
   /** Branches touched this day. */
   branches: string[];
+  /** Per-commit list for click-to-expand inspection. */
+  commitList: CommitSummary[];
 }
 
 export interface AuthorStats {
@@ -325,6 +338,17 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
         new Set(commits.flatMap((c) => c.branches)),
       ).sort();
 
+      const commitList: CommitSummary[] = commits.map((c) => ({
+        oid: c.oid,
+        message: c.message,
+        committedDate: c.committedDate,
+        authoredDate: c.authoredDate,
+        additions: c.additions,
+        deletions: c.deletions,
+        branches: c.branches,
+        aiAssisted: c.aiAssisted,
+      }));
+
       dayStats[date] = {
         date,
         commits: commits.length,
@@ -337,6 +361,7 @@ export async function fetchTeam(days = 30): Promise<TeamData> {
         maxBurst,
         burstSpanMinutes: Math.round(burstSpanMs / 60000),
         branches: dayBranches,
+        commitList,
       };
       totalActive += activeMin;
       activeDays++;

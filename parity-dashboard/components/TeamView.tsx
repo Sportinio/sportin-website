@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { AuthorStats, DayStat, TeamData } from "@/lib/team";
+import type { AuthorStats, CommitSummary, DayStat, TeamData } from "@/lib/team";
 
 function fmtMinutes(min: number) {
   if (min <= 0) return "0m";
@@ -46,6 +46,18 @@ function isWeekend(date: string): boolean {
   return d === 0 || d === 6;
 }
 
+/**
+ * Working-day filter: drop weekends unless they have activity (so genuine
+ * weekend pushes still show up).
+ */
+function visibleDays(days: string[], byDay: Record<string, DayStat>): string[] {
+  return days.filter((d) => !isWeekend(d) || !!byDay[d]);
+}
+
+function firstLine(message: string): string {
+  return message.split("\n")[0].trim();
+}
+
 // Burst suspicion classifier. We treat ≥3 commits within 10 minutes as a
 // "batched landing" signal. Stronger when burstSpan is very small.
 function burstVerdict(stat: DayStat): {
@@ -70,10 +82,14 @@ function ActivityHeatmap({
   author: AuthorStats;
   days: string[];
 }) {
-  const maxCommits = Math.max(1, ...days.map((d) => author.byDay[d]?.commits || 0));
+  const workdays = visibleDays(days, author.byDay);
+  const maxCommits = Math.max(
+    1,
+    ...workdays.map((d) => author.byDay[d]?.commits || 0),
+  );
   return (
     <div className="flex gap-[3px]">
-      {days.map((d) => {
+      {workdays.map((d) => {
         const stat = author.byDay[d];
         const intensity = stat ? Math.min(1, stat.commits / maxCommits) : 0;
         const bg =
@@ -102,18 +118,35 @@ function ActiveTimeBars({
   author: AuthorStats;
   days: string[];
 }) {
-  const recent = days.slice(-14);
+  // Show last ~14 working days (plus weekends with activity).
+  const recent = visibleDays(days, author.byDay).slice(-14);
+  const [expanded, setExpanded] = useState<string | null>(null);
   return (
     <div className="space-y-1">
-      {recent.map((d) => {
-        const stat = author.byDay[d];
-        return <DayBar key={d} date={d} stat={stat} />;
-      })}
+      {recent.map((d) => (
+        <DayBar
+          key={d}
+          date={d}
+          stat={author.byDay[d]}
+          expanded={expanded === d}
+          onToggle={() => setExpanded((e) => (e === d ? null : d))}
+        />
+      ))}
     </div>
   );
 }
 
-function DayBar({ date, stat }: { date: string; stat?: DayStat }) {
+function DayBar({
+  date,
+  stat,
+  expanded,
+  onToggle,
+}: {
+  date: string;
+  stat?: DayStat;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
   if (!stat) {
     return (
       <div className="flex items-center gap-2 text-[10px] text-muted/50">
@@ -130,18 +163,75 @@ function DayBar({ date, stat }: { date: string; stat?: DayStat }) {
   const left = (firstH / 24) * 100;
   const width = Math.max(1, ((lastH - firstH) / 24) * 100);
   return (
-    <div className="flex items-center gap-2 text-[10px] text-muted">
-      <span className="w-12 font-mono">{date.slice(5)}</span>
-      <span className="w-8">{weekday(date)}</span>
-      <div className="relative flex-1 h-3 rounded bg-surface2">
-        <div
-          className="absolute top-0 h-full rounded bg-ok"
-          style={{ left: `${left}%`, width: `${width}%` }}
-          title={`${timeLabel(stat.firstAt!)} → ${timeLabel(stat.lastAt!)} · ${fmtMinutes(stat.activeMinutes)}`}
-        />
+    <div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex w-full items-center gap-2 rounded text-left text-[10px] text-muted transition hover:bg-surface2/40"
+      >
+        <span className="w-12 font-mono">{date.slice(5)}</span>
+        <span className="w-8">{weekday(date)}</span>
+        <div className="relative flex-1 h-3 rounded bg-surface2">
+          <div
+            className="absolute top-0 h-full rounded bg-ok"
+            style={{ left: `${left}%`, width: `${width}%` }}
+            title={`${timeLabel(stat.firstAt!)} → ${timeLabel(stat.lastAt!)} · ${fmtMinutes(stat.activeMinutes)}`}
+          />
+        </div>
+        <span className="w-12 text-right">{stat.commits}c</span>
+        <span className="w-16 text-right">{fmtMinutes(stat.activeMinutes)}</span>
+        <span className="w-4 text-right text-muted/60">{expanded ? "▾" : "▸"}</span>
+      </button>
+      {expanded && <CommitList commits={stat.commitList} />}
+    </div>
+  );
+}
+
+function CommitList({ commits }: { commits: CommitSummary[] }) {
+  if (commits.length === 0) {
+    return (
+      <div className="ml-[88px] mt-1 mb-2 text-[10px] italic text-muted">
+        No commits recorded.
       </div>
-      <span className="w-12 text-right">{stat.commits}c</span>
-      <span className="w-16 text-right">{fmtMinutes(stat.activeMinutes)}</span>
+    );
+  }
+  // Show in chronological order — earliest first within the day.
+  const sorted = [...commits].sort((a, b) =>
+    a.committedDate.localeCompare(b.committedDate),
+  );
+  return (
+    <div className="ml-[88px] mr-[120px] mt-1 mb-2 space-y-1 rounded-md border border-border/60 bg-surface2/40 p-2">
+      {sorted.map((c) => (
+        <div
+          key={c.oid}
+          className="flex items-start gap-2 text-[11px] leading-tight"
+        >
+          <span className="w-12 shrink-0 font-mono text-muted/80">
+            {timeLabel(c.committedDate)}
+          </span>
+          <span className="w-16 shrink-0 font-mono text-muted/60" title={c.oid}>
+            {c.oid.slice(0, 8)}
+          </span>
+          <span className="flex-1 text-text/90">
+            {firstLine(c.message)}
+            {c.aiAssisted && (
+              <span className="ml-1.5 rounded bg-staged/15 px-1 py-px text-[9px] font-semibold uppercase text-staged">
+                AI
+              </span>
+            )}
+          </span>
+          <span className="shrink-0 text-[10px] text-muted/70">
+            <span className="text-ok/90">+{c.additions}</span>
+            <span className="ml-1 text-bad/80">-{c.deletions}</span>
+          </span>
+          {c.branches.length > 0 && (
+            <span className="shrink-0 max-w-[160px] truncate text-[10px] text-muted/60">
+              {c.branches[0]}
+              {c.branches.length > 1 ? ` +${c.branches.length - 1}` : ""}
+            </span>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -149,14 +239,20 @@ function DayBar({ date, stat }: { date: string; stat?: DayStat }) {
 // ── 7-day audit panel — designed for verifying paid-hours claims ─────
 
 function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
-  const audit = days.map((d) => {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  // Hide weekends with no activity; keep weekends that DO have activity (so
+  // anomalous weekend pushes still surface).
+  const visible = visibleDays(days, author.byDay);
+  const audit = visible.map((d) => {
     const stat = author.byDay[d];
     const weekend = isWeekend(d);
     return { date: d, stat, weekend };
   });
 
-  // Workdays = non-weekend days in range. The user pays for 8h × workdays.
-  const workdays = audit.filter((a) => !a.weekend).length;
+  // Workdays = non-weekend days in the original 7-day range. The user pays
+  // for 8h × workdays regardless of whether they're hidden from the table.
+  const workdays = days.filter((d) => !isWeekend(d)).length;
   const claimedHours = workdays * 8;
 
   // Real work signal: sum of active minutes on workdays only, MINUS days where
@@ -240,17 +336,32 @@ function AuditPanel({ author, days }: { author: AuthorStats; days: string[] }) {
 
       <p className="mb-3 text-[11px] leading-relaxed text-muted">{verdict.explainer}</p>
 
-      <div className="space-y-1.5">
-        {audit.map(({ date, stat, weekend }) => (
-          <AuditRow key={date} date={date} stat={stat} weekend={weekend} />
-        ))}
+      <div className="space-y-0.5">
+        {audit.length === 0 ? (
+          <div className="rounded border border-border/60 px-2 py-3 text-center text-[11px] italic text-muted">
+            No working-day activity recorded in the last 7 days.
+          </div>
+        ) : (
+          audit.map(({ date, stat, weekend }) => (
+            <AuditRow
+              key={date}
+              date={date}
+              stat={stat}
+              weekend={weekend}
+              expanded={expanded === date}
+              onToggle={() =>
+                setExpanded((e) => (e === date ? null : date))
+              }
+            />
+          ))
+        )}
       </div>
 
       <p className="mt-3 text-[10px] leading-relaxed text-muted/80">
         Heuristics: ≥3 commits within 10 minutes = "tight cluster"; ≥5 within 5 minutes
         = "batched landing". Batched landings are excluded from work signal because the
-        timestamps reflect when code was pushed, not when it was written. Local work that
-        never pushes is invisible.
+        timestamps reflect when code was pushed, not when it was written. Click any row
+        to expand the commit list for that day. Local work that never pushes is invisible.
       </p>
     </div>
   );
@@ -260,10 +371,14 @@ function AuditRow({
   date,
   stat,
   weekend,
+  expanded,
+  onToggle,
 }: {
   date: string;
   stat?: DayStat;
   weekend: boolean;
+  expanded: boolean;
+  onToggle: () => void;
 }) {
   const flag = stat ? burstVerdict(stat) : null;
   const flagColor =
@@ -273,54 +388,63 @@ function AuditRow({
         ? "bg-warn/20 text-warn"
         : "bg-ok/15 text-ok";
 
+  const canExpand = !!stat && stat.commitList.length > 0;
+
   return (
-    <div
-      className={`grid grid-cols-[55px_45px_1fr_70px_90px_110px] items-center gap-3 rounded px-2 py-1.5 text-[11px] ${
-        weekend ? "opacity-50" : ""
-      }`}
-    >
-      <span className="font-mono text-muted">{date.slice(5)}</span>
-      <span className={weekend ? "text-muted/60" : "text-muted"}>
-        {weekday(date)}
-        {weekend && <span className="ml-1 text-[9px]">·wk</span>}
-      </span>
+    <div>
+      <button
+        type="button"
+        onClick={canExpand ? onToggle : undefined}
+        disabled={!canExpand}
+        className={`grid w-full grid-cols-[55px_45px_1fr_70px_90px_110px_16px] items-center gap-3 rounded px-2 py-1.5 text-left text-[11px] ${
+          weekend ? "opacity-60" : ""
+        } ${canExpand ? "transition hover:bg-surface2/40" : "cursor-default"}`}
+      >
+        <span className="font-mono text-muted">{date.slice(5)}</span>
+        <span className={weekend ? "text-muted/60" : "text-muted"}>
+          {weekday(date)}
+          {weekend && <span className="ml-1 text-[9px]">·wk</span>}
+        </span>
 
-      {stat ? (
-        <span className="truncate text-text/80">
-          {timeLabel(stat.firstAt!)} → {timeLabel(stat.lastAt!)}
-          {stat.branches.length > 0 && (
-            <span className="ml-2 text-muted/70">
-              ({stat.branches.slice(0, 2).join(", ")}
-              {stat.branches.length > 2 ? ` +${stat.branches.length - 2}` : ""})
-            </span>
-          )}
-        </span>
-      ) : (
-        <span className="italic text-muted/60">
-          {weekend ? "weekend · no commits" : "no commits"}
-        </span>
-      )}
+        {stat ? (
+          <span className="truncate text-text/80">
+            {timeLabel(stat.firstAt!)} → {timeLabel(stat.lastAt!)}
+            {stat.branches.length > 0 && (
+              <span className="ml-2 text-muted/70">
+                ({stat.branches.slice(0, 2).join(", ")}
+                {stat.branches.length > 2 ? ` +${stat.branches.length - 2}` : ""})
+              </span>
+            )}
+          </span>
+        ) : (
+          <span className="italic text-muted/60">no commits</span>
+        )}
 
-      <span className="text-right text-text/70">
-        {stat ? `${stat.commits}c` : "—"}
-      </span>
-      <span className="text-right text-text/70">
-        {stat ? fmtMinutes(stat.activeMinutes) : "—"}
-      </span>
-      {stat && flag ? (
-        <span
-          className={`rounded px-1.5 py-0.5 text-center text-[10px] font-semibold ${flagColor}`}
-          title={
-            stat.maxBurst >= 2
-              ? `${stat.maxBurst} commits within ${stat.burstSpanMinutes}m`
-              : `single commit`
-          }
-        >
-          {flag.label}
+        <span className="text-right text-text/70">
+          {stat ? `${stat.commits}c` : "—"}
         </span>
-      ) : (
-        <span />
-      )}
+        <span className="text-right text-text/70">
+          {stat ? fmtMinutes(stat.activeMinutes) : "—"}
+        </span>
+        {stat && flag ? (
+          <span
+            className={`rounded px-1.5 py-0.5 text-center text-[10px] font-semibold ${flagColor}`}
+            title={
+              stat.maxBurst >= 2
+                ? `${stat.maxBurst} commits within ${stat.burstSpanMinutes}m`
+                : `single commit`
+            }
+          >
+            {flag.label}
+          </span>
+        ) : (
+          <span />
+        )}
+        <span className="text-right text-[10px] text-muted/50">
+          {canExpand ? (expanded ? "▾" : "▸") : ""}
+        </span>
+      </button>
+      {expanded && stat && <CommitList commits={stat.commitList} />}
     </div>
   );
 }
