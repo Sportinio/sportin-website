@@ -1259,6 +1259,37 @@
   .sponsor-avail.on-hold {
     color: #60A5FA;
   }
+  .sponsor-avail.confirmed {
+    color: var(--green);
+    gap: 6px;
+  }
+  .sponsor-avail.confirmed::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+  }
+  /* Filled sponsor slot (signed sponsor with jersey) */
+  .sponsor-slot.filled {
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.04);
+    justify-content: space-between;
+  }
+  .sponsor-slot.filled:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .sponsor-shirt {
+    width: 158px;
+    height: 158px;
+    object-fit: contain;
+    margin: 4px 0 14px;
+    filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.45));
+    transform: scale(1.3);
+    transform-origin: center;
+  }
   .sponsor-slot.held {
     opacity: 0.4;
     filter: grayscale(0.5);
@@ -3674,16 +3705,10 @@
       <div class="sponsor-price"><span class="currency">&euro;</span>5,000 <span class="per">/ competition</span></div>
       <div class="sponsor-avail on-hold">On Hold</div>
     </div>
-    <div class="sponsor-slot reveal" style="--rd:0.2s;">
+    <div class="sponsor-slot filled reveal" style="--rd:0.2s;">
       <div class="sponsor-num">Slot 03</div>
-      <div class="sponsor-empty-ico">
-        <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M38 8 C38 8 45 4 60 4 C75 4 82 8 82 8 L100 20 L108 44 L92 52 L88 36 L88 132 C88 135 86 136 84 136 L36 136 C34 136 32 135 32 132 L32 36 L28 52 L12 44 L20 20 Z"
-            stroke="rgba(255,255,255,0.18)" stroke-width="2" stroke-dasharray="5 4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="sponsor-price"><span class="currency">&euro;</span>5,000 <span class="per">/ competition</span></div>
-      <div class="sponsor-avail">Available</div>
+      <img class="sponsor-shirt" src="/leagueofbrands/porsche-jersey.png" alt="Porsche league jersey" loading="lazy" />
+      <div class="sponsor-title">Porsche</div>
     </div>
     <div class="sponsor-slot reveal" style="--rd:0.25s;">
       <div class="sponsor-num">Slot 04</div>
