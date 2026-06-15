@@ -480,13 +480,17 @@
     btn.disabled = true;
     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 0.8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Submitting…';
 
-    // no-cors bypasses the CORS block; the data still reaches the sheet
-    // but the response is opaque so we show success optimistically
+    const formData = new URLSearchParams();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('brand', brand);
+    formData.append('agreeTeam', agreed.team ? 'Yes' : 'No');
+    formData.append('agreeRules', agreed.rules ? 'Yes' : 'No');
+
     fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ name, email, brand, agreeTeam: agreed.team, agreeRules: agreed.rules }),
+      body: formData,
     })
       .then(() => showSuccess(name, brand))
       .catch(() => {
