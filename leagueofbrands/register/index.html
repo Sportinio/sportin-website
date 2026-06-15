@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Register for League of Brands &middot; SportIn</title>
+<meta name="description" content="Sign up your brand for Romania's national movement league. Season 1 now open." />
+<meta name="theme-color" content="#0751FB" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink-0: #06060C;
+    --ink-1: #0A0A12;
+    --ink-2: #111119;
+    --ink-3: #1A1A26;
+    --surface: rgba(255,255,255,0.04);
+    --surface-2: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.1);
+    --border-strong: rgba(255,255,255,0.2);
+    --text: #FFFFFF;
+    --text-2: #C8CAD4;
+    --text-3: #9AA0B4;
+    --text-4: #5F667E;
+    --blue: #0751FB;
+    --blue-bright: #3B7BFF;
+    --blue-light: #4D8AFF;
+    --gold: #F5E4A8;
+    --green: #12E094;
+    --red: #FF4757;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; background: #06060C; }
+  html, body {
+    color: var(--text);
+    font-family: 'Geist', 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { background: transparent; }
+  a { text-decoration: none; color: inherit; }
+
+  #meshCanvas {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+
+  .page {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 56px 22px 48px;
+  }
+
+  .inner {
+    width: 100%; max-width: 560px;
+    display: flex; flex-direction: column;
+    gap: 28px;
+  }
+
+  /* Back link */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-4); transition: color 0.2s ease;
+    align-self: flex-start;
+  }
+  .back-link:hover { color: var(--text-2); }
+  .back-link svg { width: 14px; height: 14px; }
+
+  /* Header */
+  .reg-header { text-align: center; }
+  .reg-badge {
+    width: 64px; height: 64px;
+    margin: 0 auto 18px;
+    display: grid; place-items: center;
+    border-radius: 18px;
+    background: linear-gradient(160deg, #0B57FF 0%, #0751FB 55%, #043CC0 100%);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+    animation: pop 0.6s cubic-bezier(0.2,0.8,0.2,1) both;
+  }
+  .reg-badge svg { width: 28px; height: auto; }
+  .reg-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--blue-light); margin-bottom: 10px;
+  }
+  .reg-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px; font-weight: 700;
+    color: var(--text); margin-bottom: 10px;
+    letter-spacing: -0.3px;
+  }
+  .reg-sub {
+    font-size: 14.5px; line-height: 1.6;
+    color: var(--text-3); max-width: 380px; margin: 0 auto;
+  }
+
+  /* Form card */
+  .form-card {
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 20px 50px rgba(0,0,0,0.4);
+    border-radius: 22px;
+    padding: 32px 28px;
+    animation: rise 0.55s 0.1s ease both;
+  }
+
+  .form-section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-4); margin-bottom: 20px;
+  }
+
+  .fields { display: flex; flex-direction: column; gap: 18px; margin-bottom: 28px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-2); letter-spacing: 0.01em;
+  }
+  .field-input {
+    height: 46px;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 0 16px;
+    font-family: 'Geist', 'Inter', sans-serif;
+    font-size: 15px; color: var(--text);
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  .field-input::placeholder { color: var(--text-4); }
+  .field-input:focus {
+    border-color: rgba(7,81,251,0.7);
+    background: rgba(7,81,251,0.08);
+    box-shadow: 0 0 0 3px rgba(7,81,251,0.18);
+  }
+  .field-hint {
+    font-size: 12px; color: var(--text-4); line-height: 1.4;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 4px 0 24px;
+  }
+
+  /* Agreement items */
+  .agreements { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+
+  .agree-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    user-select: none;
+  }
+  .agree-item:hover { border-color: rgba(255,255,255,0.16); }
+  .agree-item.is-checked {
+    border-color: rgba(7,81,251,0.45);
+    background: rgba(7,81,251,0.07);
+  }
+
+  .agree-box {
+    flex-shrink: 0; margin-top: 2px;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    display: grid; place-items: center;
+    transition: all 0.18s ease;
+  }
+  .agree-box.is-checked {
+    background: var(--blue);
+    border-color: var(--blue-bright);
+  }
+  .agree-box svg { display: none; }
+  .agree-box.is-checked svg { display: block; }
+
+  .agree-text { flex: 1; }
+  .agree-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px; font-weight: 600;
+    color: var(--text); margin-bottom: 4px;
+  }
+  .agree-desc {
+    font-size: 12.5px; color: var(--text-4); line-height: 1.5;
+  }
+  .agree-desc a { color: var(--blue-light); }
+  .agree-desc a:hover { color: var(--text-2); }
+
+  /* Error */
+  .field-error {
+    font-size: 12px; color: var(--red);
+    display: none; margin-top: -4px;
+  }
+  .field-error.visible { display: block; }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%; height: 50px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0B57FF 0%, #0751FB 60%, #053AC4 100%);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 10px 30px rgba(0,0,0,0.3);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.01em;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: opacity 0.18s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .submit-btn:hover:not(:disabled) {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 18px 44px rgba(0,0,0,0.42);
+    transform: translateY(-1px);
+  }
+  .submit-btn:active:not(:disabled) { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+  .submit-btn svg { width: 18px; height: 18px; }
+
+  /* Footer note */
+  .form-footer {
+    text-align: center; margin-top: 18px;
+    font-size: 12px; color: var(--text-4); line-height: 1.6;
+  }
+  .form-footer a { color: var(--blue-light); }
+  .form-footer a:hover { color: var(--text-2); }
+
+  /* Success state */
+  .success-screen {
+    display: none; flex-direction: column;
+    align-items: center; text-align: center; gap: 16px;
+    padding: 48px 28px;
+  }
+  .success-screen.visible { display: flex; }
+  .success-circle {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(18,224,148,0.12);
+    border: 1.5px solid rgba(18,224,148,0.3);
+    display: grid; place-items: center;
+    animation: pop 0.5s cubic-bezier(0.2,0.8,0.2,1) both;
+  }
+  .success-circle svg { width: 30px; height: 30px; stroke: var(--green); }
+  .success-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px; font-weight: 700; color: var(--text);
+  }
+  .success-desc { font-size: 14.5px; color: var(--text-3); line-height: 1.6; max-width: 360px; }
+  .success-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px; font-weight: 600;
+    color: var(--blue-light); margin-top: 8px;
+    cursor: pointer; transition: color 0.2s ease;
+  }
+  .success-back:hover { color: var(--text); }
+
+  /* Page footer */
+  .page-footer {
+    text-align: center; margin-top: 8px;
+  }
+  .page-footer a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-4); transition: color 0.2s ease;
+  }
+  .page-footer a:hover { color: var(--text-2); }
+  .page-footer-copy {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-4); margin-top: 10px; opacity: 0.7;
+  }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .form-card, .reg-badge, .success-circle { animation: none; opacity: 1; transform: none; }
+  }
+  @media (max-width: 380px) {
+    .form-card { padding: 24px 18px; }
+    .reg-title { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="meshCanvas"></canvas>
+
+<div class="page">
+  <div class="inner">
+
+    <!-- Back -->
+    <a class="back-link" href="/links">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to links
+    </a>
+
+    <!-- Header -->
+    <header class="reg-header">
+      <div class="reg-badge">
+        <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M68.0643 1.18373C68.4786 2.11227 68.2768 2.39873 64.7589 5.87123C63.0757 7.53268 59.7993 10.7671 57.4782 13.0587C55.157 15.3504 51.548 18.8875 49.4586 20.9193C47.3693 22.951 44.4876 25.7635 43.0553 27.1693C36.7282 33.3789 35.0468 35.0216 31.9097 38.0583C30.0763 39.8329 28.0624 41.7777 27.4341 42.3802C26.8057 42.9827 25.2824 44.4681 24.0486 45.6814C22.8149 46.8948 21.5813 48.0581 21.3076 48.2666C20.0186 49.2485 18.2418 49.6683 16.7324 49.3477C15.668 49.1214 14.8088 48.5866 13.6772 47.4458C12.6572 46.4177 8.87468 42.4789 7.2178 40.7204C6.76176 40.2366 5.84718 39.2756 5.18509 38.585C1.75343 35.0056 1.40718 34.585 0.823635 33.2841C-0.236365 30.9219 -0.278033 27.4966 0.726551 25.3369C1.2353 24.2431 1.75051 23.5179 4.30926 20.2937C5.76864 18.4548 7.1028 16.7777 7.27447 16.5668C8.01447 15.6583 10.6828 12.2637 11.2195 11.5483C11.5418 11.1187 12.1805 10.2937 12.6388 9.71539C13.0972 9.13664 14.058 7.89748 14.7743 6.96123C17.263 3.70831 17.7591 3.17435 19.2013 2.1981C20.6397 1.22456 22.088 0.586017 23.6805 0.223309C24.3316 0.0749757 26.6563 0.0528925 45.3993 0.0176841C64.8053 -0.0191909 66.4241 -0.00898313 66.8576 0.15185C67.4116 0.357059 67.8705 0.749767 68.0643 1.18373Z" fill="white"/>
+          <path d="M74.2966 47.9023C74.4751 48.9085 73.9912 52.2362 73.5808 52.8223C73.4918 52.9489 73.4193 53.1246 73.4191 53.2119C73.4183 53.5369 72.3755 55.0504 70.4947 57.4575C69.4301 58.8192 68.0147 60.6367 67.3487 61.496C65.6174 63.7302 61.4189 69.0571 59.8637 70.9925C59.4416 71.5177 58.5589 72.6427 57.9018 73.4925C56.4318 75.3944 55.5903 76.2548 54.5145 76.9571C53.2012 77.8144 51.9985 78.3119 50.2943 78.7016C49.5676 78.8681 48.0866 78.8781 29.0964 78.8479C9.57034 78.8169 8.66347 78.8071 8.30513 78.6254C7.33326 78.1319 7.20241 76.9046 8.0197 75.9502C8.51116 75.3769 20.8564 62.9579 40.2512 43.5273C50.147 33.6129 53.982 29.8354 54.4193 29.571C54.8226 29.3271 55.3114 29.1487 55.912 29.0258C57.017 28.7998 57.437 28.7956 58.2337 29.0019C59.3307 29.2862 59.8041 29.625 61.2068 31.131C61.9276 31.9048 63.0133 33.056 63.6193 33.6894C65.0014 35.1337 65.9966 36.1871 67.8464 38.1642C68.6485 39.0212 69.6351 40.0748 70.0389 40.5052C72.4093 43.0317 72.8914 43.6208 73.2978 44.4867C73.7732 45.4998 73.9924 46.1569 74.1418 47.0169C74.2016 47.3606 74.271 47.7589 74.2966 47.9023Z" fill="white"/>
+        </svg>
+      </div>
+      <div class="reg-eyebrow">League of Brands &middot; Season 1</div>
+      <h1 class="reg-title">Register your brand</h1>
+      <p class="reg-sub">Represent your company in Romania's national movement league. Spots are limited.</p>
+    </header>
+
+    <!-- Form card -->
+    <div class="form-card">
+
+      <!-- The form itself -->
+      <div id="formContent">
+        <p class="form-section-label">Your details</p>
+        <div class="fields">
+
+          <div class="field">
+            <label class="field-label" for="f-name">Full name</label>
+            <input id="f-name" class="field-input" type="text" placeholder="e.g. Andrei Ionescu" autocomplete="name" />
+            <span class="field-error" id="err-name">Please enter your full name.</span>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-email">Work email</label>
+            <input id="f-email" class="field-input" type="email" placeholder="you@yourcompany.com" autocomplete="email" />
+            <span class="field-error" id="err-email">Please enter a valid email address.</span>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="f-brand">Brand / company name</label>
+            <input id="f-brand" class="field-input" type="text" placeholder="e.g. Vodafone Romania" />
+            <span class="field-error" id="err-brand">Please enter your brand name.</span>
+            <span class="field-hint">This is how your team will appear in the league standings.</span>
+          </div>
+
+        </div>
+
+        <hr class="divider" />
+        <p class="form-section-label">Agreements</p>
+
+        <div class="agreements">
+
+          <div class="agree-item" id="card-team" onclick="toggleAgree('box-team','card-team')">
+            <div class="agree-box" id="box-team">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="agree-text">
+              <div class="agree-title">We'll field at least 10 players</div>
+              <div class="agree-desc">I confirm that our team will have a minimum of 10 registered players before the competition begins.</div>
+            </div>
+          </div>
+
+          <div class="agree-item" id="card-rules" onclick="toggleAgree('box-rules','card-rules')">
+            <div class="agree-box" id="box-rules">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="agree-text">
+              <div class="agree-title">I agree to the rules and regulations</div>
+              <div class="agree-desc">I have read and accept the <a href="/leagueofbrands/rules" onclick="event.stopPropagation()">League of Brands regulations</a> and SportIn's <a href="/terms" onclick="event.stopPropagation()">terms of service</a>.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <span class="field-error" id="err-agree" style="display:none; margin-bottom:16px; display:block; visibility:hidden;">Please accept both agreements to continue.</span>
+
+        <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v3a6 6 0 0 1-12 0V4z"/><path d="M6 5H3v1a3 3 0 0 0 3 3M18 5h3v1a3 3 0 0 1-3 3"/><path d="M9 14.5V17h6v-2.5M8 21h8M12 17v4"/></svg>
+          Register for League of Brands
+        </button>
+
+        <p class="form-footer">
+          Questions? Email us at <a href="mailto:help@sportin.io">help@sportin.io</a>
+        </p>
+      </div>
+
+      <!-- Success state -->
+      <div class="success-screen" id="successScreen">
+        <div class="success-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="success-title">You're registered!</div>
+        <p class="success-desc">Thanks for signing up <strong id="successName"></strong>. We'll be in touch with next steps for <strong id="successBrand"></strong> very soon.</p>
+        <a class="success-back" href="/leagueofbrands">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back to League of Brands
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Page footer -->
+    <footer class="page-footer">
+      <a href="https://sportin.io">sportin.io</a>
+      <div class="page-footer-copy">&copy; SportIn.io SRL &middot; Romania</div>
+    </footer>
+
+  </div>
+</div>
+
+<script src="/mesh-bg.js"></script>
+<script>
+  const agreed = { team: false, rules: false };
+
+  function toggleAgree(boxId, cardId) {
+    const key = boxId === 'box-team' ? 'team' : 'rules';
+    agreed[key] = !agreed[key];
+    document.getElementById(boxId).classList.toggle('is-checked', agreed[key]);
+    document.getElementById(cardId).classList.toggle('is-checked', agreed[key]);
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.classList.add('visible');
+  }
+  function clearError(id) {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    el.classList.remove('visible');
+  }
+
+  function handleSubmit() {
+    let valid = true;
+    const name  = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const brand = document.getElementById('f-brand').value.trim();
+
+    clearError('err-name'); clearError('err-email'); clearError('err-brand');
+    const agreeEl = document.getElementById('err-agree');
+    agreeEl.style.visibility = 'hidden';
+
+    if (!name)  { showError('err-name', 'Please enter your full name.'); valid = false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('err-email', 'Please enter a valid email address.'); valid = false; }
+    if (!brand) { showError('err-brand', 'Please enter your brand name.'); valid = false; }
+    if (!agreed.team || !agreed.rules) {
+      agreeEl.style.visibility = 'visible';
+      agreeEl.textContent = 'Please accept both agreements to continue.';
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    // Store submission — swap for real backend when ready
+    setTimeout(() => {
+      document.getElementById('successName').textContent = name;
+      document.getElementById('successBrand').textContent = brand;
+      document.getElementById('formContent').style.display = 'none';
+      document.getElementById('successScreen').classList.add('visible');
+    }, 900);
+  }
+</script>
+</body>
+</html>
