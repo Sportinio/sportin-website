@@ -53,25 +53,45 @@
   a { color: var(--accent-gold); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
-  /* ── Header ── */
-  .top {
+  /* ── Nav ── */
+  .nav {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 32px;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background: rgba(10, 10, 18, 0.6);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    gap: 28px;
+    padding: 12px 14px 12px 22px;
+    width: 56%;
+    max-width: calc(100vw - 32px);
+    border-radius: 999px;
+    background: rgba(10, 10, 18, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    box-shadow: 0 16px 44px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
   }
-  .top .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; font-size: 14px; text-decoration: none; }
-  .top .brand:hover { text-decoration: none; }
-  .top .brand svg { height: 22px; width: auto; }
-  .top a.back { font-size: 13px; color: var(--text-3); }
-  .top a.back:hover { color: var(--text); text-decoration: none; }
+  .brand { display: flex; align-items: center; gap: 0; text-decoration: none; }
+  .brand:hover { text-decoration: none; }
+  .brand svg { height: 28px; width: auto; }
+  .nav-links { display: flex; gap: 32px; font-family: 'Geist', system-ui, sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.02em; }
+  .nav-links a { color: var(--text-3); padding: 8px 0; transition: color 0.2s; text-decoration: none; }
+  .nav-links a:hover { color: var(--text); text-decoration: none; }
+  .nav-cta {
+    display: inline-flex; align-items: center; padding: 11px 20px;
+    background: #0751FB; color: #fff; border-radius: 999px;
+    font-family: 'Geist', system-ui, sans-serif; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.02em; text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3); white-space: nowrap;
+  }
+  .nav-cta:hover { transform: translateY(-1px); background: #3B7BFF; box-shadow: 0 4px 12px rgba(0,0,0,0.4); text-decoration: none; }
+  @media (max-width: 1024px) { .nav { width: 80%; gap: 18px; padding: 11px 14px 11px 20px; } .nav-links { display: none; } }
+  @media (max-width: 768px) { .nav { top: 10px; width: calc(100% - 24px); border-radius: 22px; padding: 10px 12px 10px 18px; gap: 12px; } }
+  @media (max-width: 480px) { .nav { padding: 8px 10px 8px 16px; gap: 10px; } .nav-cta { padding: 8px 14px; font-size: 12px; } .brand svg { height: 24px; } }
 
   /* ── Main content ── */
   .wrap {
@@ -81,8 +101,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: calc(100vh - 65px);
-    padding: 80px 24px 120px;
+    min-height: 100vh;
+    padding: 120px 24px 120px;
     text-align: center;
   }
 
@@ -266,16 +286,22 @@
 <body>
 <canvas id="meshCanvas"></canvas>
 
-<header class="top">
+<nav class="nav">
   <a class="brand" href="/">
     <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M68.06 1.18C68.48 2.11 68.28 2.40 64.76 5.87C63.08 7.53 59.80 10.77 57.48 13.06C55.16 15.35 51.55 18.89 49.46 20.92C47.37 22.95 44.49 25.76 43.06 27.17C36.73 33.38 35.05 35.02 31.91 38.06C30.08 39.83 28.06 41.78 27.43 42.38C26.81 42.98 25.28 44.47 24.05 45.68C22.81 46.89 21.58 48.06 21.31 48.27C20.02 49.25 18.24 49.67 16.73 49.35C15.67 49.12 14.81 48.59 13.68 47.45C12.66 46.42 8.87 42.48 7.22 40.72C6.76 40.24 5.85 39.28 5.19 38.59C1.75 35.01 1.41 34.59 0.82 33.28C-0.24 30.92 -0.28 27.50 0.73 25.34C1.24 24.24 1.75 23.52 4.31 20.29C5.77 18.45 7.10 16.78 7.27 16.57C8.01 15.66 10.68 12.26 11.22 11.55C11.54 11.12 12.18 10.29 12.64 9.72C13.10 9.14 14.06 7.90 14.77 6.96C17.26 3.71 17.76 3.17 19.20 2.20C20.64 1.22 22.09 0.59 23.68 0.22C24.33 0.07 26.66 0.05 45.40 0.02C64.81 -0.02 66.42 -0.01 66.86 0.15C67.41 0.36 67.87 0.75 68.06 1.18Z" fill="white"/>
       <path d="M74.30 47.90C74.48 48.91 73.99 52.24 73.58 52.82C73.49 52.95 73.42 53.12 73.42 53.21C73.42 53.54 72.38 55.05 70.49 57.46C69.43 58.82 68.01 60.64 67.35 61.50C65.62 63.73 61.42 69.06 59.86 70.99C59.44 71.52 58.56 72.64 57.90 73.49C56.43 75.39 55.59 76.25 54.51 76.96C53.20 77.81 52.00 78.31 50.29 78.70C49.57 78.87 48.09 78.88 29.10 78.85C9.57 78.82 8.66 78.81 8.31 78.63C7.33 78.13 7.20 76.90 8.02 75.95C8.51 75.38 20.86 62.96 40.25 43.53C50.15 33.61 53.98 29.84 54.42 29.57C54.82 29.33 55.31 29.15 55.91 29.03C57.02 28.80 57.44 28.80 58.23 29.00C59.33 29.29 59.80 29.62 61.21 31.13C61.93 31.90 63.01 33.06 63.62 33.69C65.00 35.13 66.00 36.19 67.85 38.16C68.65 39.02 69.64 40.07 70.04 40.51C72.41 43.03 72.89 43.62 73.30 44.49C73.77 45.50 73.99 46.16 74.14 47.02C74.20 47.36 74.27 47.76 74.30 47.90Z" fill="white"/>
     </svg>
-    <span>SportIn</span>
   </a>
-  <a class="back" href="/">← Back to home</a>
-</header>
+  <div class="nav-links">
+    <a href="/#pillars">Platform</a>
+    <a href="/#signals">Reactions</a>
+    <a href="/#worlds">Live Formats</a>
+    <a href="/#audience">For You</a>
+    <a href="/#contact">Contact</a>
+  </div>
+  <a class="nav-cta" href="https://calendly.com/sportin" target="_blank" rel="noopener">Schedule a Demo</a>
+</nav>
 
 <main class="wrap">
   <div class="circuit" aria-hidden="true">

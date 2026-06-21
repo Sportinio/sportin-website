@@ -1661,6 +1661,35 @@
     transition: background 0.4s, transform 0.4s;
     cursor: pointer;
   }
+  /* ---- Arena sound toggle ---- */
+  .arena-sound-btn {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    z-index: 5;
+    background: rgba(10, 10, 18, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: opacity 0.4s, background 0.2s;
+    opacity: 0;
+    pointer-events: none;
+    color: white;
+  }
+  .arena-sound-btn.visible { opacity: 1; pointer-events: auto; }
+  .arena-sound-btn:hover { background: rgba(30, 30, 50, 0.7); }
+  .arena-sound-btn svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .arena-sound-btn .ico-playing { display: none; }
+  .arena-sound-btn.playing .ico-muted { display: none; }
+  .arena-sound-btn.playing .ico-playing { display: block; }
+
   .arena-prog-dot.active {
     background: rgba(255,255,255,0.9);
     transform: scale(1.4);
@@ -3092,6 +3121,12 @@
       <div class="arena-prog-dot" data-idx="1"></div>
       <div class="arena-prog-dot" data-idx="2"></div>
     </div>
+
+    <!-- Sound toggle -->
+    <button class="arena-sound-btn" id="arenaSoundBtn" aria-label="Toggle stadium sound">
+      <svg class="ico-muted" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      <svg class="ico-playing" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+    </button>
   </div>
 </div>
 
@@ -4369,16 +4404,49 @@
   crowdAudio.volume = 0;
   var crowdPlaying = false;
   var crowdTargetVol = 0;
+  var soundBtn = document.getElementById('arenaSoundBtn');
 
   function setCrowdVolume(vol) {
     crowdTargetVol = Math.max(0, Math.min(1, vol * 0.6));
   }
 
+  function setSoundBtnState(playing) {
+    if (!soundBtn) return;
+    if (playing) soundBtn.classList.add('playing');
+    else soundBtn.classList.remove('playing');
+  }
+
   function resumeAudio() {
     if (!crowdPlaying) {
-      crowdPlaying = true;
-      crowdAudio.play().catch(function(){});
+      // Only mark crowdPlaying=true after play() actually succeeds.
+      // If play() is blocked by autoplay policy, crowdPlaying stays false
+      // so the next scroll tick will retry automatically.
+      crowdAudio.play().then(function() {
+        crowdPlaying = true;
+        setSoundBtnState(true);
+      }).catch(function() {
+        // Autoplay blocked — show the tap-to-unmute button so user can unlock
+        if (soundBtn) soundBtn.classList.add('visible');
+      });
     }
+  }
+
+  // Sound toggle button
+  if (soundBtn) {
+    soundBtn.addEventListener('click', function() {
+      if (crowdPlaying) {
+        crowdAudio.pause();
+        crowdPlaying = false;
+        setCrowdVolume(0);
+        setSoundBtnState(false);
+      } else {
+        crowdAudio.play().then(function() {
+          crowdPlaying = true;
+          setCrowdVolume(1);
+          setSoundBtnState(true);
+        }).catch(function() {});
+      }
+    });
   }
 
   // Smooth volume ramping
@@ -5400,6 +5468,7 @@
     // Audio — starts when Brands overlay appears, fades out at end of stadium
     if (p > 0.12 && p < 0.95) {
       resumeAudio();
+      if (soundBtn) soundBtn.classList.add('visible');
       var vol;
       if (p < 0.20) vol = (p - 0.12) / 0.08;
       else if (p > 0.80) vol = (0.95 - p) / 0.15;
@@ -5407,6 +5476,7 @@
       setCrowdVolume(vol);
     } else {
       setCrowdVolume(0);
+      if (soundBtn) soundBtn.classList.remove('visible');
     }
 
     // ====== PHASE TRIGGERS ======
@@ -5433,7 +5503,7 @@
       } else {
         stopRender();
         setCrowdVolume(0);
-        if (crowdPlaying) { crowdAudio.pause(); crowdPlaying = false; }
+        if (crowdPlaying) { crowdAudio.pause(); crowdPlaying = false; setSoundBtnState(false); }
       }
     });
   }, { threshold: 0 });
