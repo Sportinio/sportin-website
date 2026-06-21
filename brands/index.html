@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SportIn for Brands · Coming Soon</title>
+<meta name="description" content="SportIn for Brands — turn your employees, clients, and communities into competing teams using professional sport formats. Coming soon." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://sportin.io/brands" />
+<meta name="theme-color" content="#0751FB" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #06060C;
+    --ink-1: #0A0A12;
+    --text: #FFFFFF;
+    --text-2: #C8CAD4;
+    --text-3: #9AA0B4;
+    --text-4: #5F667E;
+    --blue: #0751FB;
+    --blue-bright: #3B7BFF;
+    --accent: #818CF8;
+    --accent-dim: rgba(129, 140, 248, 0.12);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-accent: rgba(129, 140, 248, 0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    background: var(--ink-1);
+    color: var(--text);
+    font-family: 'Geist', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(129, 140, 248, 0.16) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(7, 81, 251, 0.08) 0%, transparent 50%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+  }
+  #meshCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Header ── */
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(10, 10, 18, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; font-size: 14px; text-decoration: none; }
+  .top .brand:hover { text-decoration: none; }
+  .top .brand svg { height: 22px; width: auto; }
+  .top a.back { font-size: 13px; color: var(--text-3); }
+  .top a.back:hover { color: var(--text); text-decoration: none; }
+
+  /* ── Main content ── */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 65px);
+    padding: 80px 24px 120px;
+    text-align: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--border-accent);
+    background: var(--accent-dim);
+    border-radius: 999px;
+    padding: 6px 14px;
+    margin-bottom: 36px;
+  }
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+  h1 .accent { color: var(--accent); }
+
+  .lead {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--text-2);
+    max-width: 520px;
+    margin: 0 auto 52px;
+    line-height: 1.6;
+  }
+
+  /* ── Email capture ── */
+  .form-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 16px;
+  }
+  .form-row input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-row input::placeholder { color: var(--text-4); }
+  .form-row input:focus { border-color: var(--border-accent); }
+  .form-row button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 13px 22px;
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .form-row button:hover { opacity: 0.88; transform: translateY(-1px); }
+  .form-row button:active { transform: translateY(0); }
+
+  .hint {
+    font-size: 13px;
+    color: var(--text-4);
+    margin-bottom: 60px;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+    margin: 0 auto 60px;
+  }
+
+  /* ── Feature chips ── */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-width: 560px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--text-3);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.03);
+  }
+  .chip svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── Footer ── */
+  footer.foot {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-4);
+  }
+  footer.foot a { color: var(--text-3); margin: 0 12px; }
+  footer.foot a:hover { color: var(--text); text-decoration: none; }
+
+  /* ── Success state ── */
+  .success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 60px;
+  }
+  .success svg { width: 36px; height: 36px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  @media (max-width: 600px) {
+    .top { padding: 14px 18px; }
+    .form-row { flex-direction: column; }
+    .form-row button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<canvas id="meshCanvas"></canvas>
+
+<header class="top">
+  <a class="brand" href="/">
+    <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M68.06 1.18C68.48 2.11 68.28 2.40 64.76 5.87C63.08 7.53 59.80 10.77 57.48 13.06C55.16 15.35 51.55 18.89 49.46 20.92C47.37 22.95 44.49 25.76 43.06 27.17C36.73 33.38 35.05 35.02 31.91 38.06C30.08 39.83 28.06 41.78 27.43 42.38C26.81 42.98 25.28 44.47 24.05 45.68C22.81 46.89 21.58 48.06 21.31 48.27C20.02 49.25 18.24 49.67 16.73 49.35C15.67 49.12 14.81 48.59 13.68 47.45C12.66 46.42 8.87 42.48 7.22 40.72C6.76 40.24 5.85 39.28 5.19 38.59C1.75 35.01 1.41 34.59 0.82 33.28C-0.24 30.92 -0.28 27.50 0.73 25.34C1.24 24.24 1.75 23.52 4.31 20.29C5.77 18.45 7.10 16.78 7.27 16.57C8.01 15.66 10.68 12.26 11.22 11.55C11.54 11.12 12.18 10.29 12.64 9.72C13.10 9.14 14.06 7.90 14.77 6.96C17.26 3.71 17.76 3.17 19.20 2.20C20.64 1.22 22.09 0.59 23.68 0.22C24.33 0.07 26.66 0.05 45.40 0.02C64.81 -0.02 66.42 -0.01 66.86 0.15C67.41 0.36 67.87 0.75 68.06 1.18Z" fill="white"/>
+      <path d="M74.30 47.90C74.48 48.91 73.99 52.24 73.58 52.82C73.49 52.95 73.42 53.12 73.42 53.21C73.42 53.54 72.38 55.05 70.49 57.46C69.43 58.82 68.01 60.64 67.35 61.50C65.62 63.73 61.42 69.06 59.86 70.99C59.44 71.52 58.56 72.64 57.90 73.49C56.43 75.39 55.59 76.25 54.51 76.96C53.20 77.81 52.00 78.31 50.29 78.70C49.57 78.87 48.09 78.88 29.10 78.85C9.57 78.82 8.66 78.81 8.31 78.63C7.33 78.13 7.20 76.90 8.02 75.95C8.51 75.38 20.86 62.96 40.25 43.53C50.15 33.61 53.98 29.84 54.42 29.57C54.82 29.33 55.31 29.15 55.91 29.03C57.02 28.80 57.44 28.80 58.23 29.00C59.33 29.29 59.80 29.62 61.21 31.13C61.93 31.90 63.01 33.06 63.62 33.69C65.00 35.13 66.00 36.19 67.85 38.16C68.65 39.02 69.64 40.07 70.04 40.51C72.41 43.03 72.89 43.62 73.30 44.49C73.77 45.50 73.99 46.16 74.14 47.02C74.20 47.36 74.27 47.76 74.30 47.90Z" fill="white"/>
+    </svg>
+    <span>SportIn</span>
+  </a>
+  <a class="back" href="/">← Back to home</a>
+</header>
+
+<main class="wrap">
+  <div class="badge">Coming Soon</div>
+
+  <h1>SportIn for<br><span class="accent">Brands</span></h1>
+
+  <p class="lead">
+    Turn your employees, clients, and partners into competing teams.
+    Professional sport formats — leagues, cups, grand tours — built around your brand.
+  </p>
+
+  <form class="form-row" id="notifyForm" onsubmit="handleSubmit(event)">
+    <input type="email" name="email" placeholder="your@email.com" required autocomplete="email" />
+    <button type="submit">Notify me</button>
+  </form>
+
+  <div class="success" id="successMsg">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    You're on the list. We'll reach out soon.
+  </div>
+
+  <p class="hint">No spam. Early access for qualifying brands.</p>
+
+  <div class="divider"></div>
+
+  <div class="chips">
+    <div class="chip">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Team competitions
+    </div>
+    <div class="chip">
+      <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      Live leaderboards
+    </div>
+    <div class="chip">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Real-time step tracking
+    </div>
+    <div class="chip">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      Custom branded arena
+    </div>
+    <div class="chip">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Sponsor activation
+    </div>
+    <div class="chip">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Engagement analytics
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div>
+    <a href="/">Home</a>
+    <a href="/leagueofbrands">League of Brands</a>
+    <a href="https://calendly.com/sportin" target="_blank" rel="noopener">Schedule a Demo</a>
+    <a href="mailto:hello@sportin.io">Contact</a>
+  </div>
+  <div style="margin-top:14px;">© SportIn.io SRL · Romania</div>
+</footer>
+
+<script src="/mesh-bg.js"></script>
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('notifyForm');
+  const success = document.getElementById('successMsg');
+  const email = form.querySelector('input[type="email"]').value;
+
+  // Send to Formspree or similar (replace with real endpoint if needed)
+  fetch('https://formspree.io/f/brands-notify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ email, page: 'brands' })
+  }).catch(() => {});
+
+  form.style.display = 'none';
+  success.style.display = 'flex';
+}
+</script>
+</body>
+</html>
