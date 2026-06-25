@@ -2093,6 +2093,23 @@
     .felt-head .section-title { font-size: 28px; }
     .felt-stage { height: 280px; }
   }
+
+  /* ── Season blocks (levels / target / medals) ── */
+  .season-block { background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 20px; padding: 30px 32px; margin-bottom: 18px; display: grid; grid-template-columns: minmax(240px, 300px) 1fr; gap: 30px; align-items: center; }
+  .season-block:last-of-type { margin-bottom: 0; }
+  .sb-kicker { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue-bright); }
+  .season-block-text h3 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; margin: 10px 0 8px; color: var(--text); }
+  .season-block-text p { font-size: 14.5px; color: var(--text-3); line-height: 1.55; }
+  .season-icons { display: flex; flex-wrap: wrap; gap: 16px 18px; align-items: flex-end; justify-content: center; }
+  .season-icons figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 9px; }
+  .season-icons figcaption { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: var(--text-4); }
+  .levels-row img { height: 88px; width: auto; display: block; }
+  .tokens-row img { height: 58px; width: auto; display: block; }
+  .tokens-row .token-turtle img { height: 72px; }
+  .medals-row { gap: 24px; }
+  .medals-row img { height: 86px; width: auto; display: block; }
+  @media (max-width: 820px) { .season-block { grid-template-columns: 1fr; gap: 22px; padding: 26px 22px; text-align: center; } .season-block-text { text-align: center; } }
+  @media (max-width: 480px) { .levels-row img { height: 68px; } .medals-row img { height: 70px; } }
 </style>
 </head>
 <body>
@@ -2549,70 +2566,55 @@
       <div class="section-head reveal">
         <span class="eyebrow">The season</span>
         <h2 class="section-title">How the season comes alive</h2>
-        <p class="section-intro">Ten simple rituals turn everyday movement into something the whole company follows.</p>
+        <p class="section-intro">Three things keep everyone in the race, whatever their pace.</p>
       </div>
-      <div class="mech-grid">
-        <div class="mech reveal">
-          <span class="mech-num">01</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
-          <h4>Teams compete</h4>
-          <p>People move under a shared identity.</p>
+      <!-- Block 1: Levels -->
+      <div class="season-block reveal">
+        <div class="season-block-text">
+          <span class="sb-kicker">Levels</span>
+          <h3>Everyone runs in their own league.</h3>
+          <p>No marathon runner against walkers. You compete inside your own level, set by how far you move.</p>
         </div>
-        <div class="mech reveal">
-          <span class="mech-num">02</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg></span>
-          <h4>Direct matches</h4>
-          <p>Every round gives the company something to talk about.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">03</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-          <h4>Point system</h4>
-          <p>The story stays clear, from day one to the finish.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">04</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span>
-          <h4>Podium</h4>
-          <p>Winning becomes a moment, not a spreadsheet.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">05</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 14 2-2-2-2"/><path d="m16 10-2 2 2 2"/></svg></span>
-          <h4>Puma &amp; Turtle</h4>
-          <p>Progress and consistency get their own spotlight.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">06</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg></span>
-          <h4>5 levels</h4>
-          <p>Everyone has a fair race to run.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">07</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/></svg></span>
-          <h4>Rewards</h4>
-          <p>Small rituals make the season tangible.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">08</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><path d="M3 11h2l2 6 4-12 2 6h5"/><path d="M19 11v3"/><path d="M22 11v3"/></svg></span>
-          <h4>Live commentary</h4>
-          <p>The league gets a voice.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">09</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
-          <h4>Sentinel 2.0</h4>
-          <p>Trust keeps the game meaningful.</p>
-        </div>
-        <div class="mech reveal">
-          <span class="mech-num">10</span>
-          <span class="mech-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-          <h4>Real-time rankings</h4>
-          <p>Momentum, visible as it happens.</p>
+        <div class="season-icons levels-row">
+          <figure><img src="/levels/3k.png" alt="3K starter level" loading="lazy"><figcaption>3K</figcaption></figure>
+          <figure><img src="/levels/5k.png" alt="5K level" loading="lazy"><figcaption>5K</figcaption></figure>
+          <figure><img src="/levels/10k.png" alt="10K level" loading="lazy"><figcaption>10K</figcaption></figure>
+          <figure><img src="/levels/15k.png" alt="15K level" loading="lazy"><figcaption>15K</figcaption></figure>
+          <figure><img src="/levels/half.png" alt="Half marathon level" loading="lazy"><figcaption>21.1K</figcaption></figure>
+          <figure><img src="/levels/full.png" alt="Marathon level" loading="lazy"><figcaption>42.2K</figcaption></figure>
         </div>
       </div>
+
+      <!-- Block 2: Target (Puma and Turtle) -->
+      <div class="season-block reveal">
+        <div class="season-block-text">
+          <span class="sb-kicker">Target</span>
+          <h3>Collect points. Climb the ladder.</h3>
+          <p>Everyone earns points and climbs. Your Puma is color-matched to your level. Keep showing up and earn your Turtle.</p>
+        </div>
+        <div class="season-icons tokens-row">
+          <figure><img src="/tokens/puma-bronze.png" alt="Bronze puma" loading="lazy"><figcaption>Bronze</figcaption></figure>
+          <figure><img src="/tokens/puma-silver.png" alt="Silver puma" loading="lazy"><figcaption>Silver</figcaption></figure>
+          <figure><img src="/tokens/puma-gold.png" alt="Gold puma" loading="lazy"><figcaption>Gold</figcaption></figure>
+          <figure><img src="/tokens/puma-master.png" alt="Master puma" loading="lazy"><figcaption>Master</figcaption></figure>
+          <figure class="token-turtle"><img src="/tokens/turtle.png" alt="Turtle walker badge" loading="lazy"><figcaption>Turtle</figcaption></figure>
+        </div>
+      </div>
+
+      <!-- Block 3: Medals -->
+      <div class="season-block reveal">
+        <div class="season-block-text">
+          <span class="sb-kicker">Medals</span>
+          <h3>Top three, every day.</h3>
+          <p>Gold, silver and bronze for the best daily steps. Every winner joins the all-time medal leaderboard.</p>
+        </div>
+        <div class="season-icons medals-row">
+          <figure><img src="/medals/gold.png" alt="Gold medal, first place" loading="lazy"><figcaption>1st</figcaption></figure>
+          <figure><img src="/medals/silver.png" alt="Silver medal, second place" loading="lazy"><figcaption>2nd</figcaption></figure>
+          <figure><img src="/medals/bronze.png" alt="Bronze medal, third place" loading="lazy"><figcaption>3rd</figcaption></figure>
+        </div>
+      </div>
+
       <div style="text-align:center;margin-top:40px;">
         <a class="btn btn-primary" href="#calculator">Build your season</a>
       </div>
