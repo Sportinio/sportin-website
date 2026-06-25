@@ -525,6 +525,8 @@
   .out-peruser { display: flex; align-items: baseline; gap: 8px; margin: 8px 0 4px; }
   .out-peruser .num { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -0.02em; }
   .out-peruser .unit { font-size: 13px; color: var(--text-3); }
+  .out-discount { display: none; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: #2ECC71; border: 1px solid rgba(46,204,113,0.35); background: rgba(46,204,113,0.12); border-radius: 999px; padding: 2px 9px; margin-left: 6px; white-space: nowrap; }
+  .out-discount.show { display: inline-flex; align-items: center; }
   .out-total {
     margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--border);
   }
@@ -2954,6 +2956,8 @@
         </div>
       </div>
 
+      <p class="section-intro" style="text-align:center; margin:20px auto 0; font-size:13px; opacity:0.7;">All prices are exclusive of VAT.</p>
+
       <details class="breakdown reveal">
         <summary>
           What's inside the season
@@ -2964,7 +2968,7 @@
           <table class="bd-table">
             <tr><td>Core competition platform</td><td>6 €</td></tr>
             <tr><td>Branded social templates</td><td>1 €</td></tr>
-            <tr><td>Garmin &amp; other device integrations</td><td>1.99 €</td></tr>
+            <tr><td>Wearable integration</td><td>1.99 €</td></tr>
             <tr><td>Live commentary</td><td>3 €</td></tr>
             <tr><td>Human support</td><td>2 €</td></tr>
             <tr><td>Private channel</td><td>1 €</td></tr>
@@ -3024,8 +3028,8 @@
               <div class="switch"><input type="checkbox" id="optTemplates" /><label for="optTemplates" aria-label="Include branded templates"></label></div>
             </div>
             <div class="toggle-row">
-              <div class="toggle-info"><span class="t-name">Garmin / device integrations</span><span class="t-price">+1.99 € / person</span></div>
-              <div class="switch"><input type="checkbox" id="optGarmin" /><label for="optGarmin" aria-label="Include Garmin and other device integrations"></label></div>
+              <div class="toggle-info"><span class="t-name">Wearable integration</span><span class="t-price">+1.99 € / person</span></div>
+              <div class="switch"><input type="checkbox" id="optGarmin" /><label for="optGarmin" aria-label="Include wearable integration"></label></div>
             </div>
             <div class="toggle-row">
               <div class="toggle-info"><span class="t-name">Live commentary</span><span class="t-price">+3 € / person</span></div>
@@ -3045,12 +3049,13 @@
         <div class="calc-output">
           <div>
             <div class="out-label">Price per person</div>
-            <div class="out-peruser"><span class="num" id="outPerUser">6 €</span><span class="unit">/ month</span></div>
+            <div class="out-peruser"><span class="num" id="outPerUser">6 €</span><span class="unit">/ month</span><span class="out-discount" id="outDiscount"></span></div>
           </div>
           <div class="out-total">
             <div class="out-label">Total per month</div>
             <div class="num" id="outTotal">€ 6,000</div>
             <div class="sub" id="outTotalSub">1,000 people · billed monthly</div>
+            <div class="sub" style="margin-top:5px; opacity:0.75;">All prices exclude VAT.</div>
           </div>
           <div class="out-value" id="outValue"></div>
           <div class="out-rec">
@@ -3149,6 +3154,7 @@
   var optRewards = document.getElementById('optRewards');
 
   var outPerUser = document.getElementById('outPerUser');
+  var outDiscount = document.getElementById('outDiscount');
   var outTotal = document.getElementById('outTotal');
   var outTotalSub = document.getElementById('outTotalSub');
   var outValue = document.getElementById('outValue');
@@ -3211,10 +3217,15 @@
     outTotalSub.textContent = intFmt.format(users) + ' people · billed monthly, plus €500 one-time setup';
 
     if (base < 6) {
-      outValue.innerHTML = "Volume pricing. <strong>" + fmtPerUser(base) +
-        "/person</strong> at " + intFmt.format(users) +
-        " people, down from the 6 € entry price. The more of your people move, the less it costs per person.";
+      var off = 6 - base;
+      var pct = Math.round(off / 6 * 100);
+      var saving = off * users;
+      if (outDiscount) { outDiscount.textContent = pct + '% off'; outDiscount.classList.add('show'); }
+      outValue.innerHTML = "Volume discount. Your base is <strong>" + fmtPerUser(base) +
+        "/person</strong>, " + pct + "% below the 6 € entry. That's <strong>" + eur.format(saving) +
+        "/month</strong> saved across " + intFmt.format(users) + " people.";
     } else {
+      if (outDiscount) { outDiscount.textContent = ''; outDiscount.classList.remove('show'); }
       outValue.innerHTML = "Entry price. <strong>6 €/person</strong>. Bring more people in and it drops, all the way to <strong>4 €</strong> at 4,000+.";
     }
 
