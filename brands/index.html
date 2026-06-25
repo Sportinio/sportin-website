@@ -2105,6 +2105,8 @@
   .season-icons figcaption { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: var(--text-4); }
   .levels-row img { height: 82px; width: auto; display: block; }
   .season-icons .lvl-sub { display: block; font-size: 10px; opacity: 0.65; margin-top: 1px; }
+  .level-stack { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+  .level-group-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-4); margin-bottom: 13px; text-align: center; }
   .tokens-row img { height: 58px; width: auto; display: block; }
   .tokens-row .token-turtle img { height: 72px; }
   .medals-row { gap: 24px; }
@@ -2573,18 +2575,34 @@
       <div class="season-block reveal">
         <div class="season-block-text">
           <span class="sb-kicker">Levels</span>
-          <h3>Everyone runs in their own league.</h3>
-          <p>No marathon runner against walkers. Your level is set by your average daily steps, so everyone has a fair race.</p>
+          <h3>Everyone in their own league.</h3>
+          <p>No marathon runner against walkers. Whether your people walk or run, they compete inside their own level, so every race is fair.</p>
         </div>
-        <div class="season-icons levels-row">
-          <figure><img src="/levels/bronze.png" alt="Bronze level" loading="lazy"><figcaption>Bronze<span class="lvl-sub">5K/day</span></figcaption></figure>
-          <figure><img src="/levels/silver.png" alt="Silver level" loading="lazy"><figcaption>Silver<span class="lvl-sub">10K/day</span></figcaption></figure>
-          <figure><img src="/levels/gold.png" alt="Gold level" loading="lazy"><figcaption>Gold<span class="lvl-sub">15K/day</span></figcaption></figure>
-          <figure><img src="/levels/platinum.png" alt="Platinum level" loading="lazy"><figcaption>Platinum<span class="lvl-sub">20K/day</span></figcaption></figure>
-          <figure><img src="/levels/diamond.png" alt="Diamond level" loading="lazy"><figcaption>Diamond<span class="lvl-sub">25K/day</span></figcaption></figure>
-          <figure><img src="/levels/master.png" alt="Master level" loading="lazy"><figcaption>Master<span class="lvl-sub">40K/day</span></figcaption></figure>
+        <div class="level-stack">
+          <div class="level-group">
+            <div class="level-group-label">By steps</div>
+            <div class="season-icons levels-row">
+              <figure><img src="/levels/bronze.png" alt="Bronze step level" loading="lazy"><figcaption>Bronze<span class="lvl-sub">5K/day</span></figcaption></figure>
+              <figure><img src="/levels/silver.png" alt="Silver step level" loading="lazy"><figcaption>Silver<span class="lvl-sub">10K/day</span></figcaption></figure>
+              <figure><img src="/levels/gold.png" alt="Gold step level" loading="lazy"><figcaption>Gold<span class="lvl-sub">15K/day</span></figcaption></figure>
+              <figure><img src="/levels/platinum.png" alt="Platinum step level" loading="lazy"><figcaption>Platinum<span class="lvl-sub">20K/day</span></figcaption></figure>
+              <figure><img src="/levels/diamond.png" alt="Diamond step level" loading="lazy"><figcaption>Diamond<span class="lvl-sub">25K/day</span></figcaption></figure>
+              <figure><img src="/levels/master.png" alt="Master step level" loading="lazy"><figcaption>Master<span class="lvl-sub">40K/day</span></figcaption></figure>
+            </div>
+          </div>
+          <div class="level-group">
+            <div class="level-group-label">By distance</div>
+            <div class="season-icons levels-row">
+              <figure><img src="/levels/3k.png" alt="3 km level" loading="lazy"><figcaption>3 km</figcaption></figure>
+              <figure><img src="/levels/5k.png" alt="5 km level" loading="lazy"><figcaption>5 km</figcaption></figure>
+              <figure><img src="/levels/10k.png" alt="10 km level" loading="lazy"><figcaption>10 km</figcaption></figure>
+              <figure><img src="/levels/15k.png" alt="15 km level" loading="lazy"><figcaption>15 km</figcaption></figure>
+              <figure><img src="/levels/half.png" alt="Half marathon level" loading="lazy"><figcaption>21.1 km</figcaption></figure>
+              <figure><img src="/levels/full.png" alt="Marathon level" loading="lazy"><figcaption>42.2 km</figcaption></figure>
+            </div>
+          </div>
         </div>
-      </div>
+        </div>
 
       <!-- Block 2: Target (Puma and Turtle) -->
       <div class="season-block reveal">
