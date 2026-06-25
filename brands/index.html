@@ -2103,7 +2103,8 @@
   .season-icons { display: flex; flex-wrap: wrap; gap: 16px 18px; align-items: flex-end; justify-content: center; }
   .season-icons figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 9px; }
   .season-icons figcaption { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: var(--text-4); }
-  .levels-row img { height: 88px; width: auto; display: block; }
+  .levels-row img { height: 82px; width: auto; display: block; }
+  .season-icons .lvl-sub { display: block; font-size: 10px; opacity: 0.65; margin-top: 1px; }
   .tokens-row img { height: 58px; width: auto; display: block; }
   .tokens-row .token-turtle img { height: 72px; }
   .medals-row { gap: 24px; }
@@ -2573,15 +2574,15 @@
         <div class="season-block-text">
           <span class="sb-kicker">Levels</span>
           <h3>Everyone runs in their own league.</h3>
-          <p>No marathon runner against walkers. You compete inside your own level, set by how far you move.</p>
+          <p>No marathon runner against walkers. Your level is set by your average daily steps, so everyone has a fair race.</p>
         </div>
         <div class="season-icons levels-row">
-          <figure><img src="/levels/3k.png" alt="3K starter level" loading="lazy"><figcaption>3K</figcaption></figure>
-          <figure><img src="/levels/5k.png" alt="5K level" loading="lazy"><figcaption>5K</figcaption></figure>
-          <figure><img src="/levels/10k.png" alt="10K level" loading="lazy"><figcaption>10K</figcaption></figure>
-          <figure><img src="/levels/15k.png" alt="15K level" loading="lazy"><figcaption>15K</figcaption></figure>
-          <figure><img src="/levels/half.png" alt="Half marathon level" loading="lazy"><figcaption>21.1K</figcaption></figure>
-          <figure><img src="/levels/full.png" alt="Marathon level" loading="lazy"><figcaption>42.2K</figcaption></figure>
+          <figure><img src="/levels/bronze.png" alt="Bronze level" loading="lazy"><figcaption>Bronze<span class="lvl-sub">5K/day</span></figcaption></figure>
+          <figure><img src="/levels/silver.png" alt="Silver level" loading="lazy"><figcaption>Silver<span class="lvl-sub">10K/day</span></figcaption></figure>
+          <figure><img src="/levels/gold.png" alt="Gold level" loading="lazy"><figcaption>Gold<span class="lvl-sub">15K/day</span></figcaption></figure>
+          <figure><img src="/levels/platinum.png" alt="Platinum level" loading="lazy"><figcaption>Platinum<span class="lvl-sub">20K/day</span></figcaption></figure>
+          <figure><img src="/levels/diamond.png" alt="Diamond level" loading="lazy"><figcaption>Diamond<span class="lvl-sub">25K/day</span></figcaption></figure>
+          <figure><img src="/levels/master.png" alt="Master level" loading="lazy"><figcaption>Master<span class="lvl-sub">40K/day</span></figcaption></figure>
         </div>
       </div>
 
