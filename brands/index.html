@@ -591,7 +591,7 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    margin: -10px auto 8px;
+    margin: -10px auto 24px;
   }
   .commentary-sphere-label {
     font-family: 'IBM Plex Mono', monospace;
@@ -1911,11 +1911,11 @@
       </div>
     </section>
 
-    <!-- ════ SHOWCASE HEADING: "Inside SportIn / Six layers of one feeling" (ported verbatim from / ) ════ -->
+    <!-- ════ SHOWCASE HEADING: Custom branded templates / UGC ════ -->
     <div class="showcase-head">
-      <div class="section-kicker reveal">Inside SportIn</div>
-      <h2 class="section-title reveal" style="--rd:0.05s;">Six layers of <span class="gradient">one feeling.</span></h2>
-      <p class="section-intro reveal" style="--rd:0.15s;">Each layer makes the next one possible. Together they turn movement into a season worth showing up for. The foundation of a branded competition platform built for fans, employees, and communities.</p>
+      <div class="section-kicker reveal">Branded Templates</div>
+      <h2 class="section-title reveal" style="--rd:0.05s;">Your logo on <span class="gradient">every template.</span></h2>
+      <p class="section-intro reveal" style="--rd:0.15s;">Every template your employees and clients download and share is fully customizable — and carries your brand. The result is the most user-generated content your company has ever had: your people putting your logo in front of their networks every single day, doing brand awareness for you.</p>
     </div>
 
     <!-- ════ Component B: SIX PILLAR CARDS (ported verbatim from /leagueofbrands) ════ -->
@@ -2226,7 +2226,7 @@
         <button class="commentary-play" id="commentaryPlayBtn" type="button" aria-pressed="false">
           <svg class="cp-icon cp-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
           <svg class="cp-icon cp-icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-          <span class="cp-label">Ascultă comentariul AI</span>
+          <span class="cp-label">Listen to AI commentary</span>
         </button>
       </div>
 
@@ -3316,7 +3316,7 @@
     commentaryPlayBtn.classList.toggle('playing', playing);
     commentaryPlayBtn.setAttribute('aria-pressed', playing ? 'true' : 'false');
     var lbl = commentaryPlayBtn.querySelector('.cp-label');
-    if (lbl) lbl.textContent = playing ? 'Pauză comentariu' : 'Ascultă comentariul AI';
+    if (lbl) lbl.textContent = playing ? 'Pause commentary' : 'Listen to AI commentary';
   }
 
   function playCommentary() {
