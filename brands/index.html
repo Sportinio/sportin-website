@@ -238,6 +238,28 @@
   }
   .card p { font-size: 14px; color: var(--text-3); line-height: 1.55; }
 
+  /* ── HR dashboard KPIs ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 8px; }
+  @media (max-width: 980px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .kpi-grid { grid-template-columns: 1fr; } }
+  .kpi-card {
+    background: rgba(255,255,255,0.035);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.22);
+    transition: border-color 0.25s, transform 0.25s, background 0.25s;
+  }
+  .kpi-card:hover { border-color: var(--border-accent); transform: translateY(-3px); background: rgba(255,255,255,0.05); }
+  .kpi-num { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1.1; }
+  .kpi-label { font-size: 13px; color: var(--text-3); margin-top: 6px; line-height: 1.4; }
+  .kpi-bar { margin-top: 16px; height: 4px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .kpi-bar > span { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--blue); transition: width 1.1s cubic-bezier(0.22,1,0.36,1); }
+  .kpi-card:nth-child(2) .kpi-bar > span,
+  .kpi-card:nth-child(4) .kpi-bar > span { background: var(--accent); }
+  .dash-closer { text-align: center; margin-top: 26px; font-size: 14px; color: var(--text-4); }
+  @media (prefers-reduced-motion: reduce) { .kpi-bar > span { transition: none; } }
+
   .grid { display: grid; gap: 18px; }
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
   .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -2288,6 +2310,41 @@
   </section>
 
   <!-- ── REWARDS / MATCHDAY PERKS (Component C, ported from /leagueofbrands) ── -->
+  <section id="dashboard" class="section-pad">
+    <div class="container">
+      <div class="section-head reveal" style="text-align:center; margin-left:auto; margin-right:auto;">
+        <span class="eyebrow">For HR</span>
+        <h2 class="section-title">Everything HR needs, in one view.</h2>
+        <p class="section-intro" style="margin-left:auto; margin-right:auto;">See who's moving, who's not, and where a small nudge changes everything.</p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card reveal" style="--rd:0.05s;" data-kpi data-kpi-target="1284" data-kpi-format="int" data-bar="78">
+          <div class="kpi-num">0</div>
+          <div class="kpi-label">People active this week</div>
+          <div class="kpi-bar"><span></span></div>
+        </div>
+        <div class="kpi-card reveal" style="--rd:0.1s;" data-kpi data-kpi-target="87" data-kpi-suffix="%" data-bar="87">
+          <div class="kpi-num">0</div>
+          <div class="kpi-label">Participation rate</div>
+          <div class="kpi-bar"><span></span></div>
+        </div>
+        <div class="kpi-card reveal" style="--rd:0.15s;" data-kpi data-kpi-target="163" data-kpi-format="int" data-bar="13">
+          <div class="kpi-num">0</div>
+          <div class="kpi-label">Not started yet — reach out</div>
+          <div class="kpi-bar"><span></span></div>
+        </div>
+        <div class="kpi-card reveal" style="--rd:0.2s;" data-kpi data-kpi-target="5.2" data-kpi-decimals="1" data-bar="65">
+          <div class="kpi-num">0</div>
+          <div class="kpi-label">Average Movement Index</div>
+          <div class="kpi-bar"><span></span></div>
+        </div>
+      </div>
+
+      <p class="dash-closer">One screen. Updated live, all season long.</p>
+    </div>
+  </section>
+
   <section id="rewards" class="section-pad">
     <div class="container">
       <div class="section-head reveal" style="text-align:center; margin-left:auto; margin-right:auto;">
@@ -2448,6 +2505,7 @@
           <div class="price-name">Company Season</div>
           <div class="price-val"><span class="num">6 €</span><span class="unit">/ user / 30 days</span></div>
           <div class="price-sub">Everything to run your season</div>
+          <div class="price-sub">Entry price at 500 people · drops to 4 € with volume · + €500 one-time setup</div>
           <ul class="price-list">
             <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>The competition structure — teams, matchdays, standings, podium</li>
             <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>The fairness system — five levels and the Movement Index</li>
@@ -2463,6 +2521,7 @@
           <div class="price-name">Managed Company Season</div>
           <div class="price-val"><span class="num">8 €</span><span class="unit">/ user / 30 days</span></div>
           <div class="price-sub">Your season, fully supported</div>
+          <div class="price-sub">Entry price at 500 people · volume pricing applies · + €500 one-time setup</div>
           <ul class="price-list">
             <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Everything in the Company Season</li>
             <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>The support layer — guided onboarding and league setup</li>
@@ -2480,14 +2539,16 @@
           <span class="chev"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
         </summary>
         <div class="breakdown-body">
-          <p>Bought à la carte, the components of a SportIn league are worth around <strong>12 € per user</strong>. Bundled into the Standard package, you get them for <strong>6 € per user</strong> (8 € with human support). Here's how that value adds up:</p>
+          <p>A SportIn season starts at <strong>6 € per person</strong> and drops with volume — down to <strong>4 € per person</strong> at 4,000+ people. Add only what you need on top, plus a one-time <strong>€500 setup</strong> per season. Here's how it breaks down:</p>
           <table class="bd-table">
             <tr><td>Core competition platform</td><td>6 €</td></tr>
             <tr><td>Branded social templates</td><td>1 €</td></tr>
-            <tr><td>Garmin &amp; other device integrations</td><td>1.5 – 1.99 €</td></tr>
+            <tr><td>Garmin &amp; other device integrations</td><td>1.99 €</td></tr>
             <tr><td>Live commentary</td><td>3 €</td></tr>
             <tr><td>Human support</td><td>2 €</td></tr>
-            <tr class="total"><td>Standard bundle delivers</td><td>~12 € of value for 6 €</td></tr>
+            <tr><td>Private channel</td><td>1 €</td></tr>
+            <tr><td>One-time setup (per season)</td><td>€500</td></tr>
+            <tr class="total"><td>Volume pricing</td><td>6 € entry, down to 4 € per person at 4,000+</td></tr>
           </table>
         </div>
       </details>
@@ -2513,13 +2574,19 @@
             </div>
             <div class="plan-chips" role="group" aria-label="Recommended plans">
               <button type="button" class="plan-chip" data-users="500">
-                <div class="pc-users">500</div><div class="pc-tier">Entry</div>
+                <div class="pc-users">500</div><div class="pc-tier">6 €/person</div>
               </button>
               <button type="button" class="plan-chip" data-users="1000">
-                <div class="pc-users">1,000</div><div class="pc-tier">Recommended</div>
+                <div class="pc-users">1,000</div><div class="pc-tier">5.5 €/person</div>
               </button>
-              <button type="button" class="plan-chip" data-users="1500">
-                <div class="pc-users">1,500+</div><div class="pc-tier">Volume / custom</div>
+              <button type="button" class="plan-chip" data-users="2000">
+                <div class="pc-users">2,000</div><div class="pc-tier">5 €/person</div>
+              </button>
+              <button type="button" class="plan-chip" data-users="3000">
+                <div class="pc-users">3,000</div><div class="pc-tier">4.5 €/person</div>
+              </button>
+              <button type="button" class="plan-chip" data-users="4000">
+                <div class="pc-users">4,000+</div><div class="pc-tier">4 €/person</div>
               </button>
             </div>
           </div>
@@ -2535,12 +2602,16 @@
               <div class="switch"><input type="checkbox" id="optTemplates" /><label for="optTemplates" aria-label="Include branded templates"></label></div>
             </div>
             <div class="toggle-row">
-              <div class="toggle-info"><span class="t-name">Garmin / device integrations</span><span class="t-price">+1.5 € / person</span></div>
+              <div class="toggle-info"><span class="t-name">Garmin / device integrations</span><span class="t-price">+1.99 € / person</span></div>
               <div class="switch"><input type="checkbox" id="optGarmin" /><label for="optGarmin" aria-label="Include Garmin and other device integrations"></label></div>
             </div>
             <div class="toggle-row">
               <div class="toggle-info"><span class="t-name">Live commentary</span><span class="t-price">+3 € / person</span></div>
               <div class="switch"><input type="checkbox" id="optCommentary" /><label for="optCommentary" aria-label="Include live commentary"></label></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><span class="t-name">Private channel</span><span class="t-price">+1 € / person</span></div>
+              <div class="switch"><input type="checkbox" id="optPrivate" /><label for="optPrivate" aria-label="Include private channel"></label></div>
             </div>
           </div>
         </div>
@@ -2621,14 +2692,23 @@
   }
 
   /* ── Calculator ── */
-  var BASE = 6;            // standard bundled package, always included
   var SUPPORT = 2;
   var TEMPLATES = 1;
-  var GARMIN = 1.5;
+  var GARMIN = 1.99;
   var COMMENTARY = 3;
-  var FULL_VALUE = 12;     // full à-la-carte value per user
+  var PRIVATE = 1;
+  var SETUP = 500;         // one-time setup fee per season (added once, not per person)
   var MIN_USERS = 100;
   var MAX_USERS = 5000;
+
+  // Tiered base price per person by headcount
+  function baseFor(users) {
+    if (users >= 4000) return 4;
+    if (users >= 3000) return 4.5;
+    if (users >= 2000) return 5;
+    if (users >= 1000) return 5.5;
+    return 6;
+  }
 
   var range = document.getElementById('userRange');
   var num = document.getElementById('userNum');
@@ -2638,6 +2718,7 @@
   var optTemplates = document.getElementById('optTemplates');
   var optGarmin = document.getElementById('optGarmin');
   var optCommentary = document.getElementById('optCommentary');
+  var optPrivate = document.getElementById('optPrivate');
 
   var outPerUser = document.getElementById('outPerUser');
   var outTotal = document.getElementById('outTotal');
@@ -2664,18 +2745,21 @@
   }
 
   function recommendation(users) {
-    if (users < 500) return 'A first season — perfect for a pilot.';
-    if (users < 1000) return 'A focused first season.';
-    if (users < 1500) return 'The sweet spot for a company-wide season.';
-    return "Big season — let's shape a custom quote together.";
+    if (users >= 4000) return '4 €/person — our best volume price.';
+    if (users >= 3000) return '4.5 €/person — built for serious scale.';
+    if (users >= 2000) return '5 €/person — strong volume pricing.';
+    if (users >= 1000) return '5.5 €/person — the company-wide sweet spot.';
+    return '6 €/person — a focused first season.';
   }
 
   function activeChip(users) {
     chips.forEach(function (c) {
       var cu = parseInt(c.getAttribute('data-users'), 10);
       var match = (cu === 500 && users >= 500 && users < 1000) ||
-                  (cu === 1000 && users >= 1000 && users < 1500) ||
-                  (cu === 1500 && users >= 1500);
+                  (cu === 1000 && users >= 1000 && users < 2000) ||
+                  (cu === 2000 && users >= 2000 && users < 3000) ||
+                  (cu === 3000 && users >= 3000 && users < 4000) ||
+                  (cu === 4000 && users >= 4000);
       c.classList.toggle('active', match);
     });
   }
@@ -2683,26 +2767,26 @@
   function compute() {
     var users = clampUsers(num.value);
 
-    var perUser = BASE;
-    if (optSupport.checked) perUser += SUPPORT;
-    if (optTemplates.checked) perUser += TEMPLATES;
-    if (optGarmin.checked) perUser += GARMIN;
-    if (optCommentary.checked) perUser += COMMENTARY;
+    var base = baseFor(users);
+    var perPerson = base;
+    if (optSupport.checked) perPerson += SUPPORT;
+    if (optTemplates.checked) perPerson += TEMPLATES;
+    if (optGarmin.checked) perPerson += GARMIN;
+    if (optCommentary.checked) perPerson += COMMENTARY;
+    if (optPrivate && optPrivate.checked) perPerson += PRIVATE;
 
-    var total = perUser * users;
+    var total = SETUP + perPerson * users;
 
-    outPerUser.textContent = fmtPerUser(perUser);
+    outPerUser.textContent = fmtPerUser(perPerson);
     outTotal.textContent = eur.format(total);
-    outTotalSub.textContent = intFmt.format(users) + ' people · 30-day season';
+    outTotalSub.textContent = intFmt.format(users) + ' people · 30-day season · incl. €500 setup';
 
-    var savingsPerUser = FULL_VALUE - perUser;
-    if (savingsPerUser > 0) {
-      outValue.innerHTML = "You're getting <strong>" + fmtPerUser(FULL_VALUE) +
-        "/person of value</strong> for " + fmtPerUser(perUser) + "/person — that's <strong>" +
-        eur.format(savingsPerUser * users) + "</strong> of bundled value across " + intFmt.format(users) + " people.";
+    if (base < 6) {
+      outValue.innerHTML = "Volume pricing — <strong>" + fmtPerUser(base) +
+        "/person</strong> at " + intFmt.format(users) +
+        " people, down from the 6 € entry price. The more of your people move, the less it costs per person.";
     } else {
-      outValue.innerHTML = "You've selected every component — the full <strong>" +
-        fmtPerUser(perUser) + "/person</strong> package with nothing left out.";
+      outValue.innerHTML = "Entry price — <strong>6 €/person</strong>. Bring more people in and it drops — all the way to <strong>4 €</strong> at 4,000+.";
     }
 
     outRec.textContent = recommendation(users);
@@ -2732,7 +2816,7 @@
       syncFromNum();
     });
 
-    [optSupport, optTemplates, optGarmin, optCommentary].forEach(function (el) {
+    [optSupport, optTemplates, optGarmin, optCommentary, optPrivate].forEach(function (el) {
       if (el) el.addEventListener('change', compute);
     });
 
@@ -2747,6 +2831,76 @@
 
     compute();
   }
+})();
+</script>
+
+<!-- ── HR dashboard KPI count-up + bars ── -->
+<script>
+(function () {
+  'use strict';
+  var cards = document.querySelectorAll('[data-kpi]');
+  if (!cards.length) return;
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var intFmt = new Intl.NumberFormat('en-US');
+
+  function fmt(card, v) {
+    var suffix = card.getAttribute('data-kpi-suffix') || '';
+    var decimals = parseInt(card.getAttribute('data-kpi-decimals'), 10);
+    var out;
+    if (!isNaN(decimals)) {
+      out = v.toFixed(decimals);
+    } else {
+      out = intFmt.format(Math.round(v));
+    }
+    return out + suffix;
+  }
+
+  function animate(card) {
+    var numEl = card.querySelector('.kpi-num');
+    var barEl = card.querySelector('.kpi-bar > span');
+    var target = parseFloat(card.getAttribute('data-kpi-target')) || 0;
+    var bar = parseFloat(card.getAttribute('data-bar')) || 0;
+
+    if (reduce) {
+      if (numEl) numEl.textContent = fmt(card, target);
+      if (barEl) barEl.style.width = bar + '%';
+      return;
+    }
+
+    // bar fills via CSS transition
+    requestAnimationFrame(function () {
+      if (barEl) barEl.style.width = bar + '%';
+    });
+
+    var duration = 1200;
+    var start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      if (numEl) numEl.textContent = fmt(card, target * eased);
+      if (p < 1) requestAnimationFrame(step);
+      else if (numEl) numEl.textContent = fmt(card, target);
+    }
+    requestAnimationFrame(step);
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    cards.forEach(animate);
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        animate(entry.target);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '0px 0px -8% 0px' });
+
+  cards.forEach(function (c) { io.observe(c); });
 })();
 </script>
 
