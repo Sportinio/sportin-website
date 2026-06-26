@@ -575,11 +575,13 @@
   footer.foot a:hover { color: var(--text); text-decoration: none; }
 
   /* ── Reveal ── */
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .reveal { opacity: 0; transform: translateY(30px) scale(0.985); transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1); transition-delay: var(--rd, 0s); }
   .reveal.in { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .reveal { opacity: 1; transform: none; transition: none; }
+    .rw-float { animation: none !important; }
+    .reward-row img { transition: none; }
     .badge.pulse::before { animation: none; }
     .btn:hover, .card:hover, .mech:hover { transform: none; }
   }
@@ -2117,6 +2119,20 @@
   /* ── Levels feature (steps | running as two cards) ── */
   .season-feature { margin-bottom: 18px; }
   .season-card { background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 20px; padding: 30px 28px; }
+  /* Reward rows: airy, floating, staggered (Target & Medals) */
+  @keyframes tokenFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  .reward-row { gap: 30px 26px; padding: 14px 0 10px; }
+  .reward-row .rw-float { display: block; animation: tokenFloat 5s ease-in-out infinite; will-change: transform; }
+  .reward-row figure:nth-child(2) .rw-float { animation-delay: -1s; }
+  .reward-row figure:nth-child(3) .rw-float { animation-delay: -2s; }
+  .reward-row figure:nth-child(4) .rw-float { animation-delay: -2.7s; }
+  .reward-row figure:nth-child(5) .rw-float { animation-delay: -3.5s; }
+  .reward-row img { transition: transform 0.28s cubic-bezier(.215,.61,.355,1); }
+  .reward-row figure:hover img { transform: scale(1.1); }
+  .medals-row.reward-row { align-items: flex-end; gap: 40px; }
+  .medals-row .medal-1 { margin-bottom: 28px; }
+  .medals-row .medal-1 img { height: 106px; }
+  @media (max-width: 480px) { .reward-row { gap: 16px; } .medals-row.reward-row { gap: 22px; } .medals-row .medal-1 img { height: 82px; } }
   .season-feature-head { text-align: center; max-width: 680px; margin: 0 auto 26px; }
   .season-feature-head .sb-kicker { display: block; margin-bottom: 12px; }
   .season-feature-head h3 { font-family: 'Lato', sans-serif; font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 12px; color: var(--text); }
@@ -2619,36 +2635,32 @@
       </div>
 
       <!-- Block 2: Target (Puma and Turtle) -->
-      <div class="season-feature reveal">
-        <div class="season-feature-head">
+      <div class="season-feature">
+        <div class="season-feature-head reveal">
           <span class="sb-kicker">Target</span>
           <h3>Collect points. Climb the ladder.</h3>
           <p>Push hard on a good day and your effort earns a Puma. On a low day, a Turtle reminds you that movement matters, whatever the day.</p>
         </div>
-        <div class="season-card">
-          <div class="season-icons tokens-row">
-          <figure><img src="/tokens/puma-bronze.png" alt="Bronze puma" loading="lazy"><figcaption>Bronze</figcaption></figure>
-          <figure><img src="/tokens/puma-silver.png" alt="Silver puma" loading="lazy"><figcaption>Silver</figcaption></figure>
-          <figure><img src="/tokens/puma-gold.png" alt="Gold puma" loading="lazy"><figcaption>Gold</figcaption></figure>
-          <figure><img src="/tokens/puma-master.png" alt="Master puma" loading="lazy"><figcaption>Master</figcaption></figure>
-          <figure class="token-turtle"><img src="/tokens/turtle.png" alt="Turtle walker badge" loading="lazy"><figcaption>Turtle</figcaption></figure>
-        </div>
+        <div class="season-icons tokens-row reward-row">
+          <figure class="reveal" style="--rd:0.05s"><span class="rw-float"><img src="/tokens/puma-bronze.png" alt="Bronze puma" loading="lazy"></span><figcaption>Bronze</figcaption></figure>
+          <figure class="reveal" style="--rd:0.13s"><span class="rw-float"><img src="/tokens/puma-silver.png" alt="Silver puma" loading="lazy"></span><figcaption>Silver</figcaption></figure>
+          <figure class="reveal" style="--rd:0.21s"><span class="rw-float"><img src="/tokens/puma-gold.png" alt="Gold puma" loading="lazy"></span><figcaption>Gold</figcaption></figure>
+          <figure class="reveal" style="--rd:0.29s"><span class="rw-float"><img src="/tokens/puma-master.png" alt="Master puma" loading="lazy"></span><figcaption>Master</figcaption></figure>
+          <figure class="reveal token-turtle" style="--rd:0.37s"><span class="rw-float"><img src="/tokens/turtle.png" alt="Turtle walker badge" loading="lazy"></span><figcaption>Turtle</figcaption></figure>
         </div>
       </div>
 
       <!-- Block 3: Medals -->
-      <div class="season-feature reveal">
-        <div class="season-feature-head">
+      <div class="season-feature">
+        <div class="season-feature-head reveal">
           <span class="sb-kicker">Medals</span>
           <h3>Top three, every day.</h3>
           <p>Gold, silver and bronze for the best daily steps. Every winner joins the all-time medal leaderboard.</p>
         </div>
-        <div class="season-card">
-          <div class="season-icons medals-row">
-          <figure><img src="/medals/gold.png" alt="Gold medal, first place" loading="lazy"><figcaption>1st</figcaption></figure>
-          <figure><img src="/medals/silver.png" alt="Silver medal, second place" loading="lazy"><figcaption>2nd</figcaption></figure>
-          <figure><img src="/medals/bronze.png" alt="Bronze medal, third place" loading="lazy"><figcaption>3rd</figcaption></figure>
-        </div>
+        <div class="season-icons medals-row reward-row">
+          <figure class="reveal medal-2" style="--rd:0.13s"><span class="rw-float"><img src="/medals/silver.png" alt="Silver medal, second place" loading="lazy"></span><figcaption>2nd</figcaption></figure>
+          <figure class="reveal medal-1" style="--rd:0.05s"><span class="rw-float"><img src="/medals/gold.png" alt="Gold medal, first place" loading="lazy"></span><figcaption>1st</figcaption></figure>
+          <figure class="reveal medal-3" style="--rd:0.21s"><span class="rw-float"><img src="/medals/bronze.png" alt="Bronze medal, third place" loading="lazy"></span><figcaption>3rd</figcaption></figure>
         </div>
       </div>
 
