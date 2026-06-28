@@ -174,14 +174,26 @@ function fmtK(n){n=+n||0;return n>=1000?((n/1000>=10?Math.round(n/1000):(Math.ro
 // 3) Accept → carry the code (clipboard + localStorage) and route to the right store.
 function isiOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
 function isAndroid(){return /android/i.test(navigator.userAgent);}
-function accept(){
-  try{localStorage.setItem('sportin_ref_code',code);}catch(e){}
-  // Copy the full tagged URL so the app can detect a referral on the clipboard
-  // (vs. arbitrary text) and parse the code from /ref/<code>.
-  try{navigator.clipboard&&navigator.clipboard.writeText(location.origin+'/ref/'+code);}catch(e){}
+function routeToStore(){
   if(isiOS()){location.href=APP_STORE_URL;}
   else if(isAndroid()){location.href=PLAY_STORE_URL;}
   else{document.getElementById('stores').style.display='flex';}
+}
+function accept(){
+  try{localStorage.setItem('sportin_ref_code',code);}catch(e){}
+  // Copy the full tagged URL so the app can detect a referral on the clipboard
+  // (vs. arbitrary text) and parse the code from /ref/<code>. CRITICAL: writeText is
+  // async — we must let it settle BEFORE navigating to the store, or iOS Safari aborts
+  // the write and the app never sees the code. Navigate on resolve, with a 400ms cap so
+  // a hung/denied clipboard never strands the user.
+  var navigated=false;
+  function once(){ if(navigated) return; navigated=true; routeToStore(); }
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(location.origin+'/ref/'+code).then(once,once);
+      setTimeout(once,400);
+    } else { once(); }
+  }catch(e){ once(); }
 }
 function showCodeHint(){
   if(!code) return;
