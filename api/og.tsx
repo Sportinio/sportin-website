@@ -213,7 +213,6 @@ export default async function handler(req: Request) {
               color: '#fff',
               textAlign: 'center',
               maxWidth: 640,
-              textShadow: '0 0 46px rgba(26,140,255,0.95), 0 0 16px rgba(26,140,255,0.7)',
             }}
           >
             Walk beside me if you can, outrun me if you dare
