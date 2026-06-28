@@ -1,5 +1,7 @@
 {
   "rewrites": [
-    { "source": "/ref/:code", "destination": "/ref/index.html" }
+    { "source": "/ref", "destination": "/api/ref?code=" },
+    { "source": "/ref/", "destination": "/api/ref?code=" },
+    { "source": "/ref/:code((?!.*\\.).*)", "destination": "/api/ref?code=:code" }
   ]
 }

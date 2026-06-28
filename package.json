@@ -1,0 +1,11 @@
+{
+  "name": "sportin-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SportIn marketing/referral static site with dynamic OG image rendering.",
+  "dependencies": {
+    "@vercel/og": "^0.11.1",
+    "react": "^18.2.0",
+    "@types/react": "^18.2.0"
+  }
+}

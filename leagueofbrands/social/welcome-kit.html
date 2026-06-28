@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Welcome Kit — League of Brands | SportIn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<style>
+  :root {
+    --ink-0: #06060C;
+    --ink-1: #0A0A12;
+    --ink-2: #101018;
+    --surface: rgba(255,255,255,0.04);
+    --surface-2: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.08);
+    --border-2: rgba(255,255,255,0.13);
+    --text: #F4F5F8;
+    --text-2: #C2C5D2;
+    --text-3: #888EA3;
+    --text-4: #565C72;
+    --blue: #0751FB;
+    --blue-bright: #4C86FF;
+    --radius-card: 22px;
+    --font: 'Lato', system-ui, -apple-system, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { background: var(--ink-0); color: var(--text); font-family: var(--font); min-height: 100vh; }
+
+  /* ───────── PAGE CHROME ───────── */
+  .page-header { text-align: center; padding: 64px 24px 4px; max-width: 720px; margin: 0 auto; }
+  .page-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--blue-bright); margin-bottom: 18px; }
+  .page-title { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 14px; text-wrap: balance; }
+  .page-sub { color: var(--text-3); font-size: 15px; line-height: 1.6; text-wrap: pretty; }
+  .note { max-width: 600px; margin: 22px auto 0; text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 13px 16px; font-size: 12.5px; color: var(--text-3); line-height: 1.55; display: flex; gap: 10px; align-items: flex-start; }
+  .note .d { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-bright); margin-top: 6px; flex-shrink: 0; }
+  .note b { color: var(--text-2); font-weight: 700; }
+
+  .sec-head { max-width: 1100px; margin: 0 auto; padding: 64px 24px 0; text-align: center; }
+  .sec-num { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: var(--text-4); text-transform: uppercase; }
+  .sec-title { font-size: 21px; font-weight: 900; letter-spacing: -0.01em; margin-top: 8px; }
+  .sec-title span { color: var(--text-4); font-weight: 400; }
+  .sec-desc { color: var(--text-3); font-size: 13.5px; margin-top: 6px; line-height: 1.55; }
+
+  /* ───────── CAROUSEL ───────── */
+  .stage { display: flex; align-items: center; justify-content: center; gap: 24px; padding: 32px 24px 0; }
+  .arrow { flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border-2); color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .18s cubic-bezier(.23,1,.32,1), border-color .18s, transform .15s, color .18s; }
+  .arrow:hover { background: rgba(7,81,251,.16); border-color: var(--blue); color: #fff; }
+  .arrow:active { transform: scale(.94); }
+  .arrow svg { width: 20px; height: 20px; }
+
+  .controls { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 22px 24px 0; }
+  .dots { display: flex; gap: 6px; max-width: 360px; flex-wrap: wrap; justify-content: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border-2); cursor: pointer; transition: all .22s cubic-bezier(.23,1,.32,1); }
+  .dot.active { background: var(--blue-bright); width: 20px; border-radius: 100px; }
+  .cap { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-4); }
+  .cap b { color: var(--text-2); font-weight: 700; }
+  .dl { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; background: var(--blue); color: #fff; border: none; border-radius: 11px; font-family: var(--font); font-size: 13.5px; font-weight: 700; cursor: pointer; transition: background .18s, transform .12s; }
+  .dl:hover { background: #1e62ff; transform: translateY(-1px); }
+  .dl:active { transform: scale(.97); }
+  .dl svg { width: 15px; height: 15px; }
+
+  /* ───────── SHARED CARD PIECES ───────── */
+  .card { position: relative; overflow: hidden; flex-shrink: 0; isolation: isolate; }
+
+  /* Light logo plate — the "lighter" treatment, holds the real crest */
+  .badge {
+    position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    background: linear-gradient(180deg, #FFFFFF 0%, #EAEDF3 100%);
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 10px 26px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .badge .ini { font-weight: 900; color: #0A0A12; letter-spacing: 0.01em; }
+
+  .lob-lock { display: inline-flex; align-items: center; gap: 9px; }
+  .lob-lock .mark { width: 19px; height: 19px; border-radius: 5px; display: block; flex-shrink: 0; }
+  .lob-lock .wm { font-weight: 900; font-size: 12px; letter-spacing: 0.16em; color: var(--text-2); text-transform: uppercase; }
+  .pill { font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); padding: 5px 11px; border: 1px solid var(--border-2); border-radius: 100px; white-space: nowrap; }
+  .eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase; color: var(--blue-bright); display: inline-flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content:''; width: 5px; height: 5px; border-radius: 50%; background: var(--blue-bright); }
+  .brand-rule { height: 2px; width: 42px; border-radius: 2px; background: var(--blue); }
+
+  /* ════════ FORMAT 01 — WELCOME CARD · 4:3 (600×450) ════════ */
+  .c-welcome { width: 600px; height: 450px; border-radius: var(--radius-card); padding: 30px 40px 26px; display: flex; flex-direction: column; background: linear-gradient(180deg, var(--ink-2) 0%, var(--ink-0) 82%); border: 1px solid var(--border-2); box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 24px 70px rgba(0,0,0,.55); }
+  .c-welcome .head { display: flex; align-items: center; justify-content: space-between; }
+  .c-welcome .hero { margin: auto 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .c-welcome .badge { width: 86px; height: 86px; border-radius: 20px; margin-bottom: 22px; }
+  .c-welcome .badge img { padding: 0; }
+  .c-welcome .badge .ini { font-size: 30px; }
+  .c-welcome .eyebrow { margin-bottom: 14px; }
+  .c-welcome .team { font-size: 40px; font-weight: 900; letter-spacing: -0.028em; line-height: 1.0; color: #fff; text-wrap: balance; max-width: 480px; }
+  .c-welcome .sub { font-size: 13px; font-weight: 400; color: var(--text-3); margin-top: 16px; }
+  .c-welcome .foot { display: flex; align-items: center; justify-content: space-between; padding-top: 18px; border-top: 1px solid var(--border); }
+  .c-welcome .foot .url { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--text-4); text-transform: uppercase; }
+  .c-welcome .cup-bg { position: absolute; right: -26px; bottom: -34px; height: 240px; width: auto; opacity: .07; filter: grayscale(.4); z-index: -1; pointer-events: none; }
+
+  /* ════════ FORMAT 02 — TEAM PROFILE · 4:5 (540×675) ════════ */
+  .c-profile { width: 540px; height: 675px; border-radius: var(--radius-card); padding: 40px 44px 36px; display: flex; flex-direction: column; background: linear-gradient(180deg, var(--ink-2) 0%, var(--ink-0) 88%); border: 1px solid var(--border-2); box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 24px 70px rgba(0,0,0,.55); }
+  .c-profile .head { display: flex; align-items: center; justify-content: space-between; }
+  .c-profile .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .c-profile .badge { width: 138px; height: 138px; border-radius: 30px; margin-bottom: 26px; }
+  .c-profile .badge img { padding: 0; }
+  .c-profile .badge .ini { font-size: 48px; }
+  .c-profile .eyebrow { margin-bottom: 16px; }
+  .c-profile .team { font-size: 44px; font-weight: 900; letter-spacing: -0.028em; line-height: 0.98; color: #fff; text-wrap: balance; max-width: 430px; }
+  .c-profile .brand-rule { margin: 16px 0 0; }
+  .c-profile .sub { font-size: 13.5px; font-weight: 400; color: var(--text-3); margin-top: 16px; }
+  .c-profile .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 4px; }
+  .c-profile .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 15px 8px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 76px; }
+  .c-profile .stat .v { font-size: 19px; font-weight: 900; color: #fff; letter-spacing: -0.01em; display: flex; align-items: center; justify-content: center; }
+  .c-profile .stat .v img { height: 26px; width: auto; border-radius: 3px; outline: 1px solid rgba(255,255,255,0.16); outline-offset: -1px; display: block; }
+  .c-profile .stat .l { font-size: 8.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-4); margin-top: 8px; }
+  .c-profile .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .c-profile .foot .url { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--text-4); text-transform: uppercase; }
+  .c-profile .cup-bg { position: absolute; left: 50%; bottom: -70px; transform: translateX(-50%); height: 420px; width: auto; opacity: .055; filter: grayscale(.5); z-index: -1; pointer-events: none; }
+
+  footer { text-align: center; padding: 72px 24px 64px; color: var(--text-4); font-size: 12.5px; }
+  footer a { color: var(--text-3); text-decoration: none; }
+  footer a:hover { color: var(--text-2); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-eyebrow">Media Kit · Welcome Series</div>
+  <h1 class="page-title">League of Brands — Welcome Kit</h1>
+  <p class="page-sub">Ready-to-post assets announcing each team. Arrow through the roster — download a PNG.</p>
+  <div class="note"><span class="d"></span><span><b>Live data:</b> the <span id="team-count"></span> teams below are the <b>League of Brands '26</b> roster — pulled straight from the competition (try.sportin.io). Other competitions are excluded.</span></div>
+</div>
+
+<!-- ════ FORMAT 01: WELCOME CARD (4:3) ════ -->
+<div class="sec-head">
+  <div class="sec-num">Format 01</div>
+  <div class="sec-title">Welcome Card <span>· 4:3 · feed post</span></div>
+  <div class="sec-desc">The announcement — crest, the team, and the cup.</div>
+</div>
+
+<div class="stage">
+  <button class="arrow" onclick="move(-1)" aria-label="Previous team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+
+  <div class="card c-welcome" id="c-welcome">
+    <img src="/leagueofbrands/lob_cup.png" alt="" class="cup-bg"/>
+    <div class="head">
+      <div class="lob-lock"><span class="mark" id="w-mark"></span><span class="wm">League of Brands</span></div>
+      <span class="pill">Season I</span>
+    </div>
+    <div class="hero">
+      <div class="badge" id="w-badge"></div>
+      <div class="eyebrow">Welcome to the League</div>
+      <div class="team" id="w-team"></div>
+      <div class="sub">Romania's national brand competition · Season I</div>
+    </div>
+    <div class="foot">
+      <span class="pill">Official Team</span>
+      <span class="url">sportin.io/leagueofbrands</span>
+    </div>
+  </div>
+
+  <button class="arrow" onclick="move(1)" aria-label="Next team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<div class="controls">
+  <div class="dots" id="dots-1"></div>
+  <div class="cap">Team · <b id="cap-1"></b></div>
+  <button class="dl" onclick="downloadCard('c-welcome','welcome-card')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PNG</button>
+</div>
+
+<!-- ════ FORMAT 02: TEAM PROFILE (4:5) ════ -->
+<div class="sec-head">
+  <div class="sec-num">Format 02</div>
+  <div class="sec-title">Team Profile <span>· 4:5 · story / portrait</span></div>
+  <div class="sec-desc">The team sign — crest, name, country and squad.</div>
+</div>
+
+<div class="stage">
+  <button class="arrow" onclick="move(-1)" aria-label="Previous team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+
+  <div class="card c-profile" id="c-profile">
+    <img src="/leagueofbrands/lob_cup.png" alt="" class="cup-bg"/>
+    <div class="head">
+      <div class="lob-lock"><span class="mark" id="p-mark"></span><span class="wm">League of Brands</span></div>
+      <span class="pill">Season I</span>
+    </div>
+    <div class="hero">
+      <div class="badge" id="p-badge"></div>
+      <div class="eyebrow">New Team</div>
+      <div class="team" id="p-team"></div>
+      <div class="brand-rule"></div>
+      <div class="sub">Competing in the League of Brands</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v" id="p-flag"></div><div class="l">Country</div></div>
+      <div class="stat"><div class="v">25+</div><div class="l">Squad</div></div>
+      <div class="stat"><div class="v">Movement</div><div class="l">Format</div></div>
+    </div>
+    <div class="foot">
+      <span class="pill">Official Team</span>
+      <span class="url">sportin.io/leagueofbrands</span>
+    </div>
+  </div>
+
+  <button class="arrow" onclick="move(1)" aria-label="Next team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<div class="controls">
+  <div class="dots" id="dots-2"></div>
+  <div class="cap">Team · <b id="cap-2"></b></div>
+  <button class="dl" onclick="downloadCard('c-profile','team-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PNG</button>
+</div>
+
+<footer>League of Brands · <a href="/leagueofbrands">sportin.io/leagueofbrands</a></footer>
+
+<script>
+  const MARK = "data:image/svg+xml;base64," + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="246" height="246" viewBox="0 0 246 246"><rect width="246" height="246" rx="40" fill="#0751FB"/><path d="M178.519 54.984C179.256 56.6353 178.897 57.1447 172.64 63.32C169.647 66.2747 163.821 72.0265 159.693 76.1019C155.565 80.1773 149.147 86.4674 145.431 90.0808C141.716 93.6938 136.591 98.6955 134.044 101.196C122.792 112.238 119.802 115.16 114.223 120.56C110.963 123.716 107.381 127.174 106.264 128.246C105.147 129.317 102.438 131.959 100.243 134.116C98.0494 136.274 95.8557 138.343 95.3689 138.714C93.0767 140.46 89.9168 141.207 87.2326 140.636C85.3398 140.234 83.8119 139.283 81.7994 137.254C79.9855 135.426 73.2589 128.421 70.3123 125.294C69.5013 124.434 67.8749 122.725 66.6975 121.497C60.5948 115.131 59.979 114.383 58.9413 112.07C57.0562 107.869 56.9821 101.778 58.7686 97.9367C59.6734 95.9916 60.5896 94.702 65.1399 88.9683C67.7352 85.6979 70.1078 82.7155 70.4131 82.3406C71.7291 80.7249 76.4743 74.6881 77.4287 73.4158C78.0019 72.6519 79.1378 71.1848 79.9529 70.1563C80.7679 69.1271 82.4766 66.9234 83.7504 65.2584C88.1762 59.4736 89.0584 58.524 91.6233 56.7879C94.1811 55.0566 96.7568 53.9211 99.5888 53.276C100.747 53.0122 104.881 52.973 138.212 52.9104C172.723 52.8448 175.602 52.8629 176.373 53.1489C177.358 53.5139 178.174 54.2123 178.519 54.984Z" fill="white"/><path d="M189.602 138.066C189.92 139.856 189.059 145.774 188.329 146.816C188.171 147.041 188.042 147.353 188.042 147.509C188.04 148.087 186.186 150.778 182.841 155.059C180.948 157.48 178.431 160.713 177.246 162.241C174.168 166.214 166.701 175.687 163.935 179.129C163.185 180.063 161.615 182.063 160.446 183.575C157.832 186.957 156.336 188.487 154.423 189.736C152.087 191.261 149.948 192.145 146.918 192.838C145.625 193.134 142.992 193.152 109.22 193.099C74.4962 193.043 72.8835 193.026 72.2463 192.703C70.5179 191.825 70.2852 189.643 71.7387 187.945C72.6127 186.926 94.5668 164.841 129.058 130.286C146.656 112.655 153.476 105.937 154.253 105.467C154.971 105.033 155.84 104.716 156.908 104.497C158.873 104.095 159.62 104.088 161.037 104.455C162.988 104.961 163.829 105.563 166.324 108.241C167.606 109.617 169.536 111.665 170.614 112.791C173.072 115.359 174.842 117.233 178.131 120.749C179.558 122.273 181.312 124.146 182.03 124.912C186.246 129.405 187.103 130.452 187.826 131.992C188.672 133.794 189.061 134.962 189.327 136.492C189.433 137.103 189.557 137.811 189.602 138.066Z" fill="white"/></svg>');
+
+  // ── League of Brands '26 roster — authoritative (lob_league_teams · league 4b0f82f7) ──
+  const TEAMS = [
+    { name: "FC Oxford United", cc: "gb", ini: "FO", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/b008d361-fb12-4dc3-ae2f-561dfd327fb7/logo-1781087021906.jpg" },
+    { name: "Porsche", cc: "pt", ini: "PO", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/eb14a388-4c0a-4ca6-9e5b-7a271b28177d/logo-1780612128611.jpg" },
+    { name: "Xiaomi", cc: "es", ini: "XI", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/44030fe1-f95d-475a-9709-d367754e583c/logo-1780937877468.png" },
+    { name: "Carrefour", cc: "es", ini: "CA", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/ac233dfd-1af7-4f13-a911-8c58b9aa289f/logo-1780938084592.webp" },
+    { name: "Burger King", cc: "it", ini: "BK", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/aee6065a-8f39-4b82-a8c3-00e70ca62d2c/logo-1782074735671.jpg" },
+    { name: "Planet Fitness", cc: "es", ini: "PF", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/b817377c-b8bd-4045-a9f3-49634063ba8c/logo-1781034697924.png" },
+    { name: "SportIn", cc: "ro", ini: "SP", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/8d149428-baca-46be-a8f4-11ba755d06d1/logo-1780581520002.png" },
+    { name: "theMarketer", cc: "ro", ini: "TH", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/b6c84435-5adc-45ce-99fc-e15037908e81/logo-1781871833900.jpeg" },
+    { name: "Urban FM", cc: "ro", ini: "UF", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/736ea398-c8d5-410c-bfd2-ee31c3ddea9e/logo-1780581594138.jpeg" },
+    { name: "GAM", cc: "ro", ini: "GA", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/4e05ea37-35e2-4591-b0e7-b3e59ec9b8e9/logo-1781454912057.png" },
+    { name: "Data Dive CSOP", cc: "ro", ini: "DD", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/c9198da7-484b-42a1-9eb3-f8143688eb43/logo-1782075192831.jpeg" },
+    { name: "Mama Harmony", cc: "ro", ini: "MH", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/6ea3906d-bff5-4116-a0a0-d0dde8de3eb7/logo-1780953362396.jpeg" },
+    { name: "Ajungem Mari", cc: "ro", ini: "AM", logo: "https://yorrcazqfkpqtsziyyqx.supabase.co/storage/v1/object/public/team-logos/4b0f82f7-fd1f-4cf3-b059-ee0af17dab1c/1667be69-0558-415a-a121-18d0da920e7a/1780522228096.png" },
+  ];
+
+  let i = 0;
+  const flagUrl = cc => cc ? `https://flagcdn.com/w160/${cc}.png` : '';
+
+  function fillBadge(el, t) {
+    if (t.logo) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.alt = t.name;
+      img.onerror = () => { el.innerHTML = `<span class="ini">${t.ini}</span>`; };
+      img.src = t.logo;
+      el.innerHTML = ''; el.appendChild(img);
+    } else { el.innerHTML = `<span class="ini">${t.ini}</span>`; }
+  }
+  function fillFlag(el, cc) {
+    if (cc) {
+      const f = new Image(); f.crossOrigin = 'anonymous'; f.alt = cc;
+      f.onerror = () => { el.textContent = cc.toUpperCase(); };
+      f.src = flagUrl(cc);
+      el.innerHTML = ''; el.appendChild(f);
+    } else { el.textContent = '—'; }
+  }
+
+  function render() {
+    const t = TEAMS[i];
+    [document.getElementById('w-mark'), document.getElementById('p-mark')].forEach(m => { m.style.background = `url(${MARK}) center/contain no-repeat`; });
+
+    fillBadge(document.getElementById('w-badge'), t);
+    document.getElementById('w-team').textContent = t.name;
+
+    fillBadge(document.getElementById('p-badge'), t);
+    document.getElementById('p-team').textContent = t.name;
+    fillFlag(document.getElementById('p-flag'), t.cc);
+
+    document.getElementById('cap-1').textContent = t.name;
+    document.getElementById('cap-2').textContent = t.name;
+    document.querySelectorAll('.dots').forEach(d => d.querySelectorAll('.dot').forEach((dot, idx) => dot.classList.toggle('active', idx === i)));
+  }
+
+  function move(dir) { i = (i + dir + TEAMS.length) % TEAMS.length; render(); }
+
+  function buildDots() {
+    ['dots-1','dots-2'].forEach(id => {
+      const el = document.getElementById(id); el.innerHTML = '';
+      TEAMS.forEach((_, idx) => { const d = document.createElement('div'); d.className='dot'; d.onclick = () => { i = idx; render(); }; el.appendChild(d); });
+    });
+  }
+
+  document.addEventListener('keydown', e => { if (e.key==='ArrowLeft') move(-1); if (e.key==='ArrowRight') move(1); });
+
+  async function downloadCard(id, prefix) {
+    const el = document.getElementById(id); const btn = event.currentTarget; const orig = btn.innerHTML;
+    btn.innerHTML = 'Generating…'; btn.disabled = true;
+    try {
+      const canvas = await html2canvas(el, { scale: 3, backgroundColor: null, useCORS: true, allowTaint: false, logging: false });
+      const link = document.createElement('a');
+      link.download = prefix + '-' + TEAMS[i].name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.png';
+      link.href = canvas.toDataURL('image/png'); link.click();
+    } catch (err) { console.error(err); alert('Download failed. Try again.'); }
+    btn.innerHTML = orig; btn.disabled = false;
+  }
+
+  document.getElementById('team-count').textContent = TEAMS.length;
+  buildDots(); render();
+</script>
+</body>
+</html>
