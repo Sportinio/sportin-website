@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>You're invited to SportIn</title>
+<meta name="description" content="Track your movement, earn your level, and settle it on the leaderboard. Accept your invitation and claim your spot." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="SportIn" />
+<meta property="og:title" content="You're invited to SportIn" />
+<meta property="og:description" content="Track your movement, earn your level, and settle it on the leaderboard. Accept your invitation and claim your spot." />
+<meta property="og:image" content="https://www.sportin.io/ref/og.png" />
+<meta property="og:image:secure_url" content="https://www.sportin.io/ref/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="You're invited to SportIn" />
+<meta property="og:url" content="https://sportin.io/ref/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="You're invited to SportIn" />
+<meta name="twitter:description" content="Track your movement, earn your level, and settle it on the leaderboard." />
+<meta name="twitter:image" content="https://www.sportin.io/ref/og.png" />
+<meta name="theme-color" content="#08080a" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;800&family=Ms+Madi&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{ --brand:#1A8CFF; --brand-deep:#0751FB; --bg1:#11141b; --bg2:#0a0c11;
+    --t2:rgba(255,255,255,.5); --t3:rgba(255,255,255,.42); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{min-height:100dvh;background:#08080a;overflow-x:hidden;
+    font-family:'Inter',-apple-system,system-ui,sans-serif;}
+
+  .invite{position:relative;width:100%;max-width:600px;margin:0 auto;min-height:100dvh;overflow:hidden;display:flex;flex-direction:column;}
+  .invite .wm{position:absolute;inset:0;width:100%;height:100%}
+  .invite .pad{position:relative;min-width:0;display:flex;flex-direction:column;padding:30px clamp(20px,5.5vw,44px) 0;}
+  .row{display:flex;align-items:center;justify-content:flex-end;width:100%;min-width:0;margin-bottom:clamp(22px,4vh,40px)}
+  .pill{display:inline-flex;align-items:center;gap:9px;padding:8px 15px;border-radius:999px;border:1px solid rgba(255,255,255,.14)}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--brand)}
+  .pill span{font-size:11px;font-weight:700;letter-spacing:1.6px;color:#fff}
+  .wordmark{height:14px;width:auto}
+  .avatar{position:relative;width:clamp(150px,42vw,250px);height:clamp(150px,42vw,250px);margin:clamp(8px,2vh,22px) 0 clamp(14px,3vh,26px)}
+  .avatar .ph{position:absolute;inset:0;border-radius:50%;overflow:hidden;
+    background:radial-gradient(circle at 50% 38%,#3a3f4a,#23262e);border:1px solid rgba(255,255,255,.08)}
+  .avatar .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .name{position:relative;width:100%;min-width:0;margin-top:clamp(8px,2vh,18px);padding-top:clamp(34px,9vw,60px)}
+  .name .last{font-family:'Big Shoulders Display';font-weight:800;font-size:clamp(58px,18vw,110px);line-height:.9;letter-spacing:-1px;color:#fff;text-transform:uppercase}
+  .name .first{position:absolute;top:clamp(-4px,-0.5vw,0px);left:2px;font-family:'Ms Madi';font-size:clamp(44px,13.6vw,84px);line-height:1;color:var(--brand-deep);z-index:2;text-shadow:0 2px 12px rgba(8,10,16,.5)}
+  .name .first.pink{color:#FF5CA8} .name .first.grey{color:#AEB4BE}
+  .stats{margin:clamp(24px,5vh,44px) 0 0;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;display:flex}
+  .stat{flex:1;min-width:0;padding:clamp(16px,3.5vw,24px) 6px;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,2vw,12px)}
+  .stat + .stat{border-left:1px solid rgba(255,255,255,.08)}
+  .stat .lbl{font-size:clamp(11px,2.8vw,13px);font-weight:700;letter-spacing:1.4px;color:var(--t3)}
+  .stat .val{font-family:'Big Shoulders Display';font-weight:800;font-size:clamp(28px,8.5vw,44px);color:#fff;line-height:1;height:clamp(30px,8.5vw,46px);display:flex;align-items:center}
+  .stat .badge-img{height:clamp(30px,8.5vw,46px);display:block}
+
+  .foot{margin-top:auto;padding:clamp(20px,4vh,34px) clamp(20px,5.5vw,44px) 26px;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .cta{position:relative;cursor:pointer;border:none;width:100%;border-radius:16px;
+    background:var(--brand-deep);color:#fff;padding:clamp(18px,4.5vw,24px);font-family:inherit;
+    display:flex;align-items:center;justify-content:center}
+  .cta span{font-size:clamp(15px,4vw,18px);font-weight:700;letter-spacing:1.5px}
+  .cta svg{position:absolute;right:clamp(20px,6vw,30px);top:50%;transform:translateY(-50%);width:clamp(20px,6vw,26px);height:auto}
+  .stores{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+  .store-row{display:flex;gap:10px;width:100%}
+  .store{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:12px;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;text-decoration:none;
+    font-size:13px;font-weight:600}
+  .weblink{color:var(--t2);font-size:12px;text-decoration:underline;text-underline-offset:3px}
+  .codehint{color:var(--t3);font-size:12px;text-align:center;line-height:1.5}
+  .codehint b{color:#fff;font-weight:700;letter-spacing:.5px}
+  .tag{text-align:center;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.28);font-weight:600}
+</style>
+</head>
+<body>
+  <div class="invite">
+    <svg class="wm" viewBox="0 0 330 560" aria-hidden="true">
+      <defs><linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#26272d"/><stop offset=".5" stop-color="#16171b"/><stop offset="1" stop-color="#0c0d10"/>
+      </linearGradient></defs>
+      <g opacity=".95" transform="translate(40 150) rotate(-6) scale(3.47)" fill="url(#gloss)">
+        <path d="M68.0643 1.18373C68.4786 2.11227 68.2768 2.39873 64.7589 5.87123C63.0757 7.53268 59.7993 10.7671 57.4782 13.0587C55.157 15.3504 51.548 18.8875 49.4586 20.9193C47.3693 22.951 44.4876 25.7635 43.0553 27.1693C36.7282 33.3789 35.0468 35.0216 31.9097 38.0583C30.0763 39.8329 28.0624 41.7777 27.4341 42.3802C26.8057 42.9827 25.2824 44.4681 24.0486 45.6814C22.8149 46.8948 21.5813 48.0581 21.3076 48.2666C20.0186 49.2485 18.2418 49.6683 16.7324 49.3477C15.668 49.1214 14.8088 48.5866 13.6772 47.4458C12.6572 46.4177 8.87468 42.4789 7.2178 40.7204C6.76176 40.2366 5.84718 39.2756 5.18509 38.585C1.75343 35.0056 1.40718 34.585 0.823635 33.2841C-0.236365 30.9219 -0.278033 27.4966 0.726551 25.3369C1.2353 24.2431 1.75051 23.5179 4.30926 20.2937C5.76864 18.4548 7.1028 16.7777 7.27447 16.5668C8.01447 15.6583 10.6828 12.2637 11.2195 11.5483C11.5418 11.1187 12.1805 10.2937 12.6388 9.71539C13.0972 9.13664 14.058 7.89748 14.7743 6.96123C17.263 3.70831 17.7591 3.17435 19.2013 2.1981C20.6397 1.22456 22.088 0.586017 23.6805 0.223309C24.3316 0.0749757 26.6563 0.0528925 45.3993 0.0176841C64.8053 -0.0191909 66.4241 -0.00898313 66.8576 0.15185C67.4116 0.357059 67.8705 0.749767 68.0643 1.18373Z"/>
+        <path d="M74.2966 47.9023C74.4751 48.9085 73.9912 52.2362 73.5808 52.8223C73.4918 52.9489 73.4193 53.1246 73.4191 53.2119C73.4183 53.5369 72.3755 55.0504 70.4947 57.4575C69.4301 58.8192 68.0147 60.6367 67.3487 61.496C65.6174 63.7302 61.4189 69.0571 59.8637 70.9925C59.4416 71.5177 58.5589 72.6427 57.9018 73.4925C56.4318 75.3944 55.5903 76.2548 54.5145 76.9571C53.2012 77.8144 51.9985 78.3119 50.2943 78.7016C49.5676 78.8681 48.0866 78.8781 29.0964 78.8479C9.57034 78.8169 8.66347 78.8071 8.30513 78.6254C7.33326 78.1319 7.20241 76.9046 8.0197 75.9502C8.51116 75.3769 20.8564 62.9579 40.2512 43.5273C50.147 33.6129 53.982 29.8354 54.4193 29.571C54.8226 29.3271 55.3114 29.1487 55.912 29.0258C57.017 28.7998 57.437 28.7956 58.2337 29.0019C59.3307 29.2862 59.8041 29.625 61.2068 31.131C61.9276 31.9048 63.0133 33.056 63.6193 33.6894C65.0014 35.1337 65.9966 36.1871 67.8464 38.1642C68.6485 39.0212 69.6351 40.0748 70.0389 40.5052C72.4093 43.0317 72.8914 43.6208 73.2978 44.4867C73.7732 45.4998 73.9924 46.1569 74.1418 47.0169C74.2016 47.3606 74.271 47.7589 74.2966 47.9023Z"/>
+      </g>
+    </svg>
+    <div class="pad">
+      <div class="row">
+        <svg width="80" height="11" viewBox="0 81 208 27" fill="white" aria-hidden="true">
+          <path d="M81.2725 82.0357C91.9558 82.0778 91.4877 82.045 93.0977 82.8521C94.788 83.6991 96.0191 85.312 96.3711 87.1382C96.4236 87.4116 96.4755 90.6699 96.4863 94.3785C96.4926 96.6258 96.4992 98.8733 96.5059 101.121C96.4109 101.398 96.3157 101.677 96.2207 101.955C95.8441 103.056 95.4586 103.705 94.7607 104.417C93.7092 105.489 92.7426 106.005 91.1416 106.35C90.3423 106.523 89.527 106.538 80.8467 106.538C70.1494 106.538 70.6939 106.577 68.8672 105.678C67.5529 105.032 66.6521 104.142 66.0654 102.914C65.8409 102.443 65.6022 101.824 65.5352 101.538C65.3904 100.917 65.2988 89.9409 65.4248 88.3003C65.5563 86.5894 66.0638 85.367 67.1035 84.2554C68.1293 83.1586 69.3712 82.4837 70.96 82.1597C71.6481 82.0193 72.9845 82.0032 81.2725 82.0357ZM80.6797 88.1753C78.739 88.1851 76.7981 88.1948 74.8574 88.2046C74.6919 88.3019 74.5259 88.3992 74.3604 88.4966C74.0862 88.6577 73.7358 88.9849 73.5791 89.2261C73.4844 89.3715 73.3897 89.5171 73.2949 89.6626V94.1939C73.2949 98.6378 73.2989 98.7334 73.5195 99.1421C73.807 99.6748 74.2293 100.068 74.7393 100.278C75.3305 100.521 86.2525 100.528 87.0703 100.286C87.7297 100.09 88.39 99.4007 88.4883 98.8042C88.5947 98.1604 88.5436 90.1164 88.4307 89.691C88.3731 89.4751 88.1436 89.1195 87.9141 88.8902C87.1576 88.1339 87.2385 88.1422 80.6797 88.1753Z"/>
+          <path d="M43.7363 82.0063C56.162 82.0067 56.2813 82.0119 57.7344 82.6225C59.6672 83.4346 60.9457 84.9504 61.4047 86.9742C61.6528 88.0677 61.6547 94.5392 61.4069 95.5261C61.0219 97.0609 59.759 98.5915 58.2936 99.2984C56.6972 100.069 56.8305 100.058 48.1634 100.103C45.5853 100.116 43.0072 100.13 40.429 100.143C40.429 101.217 40.429 102.292 40.429 103.366C40.429 104.44 40.429 105.515 40.429 106.589C39.1136 106.589 37.7984 106.589 36.4828 106.589C35.1676 106.589 33.852 106.589 32.5365 106.589C32.5157 106.511 32.4949 106.433 32.4738 106.355C32.4392 106.226 32.4105 100.695 32.4097 94.0632C32.4092 90.044 32.4086 86.025 32.4082 82.0059C36.1842 82.0059 39.9603 82.0061 43.7363 82.0063ZM53.4117 89.0486C53.277 88.8256 52.9842 88.5329 52.7613 88.3981C52.6263 88.3163 52.4913 88.2346 52.3561 88.1527C50.3682 88.1525 48.3803 88.1525 46.3926 88.1523C44.4049 88.1519 42.4167 88.1519 40.429 88.1517C40.429 89.125 40.429 90.0982 40.429 91.0715C40.429 92.045 40.429 93.0184 40.429 93.9917C42.4167 93.9819 44.4049 93.9721 46.3926 93.9621C48.3803 93.9523 50.3682 93.9427 52.3561 93.9329C52.4986 93.8402 52.6411 93.7475 52.7836 93.6546C53.559 93.15 53.6582 92.8532 53.6576 91.0363C53.6572 89.559 53.6409 89.4269 53.4117 89.0486Z"/>
+          <path d="M178.208 82.074C178.246 82.0367 180.114 82.0059 182.36 82.0059C183.721 82.0059 185.082 82.0059 186.443 82.0059C187.445 83.0563 188.448 84.1065 189.45 85.1569C191.105 86.8898 193.001 88.8704 193.665 89.5579C194.829 90.7642 197.706 93.815 199.049 95.2675C199.266 95.5023 199.483 95.7369 199.7 95.9719C199.7 93.6442 199.7 91.3165 199.7 88.989C199.7 86.6613 199.7 84.3336 199.7 82.0059C201.071 82.0059 202.443 82.0059 203.814 82.0059C205.186 82.0059 206.557 82.0059 207.929 82.0059C207.929 86.1032 207.929 90.2002 207.929 94.2975C207.929 98.3948 207.929 102.492 207.929 106.589C206.531 106.589 205.134 106.59 203.736 106.59C202.339 106.59 200.941 106.59 199.544 106.59C199.283 106.318 199.023 106.045 198.762 105.772C194.925 101.75 192.48 99.1798 191.479 98.115C190.824 97.419 189.602 96.1232 188.763 95.235C187.924 94.3469 187.059 93.4213 186.842 93.1777C186.624 92.9342 186.405 92.735 186.354 92.735C186.302 92.735 186.262 95.7221 186.262 99.6634C186.262 101.973 186.262 104.282 186.262 106.591C184.917 106.583 183.571 106.573 182.226 106.564C180.88 106.555 179.535 106.546 178.189 106.537C178.181 102.471 178.173 98.4054 178.165 94.3396C178.151 87.6311 178.17 82.1117 178.208 82.074Z"/>
+          <path d="M112.539 82.0317C116.576 82.0421 120.612 82.0527 124.648 82.0633C124.908 82.1431 125.168 82.2229 125.428 82.3025C127.757 83.0173 129.127 84.3754 129.718 86.5573C129.908 87.259 129.945 87.7452 129.987 90.0814C130.056 93.9869 129.889 94.9931 128.936 96.4098C127.843 98.035 125.889 98.9825 123.624 98.985C123.233 98.9854 122.928 99.0281 122.947 99.0802C122.966 99.1321 124.042 100.152 125.338 101.346C129.276 104.973 130.826 106.43 130.837 106.512C130.842 106.555 128.444 106.59 125.507 106.59C123.728 106.59 121.948 106.59 120.168 106.59C118.919 105.341 117.671 104.092 116.422 102.843C115.173 101.594 113.925 100.345 112.676 99.0956C112.21 99.086 111.744 99.0762 111.278 99.0669C110.812 99.0571 110.347 99.0475 109.881 99.0379C109.877 98.1004 109.873 97.1629 109.869 96.2254C109.865 95.2879 109.861 94.3504 109.857 93.4129C111.714 93.3956 113.572 93.3781 115.43 93.3608C120.797 93.3106 121.016 93.3008 121.363 93.0967C122.01 92.7169 122.144 92.3429 122.182 90.8087C122.213 89.5519 122.198 89.4217 121.971 88.9969C121.498 88.1112 121.851 88.1525 114.728 88.1525C112.636 88.1525 110.543 88.1525 108.451 88.1525C108.451 91.2254 108.451 94.2983 108.451 97.3712C108.451 100.444 108.451 103.517 108.451 106.59C107.114 106.59 105.777 106.59 104.44 106.59C103.103 106.59 101.767 106.59 100.43 106.59C100.43 102.492 100.43 98.3933 100.43 94.295C100.43 90.1967 100.43 86.0983 100.43 82C104.466 82.0106 108.503 82.021 112.539 82.0317Z"/>
+          <path d="M0.111039 87.456C0.350206 85.9438 1.00354 84.5783 1.8625 83.7963C2.13396 83.549 2.77812 83.1402 3.29375 82.8885C5.08125 82.0154 4.22083 82.0713 16.4448 82.0335C20.0646 82.0225 23.6844 82.0113 27.3042 82C27.3042 83.0254 27.3042 84.0506 27.3042 85.0762C27.3042 86.1017 27.3042 87.1269 27.3042 88.1523C24.2294 88.1523 21.1548 88.1523 18.0802 88.1523C8.04292 88.1523 8.48729 88.1265 8.08979 88.7331C7.98917 88.8865 7.88271 89.2798 7.85313 89.6069C7.78542 90.3529 8.00688 90.8665 8.53917 91.1975C8.66583 91.2763 8.79208 91.3548 8.91875 91.4335C11.3321 91.4342 13.745 91.4348 16.1583 91.4356C22.8527 91.4373 23.4529 91.4519 24.1271 91.6292C26.4144 92.2308 27.9337 93.7144 28.5146 95.9127C28.6758 96.5229 28.7073 97.0413 28.7073 99.0898C28.7075 101.485 28.7012 101.556 28.421 102.387C28.059 103.462 27.4492 104.378 26.6596 105.035C25.961 105.616 25.6425 105.798 24.8131 106.085C23.4115 106.572 22.9515 106.589 11.126 106.589C7.41729 106.589 3.70854 106.59 0 106.59C0.0216667 106.251 0.0435392 105.913 0.0652059 105.574C0.201248 103.459 0.431876 100.615 0.470626 100.576C0.492709 100.554 4.91062 100.509 10.2879 100.476C18.4715 100.425 20.1127 100.391 20.3592 100.267C20.6923 100.098 21.0487 99.4117 21.0512 98.9335C21.0542 98.3969 20.8598 97.8921 20.5273 97.5733C20.4206 97.4713 20.314 97.369 20.2073 97.2669C17.7704 97.2479 15.3333 97.2287 12.8963 97.2096C5.73625 97.1533 5.56833 97.1473 4.75208 96.9194C3.50937 96.5719 2.68292 96.1279 1.89292 95.3825C1.09229 94.6275 0.606248 93.8056 0.302289 92.6942C0.144164 92.1154 0.0920823 91.5235 0.0627073 89.9752C0.0422906 88.8867 0.0639561 87.7529 0.111039 87.456Z"/>
+          <path d="M148.504 82.0059C153.383 82.0059 158.262 82.0059 163.141 82.0059C163.132 83.0215 163.123 84.0371 163.113 85.0527C163.104 86.0684 163.095 87.084 163.086 88.0996C161.307 88.1086 159.527 88.1177 157.748 88.1267C155.969 88.1357 154.189 88.1446 152.41 88.1536C152.401 91.2175 152.392 94.2815 152.383 97.3454C152.374 100.409 152.366 103.473 152.357 106.537C151.029 106.546 149.701 106.555 148.372 106.564C147.044 106.573 145.716 106.583 144.388 106.592C144.388 103.518 144.388 100.445 144.388 97.3717C144.388 94.2984 144.388 91.225 144.388 88.1517C142.634 88.1517 140.881 88.1517 139.128 88.1517C137.374 88.1517 135.621 88.1517 133.867 88.1517C133.867 87.1273 133.867 86.1032 133.867 85.0788C133.867 84.0544 133.867 83.0302 133.867 82.0059C138.746 82.0059 143.625 82.0059 148.504 82.0059Z"/>
+          <path d="M170.269 82.0059C171.605 82.0059 172.941 82.0059 174.277 82.0059C174.287 82.4486 174.297 82.8913 174.306 83.334C174.322 84.0644 174.323 89.5963 174.308 95.6269C174.3 99.2817 174.29 102.937 174.282 106.592C172.954 106.583 171.626 106.573 170.298 106.564C168.97 106.555 167.642 106.546 166.315 106.537C166.306 102.449 166.297 98.36 166.288 94.2715C166.279 90.1829 166.271 86.0944 166.262 82.0059C167.598 82.0059 168.934 82.0059 170.269 82.0059Z"/>
+        </svg>
+      </div>
+      <div class="avatar">
+        <div class="ph"><img id="avatar" alt="" onerror="this.style.display='none'"/></div>
+      </div>
+      <div class="name">
+        <div class="last" id="last">SPORTIN</div>
+        <div class="first" id="first">Friend</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="lbl">LEVEL</div><img class="badge-img" id="levelImg" alt="" onerror="this.style.display='none'" style="display:none"/><span class="val" id="level">—</span></div>
+        <div class="stat"><div class="lbl">MI</div><div class="val" id="mi">—</div></div>
+        <div class="stat"><div class="lbl">STEPS</div><div class="val" id="steps">—</div></div>
+      </div>
+    </div>
+
+    <div class="foot">
+  <button class="cta" id="accept">
+    <span>ACCEPT INVITATION</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </button>
+
+  <div class="stores" id="stores" style="display:none">
+    <div class="store-row">
+      <a class="store" id="appstore" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M16 1c.1 1.2-.4 2.3-1.1 3.1-.7.8-1.9 1.5-3 1.4-.1-1.2.4-2.4 1.1-3.1C13.7 1.5 15 .9 16 1zm3.6 16.4c-.5 1.2-.8 1.7-1.5 2.8-1 1.5-2.4 3.4-4.1 3.4-1.5 0-1.9-1-3.9-1-2 0-2.5 1-3.9 1-1.7 0-3-1.7-4-3.2-2.8-4.2-3.1-9.2-1.4-11.8 1.2-1.9 3.1-3 4.9-3 1.8 0 2.9 1 4.4 1 1.4 0 2.3-1 4.4-1 1.6 0 3.3.9 4.5 2.4-3.9 2.2-3.3 7.8.1 9.4z"/></svg>App Store</a>
+      <a class="store" id="playstore" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M3.6 1.8c-.3.3-.5.8-.5 1.4v17.6c0 .6.2 1.1.5 1.4l.1.1L14 12.1v-.2L3.7 1.7l-.1.1zm13.8 13.9L14.4 12l3-3 3.6 2c1 .6 1 1.5 0 2.1l-3.6 2.6zm-.6.6L13.7 12 3.7 22c.4.3 1 .4 1.6.1l11.3-6.4zM5.3 1.9c-.6-.3-1.2-.3-1.6.1l10 9.9 2.5-2.5L5.3 1.9z"/></svg>Google Play</a>
+    </div>
+    <a class="weblink" id="weblink" href="https://try.sportin.io">Or continue on the web →</a>
+  </div>
+
+  <div class="codehint" id="codehint" style="display:none"></div>
+  <div class="tag">Let&rsquo;s settle this in steps.</div>
+    </div>
+  </div>
+
+<script>
+const SUPABASE_URL='https://yorrcazqfkpqtsziyyqx.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvcnJjYXpxZmtwcXRzeml5eXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2MTcwNTksImV4cCI6MjA4OTE5MzA1OX0.TpOf5GO8NKxQjT327S4fzWKD9s-NtYJHSv3YQyxvYS8';
+const APP_STORE_URL='https://apps.apple.com/us/app/sportin-rise-to-the-challenge/id6762152651';
+const PLAY_STORE_URL='https://play.google.com/store/apps/details?id=app.sportin.io';
+const WEB_SIGNUP_URL='https://try.sportin.io';
+
+// 1) Parse the code from /ref/<code>
+const code=decodeURIComponent((location.pathname.replace(/^\/ref\/?/,'').split('/')[0]||'').trim().toLowerCase());
+
+// 2) Personalize the card from the inviter's public profile (SECURITY DEFINER RPC).
+async function loadInviter(){
+  if(!code) return;
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_referral_invite_card`,{
+      method:'POST',headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({p_code:code})});
+    if(!r.ok) return;
+    const d=await r.json(); const p=Array.isArray(d)?d[0]:d; if(!p) return;
+    if(p.first_name) document.getElementById('first').textContent=p.first_name;
+    if(p.last_name) document.getElementById('last').textContent=p.last_name;
+    const g=(p.gender||'').toLowerCase(); const first=document.getElementById('first');
+    if(['female','woman','f','girl'].includes(g)) first.className='first pink';
+    else if(['male','man','m','boy'].includes(g)) first.className='first';
+    else first.className='first grey';
+    if(p.avatar_url){const a=document.getElementById('avatar');a.src=p.avatar_url;}
+    // LEVEL = the inviter's tier badge (shown on the avatar AND in the LEVEL tile).
+    const TIERS=['bronze','silver','gold','platinum','diamond','master'];
+    const tier=(p.tier||'').toLowerCase().trim();
+    if(TIERS.includes(tier)){
+      const tl=document.getElementById('levelImg'); tl.src='/levels/'+tier+'.png'; tl.style.display='block';
+      document.getElementById('level').style.display='none';
+    }
+    if(p.mi!=null) document.getElementById('mi').textContent=(Math.round(p.mi*10)/10);
+    if(p.avg_steps!=null) document.getElementById('steps').textContent=fmtK(p.avg_steps);
+  }catch(e){/* graceful: generic invite still renders */}
+}
+function fmtK(n){n=+n||0;return n>=1000?((n/1000>=10?Math.round(n/1000):(Math.round(n/100)/10))+'k'):(''+n);}
+
+// 3) Accept → carry the code (clipboard + localStorage) and route to the right store.
+function isiOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
+function isAndroid(){return /android/i.test(navigator.userAgent);}
+function accept(){
+  try{localStorage.setItem('sportin_ref_code',code);}catch(e){}
+  // Copy the full tagged URL so the app can detect a referral on the clipboard
+  // (vs. arbitrary text) and parse the code from /ref/<code>.
+  try{navigator.clipboard&&navigator.clipboard.writeText(location.origin+'/ref/'+code);}catch(e){}
+  if(isiOS()){location.href=APP_STORE_URL;}
+  else if(isAndroid()){location.href=PLAY_STORE_URL;}
+  else{document.getElementById('stores').style.display='flex';}
+}
+function showCodeHint(){
+  if(!code) return;
+  const el=document.getElementById('codehint');
+  el.innerHTML=`Your invite code is <b>${code}</b> — enter it when you create your account so ${document.getElementById('first').textContent} gets the credit.`;
+  el.style.display='block';
+}
+document.getElementById('appstore').href=APP_STORE_URL;
+document.getElementById('playstore').href=PLAY_STORE_URL;
+document.getElementById('weblink').href=WEB_SIGNUP_URL+(code?('?ref='+encodeURIComponent(code)):'');
+document.getElementById('accept').addEventListener('click',accept);
+loadInviter();
+</script>
+</body>
+</html>
