@@ -1,0 +1,133 @@
+# Parity Tracker — rork-sportin-io
+#
+# Commit this to Sportinio/rork-sportin-io at .github/workflows/parity-tracker.yml
+# (it supersedes the existing file: same issue-labeling, plus lane events to the
+# parity dashboard).
+#
+# Repo secrets required:
+#   PARITY_TOKEN          existing — PAT that can edit mobile-features issues
+#   PARITY_INGEST_URL     e.g. https://dev.sportin.io/api/ingest
+#   PARITY_INGEST_SECRET  must match PARITY_INGEST_SECRET on the dashboard
+
+name: Parity Tracker
+
+on:
+  push:
+    branches: ["feat/**", "fix/**", "feature/**"]
+  pull_request:
+    types: [closed]
+    branches: [main, dev, testing]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # ── A feature branch got new commits -> Dev lane ──────────────────────────
+  on-push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post Dev-lane event
+        env:
+          INGEST_URL: ${{ secrets.PARITY_INGEST_URL }}
+          INGEST_SECRET: ${{ secrets.PARITY_INGEST_SECRET }}
+          BRANCH: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+          AT: ${{ github.event.head_commit.timestamp }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          set -e
+          if [ -z "$INGEST_URL" ] || [ -z "$INGEST_SECRET" ]; then
+            echo "Ingest not configured — skipping."; exit 0
+          fi
+          curl -fsS -X POST "$INGEST_URL" \
+            -H "content-type: application/json" \
+            -H "x-parity-secret: $INGEST_SECRET" \
+            -d "$(jq -n \
+              --arg repo "$REPO_NAME" --arg branch "$BRANCH" \
+              --arg actor "$ACTOR" --arg at "$AT" \
+              '{kind:"push", repo:$repo, branch:$branch, actor:$actor, at:$at}')" \
+            && echo "Posted Dev event for $BRANCH"
+
+  # ── A PR merged -> Testing / Main / Dev lane (by base branch) ─────────────
+  on-merge:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post lane event
+        env:
+          INGEST_URL: ${{ secrets.PARITY_INGEST_URL }}
+          INGEST_SECRET: ${{ secrets.PARITY_INGEST_SECRET }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+        run: |
+          set -e
+          if [ -z "$INGEST_URL" ] || [ -z "$INGEST_SECRET" ]; then
+            echo "Ingest not configured — skipping."; exit 0
+          fi
+          curl -fsS -X POST "$INGEST_URL" \
+            -H "content-type: application/json" \
+            -H "x-parity-secret: $INGEST_SECRET" \
+            -d "$(jq -n \
+              --arg repo "$REPO_NAME" --arg head "$HEAD_BRANCH" --arg base "$BASE_BRANCH" \
+              --arg title "$PR_TITLE" --arg actor "$PR_AUTHOR" --arg url "$PR_URL" \
+              --argjson num "$PR_NUMBER" --arg at "$PR_MERGED_AT" \
+              '{kind:"merge", repo:$repo, headBranch:$head, baseBranch:$base, title:$title, actor:$actor, prUrl:$url, prNumber:$num, at:$at}')" \
+            && echo "Posted $BASE_BRANCH event for $HEAD_BRANCH"
+
+  # ── Existing behaviour: label mobile-features tracking issues on merge ─────
+  update-parity-issues:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update mobile-features parity issues
+        env:
+          GH_TOKEN: ${{ secrets.PARITY_TOKEN }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -e
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PARITY_TOKEN secret not configured — skipping."; exit 0
+          fi
+          platforms=""
+          case "$REPO_NAME" in
+            rork-sportin-io) platforms="ios" ;;
+            sportin-pro)     platforms="web" ;;
+            sportin-pro-mobile)
+              changed=$(gh api "repos/Sportinio/${REPO_NAME}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename' || true)
+              if echo "$changed" | grep -qi '^ios/'; then platforms="$platforms ios"; fi
+              if echo "$changed" | grep -qi '^android/'; then platforms="$platforms android"; fi
+              ;;
+            *) echo "Unknown repo: $REPO_NAME — skipping."; exit 0 ;;
+          esac
+          platforms=$(echo "$platforms" | xargs)
+          if [ -z "$platforms" ]; then echo "No platform detected — skipping."; exit 0; fi
+
+          issues=$(echo "$PR_BODY" \
+            | grep -oiE '(implements|closes|fixes|refs|resolves)[[:space:]]+(sportinio/)?mobile-features#[0-9]+' \
+            | grep -oE '[0-9]+$' | sort -u || true)
+          if [ -z "$issues" ]; then echo "No mobile-features#N references — skipping."; exit 0; fi
+
+          for issue in $issues; do
+            for platform in $platforms; do
+              display=$platform
+              case "$platform" in ios) display="iOS";; android) display="Android";; web) display="Web";; esac
+              gh issue edit "$issue" --repo Sportinio/mobile-features --add-label "${platform}:done" || true
+              gh issue comment "$issue" --repo Sportinio/mobile-features \
+                --body "✅ **${display} shipped** in [Sportinio/${REPO_NAME}#${PR_NUMBER}](${PR_URL}) — \"${PR_TITLE}\" by @${PR_AUTHOR} (branch: \`${BASE_BRANCH}\`, merged ${PR_MERGED_AT})" || true
+            done
+          done

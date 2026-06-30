@@ -33,5 +33,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // Exempt /api/ingest — it authenticates with its own PARITY_INGEST_SECRET so
+  // GitHub Actions can post events without basic-auth credentials.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/ingest).*)"],
 };
