@@ -9,104 +9,108 @@ import {
 } from "./stages";
 import type { ParityCard, ParityEvent } from "./parity-store";
 
-// Live board projection straight from GitHub. Every merged PR / open PR becomes
-// a lane transition with its real git timestamp, so the board is populated AND
-// metrics are accurate from day one — no database required for display. The
-// Supabase store layers on top later for manual cards + a durable going-forward
-// log; it returns the same { cards, events } shapes so it drops in seamlessly.
+// Live board projection from GitHub, built to match the real workflow: fixes are
+// pushed straight to `testing`, then promoted to `main` (production). So the unit
+// of work is a COMMIT, keyed by its message so the same fix on testing and main
+// correlates even if the SHA changes on promotion.
+//
+//   Testing lane = recent commits on testing not yet on main
+//   Main lane    = recent commits on main (shipped to production)
+//   Dev lane     = work-in-progress: open PRs + pushed feature branches
+//
+// Timings come from real commit dates. No database needed for display.
 
 const GH_GRAPHQL = "https://api.github.com/graphql";
 
+// Cap on commit-cards so a branch that is hundreds of commits ahead doesn't
+// flood the board. Most-recent first; truncation is surfaced as a warning.
+const MAX_COMMIT_CARDS = 60;
+const HISTORY_DEPTH = 100; // GitHub GraphQL caps history(first:) at 100
+
 const QUERY = /* GraphQL */ `
-  query LiveBoard($owner: String!, $name: String!, $dev: String!, $testing: String!, $main: String!) {
+  query LiveBoard($owner: String!, $name: String!, $testingRef: String!, $mainRef: String!) {
     repository(owner: $owner, name: $name) {
-      refs(refPrefix: "refs/heads/", first: 100, orderBy: { field: ALPHABETICAL, direction: ASC }) {
-        nodes {
-          name
-          target {
-            ... on Commit {
-              committedDate
-              author { user { login } name }
-            }
-          }
-        }
+      testing: ref(qualifiedName: $testingRef) {
+        target { ... on Commit { history(first: ${HISTORY_DEPTH}) { nodes { oid messageHeadline committedDate author { user { login } name } } } } }
       }
-      devPRs: pullRequests(first: 100, baseRefName: $dev, states: MERGED, orderBy: { field: UPDATED_AT, direction: DESC }) {
-        nodes { number title url mergedAt headRefName author { login } }
+      main: ref(qualifiedName: $mainRef) {
+        target { ... on Commit { history(first: ${HISTORY_DEPTH}) { nodes { oid messageHeadline committedDate author { user { login } name } } } } }
       }
-      testingPRs: pullRequests(first: 100, baseRefName: $testing, states: MERGED, orderBy: { field: UPDATED_AT, direction: DESC }) {
-        nodes { number title url mergedAt headRefName author { login } }
-      }
-      mainPRs: pullRequests(first: 100, baseRefName: $main, states: MERGED, orderBy: { field: UPDATED_AT, direction: DESC }) {
-        nodes { number title url mergedAt headRefName author { login } }
+      refs(refPrefix: "refs/heads/", first: 100) {
+        nodes { name target { ... on Commit { committedDate author { user { login } name } } } }
       }
       openPRs: pullRequests(first: 100, states: OPEN, orderBy: { field: UPDATED_AT, direction: DESC }) {
-        nodes { number title url createdAt headRefName baseRefName author { login } }
+        nodes { number title url createdAt headRefName author { login } }
       }
     }
   }
 `;
 
+interface GHCommit {
+  oid: string;
+  messageHeadline: string;
+  committedDate: string;
+  author?: { user?: { login?: string } | null; name?: string } | null;
+}
+interface GHRef {
+  name: string;
+  target: { committedDate?: string; author?: { user?: { login?: string } | null; name?: string } | null } | null;
+}
 interface GHPR {
   number: number;
   title: string;
   url: string;
-  mergedAt?: string;
-  createdAt?: string;
+  createdAt: string;
   headRefName: string;
-  baseRefName?: string;
   author?: { login?: string } | null;
 }
-interface GHRef {
-  name: string;
-  target: {
-    committedDate?: string;
-    author?: { user?: { login?: string } | null; name?: string } | null;
-  } | null;
-}
 interface GHResult {
+  testing: { target?: { history?: { nodes: GHCommit[] } } | null } | null;
+  main: { target?: { history?: { nodes: GHCommit[] } } | null } | null;
   refs: { nodes: GHRef[] };
-  devPRs: { nodes: GHPR[] };
-  testingPRs: { nodes: GHPR[] };
-  mainPRs: { nodes: GHPR[] };
   openPRs: { nodes: GHPR[] };
 }
 
-const SKIP_PREFIXES = ["dependabot/", "archive/", "renovate/"];
-
-function isNoise(branch: string): boolean {
+const SKIP_BRANCHES = ["main", "dev", "testing", "master"];
+function isNoiseBranch(b: string): boolean {
   return (
-    SKIP_PREFIXES.some((p) => branch.startsWith(p)) ||
-    ["main", "dev", "testing", "master"].includes(branch)
+    SKIP_BRANCHES.includes(b) ||
+    b.startsWith("dependabot/") ||
+    b.startsWith("archive/") ||
+    b.startsWith("renovate/")
   );
 }
-
-/** Slug = everything after the first "/" (feat/foo-bar -> foo-bar), else whole. */
-function branchSlug(branch: string): string {
-  const i = branch.indexOf("/");
-  return i >= 0 ? branch.slice(i + 1) : branch;
+function isMergeCommit(headline: string): boolean {
+  return /^merge (branch|pull request|remote)/i.test(headline.trim());
 }
-
-interface FeatureAccum {
-  slug: string;
-  title: string;
-  prUrl: string;
-  prNumber: number;
-  events: { stage: Stage; at: string; actor: string | null }[];
+/** Normalized key for correlating the same fix across testing and main. */
+function commitKey(headline: string): string {
+  return headline.trim().replace(/\s+/g, " ").toLowerCase();
+}
+function slugify(s: string): string {
+  return (
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "commit"
+  );
+}
+function actorOf(c: { author?: { user?: { login?: string } | null; name?: string } | null }): string | null {
+  return c.author?.user?.login ?? c.author?.name ?? null;
 }
 
 async function fetchRepo(
   token: string,
   owner: string,
   name: string,
-  dev: string,
-  testing: string,
-  main: string,
+  testingRef: string,
+  mainRef: string,
 ): Promise<GHResult | null> {
   const res = await fetch(GH_GRAPHQL, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ query: QUERY, variables: { owner, name, dev, testing, main } }),
+    body: JSON.stringify({ query: QUERY, variables: { owner, name, testingRef, mainRef } }),
     next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error(`GitHub ${res.status}: ${await res.text()}`);
@@ -116,6 +120,27 @@ async function fetchRepo(
     throw new Error(`GitHub GraphQL: ${JSON.stringify(json.errors)}`);
   }
   return json.data.repository as GHResult;
+}
+
+interface CommitInfo {
+  at: string;
+  actor: string | null;
+  title: string;
+}
+
+/** Dedup a commit history by message key, keeping the OLDEST occurrence (when
+ *  the fix first entered that branch). History is newest-first, so overwrite. */
+function indexHistory(nodes: GHCommit[]): Map<string, CommitInfo> {
+  const map = new Map<string, CommitInfo>();
+  for (const c of nodes) {
+    if (!c.messageHeadline || isMergeCommit(c.messageHeadline)) continue;
+    map.set(commitKey(c.messageHeadline), {
+      at: c.committedDate,
+      actor: actorOf(c),
+      title: c.messageHeadline,
+    });
+  }
+  return map;
 }
 
 export interface LiveBoard {
@@ -129,9 +154,7 @@ export async function fetchLiveBoard(repoIds?: string[]): Promise<LiveBoard> {
   if (!cfg.token) throw new Error("GITHUB_TOKEN is not set");
   if (!cfg.org) throw new Error("GITHUB_ORG is not set");
 
-  const repos = Object.values(REPO_CONFIG).filter(
-    (r) => !repoIds || repoIds.includes(r.id),
-  );
+  const repos = Object.values(REPO_CONFIG).filter((r) => !repoIds || repoIds.includes(r.id));
 
   const cards: ParityCard[] = [];
   const events: ParityEvent[] = [];
@@ -145,9 +168,8 @@ export async function fetchLiveBoard(repoIds?: string[]): Promise<LiveBoard> {
         cfg.token,
         cfg.org,
         repo.id,
-        repo.devBranch,
-        repo.testingBranch,
-        repo.mainBranch,
+        `refs/heads/${repo.testingBranch}`,
+        `refs/heads/${repo.mainBranch}`,
       );
     } catch (err) {
       warnings.push(`${repo.id}: ${err instanceof Error ? err.message : String(err)}`);
@@ -158,89 +180,107 @@ export async function fetchLiveBoard(repoIds?: string[]): Promise<LiveBoard> {
       continue;
     }
 
-    const accum = new Map<string, FeatureAccum>();
-    const add = (pr: GHPR, stage: Stage, at?: string) => {
-      if (!at || isNoise(pr.headRefName)) return;
-      const slug = branchSlug(pr.headRefName);
-      const entry = accum.get(slug) ?? {
-        slug,
-        title: pr.title || slug,
-        prUrl: pr.url,
-        prNumber: pr.number,
-        events: [],
-      };
-      entry.events.push({ stage, at, actor: pr.author?.login ?? null });
-      // Keep the title/PR from the furthest-along stage seen.
-      entry.title = pr.title || entry.title;
-      entry.prUrl = pr.url;
-      entry.prNumber = pr.number;
-      accum.set(slug, entry);
-    };
+    const lead = repo.lead;
+    const testingIdx = indexHistory(result.testing?.target?.history?.nodes ?? []);
+    const mainIdx = indexHistory(result.main?.target?.history?.nodes ?? []);
 
-    for (const pr of result.devPRs.nodes) add(pr, "dev", pr.mergedAt);
-    for (const pr of result.testingPRs.nodes) add(pr, "testing", pr.mergedAt);
-    for (const pr of result.mainPRs.nodes) add(pr, "main", pr.mergedAt);
-    // Open PRs = work in progress -> Dev lane (only if not already merged anywhere).
-    for (const pr of result.openPRs.nodes) {
-      if (isNoise(pr.headRefName)) continue;
-      const slug = branchSlug(pr.headRefName);
-      if (accum.has(slug)) continue;
-      add(pr, "dev", pr.createdAt);
+    interface Unit {
+      key: string;
+      slug: string;
+      title: string;
+      prUrl: string | null;
+      current: Stage;
+      events: { stage: Stage; at: string; actor: string | null }[];
+      lastAt: number;
     }
-    // Pushed feature branches with no PR yet -> Dev lane. This is what makes a
-    // card appear the moment you push feat/*, fix/*, feature/* — no PR needed.
-    for (const ref of result.refs.nodes) {
-      const slug = slugFromBranch(repo, ref.name);
-      if (!slug || accum.has(slug)) continue;
-      const at = ref.target?.committedDate;
-      if (!at) continue;
-      const actor = ref.target?.author?.user?.login ?? ref.target?.author?.name ?? null;
-      accum.set(slug, {
-        slug,
-        title: slugToTitle(slug),
-        prUrl: `https://github.com/${cfg.org}/${repo.id}/tree/${ref.name}`,
-        prNumber: 0,
-        events: [{ stage: "dev", at, actor }],
+    const units: Unit[] = [];
+
+    // Commit-based units: everything on testing and/or main.
+    const allKeys = new Set([...testingIdx.keys(), ...mainIdx.keys()]);
+    for (const key of allKeys) {
+      const t = testingIdx.get(key);
+      const m = mainIdx.get(key);
+      const evs: { stage: Stage; at: string; actor: string | null }[] = [];
+      if (t) evs.push({ stage: "testing", at: t.at, actor: t.actor });
+      if (m) evs.push({ stage: "main", at: m.at, actor: m.actor });
+      evs.sort((a, b) => +new Date(a.at) - +new Date(b.at));
+      const title = (m ?? t)!.title;
+      units.push({
+        key,
+        slug: slugify(title),
+        title,
+        prUrl: null,
+        current: m ? "main" : "testing",
+        events: evs,
+        lastAt: Math.max(...evs.map((e) => +new Date(e.at))),
       });
     }
 
-    const lead = repo.lead;
-
-    for (const f of accum.values()) {
-      // Dedup events per stage (keep earliest), sort chronologically.
-      const byStage = new Map<Stage, string>();
-      for (const e of f.events) {
-        const cur = byStage.get(e.stage);
-        if (!cur || new Date(e.at) < new Date(cur)) byStage.set(e.stage, e.at);
-      }
-      const ordered = [...f.events].sort((a, b) => +new Date(a.at) - +new Date(b.at));
-      const stages = ordered
-        .filter((e) => byStage.get(e.stage) === e.at)
-        .sort((a, b) => stageRank(a.stage) - stageRank(b.stage));
-
-      const current = stages.reduce<Stage>(
-        (acc, e) => (stageRank(e.stage) > stageRank(acc) ? e.stage : acc),
-        "backlog",
+    // Keep only the most-recent commit units.
+    units.sort((a, b) => b.lastAt - a.lastAt);
+    if (units.length > MAX_COMMIT_CARDS) {
+      warnings.push(
+        `${repo.id}: showing ${MAX_COMMIT_CARDS} most-recent commits (of ${units.length}) on testing/main`,
       );
-      const leadId = `${repo.id}:${f.slug}:${lead}`;
-      const createdAt = ordered[0]?.at ?? new Date().toISOString();
-      const updatedAt = ordered[ordered.length - 1]?.at ?? createdAt;
+      units.length = MAX_COMMIT_CARDS;
+    }
+
+    // Dev lane = work in progress: open PRs + pushed feature branches (no merge).
+    const wipKeys = new Set<string>();
+    for (const pr of result.openPRs.nodes) {
+      if (isNoiseBranch(pr.headRefName)) continue;
+      const slug = slugFromBranch(repo, pr.headRefName) ?? pr.headRefName;
+      if (wipKeys.has(slug)) continue;
+      wipKeys.add(slug);
+      units.push({
+        key: `wip:${slug}`,
+        slug: slugify(slug),
+        title: pr.title || slugToTitle(slug),
+        prUrl: pr.url,
+        current: "dev",
+        events: [{ stage: "dev", at: pr.createdAt, actor: pr.author?.login ?? null }],
+        lastAt: +new Date(pr.createdAt),
+      });
+    }
+    for (const ref of result.refs.nodes) {
+      const slug = slugFromBranch(repo, ref.name);
+      if (!slug || wipKeys.has(slug)) continue;
+      const at = ref.target?.committedDate;
+      if (!at) continue;
+      wipKeys.add(slug);
+      units.push({
+        key: `wip:${slug}`,
+        slug: slugify(slug),
+        title: slugToTitle(slug),
+        prUrl: `https://github.com/${cfg.org}/${repo.id}/tree/${ref.name}`,
+        current: "dev",
+        events: [{ stage: "dev", at, actor: actorOf(ref.target ?? {}) }],
+        lastAt: +new Date(at),
+      });
+    }
+
+    // Emit cards + events + Android replicas.
+    for (const u of units) {
+      const leadId = `${repo.id}:${u.slug}:${lead}`;
+      const createdAt = u.events[0]?.at ?? new Date().toISOString();
+      const updatedAt = u.events[u.events.length - 1]?.at ?? createdAt;
 
       cards.push({
         id: leadId,
         repo: repo.id,
-        feature_slug: f.slug,
+        feature_slug: u.slug,
         platform: lead,
-        title: f.title,
-        current_stage: current,
+        title: u.title,
+        current_stage: u.current,
         is_lead: true,
-        pr_url: f.prUrl,
+        pr_url: u.prUrl,
         created_at: createdAt,
         updated_at: updatedAt,
       });
 
       let prev: Stage | null = null;
-      for (const e of stages) {
+      const ordered = [...u.events].sort((a, b) => stageRank(a.stage) - stageRank(b.stage));
+      for (const e of ordered) {
         events.push({
           id: eventId++,
           card_id: leadId,
@@ -249,22 +289,20 @@ export async function fetchLiveBoard(repoIds?: string[]): Promise<LiveBoard> {
           at: e.at,
           source: "github",
           actor: e.actor,
-          pr_url: f.prUrl,
-          pr_number: f.prNumber,
+          pr_url: u.prUrl,
+          pr_number: null,
         });
         prev = e.stage;
       }
 
-      // Android (and any other non-lead platform) replica in Backlog so the lag
-      // is visible. No events until Android does its own work.
       for (const platform of repo.platforms) {
         if (platform === lead) continue;
         cards.push({
-          id: `${repo.id}:${f.slug}:${platform}`,
+          id: `${repo.id}:${u.slug}:${platform}`,
           repo: repo.id,
-          feature_slug: f.slug,
+          feature_slug: u.slug,
           platform,
-          title: f.title,
+          title: u.title,
           current_stage: "backlog",
           is_lead: false,
           pr_url: null,
