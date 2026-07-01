@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   STAGES,
   PLATFORM_LABEL,
@@ -53,6 +54,14 @@ export function Board({
   const repos = Object.values(REPO_CONFIG);
   const [repoFilter, setRepoFilter] = useState<RepoFilter>("all");
   const visibleRepos = repoFilter === "all" ? repos : repos.filter((r) => r.id === repoFilter);
+
+  // Auto-refresh: re-fetch the server data every 60s so pushes/merges show up
+  // without a manual reload.
+  const router = useRouter();
+  useEffect(() => {
+    const t = setInterval(() => router.refresh(), 60000);
+    return () => clearInterval(t);
+  }, [router]);
 
   return (
     <div className="space-y-6">

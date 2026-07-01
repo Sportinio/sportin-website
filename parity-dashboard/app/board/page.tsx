@@ -34,9 +34,10 @@ export default async function BoardPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-text">Project Board</h1>
           <p className="mt-1 text-xs text-muted">
             Every feature across your repos, placed by where it sits in git:{" "}
-            <span className="text-staged">Dev → Testing → Main</span>. Timings come
-            from real merge timestamps. iOS leads; each feature carries an Android
-            replica so the gap is always visible.
+            <span className="text-staged">Backlog → Testing → Dev → Main</span>. Cards
+            appear on push and move on merge; timings come from real git timestamps.
+            iOS leads; each feature carries an Android replica so the gap is always
+            visible.
           </p>
         </div>
         <div className="text-xs text-muted">{cards.length} cards</div>

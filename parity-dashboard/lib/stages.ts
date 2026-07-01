@@ -5,16 +5,16 @@
 // Build time for v1 is measured as the Testing -> Main duration; a dedicated
 // Build lane is added once there is an EAS / CI / release-tag signal.
 
-export type Stage = "backlog" | "dev" | "testing" | "main";
+export type Stage = "backlog" | "testing" | "dev" | "main";
 
 export const STAGES: { id: Stage; label: string }[] = [
   { id: "backlog", label: "Backlog" },
-  { id: "dev", label: "Dev" },
   { id: "testing", label: "Testing" },
+  { id: "dev", label: "Dev" },
   { id: "main", label: "Main" },
 ];
 
-export const STAGE_ORDER: Stage[] = ["backlog", "dev", "testing", "main"];
+export const STAGE_ORDER: Stage[] = ["backlog", "testing", "dev", "main"];
 
 export function stageRank(s: Stage): number {
   return STAGE_ORDER.indexOf(s);

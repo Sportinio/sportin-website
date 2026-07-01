@@ -1,5 +1,12 @@
 import { getConfig } from "./config";
-import { REPO_CONFIG, STAGE_ORDER, stageRank, type Stage } from "./stages";
+import {
+  REPO_CONFIG,
+  STAGE_ORDER,
+  stageRank,
+  slugFromBranch,
+  slugToTitle,
+  type Stage,
+} from "./stages";
 import type { ParityCard, ParityEvent } from "./parity-store";
 
 // Live board projection straight from GitHub. Every merged PR / open PR becomes
@@ -13,6 +20,17 @@ const GH_GRAPHQL = "https://api.github.com/graphql";
 const QUERY = /* GraphQL */ `
   query LiveBoard($owner: String!, $name: String!, $dev: String!, $testing: String!, $main: String!) {
     repository(owner: $owner, name: $name) {
+      refs(refPrefix: "refs/heads/", first: 100, orderBy: { field: ALPHABETICAL, direction: ASC }) {
+        nodes {
+          name
+          target {
+            ... on Commit {
+              committedDate
+              author { user { login } name }
+            }
+          }
+        }
+      }
       devPRs: pullRequests(first: 100, baseRefName: $dev, states: MERGED, orderBy: { field: UPDATED_AT, direction: DESC }) {
         nodes { number title url mergedAt headRefName author { login } }
       }
@@ -39,7 +57,15 @@ interface GHPR {
   baseRefName?: string;
   author?: { login?: string } | null;
 }
+interface GHRef {
+  name: string;
+  target: {
+    committedDate?: string;
+    author?: { user?: { login?: string } | null; name?: string } | null;
+  } | null;
+}
 interface GHResult {
+  refs: { nodes: GHRef[] };
   devPRs: { nodes: GHPR[] };
   testingPRs: { nodes: GHPR[] };
   mainPRs: { nodes: GHPR[] };
@@ -160,6 +186,22 @@ export async function fetchLiveBoard(repoIds?: string[]): Promise<LiveBoard> {
       const slug = branchSlug(pr.headRefName);
       if (accum.has(slug)) continue;
       add(pr, "dev", pr.createdAt);
+    }
+    // Pushed feature branches with no PR yet -> Dev lane. This is what makes a
+    // card appear the moment you push feat/*, fix/*, feature/* — no PR needed.
+    for (const ref of result.refs.nodes) {
+      const slug = slugFromBranch(repo, ref.name);
+      if (!slug || accum.has(slug)) continue;
+      const at = ref.target?.committedDate;
+      if (!at) continue;
+      const actor = ref.target?.author?.user?.login ?? ref.target?.author?.name ?? null;
+      accum.set(slug, {
+        slug,
+        title: slugToTitle(slug),
+        prUrl: `https://github.com/${cfg.org}/${repo.id}/tree/${ref.name}`,
+        prNumber: 0,
+        events: [{ stage: "dev", at, actor }],
+      });
     }
 
     const lead = repo.lead;

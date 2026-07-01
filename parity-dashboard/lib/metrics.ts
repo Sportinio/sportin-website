@@ -11,6 +11,8 @@ export interface CardTiming {
   cycleHours: number | null;
   /** Testing -> Main wall-clock in hours (the v1 "build time" proxy). */
   buildHours: number | null;
+  /** True once the card has reached main (shipped), regardless of measurable cycle. */
+  reachedMain: boolean;
   /** Actor credited with the work (earliest event's actor). */
   actor: string | null;
 }
@@ -38,15 +40,19 @@ export function computeCardTimings(events: ParityEvent[]): Map<string, CardTimin
       const e = evs.find((x) => x.to_stage === s);
       return e ? +new Date(e.at) : null;
     };
-    const dev = at("dev");
+    const first = evs[0] ? +new Date(evs[0].at) : null;
     const testing = at("testing");
     const main = at("main");
 
     out.set(cardId, {
       cardId,
       hoursInStage,
-      cycleHours: dev != null && main != null ? (main - dev) / 3600000 : null,
+      // Cycle = total lead time from first tracked activity to shipping on main
+      // (order-agnostic, so it holds regardless of lane ordering).
+      cycleHours: first != null && main != null && main > first ? (main - first) / 3600000 : null,
+      // Build = time from entering Testing to shipping on main.
       buildHours: testing != null && main != null ? (main - testing) / 3600000 : null,
+      reachedMain: main != null,
       actor: evs[0]?.actor ?? null,
     });
   }
@@ -76,7 +82,7 @@ export function computeActorMetrics(events: ParityEvent[]): ActorMetric[] {
   return [...byActor.entries()]
     .map(([actor, ts]) => ({
       actor,
-      shipped: ts.filter((t) => t.cycleHours != null).length,
+      shipped: ts.filter((t) => t.reachedMain).length,
       avgCycleHours: avg(ts.map((t) => t.cycleHours)),
       avgBuildHours: avg(ts.map((t) => t.buildHours)),
     }))
