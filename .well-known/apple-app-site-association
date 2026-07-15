@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["K6MXFP8G8G.io.sportin.app"],
+        "components": [
+          { "/": "/ref/*", "comment": "Existing SportIn referrals" },
+          { "/": "/10k/*", "comment": "Invitation Challenges" }
+        ]
+      }
+    ]
+  }
+}

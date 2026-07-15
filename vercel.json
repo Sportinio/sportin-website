@@ -1,7 +1,17 @@
 {
   "rewrites": [
+    { "source": "/10k/:token([0-9a-fA-F-]{36})", "destination": "/api/10k?token=:token" },
     { "source": "/ref", "destination": "/api/ref?code=" },
     { "source": "/ref/", "destination": "/api/ref?code=" },
     { "source": "/ref/:code((?!.*\\.).*)", "destination": "/api/ref?code=:code" }
+  ],
+  "headers": [
+    {
+      "source": "/.well-known/apple-app-site-association",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    }
   ]
 }
