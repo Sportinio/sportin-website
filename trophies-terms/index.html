@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SportIn Trophies — Loyalty Programme Terms &amp; Conditions · SportIn</title>
+<meta name="description" content="Terms &amp; Conditions, GDPR Notice, and Beta Disclosure for the SportIn Trophies loyalty programme, operated by SportIn.io SRL." />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://sportin.io/trophies-terms" />
+<meta name="theme-color" content="#0751FB" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #06060C;
+    --ink-1: #0A0A12;
+    --text: #FFFFFF;
+    --text-2: #C8CAD4;
+    --text-3: #9AA0B4;
+    --text-4: #5F667E;
+    --blue: #0751FB;
+    --blue-bright: #3B7BFF;
+    --amber: #F59E0B;
+    --border: rgba(255, 255, 255, 0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    background: var(--ink-1);
+    color: var(--text);
+    font-family: 'Geist', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(7, 81, 251, 0.18) 0%, transparent 55%),
+      linear-gradient(180deg, #0A0A12 0%, #06060C 100%);
+  }
+  #meshCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  a { color: var(--blue-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Top bar */
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(10, 10, 18, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; font-size: 14px; letter-spacing: 0.02em; }
+  .top .brand svg { height: 22px; width: auto; }
+  .top a.back { font-size: 13px; color: var(--text-3); }
+  .top a.back:hover { color: var(--text); text-decoration: none; }
+
+  /* Page */
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
+  }
+  .meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .lead {
+    font-size: 18px;
+    color: var(--text-2);
+    margin-bottom: 8px;
+  }
+  .versioning {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-4);
+    margin-bottom: 20px;
+    letter-spacing: 0.04em;
+  }
+  .badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--amber);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 999px;
+    padding: 5px 12px;
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 48px 0 14px;
+    line-height: 1.25;
+  }
+  h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+  .part-divider {
+    margin: 64px 0 8px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .part-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    margin-bottom: 10px;
+  }
+  p, li {
+    color: var(--text-2);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  p + p { margin-top: 14px; }
+  ul, ol { margin: 14px 0 14px 24px; }
+  ul li, ol li { margin-bottom: 8px; }
+  strong { color: var(--text); font-weight: 600; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-2);
+  }
+  th { color: var(--text); font-weight: 600; background: rgba(255,255,255,0.03); }
+
+  /* Anchor offset for sticky header */
+  h2[id], h3[id] { scroll-margin-top: 90px; }
+
+  /* TOC */
+  .toc {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    background: rgba(255,255,255,0.025);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin-bottom: 20px;
+  }
+  .toc h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-4);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .toc + .toc { margin-top: 16px; }
+  .toc ol { list-style: decimal; columns: 2; column-gap: 28px; margin: 0 0 0 20px; }
+  .toc li { color: var(--text-3); font-size: 14px; margin-bottom: 4px; break-inside: avoid; }
+  .toc a { color: var(--text-2); }
+  .toc a:hover { color: var(--blue-bright); text-decoration: none; }
+
+  .callout {
+    border-left: 3px solid var(--blue);
+    padding: 14px 16px;
+    background: rgba(7, 81, 251, 0.08);
+    border-radius: 0 10px 10px 0;
+    margin: 18px 0;
+    color: var(--text);
+  }
+  .callout.warn {
+    border-left-color: var(--amber);
+    background: rgba(245, 158, 11, 0.08);
+  }
+  .callout .callout-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+  .callout p { color: var(--text-2); font-size: 15px; }
+  .callout p + p { margin-top: 10px; }
+
+  footer.foot {
+    border-top: 1px solid var(--border);
+    padding: 30px 24px;
+    text-align: center;
+    color: var(--text-4);
+    font-size: 13px;
+  }
+  footer.foot a { color: var(--text-3); margin: 0 12px; }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 56px 18px 90px; }
+    h1 { font-size: 34px; }
+    .toc ol { columns: 1; }
+  }
+</style>
+</head>
+<body>
+<canvas id="meshCanvas"></canvas>
+
+<header class="top">
+  <a class="brand" href="/">
+    <svg viewBox="0 0 75 79" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M68.06 1.18C68.48 2.11 68.28 2.40 64.76 5.87C63.08 7.53 59.80 10.77 57.48 13.06C55.16 15.35 51.55 18.89 49.46 20.92C47.37 22.95 44.49 25.76 43.06 27.17C36.73 33.38 35.05 35.02 31.91 38.06C30.08 39.83 28.06 41.78 27.43 42.38C26.81 42.98 25.28 44.47 24.05 45.68C22.81 46.89 21.58 48.06 21.31 48.27C20.02 49.25 18.24 49.67 16.73 49.35C15.67 49.12 14.81 48.59 13.68 47.45C12.66 46.42 8.87 42.48 7.22 40.72C6.76 40.24 5.85 39.28 5.19 38.59C1.75 35.01 1.41 34.59 0.82 33.28C-0.24 30.92 -0.28 27.50 0.73 25.34C1.24 24.24 1.75 23.52 4.31 20.29C5.77 18.45 7.10 16.78 7.27 16.57C8.01 15.66 10.68 12.26 11.22 11.55C11.54 11.12 12.18 10.29 12.64 9.72C13.10 9.14 14.06 7.90 14.77 6.96C17.26 3.71 17.76 3.17 19.20 2.20C20.64 1.22 22.09 0.59 23.68 0.22C24.33 0.07 26.66 0.05 45.40 0.02C64.81 -0.02 66.42 -0.01 66.86 0.15C67.41 0.36 67.87 0.75 68.06 1.18Z" fill="white"/>
+      <path d="M74.30 47.90C74.48 48.91 73.99 52.24 73.58 52.82C73.49 52.95 73.42 53.12 73.42 53.21C73.42 53.54 72.38 55.05 70.49 57.46C69.43 58.82 68.01 60.64 67.35 61.50C65.62 63.73 61.42 69.06 59.86 70.99C59.44 71.52 58.56 72.64 57.90 73.49C56.43 75.39 55.59 76.25 54.51 76.96C53.20 77.81 52.00 78.31 50.29 78.70C49.57 78.87 48.09 78.88 29.10 78.85C9.57 78.82 8.66 78.81 8.31 78.63C7.33 78.13 7.20 76.90 8.02 75.95C8.51 75.38 20.86 62.96 40.25 43.53C50.15 33.61 53.98 29.84 54.42 29.57C54.82 29.33 55.31 29.15 55.91 29.03C57.02 28.80 57.44 28.80 58.23 29.00C59.33 29.29 59.80 29.62 61.21 31.13C61.93 31.90 63.01 33.06 63.62 33.69C65.00 35.13 66.00 36.19 67.85 38.16C68.65 39.02 69.64 40.07 70.04 40.51C72.41 43.03 72.89 43.62 73.30 44.49C73.77 45.50 73.99 46.16 74.14 47.02C74.20 47.36 74.27 47.76 74.30 47.90Z" fill="white"/>
+    </svg>
+    <span>SportIn</span>
+  </a>
+  <a class="back" href="/">← Back to home</a>
+</header>
+
+<main class="wrap">
+  <div class="meta">Legal · Trophies Rewards Programme</div>
+  <h1>SportIn Trophies — Loyalty Programme</h1>
+  <p class="lead">Terms &amp; Conditions · GDPR Notice · Beta Disclosure</p>
+  <div class="versioning">Version 2.0 (Beta) · 2026 · SportIn.io SRL · Governing law: Romania</div>
+  <span class="badge">Beta — scores are non-redeemable until partners are confirmed</span>
+
+  <div class="callout warn">
+    <p><strong>BETA — All accumulated scores are non-redeemable until partners are confirmed.</strong></p>
+    <p>SportIn may cancel the programme at any time without obligation or compensation.</p>
+  </div>
+  <p class="versioning" style="margin-bottom:40px;">Effective date: ______________ 2026 · Prepared by SportIn.io SRL · sportin.io · privacy@sportin.io · Confidential</p>
+
+  <div class="toc" aria-label="Table of contents — Part A">
+    <h4>Part A — What this programme is, and is not</h4>
+    <ol>
+      <li><a href="#a1">A1. Plain-language summary</a></li>
+      <li><a href="#a2">A2. The score is not money</a></li>
+      <li><a href="#a3">A3. Beta phase — zero obligation on SportIn</a></li>
+      <li><a href="#a4">A4. Post-beta — subscription and voucher redemption</a></li>
+    </ol>
+  </div>
+
+  <div class="toc" aria-label="Table of contents — Part B">
+    <h4>Part B — Terms &amp; Conditions</h4>
+    <ol>
+      <li><a href="#s1">Introduction and acceptance</a></li>
+      <li><a href="#s2">Definitions</a></li>
+      <li><a href="#s3">Eligibility and enrolment</a></li>
+      <li><a href="#s4">The Trophies Score — legal nature</a></li>
+      <li><a href="#s5">How the Score is earned — overview</a></li>
+      <li><a href="#s6">Daily Catches (Pumas and Turtles)</a></li>
+      <li><a href="#s7">Medals — daily leaderboard competition</a></li>
+      <li><a href="#s8">Trophies — streak awards (not yet live)</a></li>
+      <li><a href="#s9">Selling your Collection</a></li>
+      <li><a href="#s10">Negative Score</a></li>
+      <li><a href="#s11">Voucher redemption — post-beta only</a></li>
+      <li><a href="#s12">SportIn's right to modify the programme</a></li>
+      <li><a href="#s13">Fraud prevention and step validation</a></li>
+      <li><a href="#s14">Known technical limitations</a></li>
+      <li><a href="#s15">Limitation of liability</a></li>
+      <li><a href="#s16">Programme suspension and cancellation</a></li>
+      <li><a href="#s17">What happens to your Score on account deletion</a></li>
+      <li><a href="#s18">Subscription — post-beta</a></li>
+      <li><a href="#s19">Governing law and disputes</a></li>
+      <li><a href="#s20">Miscellaneous</a></li>
+    </ol>
+  </div>
+
+  <div class="toc" aria-label="Table of contents — Part C">
+    <h4>Part C — GDPR and data protection notice</h4>
+    <ol>
+      <li><a href="#c1">C1. Data controller</a></li>
+      <li><a href="#c2">C2. Data processed by the Trophies programme</a></li>
+      <li><a href="#c3">C3. Legal bases</a></li>
+      <li><a href="#c4">C4. How we use your data</a></li>
+      <li><a href="#c5">C5. Who receives your data</a></li>
+      <li><a href="#c6">C6. Retention</a></li>
+      <li><a href="#c7">C7. Your rights</a></li>
+      <li><a href="#c8">C8. Contact</a></li>
+    </ol>
+  </div>
+
+  <div class="part-divider">
+    <div class="part-label">Part A — Read First</div>
+  </div>
+  <h2 id="a1">A1. Plain-Language Summary</h2>
+  <div class="callout">
+    <p><strong>SportIn Trophies is a gamification feature.</strong> You walk. You earn a score. The score is displayed using euro units (e.g. "€12.50") because the earning rules are denominated that way — not because SportIn owes you €12.50. It is a number in an app. It is not money. You cannot withdraw it. You cannot spend it anywhere outside the SportIn Partner voucher network. During the beta, you cannot spend it at all. SportIn can cancel the entire programme tomorrow and owes you nothing.</p>
+  </div>
+
+  <h2 id="a2">A2. The Score Is Not Money</h2>
+  <p>The Trophies Score is a loyalty score expressed in euro-denominated units. This is a design choice — it makes the earning rules intuitive — but it does not create any legal relationship between you and SportIn equivalent to a bank balance, a payment account, stored value, or electronic money.</p>
+  <p>Displaying "€12.50" in your Trophies wallet does not mean SportIn holds €12.50 on your behalf. SportIn does not hold any funds for you. SportIn does not owe you any amount. The euro sign is a unit of measure for your loyalty score, in the same way that airline programmes measure miles and hotel programmes measure points — the number has value only within the programme, only on SportIn's terms, and only if SportIn chooses to make redemption available.</p>
+  <div class="callout warn">
+    <div class="callout-title">No cash value — ever</div>
+    <p>Under no circumstances — not during beta, not post-beta, not on programme cancellation, not on account deletion — will SportIn pay out, transfer, or convert your Trophies Score into real euros, any other currency, bank credits, gift cards, cryptocurrency, or any other instrument of monetary value. There is no cash-out path. There will never be one.</p>
+  </div>
+
+  <h2 id="a3">A3. Beta Phase — Zero Obligation on SportIn</h2>
+  <div class="callout warn">
+    <div class="callout-title">Beta: your score is currently unspendable</div>
+    <p>The programme is in beta. During the beta phase: (1) access is free — you pay nothing; (2) your Score accumulates but cannot be redeemed anywhere; (3) SportIn has not confirmed any Partner for voucher redemption; (4) SportIn is under no obligation to find Partners, activate redemption, or transition the programme out of beta; (5) SportIn may cancel the entire programme at any time, zeroing all Scores, without any obligation to compensate you in any form. By participating in the beta, you accept all of the above.</p>
+  </div>
+
+  <h2 id="a4">A4. Post-Beta — Subscription and Voucher Redemption</h2>
+  <p>If and when SportIn transitions the programme out of beta, the following model is planned but not guaranteed:</p>
+  <ul>
+    <li><strong>Access will require a paid SportIn Pro subscription</strong> (currently planned at €99/month). You will not be charged anything during the beta phase.</li>
+    <li><strong>If Partners are confirmed</strong>, subscribers will be able to use their accumulated Score to obtain vouchers from those Partners. The voucher system will be described in updated T&amp;C, at that time.</li>
+    <li><strong>If no Partners are confirmed</strong>, your Score continues to accumulate but remains unspendable. No refund of subscription fees will be given on the grounds that Partners are unavailable.</li>
+    <li><strong>SportIn makes no commitment</strong> to confirm any Partners, activate voucher redemption, or maintain any particular partner network.</li>
+  </ul>
+  <p>The specific terms governing subscriptions, voucher redemption, and any partner network will be set out in a separate addendum to these T&amp;C, when and if that phase launches. Nothing in this document commits SportIn to launching that phase.</p>
+
+  <div class="part-divider">
+    <div class="part-label">Part B — Terms &amp; Conditions</div>
+  </div>
+  <h2 id="s1">1. Introduction and Acceptance</h2>
+  <p>These Terms &amp; Conditions ("<strong>Trophies T&amp;C</strong>") govern your participation in the SportIn Trophies loyalty programme ("<strong>Trophies</strong>" or the "<strong>Programme</strong>"), operated by <strong>SportIn.io SRL</strong>, a company organised under the laws of Romania, with registered office at ______________, registration number __________, fiscal code (CUI) __________ ("<strong>SportIn</strong>", "<strong>we</strong>", "<strong>us</strong>").</p>
+  <p>These Trophies T&amp;C supplement SportIn's main <a href="/terms">Terms of Service</a> (sportin.io/terms) and <a href="/privacy-policy">Privacy Policy</a> (sportin.io/privacy-policy), which continue to apply in full. In the event of conflict, these Trophies T&amp;C prevail in relation to the Programme.</p>
+  <p><strong>By opting into the Trophies Programme via the in-app enrolment screen, you confirm that you have read, understood, and accepted these Trophies T&amp;C, including the disclosures in Part A.</strong> If you do not accept these terms, do not opt in.</p>
+
+  <h2 id="s2">2. Definitions</h2>
+  <p><strong>"Beta"</strong> — The current pre-release phase of the Programme during which the Score accumulates but cannot be redeemed, and SportIn has no obligation to activate redemption or compensate users for any reason.</p>
+  <p><strong>"Catch"</strong> — The daily automated earning event (Section 6). Produces one Puma or one Turtle per day.</p>
+  <p><strong>"Collection"</strong> — Unsold Catches accumulated since your last settlement.</p>
+  <p><strong>"Level"</strong> — Your personal difficulty tier, derived from your 30-day rolling average step count, updated daily.</p>
+  <p><strong>"Medal"</strong> — A daily leaderboard award described in Section 7.</p>
+  <p><strong>"Partner"</strong> — A third-party merchant confirmed by SportIn as a voucher redemption point. SportIn makes no guarantee as to the availability, identity, or continuity of any Partner. No Partners are currently confirmed.</p>
+  <p><strong>"Programme"</strong> — The SportIn Trophies loyalty programme.</p>
+  <p><strong>"Puma"</strong> — A positive Catch. Adds to your Score when sold.</p>
+  <p><strong>"Score"</strong> — The euro-denominated loyalty score displayed in your Trophies wallet. Not money. Not stored value. Not a debt owed by SportIn. See Section 4.</p>
+  <p><strong>"Sell Collection"</strong> — The single settlement action described in Section 9.</p>
+  <p><strong>"Trophy"</strong> — A streak-based award described in Section 8.</p>
+  <p><strong>"Turtle"</strong> — A negative Catch. Reduces your Score when sold.</p>
+  <p><strong>"Voucher"</strong> — A discount instrument issued by a Partner, obtainable using your Score post-beta if Partners are confirmed. Vouchers are issued by Partners, not by SportIn.</p>
+
+  <h2 id="s3">3. Eligibility and Enrolment</h2>
+  <p><strong>3.1 Age.</strong> You must be at least 18 years of age. By opting in you confirm this. SportIn may cancel your participation and zero your Score if it determines you are under 18.</p>
+  <p><strong>3.2 Active SportIn account.</strong> You must hold a valid SportIn account in good standing and have accepted SportIn's main Terms of Service.</p>
+  <p><strong>3.3 Opt-in only; not retroactive.</strong> The Programme is strictly opt-in. Earning begins on the calendar day you complete enrolment. No steps taken before enrolment are counted or credited retroactively.</p>
+  <p><strong>3.4 Beta is free.</strong> No payment is required to participate during the beta phase. SportIn reserves the right to introduce a paid subscription requirement when transitioning out of beta (see Section 18).</p>
+  <p><strong>3.5 One account per person.</strong> Duplicate accounts to earn multiple Scores are prohibited and will result in all associated Scores being cancelled without compensation.</p>
+
+  <h2 id="s4">4. The Trophies Score — Legal Nature</h2>
+  <div class="callout warn">
+    <div class="callout-title">The score is a loyalty metric, not a financial instrument</div>
+    <p>The Trophies Score is a loyalty score expressed in euro-denominated units. It is not: (a) money or legal tender; (b) stored value; (c) electronic money within the meaning of EU Directive 2009/110/EC; (d) a deposit, prepaid instrument, payment account, or financial instrument of any kind; (e) a debt, obligation, or liability of SportIn; (f) property that can be transferred, inherited, assigned, or enforced. SportIn does not hold funds on your behalf. Your Score represents a conditional, non-monetary entitlement to obtain Partner vouchers, subject to all conditions in these T&amp;C — and only if SportIn activates that feature.</p>
+  </div>
+  <p><strong>4.1</strong> The Score is earned entirely through physical activity, not through any payment by you to SportIn. The Programme has been specifically designed to exclude any cash-in or cash-out mechanism.</p>
+  <p><strong>4.2</strong> The Score cannot, under any circumstances, be: (a) withdrawn as cash; (b) transferred to a bank account or payment method; (c) exchanged for any currency, cryptocurrency, or monetary equivalent; (d) used to pay SportIn subscription fees or any other SportIn charge; (e) transferred or gifted to another user.</p>
+  <p><strong>4.3</strong> The Score has no value outside the SportIn voucher redemption system. If no redemption system is ever activated, the Score has no value whatsoever.</p>
+
+  <h2 id="s5">5. How the Score Is Earned — Overview</h2>
+  <table>
+    <thead><tr><th>Mechanism</th><th>Frequency</th><th>What determines it</th><th>Range per event</th></tr></thead>
+    <tbody>
+      <tr><td>Daily Catch (Puma/Turtle)</td><td>Once per day</td><td>Day steps vs. your Level</td><td>−€0.50 to +€4.00</td></tr>
+      <tr><td>Medal</td><td>Daily, top 3 only</td><td>Global daily step leaderboard rank</td><td>+€0.20 to +€0.50</td></tr>
+      <tr><td>Trophy (not yet live)</td><td>On manual claim</td><td>Consecutive days ≥10,000 validated steps</td><td>+€6 to +€30</td></tr>
+    </tbody>
+  </table>
+  <p>All euro values shown above are loyalty score units, not real euros. They are subject to change by SportIn at any time (Section 12). Indicative theoretical maximum: approximately €120/month from daily Catches plus Trophies and Medals. Actual earning will be substantially lower.</p>
+
+  <h2 id="s6">6. Daily Catches — Pumas and Turtles</h2>
+  <h3>6.1 Your Level</h3>
+  <p>Your Level is recalculated daily from your 30-day rolling average step count. It determines how many steps you need each day to earn a Puma rather than a Turtle.</p>
+  <table>
+    <thead><tr><th>Level</th><th>30-Day Avg (min steps)</th><th>Day steps needed to avoid Turtle</th></tr></thead>
+    <tbody>
+      <tr><td>Bronze</td><td>&lt; 5,000</td><td>5,000</td></tr>
+      <tr><td>Silver</td><td>5,000</td><td>10,000</td></tr>
+      <tr><td>Gold</td><td>10,000</td><td>15,000</td></tr>
+      <tr><td>Platinum</td><td>15,000</td><td>20,000</td></tr>
+      <tr><td>Diamond</td><td>20,000</td><td>25,000</td></tr>
+      <tr><td>Master</td><td>25,000</td><td>40,000</td></tr>
+    </tbody>
+  </table>
+  <h3>6.2 Pumas (positive Catches)</h3>
+  <p>If your validated steps on a given day meet or exceed the threshold for your Level, you receive a Puma. Puma values by tier:</p>
+  <table>
+    <thead><tr><th>Tier achieved</th><th>Puma value (Score units)</th></tr></thead>
+    <tbody>
+      <tr><td>Bronze</td><td>€0.50</td></tr>
+      <tr><td>Silver</td><td>€1.00</td></tr>
+      <tr><td>Gold</td><td>€1.50</td></tr>
+      <tr><td>Platinum</td><td>€2.00</td></tr>
+      <tr><td>Diamond</td><td>€2.50</td></tr>
+      <tr><td>Master</td><td>€4.00</td></tr>
+    </tbody>
+  </table>
+  <h3>6.3 Turtles (negative Catches)</h3>
+  <div class="callout warn">
+    <div class="callout-title">Turtles reduce your score</div>
+    <p>If your validated step count falls below the threshold for your current Level, you receive a Turtle — worth −€0.50 when sold. The more active you become (the higher your Level), the harder it is to avoid a Turtle on a rest day. An easy day actively costs you Score points. This is deliberate.</p>
+  </div>
+  <h3>6.4 One Catch per day; missed days</h3>
+  <p>One Catch per calendar day, per user. Days where step data is unavailable, fails fraud validation, or is identified as a spike (Section 13) produce no Catch — neither Puma nor Turtle. No retroactive Catch is awarded for missed days.</p>
+  <h3>6.5 Values are Score units, not money</h3>
+  <p>All Puma and Turtle values are loyalty score units denominated in euros for display purposes only. They are not financial obligations of SportIn. They may be changed at any time — see Section 12.</p>
+
+  <h2 id="s7">7. Medals — Daily Leaderboard Competition</h2>
+  <p><strong>7.1</strong> The three users with the highest validated step counts on the daily global SportIn leaderboard earn a Medal automatically:</p>
+  <table>
+    <thead><tr><th>Position</th><th>Medal</th><th>Score units added</th></tr></thead>
+    <tbody>
+      <tr><td>1st</td><td>Gold</td><td>€0.50</td></tr>
+      <tr><td>2nd</td><td>Silver</td><td>€0.30</td></tr>
+      <tr><td>3rd</td><td>Bronze</td><td>€0.20</td></tr>
+    </tbody>
+  </table>
+  <p><strong>7.2</strong> Medals are awarded based entirely on validated step count — a skill-based metric. Medals are not a lottery, prize draw, or game of chance. Fraudulent accounts are excluded. Tiebreak is deterministic.</p>
+  <p><strong>7.3</strong> Medal values are Score units, not money, and may be changed at any time (Section 12).</p>
+
+  <h2 id="s8">8. Trophies — Streak Awards (Not Yet Live)</h2>
+  <div class="callout warn">
+    <div class="callout-title">This feature is not currently active</div>
+    <p>The Trophy streak system is designed but not live. No Trophy awards will be made until SportIn explicitly activates the feature and notifies users via in-app notification. These terms describe the intended rules for when it launches.</p>
+  </div>
+  <p><strong>8.1</strong> Trophies reward consecutive calendar days of 10,000+ validated steps:</p>
+  <table>
+    <thead><tr><th>Trophy</th><th>Consecutive days</th><th>Score on claim</th><th>Prerequisite</th></tr></thead>
+    <tbody>
+      <tr><td>Wolf</td><td>7</td><td>€6.00</td><td>None</td></tr>
+      <tr><td>Dragon</td><td>15</td><td>€15.00</td><td>Wolf claimed</td></tr>
+      <tr><td>Phoenix</td><td>30</td><td>€30.00</td><td>Dragon claimed</td></tr>
+    </tbody>
+  </table>
+  <p><strong>8.2</strong> Trophies must be actively claimed in-app. Claiming resets your streak to zero. Only one Trophy per streak run.</p>
+  <p><strong>8.3</strong> One missed day ends the streak and forfeits all unclaimed Trophy value. No grace period, no exceptions.</p>
+  <p><strong>8.4</strong> All Trophy values and day thresholds are Score units, subject to change (Section 12).</p>
+
+  <h2 id="s9">9. Selling Your Collection</h2>
+  <p><strong>9.1</strong> Unsold Catches accumulate in your Collection. Medals and claimed Trophies credit your Score directly and are not part of the Collection.</p>
+  <p><strong>9.2 Sell Collection.</strong> This action settles all unsold Catches simultaneously into a single net figure. All-or-nothing: you cannot partially sell or exclude individual items.</p>
+  <p><strong>9.3 Final.</strong> Settlement is immediate and irreversible. The net result (positive or negative) is applied to your Score.</p>
+  <p><strong>9.4 Value at time of sale.</strong> The value applied to each unsold Catch is the value assigned to that Catch type at the moment you press Sell Collection, not when you earned it. If SportIn has changed prices since you earned a Catch, the current price applies.</p>
+
+  <h2 id="s10">10. Negative Score</h2>
+  <div class="callout warn">
+    <div class="callout-title">Your score can go below zero — this is not a debt</div>
+    <p>If you sell a Collection containing more Turtles than Pumas, your Score decreases and may go below zero. A negative Score is not a debt owed to SportIn. SportIn will never charge your payment method, withhold services, or take any adverse action to recover a negative Score. It simply means you have less (or no) voucher redemption capacity when that feature becomes available. A negative Score cannot go below zero at the point of voucher redemption — you simply have nothing to spend.</p>
+  </div>
+
+  <h2 id="s11">11. Voucher Redemption — Post-Beta Only</h2>
+  <div class="callout warn">
+    <div class="callout-title">Not available during beta</div>
+    <p>Voucher redemption does not exist during the beta phase. The following describes the intended post-beta model, which SportIn may change, delay, or never activate.</p>
+  </div>
+  <p><strong>11.1</strong> When and if SportIn activates voucher redemption, your Score may be exchanged for vouchers issued by confirmed Partners. Vouchers are issued by Partners, not by SportIn. SportIn facilitates the exchange but is not the merchant of record for voucher redemption.</p>
+  <p><strong>11.2</strong> Vouchers are redeemable only with the specific Partner that issues them, subject to that Partner's own terms and conditions. SportIn is not responsible for Partner products, pricing, availability, delivery, quality, or fulfilment.</p>
+  <p><strong>11.3</strong> SportIn may set a cap on the percentage of any purchase price that can be covered by Score (currently planned at 20%). This cap may be changed at any time.</p>
+  <p><strong>11.4 No Partners, no redemption.</strong> If SportIn has not confirmed any Partners at the time you attempt to redeem, redemption is not possible. Your Score continues to accumulate. No compensation is payable.</p>
+
+  <h2 id="s12">12. SportIn's Right to Modify the Programme</h2>
+  <p><strong>12.1</strong> SportIn may modify any aspect of the Programme at any time, at its sole discretion, including:</p>
+  <ul>
+    <li>All Puma, Turtle, Medal, and Trophy Score values;</li>
+    <li>Level thresholds and tier step counts;</li>
+    <li>Trophy day counts and sequential unlock requirements;</li>
+    <li>The voucher redemption cap;</li>
+    <li>Eligibility criteria and subscription requirements;</li>
+    <li>The introduction of Score expiry policies;</li>
+    <li>Any formula, algorithm, or rule underlying the Programme.</li>
+  </ul>
+  <div class="callout warn">
+    <div class="callout-title">Price changes affect your unsold Collection</div>
+    <p>Changes to Score values take effect immediately upon SportIn updating the system. Any change applies to all unsold Catches in your Collection at the moment you press Sell Collection, regardless of when those Catches were earned. SportIn will endeavour to provide in-app notice of material changes but is not obligated to do so.</p>
+  </div>
+  <p><strong>12.2</strong> SportIn may cancel the Programme entirely at any time, for any reason, without notice and without any obligation to compensate users. See Section 16.</p>
+
+  <h2 id="s13">13. Fraud Prevention and Step Validation</h2>
+  <p><strong>13.1</strong> All step data is subject to automated fraud validation. SportIn uses proprietary algorithms to detect abnormal patterns.</p>
+  <p><strong>13.2 Spike zeroing.</strong> Days on which your step count is identified as a statistical spike inconsistent with your history will be zeroed — set to zero steps for Programme purposes. Zeroed days are visible in your Programme history. They produce no Catch.</p>
+  <p><strong>13.3 Account suspension.</strong> Accounts exhibiting systematic fraud, GPS spoofing, step manipulation, or multi-account abuse will be suspended and all associated Scores zeroed without compensation. SportIn's determination is final.</p>
+  <p><strong>13.4 Leaderboard integrity.</strong> Fraudulent accounts are excluded from the Medal leaderboard. SportIn may correct leaderboard rankings and Medal awards retroactively where fraud is discovered after the award.</p>
+
+  <h2 id="s14">14. Known Technical Limitations</h2>
+  <p><strong>14.1</strong> The Programme is provided on an "as is" basis. SportIn does not warrant that it will be uninterrupted, error-free, or produce consistent results.</p>
+  <div class="callout warn">
+    <div class="callout-title">Known defect — UTC / local time mismatch in Medal awards</div>
+    <p>Medal awards are currently calculated on a UTC daily schedule while step-day records use your local device time. Users in timezones west of UTC may have their competition day cut short. This is harmless for current users (Romania, Spain) but will disadvantage users in western timezones. SportIn is working to resolve this. By participating you acknowledge this limitation.</p>
+  </div>
+  <p><strong>14.2</strong> The Programme depends on step data from your device's health platform (Apple HealthKit, Google Fit, or connected wearable). SportIn is not responsible for inaccuracies, gaps, or failures in that data.</p>
+
+  <h2 id="s15">15. Limitation of Liability</h2>
+  <p><strong>15.1</strong> SportIn's total aggregate liability to you in connection with the Trophies Programme shall not exceed <strong>zero euros (€0)</strong> during the beta phase, it being acknowledged that: (a) the Programme is free; (b) the Score has no monetary value; (c) SportIn owes you no amount of money.</p>
+  <p><strong>15.2</strong> SportIn shall not be liable for:</p>
+  <ul>
+    <li>Any loss of expected Score, anticipated voucher access, or hypothetical discount;</li>
+    <li>The effect of price changes on your unsold Collection;</li>
+    <li>Cancellation of the Programme or zeroing of your Score;</li>
+    <li>The unavailability of redemption Partners;</li>
+    <li>Technical failures, data inaccuracies, or fraud validation outcomes;</li>
+    <li>The UTC/local-time scheduling defect described in Section 14;</li>
+    <li>Any indirect, consequential, or speculative loss of any kind.</li>
+  </ul>
+  <p><strong>15.3</strong> Nothing in these T&amp;C excludes liability for death or personal injury caused by SportIn's negligence, or for fraud, as required by mandatory EU and Romanian law.</p>
+
+  <h2 id="s16">16. Programme Suspension and Cancellation</h2>
+  <div class="callout warn">
+    <div class="callout-title">SportIn can cancel everything at any time — no compensation</div>
+    <p>SportIn may suspend or permanently cancel the Trophies Programme at any time, without notice, without reason, and without any obligation to compensate users for: (a) any accumulated Score; (b) any unsold Collection; (c) any unclaimed Trophy; (d) any SportIn Pro subscription fees paid (whether for Trophies access or any other reason); (e) any other direct or indirect loss. This applies during beta and post-beta equally.</p>
+  </div>
+  <p><strong>16.2 Opt-out.</strong> You may opt out at any time via in-app settings. On opt-out your Score is frozen. It is not deleted but cannot be earned on further and cannot be redeemed. Opt-out does not affect your main SportIn account or any paid subscription.</p>
+  <p><strong>16.3 Suspension for breach.</strong> SportIn may immediately suspend your participation without notice for breach of these T&amp;C, the main Terms of Service, or the Acceptable Use Policy, or if fraud is detected.</p>
+
+  <h2 id="s17">17. What Happens to Your Score on Account Deletion</h2>
+  <p><strong>17.1</strong> If you delete your SportIn account, your Trophies Score, Collection, and all Programme data are permanently and immediately deleted. No compensation is payable.</p>
+  <p><strong>17.2</strong> If SportIn terminates your account for cause, your Score is forfeited. No compensation is payable.</p>
+  <p><strong>17.3 Inactive account deletion.</strong> Accounts inactive for 12 months are subject to automatic deletion per SportIn's Privacy Policy. Your Score will be deleted with the account. SportIn will provide 30 days' email notice before deletion.</p>
+
+  <h2 id="s18">18. Subscription — Post-Beta</h2>
+  <p><strong>18.1</strong> The Trophies Programme is free during the beta phase. SportIn reserves the right to require a paid SportIn Pro subscription (currently planned at €99/month) as a condition of continued earning when the Programme transitions out of beta.</p>
+  <p><strong>18.2</strong> If a subscription is introduced, SportIn will provide reasonable advance notice via in-app notification. You will be able to choose whether to subscribe. If you do not subscribe, earning will be suspended but your accumulated Score will be frozen (not deleted).</p>
+  <p><strong>18.3 No refunds for absent partners.</strong> If you hold a paid subscription and no Partners are confirmed for voucher redemption, SportIn is not obligated to refund subscription fees on that basis. The subscription grants access to earn Score — not a guarantee of redemption availability.</p>
+  <p><strong>18.4 Cancellation of subscription.</strong> If you cancel your subscription, earning is suspended and your Score is frozen. It is not deleted. If you resubscribe, earning resumes from your frozen Score.</p>
+
+  <h2 id="s19">19. Governing Law and Disputes</h2>
+  <p>These Trophies T&amp;C are governed by the laws of <strong>Romania</strong>. Any dispute shall be subject to the exclusive jurisdiction of the courts of <strong>Bucharest, Romania</strong>, subject to any mandatory consumer protection rights in your country of residence. EU residents may access the European Commission's Online Dispute Resolution platform at <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.</p>
+
+  <h2 id="s20">20. Miscellaneous</h2>
+  <p><strong>Entire agreement.</strong> These Trophies T&amp;C together with SportIn's main Terms of Service, Privacy Policy, and Acceptable Use Policy constitute the entire agreement relating to the Programme.</p>
+  <p><strong>Severability.</strong> If any provision is invalid or unenforceable, the remaining provisions continue in full force.</p>
+  <p><strong>No waiver.</strong> SportIn's failure to enforce any right does not constitute a waiver.</p>
+  <p><strong>Referral programme.</strong> To the extent any SportIn referral programme interacts with the Trophies Score, the specific terms of that programme govern the interaction. In case of conflict, these T&amp;C prevail for the Trophies Score.</p>
+  <p><strong>Updates.</strong> SportIn will notify you of material changes via in-app notification where practicable. Continued participation after the effective date of a change constitutes acceptance.</p>
+  <p><strong>Language.</strong> In the event of conflict between any translated version and the Romanian-law governing version, the governing version prevails.</p>
+
+  <div class="part-divider">
+    <div class="part-label">Part C — Data Protection</div>
+  </div>
+  <h2 id="c1">C1. Data Controller</h2>
+  <p>This GDPR Notice describes specifically how SportIn processes personal data in connection with the Trophies Programme, under Regulation (EU) 2016/679 and Romanian Law no. 190/2018. It supplements SportIn's main <a href="/privacy-policy">Privacy Policy</a> (sportin.io/privacy-policy), which continues to apply in full.</p>
+  <p><strong>SportIn.io SRL</strong>, organised under the laws of Romania. Data protection contact: <a href="mailto:privacy@sportin.io">privacy@sportin.io</a></p>
+
+  <h2 id="c2">C2. Data Processed by the Trophies Programme</h2>
+  <table>
+    <thead><tr><th>Data</th><th>Purpose</th><th>Legal basis</th><th>Retention</th></tr></thead>
+    <tbody>
+      <tr><td>Daily validated step totals</td><td>Catch calculation; fraud detection</td><td>Contract Art. 6(1)(b); Legitimate interest Art. 6(1)(f)</td><td>Programme + 90 days</td></tr>
+      <tr><td>30-day rolling average step count</td><td>Level calculation</td><td>Contract Art. 6(1)(b)</td><td>Programme + 90 days</td></tr>
+      <tr><td>Hourly step snapshots</td><td>End-of-day projection; leaderboard</td><td>Contract Art. 6(1)(b)</td><td>24h rolling — not stored long-term</td></tr>
+      <tr><td>Spike / anomaly flags</td><td>Fraud prevention; audit</td><td>Legitimate interest Art. 6(1)(f)</td><td>90 days post-flag</td></tr>
+      <tr><td>Timezone and country code</td><td>Day boundary; leaderboard timing</td><td>Contract Art. 6(1)(b)</td><td>Programme duration</td></tr>
+      <tr><td>Daily leaderboard position</td><td>Medal award</td><td>Contract Art. 6(1)(b)</td><td>Programme + 12 months</td></tr>
+      <tr><td>Trophies Score and transaction history</td><td>Programme operation; disputes</td><td>Contract Art. 6(1)(b); Legal obligation Art. 6(1)(c)</td><td>Programme + 36 months (fiscal law)</td></tr>
+      <tr><td>Opt-in timestamp and consent record</td><td>Proof of T&amp;C acceptance</td><td>Legal obligation Art. 6(1)(c)</td><td>Account duration + 5 years</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="c3">C3. Legal Bases</h2>
+  <p>Processing of step and activity data is based on Article 6(1)(b) GDPR (contract performance) — you opted in and we process your data to operate the Programme. Fraud detection is based on Article 6(1)(f) (legitimate interests). Retention of transaction records for fiscal purposes is based on Article 6(1)(c) (legal obligation).</p>
+  <p><strong>Health data.</strong> Step counts may constitute health data under Article 9 GDPR. To the extent they do, SportIn relies on your explicit consent (Article 9(2)(a)) given via the opt-in flow. You may withdraw consent at any time by opting out, without affecting prior processing.</p>
+
+  <h2 id="c4">C4. How We Use Your Data</h2>
+  <ul>
+    <li>To calculate your daily Catch, Level, and Trophies Score;</li>
+    <li>To operate and display the daily global leaderboard and award Medals;</li>
+    <li>To detect and prevent fraud and multi-account abuse;</li>
+    <li>To process Score settlements and maintain transaction records;</li>
+    <li>To retain proof of your opt-in consent and T&amp;C acceptance;</li>
+    <li>To notify you of Programme changes or account issues.</li>
+  </ul>
+  <div class="callout">
+    <p><strong>We do not sell your step data or Trophies data to any third party for their own purposes, ever.</strong></p>
+  </div>
+
+  <h2 id="c5">C5. Who Receives Your Data</h2>
+  <ul>
+    <li><strong>Cloud infrastructure providers</strong> — data processors under a DPA, data stored within the EEA;</li>
+    <li><strong>Confirmed Partners</strong> (post-beta, if applicable) — solely the minimum data required to validate and apply your Score at voucher redemption (e.g. account identifier and Score amount). Partners do not receive your step data;</li>
+    <li><strong>Fraud analytics providers</strong> — where applicable, under a DPA, for fraud detection only;</li>
+    <li><strong>Law enforcement or regulators</strong> — only where required by law or binding order.</li>
+  </ul>
+  <p>No data is transferred outside the EEA without appropriate safeguards.</p>
+
+  <h2 id="c6">C6. Retention</h2>
+  <p>Data is retained as specified in the table in Section C2. On account deletion or Programme cancellation, step data and Programme activity are deleted or anonymised within 30 days, subject to the retention of transaction records for up to 36 months under Romanian fiscal law and consent records for 5 years.</p>
+
+  <h2 id="c7">C7. Your Rights</h2>
+  <ul>
+    <li><strong>Access (Art. 15)</strong> — request a copy of your Trophies data;</li>
+    <li><strong>Rectification (Art. 16)</strong> — correct inaccurate personal data;</li>
+    <li><strong>Erasure (Art. 17)</strong> — delete account and Trophies data via Settings › Account › Delete Account;</li>
+    <li><strong>Restriction (Art. 18)</strong> — restrict processing pending accuracy review;</li>
+    <li><strong>Portability (Art. 20)</strong> — receive your data in machine-readable format;</li>
+    <li><strong>Object (Art. 21)</strong> — object to legitimate-interest processing;</li>
+    <li><strong>Withdraw consent (Art. 7(3))</strong> — opt out at any time; does not affect prior processing;</li>
+    <li><strong>Complaint</strong> — lodge a complaint with ANSPDCP (anspdcp.ro) or your local EU supervisory authority.</li>
+  </ul>
+  <p>Requests handled within 30 days, extendable by 60 days for complex cases.</p>
+
+  <h2 id="c8">C8. Contact</h2>
+  <p>Data protection: <a href="mailto:privacy@sportin.io">privacy@sportin.io</a><br/>
+  General support: <a href="mailto:hello@sportin.io">hello@sportin.io</a><br/>
+  Website: <a href="/">sportin.io</a> · ANSPDCP: <a href="https://anspdcp.ro" target="_blank" rel="noopener">anspdcp.ro</a></p>
+
+  <p style="margin-top:56px; font-size:13px; color:var(--text-4); font-style:italic;">SportIn.io SRL — Confidential. Version 2.0, 2026. Governing law: Romania. These T&amp;C do not constitute legal advice. SportIn recommends that you seek independent legal counsel before relying on this document for any commercial purpose.</p>
+</main>
+
+<footer class="foot">
+  <div>
+    <a href="/">Home</a>
+    <a href="/terms">Terms</a>
+    <a href="/privacy-policy">Privacy Policy</a>
+    <a href="mailto:hello@sportin.io">Contact</a>
+  </div>
+  <div style="margin-top:14px;">© SportIn.io SRL · Romania</div>
+</footer>
+
+<script src="/mesh-bg.js"></script>
+</body>
+</html>
