@@ -53,6 +53,64 @@
     color: var(--dim);
     line-height: 1.6;
   }
+  .templates {
+    max-width: 860px;
+    margin: 0 auto 28px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .tpl {
+    width: 96px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    color: var(--text);
+    text-align: center;
+    cursor: pointer;
+  }
+  .tpl .thumb {
+    width: 96px;
+    height: 120px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    background: #0a0a12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tpl .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .tpl .name {
+    display: block;
+    margin-top: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .tpl.active .thumb {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(211, 34, 181, 0.35);
+  }
+  .tpl.active .name { color: var(--text); }
+  .tpl.soon { cursor: default; opacity: 0.55; }
+  .tpl.soon .thumb {
+    border-style: dashed;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
   .studio {
     display: flex;
     align-items: flex-start;
@@ -151,8 +209,10 @@
 
 <header class="page">
   <h1>SportIn Media Kit</h1>
-  <p>Create your personal #10KChallenge poster. Upload your photo, add your name and title, and download it ready to share.</p>
+  <p>Pick a template, upload your photo, add your name and title, and download your poster ready to share.</p>
 </header>
+
+<div class="templates" id="templateStrip" aria-label="Templates"></div>
 
 <div class="studio">
   <div class="poster-wrap">
@@ -202,13 +262,61 @@
 
   var LOGO_SRC = 'data:image/png;base64,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';
 
+  // Template registry. Each future template gets an entry here plus its own
+  // draw function dispatched from render(). Entries with ready:false render
+  // as disabled "coming soon" placeholders in the strip.
+  var TEMPLATES = [
+    { id: '10k-challenge', name: '10K Challenge', ready: true, thumb: '10k-challenge-bg.png' },
+    { id: 'template-2', name: 'Coming soon', ready: false },
+    { id: 'template-3', name: 'Coming soon', ready: false },
+    { id: 'template-4', name: 'Coming soon', ready: false }
+  ];
+
   var state = {
+    template: TEMPLATES[0],
     photo: null,        // HTMLImageElement, ideally transparent PNG
     photoScale: 1.0,
     photoY: 0,
     name: 'YOUR NAME',
     title: 'YOUR TITLE'
   };
+
+  function buildTemplateStrip() {
+    var strip = document.getElementById('templateStrip');
+    TEMPLATES.forEach(function (tpl) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tpl' + (tpl.ready ? '' : ' soon') + (tpl === state.template ? ' active' : '');
+      var thumb = document.createElement('span');
+      thumb.className = 'thumb';
+      if (tpl.ready && tpl.thumb) {
+        var img = document.createElement('img');
+        img.src = tpl.thumb;
+        img.alt = tpl.name;
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = 'Soon';
+      }
+      var name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = tpl.name;
+      btn.appendChild(thumb);
+      btn.appendChild(name);
+      if (tpl.ready) {
+        btn.addEventListener('click', function () {
+          state.template = tpl;
+          var nodes = strip.querySelectorAll('.tpl');
+          for (var i = 0; i < nodes.length; i++) nodes[i].classList.remove('active');
+          btn.classList.add('active');
+          render();
+        });
+      } else {
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
+      }
+      strip.appendChild(btn);
+    });
+  }
 
   var logo = new Image();
   logo.src = LOGO_SRC;
@@ -472,8 +580,9 @@
     ctx.restore();
   }
 
-  function render() {
-    ctx.clearRect(0, 0, W, H);
+  // The 10K Challenge template. Future templates get their own render
+  // function and a dispatch branch below.
+  function renderTemplate10k() {
     var baked = drawBackground();
     if (!baked) {
       drawRing();
@@ -485,6 +594,11 @@
     drawStatement();
     if (!baked) drawLogo();
     drawSignature();
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+    if (state.template.id === '10k-challenge') renderTemplate10k();
   }
 
   // ---------- wiring ----------
@@ -542,6 +656,7 @@
   };
 
   // First paint after the display fonts are really available.
+  buildTemplateStrip();
   render();
   if (document.fonts && document.fonts.ready) {
     Promise.all([
