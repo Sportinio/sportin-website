@@ -389,33 +389,51 @@
 
   var RING = { cx: 540, cy: 553, r: 408 };
 
-  function ringGradient() {
-    var g = ctx.createLinearGradient(RING.cx - RING.r, RING.cy, RING.cx + RING.r, RING.cy);
+  function ringGradient(c) {
+    var g = c.createLinearGradient(RING.cx - RING.r, RING.cy, RING.cx + RING.r, RING.cy);
     g.addColorStop(0, '#3a7bff');
     g.addColorStop(0.45, '#6f63f0');
     g.addColorStop(1, '#ff4fd8');
     return g;
   }
 
-  function drawRing() {
-    // The ring is interrupted at its top: the logo sits in that gap on a dark
-    // disc, so the neon line never crosses the icon.
-    var gap = 0.16;
-    var start = -Math.PI / 2 + gap;
-    var end = -Math.PI / 2 - gap + Math.PI * 2;
-    ctx.save();
-    ctx.strokeStyle = ringGradient();
-    ctx.lineWidth = 9;
-    ctx.lineCap = 'round';
-    ctx.shadowColor = 'rgba(120, 110, 255, 0.85)';
-    ctx.shadowBlur = 48;
-    ctx.beginPath();
-    ctx.arc(RING.cx, RING.cy, RING.r, start, end);
-    ctx.stroke();
+  // The ring is built once offscreen: a full circle whose top melts away with
+  // a gradient-transparency mask around the logo, so the neon line blends out
+  // instead of hard-stopping against a dark patch.
+  var ringCache = null;
+  function ringLayer() {
+    if (ringCache) return ringCache;
+    var c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    var r = c.getContext('2d');
+    r.strokeStyle = ringGradient(r);
+    r.lineWidth = 9;
+    r.shadowColor = 'rgba(120, 110, 255, 0.85)';
+    r.shadowBlur = 48;
+    r.beginPath();
+    r.arc(RING.cx, RING.cy, RING.r, 0, Math.PI * 2);
+    r.stroke();
     // second pass tightens the core line
-    ctx.shadowBlur = 18;
-    ctx.stroke();
-    ctx.restore();
+    r.shadowBlur = 18;
+    r.stroke();
+
+    // gradient fade centered on the logo: fully clear under the icon,
+    // easing back to full ring strength further along the arc
+    r.globalCompositeOperation = 'destination-out';
+    var fade = r.createRadialGradient(RING.cx, RING.cy - RING.r, 0, RING.cx, RING.cy - RING.r, 160);
+    fade.addColorStop(0, 'rgba(0, 0, 0, 1)');
+    fade.addColorStop(0.5, 'rgba(0, 0, 0, 0.95)');
+    fade.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    r.fillStyle = fade;
+    r.fillRect(0, 0, W, H);
+
+    ringCache = c;
+    return c;
+  }
+
+  function drawRing() {
+    ctx.drawImage(ringLayer(), 0, 0);
   }
 
   function drawBigNumber() {
@@ -666,23 +684,20 @@
 
   function drawLogo() {
     if (!logo.complete || logo.naturalWidth === 0) return;
-    // The icon sits centered in the ring's top gap on its own dark disc, so
-    // the neon line reads as passing behind it.
+    // The icon floats where the ring fades out, grounded by its own dark
+    // shadow instead of a painted background.
     var cx = RING.cx, cy = RING.cy - RING.r;
-    var disc = ctx.createRadialGradient(cx, cy, 8, cx, cy, 62);
-    disc.addColorStop(0, 'rgba(6, 7, 11, 1)');
-    disc.addColorStop(0.72, 'rgba(6, 7, 11, 0.95)');
-    disc.addColorStop(1, 'rgba(6, 7, 11, 0)');
-    ctx.fillStyle = disc;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 62, 0, Math.PI * 2);
-    ctx.fill();
-
     var h = 56;
     var w = h * (logo.naturalWidth / logo.naturalHeight);
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.45)';
-    ctx.shadowBlur = 14;
+    // wide soft shadow seats the icon in the scene
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    ctx.shadowBlur = 34;
+    ctx.shadowOffsetY = 8;
+    ctx.drawImage(logo, cx - w / 2, cy - h / 2, w, h);
+    // tight pass keeps the mark crisp
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 3;
     ctx.drawImage(logo, cx - w / 2, cy - h / 2, w, h);
     ctx.restore();
   }
