@@ -266,7 +266,7 @@
   // draw function dispatched from render(). Entries with ready:false render
   // as disabled "coming soon" placeholders in the strip.
   var TEMPLATES = [
-    { id: '10k-challenge', name: '10K Challenge', ready: true, thumb: '10k-challenge-bg.png' },
+    { id: '10k-challenge', name: '10K Challenge', ready: true, thumb: '/mediakit/10k-challenge-bg.png' },
     { id: 'template-2', name: 'Coming soon', ready: false },
     { id: 'template-3', name: 'Coming soon', ready: false },
     { id: 'template-4', name: 'Coming soon', ready: false }
@@ -326,36 +326,40 @@
   var bgArt = new Image();
   var bgArtReady = false;
   bgArt.onload = function () { bgArtReady = true; render(); };
-  bgArt.src = '10k-challenge-bg.png';
+  // Absolute path: /mediakit without a trailing slash serves this page too, and
+  // a relative path would resolve to the site root there and 404.
+  if (!/[?&]noart/.test(location.search)) {
+    bgArt.src = '/mediakit/10k-challenge-bg.png';
+  }
 
   // ---------- text helpers (manual letter spacing: identical on every browser) ----------
 
-  function spacedWidth(text, spacing) {
+  function spacedWidth(c, text, spacing) {
     var w = 0;
     for (var i = 0; i < text.length; i++) {
-      w += ctx.measureText(text[i]).width;
+      w += c.measureText(text[i]).width;
       if (i < text.length - 1) w += spacing;
     }
     return w;
   }
 
-  function drawSpacedCentered(text, cx, y, spacing) {
-    var total = spacedWidth(text, spacing);
+  function drawSpacedCentered(c, text, cx, y, spacing) {
+    var total = spacedWidth(c, text, spacing);
     var x = cx - total / 2;
     for (var i = 0; i < text.length; i++) {
-      ctx.fillText(text[i], x, y);
-      x += ctx.measureText(text[i]).width + spacing;
+      c.fillText(text[i], x, y);
+      x += c.measureText(text[i]).width + spacing;
     }
   }
 
   // Shrinks the font size until the text (with spacing) fits maxWidth.
-  function fitFont(text, weight, family, startSize, spacing, maxWidth) {
+  function fitFont(c, text, weight, family, startSize, spacing, maxWidth) {
     var size = startSize;
-    ctx.font = weight + ' ' + size + 'px ' + family;
-    var w = spacedWidth(text, spacing);
+    c.font = weight + ' ' + size + 'px ' + family;
+    var w = spacedWidth(c, text, spacing);
     if (w > maxWidth) {
       size = Math.floor(size * maxWidth / w);
-      ctx.font = weight + ' ' + size + 'px ' + family;
+      c.font = weight + ' ' + size + 'px ' + family;
     }
     return size;
   }
@@ -408,13 +412,19 @@
   }
 
   function drawRing() {
+    // The ring is interrupted at its top: the logo sits in that gap on a dark
+    // disc, so the neon line never crosses the icon.
+    var gap = 0.16;
+    var start = -Math.PI / 2 + gap;
+    var end = -Math.PI / 2 - gap + Math.PI * 2;
     ctx.save();
     ctx.strokeStyle = ringGradient();
     ctx.lineWidth = 9;
+    ctx.lineCap = 'round';
     ctx.shadowColor = 'rgba(120, 110, 255, 0.85)';
     ctx.shadowBlur = 48;
     ctx.beginPath();
-    ctx.arc(RING.cx, RING.cy, RING.r, 0, Math.PI * 2);
+    ctx.arc(RING.cx, RING.cy, RING.r, start, end);
     ctx.stroke();
     // second pass tightens the core line
     ctx.shadowBlur = 18;
@@ -423,22 +433,68 @@
   }
 
   function drawBigNumber() {
-    var text = '10.000';
-    ctx.save();
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
+    var text = '10,000';   // matches the approved campaign artwork
+    var num = document.createElement('canvas');
+    num.width = W;
+    num.height = H;
+    var n = num.getContext('2d');
+    n.textBaseline = 'middle';
+    n.textAlign = 'left';
     var spacing = -4;
-    fitFont(text, '800', "'Saira Extra Condensed', sans-serif", 700, spacing, 1005);
+    fitFont(n, text, '800', "'Saira Extra Condensed', sans-serif", 700, spacing, 1005);
 
-    var g = ctx.createLinearGradient(40, 0, W - 40, 0);
+    // base: cool white on the blue side warming to pink on the right
+    var g = n.createLinearGradient(40, 0, W - 40, 0);
     g.addColorStop(0, '#a9bce4');
     g.addColorStop(0.32, '#eef2fb');
     g.addColorStop(0.62, '#f6e3f3');
     g.addColorStop(1, '#ea99d8');
-    ctx.fillStyle = g;
-    ctx.shadowColor = 'rgba(190, 205, 255, 0.28)';
-    ctx.shadowBlur = 46;
-    drawSpacedCentered(text, W / 2, 500, spacing);
+    n.fillStyle = g;
+    drawSpacedCentered(n, text, W / 2, 500, spacing);
+
+    // frozen surface: grain trapped inside the digits only
+    n.globalCompositeOperation = 'source-atop';
+    n.globalAlpha = 0.16;
+    var t = grainTile();
+    for (var gy = 0; gy < H; gy += 256) {
+      for (var gx = 0; gx < W; gx += 256) {
+        n.drawImage(t, gx, gy);
+      }
+    }
+    n.globalAlpha = 1;
+
+    // sheen: lit from above, falling into shade at the base
+    var sheen = n.createLinearGradient(0, 220, 0, 800);
+    sheen.addColorStop(0, 'rgba(255, 255, 255, 0.30)');
+    sheen.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+    sheen.addColorStop(1, 'rgba(10, 10, 20, 0.30)');
+    n.fillStyle = sheen;
+    n.fillRect(0, 0, W, H);
+
+    // the ring's neon reflecting off the digit faces
+    var lb = n.createRadialGradient(190, 640, 60, 190, 640, 460);
+    lb.addColorStop(0, 'rgba(64, 130, 255, 0.34)');
+    lb.addColorStop(1, 'rgba(64, 130, 255, 0)');
+    n.fillStyle = lb;
+    n.fillRect(0, 0, W, H);
+    var rp = n.createRadialGradient(890, 640, 60, 890, 640, 460);
+    rp.addColorStop(0, 'rgba(255, 79, 216, 0.34)');
+    rp.addColorStop(1, 'rgba(255, 79, 216, 0)');
+    n.fillStyle = rp;
+    n.fillRect(0, 0, W, H);
+    n.globalCompositeOperation = 'source-over';
+
+    // pass 1: soft light bloom around the digits
+    ctx.save();
+    ctx.shadowColor = 'rgba(190, 205, 255, 0.30)';
+    ctx.shadowBlur = 56;
+    ctx.drawImage(num, 0, 0);
+    // pass 2: the dark drop shadow that lifts the number off the background
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+    ctx.shadowBlur = 26;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 14;
+    ctx.drawImage(num, 0, 0);
     ctx.restore();
   }
 
@@ -591,7 +647,7 @@
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
     var spacing = 2;
-    fitFont(text, '400', "'Archivo Black', sans-serif", 118, spacing, 990);
+    fitFont(ctx, text, '400', "'Archivo Black', sans-serif", 118, spacing, 990);
 
     var g = ctx.createLinearGradient(60, 0, W - 60, 0);
     g.addColorStop(0, '#ffffff');
@@ -600,7 +656,7 @@
     ctx.fillStyle = g;
     ctx.shadowColor = 'rgba(0,0,0,0.5)';
     ctx.shadowBlur = 24;
-    drawSpacedCentered(text, W / 2, 1012, spacing);
+    drawSpacedCentered(ctx, text, W / 2, 1012, spacing);
     ctx.restore();
   }
 
@@ -641,12 +697,24 @@
 
   function drawLogo() {
     if (!logo.complete || logo.naturalWidth === 0) return;
+    // The icon sits centered in the ring's top gap on its own dark disc, so
+    // the neon line reads as passing behind it.
+    var cx = RING.cx, cy = RING.cy - RING.r;
+    var disc = ctx.createRadialGradient(cx, cy, 8, cx, cy, 62);
+    disc.addColorStop(0, 'rgba(6, 7, 11, 1)');
+    disc.addColorStop(0.72, 'rgba(6, 7, 11, 0.95)');
+    disc.addColorStop(1, 'rgba(6, 7, 11, 0)');
+    ctx.fillStyle = disc;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 62, 0, Math.PI * 2);
+    ctx.fill();
+
     var h = 56;
     var w = h * (logo.naturalWidth / logo.naturalHeight);
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.45)';
     ctx.shadowBlur = 14;
-    ctx.drawImage(logo, (W - w) / 2, 64, w, h);
+    ctx.drawImage(logo, cx - w / 2, cy - h / 2, w, h);
     ctx.restore();
   }
 
@@ -668,14 +736,14 @@
     if (name) {
       ctx.font = "800 31px 'Montserrat', sans-serif";
       ctx.fillStyle = '#ffffff';
-      drawSpacedCentered(name, W / 2, 1244, 9);
+      drawSpacedCentered(ctx, name, W / 2, 1244, 9);
     }
 
     var title = (state.title || '').trim().toUpperCase();
     if (title) {
       ctx.font = "600 17px 'Montserrat', sans-serif";
       ctx.fillStyle = '#8e93a1';
-      drawSpacedCentered(title, W / 2, 1284, 7);
+      drawSpacedCentered(ctx, title, W / 2, 1284, 7);
     }
     ctx.restore();
   }
