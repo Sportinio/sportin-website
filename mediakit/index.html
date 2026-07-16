@@ -633,12 +633,16 @@
   }
 
   function drawBottomOverlay() {
-    var g = ctx.createLinearGradient(0, 880, 0, H);
+    // Reaches up past the #10KCHALLENGE headline with an eased falloff, so
+    // the whole text block sits on dark instead of fighting the photo.
+    var g = ctx.createLinearGradient(0, 720, 0, H);
     g.addColorStop(0, 'rgba(4, 5, 8, 0)');
-    g.addColorStop(0.5, 'rgba(4, 5, 8, 0.68)');
+    g.addColorStop(0.28, 'rgba(4, 5, 8, 0.32)');
+    g.addColorStop(0.52, 'rgba(4, 5, 8, 0.62)');
+    g.addColorStop(0.75, 'rgba(4, 5, 8, 0.85)');
     g.addColorStop(1, 'rgba(4, 5, 8, 0.97)');
     ctx.fillStyle = g;
-    ctx.fillRect(0, 840, W, H - 840);
+    ctx.fillRect(0, 700, W, H - 700);
   }
 
   function drawHeadline() {
