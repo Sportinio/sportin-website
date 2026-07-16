@@ -324,21 +324,9 @@
 
   // The approved campaign background (ring, glow, number, and logo baked in).
   // When it loads, the procedural ring/number/logo layers are skipped entirely.
-  // The procedural layers are drawn ONLY if the art definitively fails to
-  // load. While it is still in flight the poster stays clean, so a refresh
-  // never flashes a second, differently-styled number under the artwork.
-  var bgArt = new Image();
-  var bgArtReady = false;
-  var bgArtFailed = false;
-  bgArt.onload = function () { bgArtReady = true; render(); };
-  bgArt.onerror = function () { bgArtFailed = true; render(); };
-  // Absolute path: /mediakit without a trailing slash serves this page too, and
-  // a relative path would resolve to the site root there and 404.
-  if (/[?&]noart/.test(location.search)) {
-    bgArtFailed = true;
-  } else {
-    bgArt.src = '/mediakit/10k-challenge-bg.jpg';
-  }
+  // The poster is fully canvas-rendered. The campaign JPEG remains only as
+  // the template thumbnail and og:image; drawing the scene in code lets the
+  // number sit exactly at the ring's center, which the baked art could not.
 
   // ---------- text helpers (manual letter spacing: identical on every browser) ----------
 
@@ -374,30 +362,21 @@
 
   // ---------- layers ----------
 
-  // Returns true when a full artwork background was drawn (art already contains
-  // the ring, the big number, and the logo).
   function drawBackground() {
     ctx.fillStyle = '#06070b';
     ctx.fillRect(0, 0, W, H);
 
-    if (bgArtReady) {
-      // cover-fit the campaign art
-      var s = Math.max(W / bgArt.width, H / bgArt.height);
-      var dw = bgArt.width * s, dh = bgArt.height * s;
-      ctx.drawImage(bgArt, (W - dw) / 2, (H - dh) / 2, dw, dh);
-      return true;
-    }
-
-    // Fallback ambient washes if the art has not loaded (offline, slow network).
-    var g1 = ctx.createRadialGradient(240, 560, 60, 240, 560, 640);
-    g1.addColorStop(0, 'rgba(43, 84, 180, 0.26)');
-    g1.addColorStop(1, 'rgba(43, 84, 180, 0)');
+    // Smoky ambient blooms inside the ring, matching the campaign art:
+    // cool blue on the left, magenta pooling lower right.
+    var g1 = ctx.createRadialGradient(400, 620, 60, 400, 620, 560);
+    g1.addColorStop(0, 'rgba(43, 84, 190, 0.34)');
+    g1.addColorStop(1, 'rgba(43, 84, 190, 0)');
     ctx.fillStyle = g1;
     ctx.fillRect(0, 0, W, H);
 
-    var g2 = ctx.createRadialGradient(880, 600, 60, 880, 600, 660);
-    g2.addColorStop(0, 'rgba(173, 32, 150, 0.24)');
-    g2.addColorStop(1, 'rgba(173, 32, 150, 0)');
+    var g2 = ctx.createRadialGradient(760, 800, 60, 760, 800, 560);
+    g2.addColorStop(0, 'rgba(180, 34, 160, 0.30)');
+    g2.addColorStop(1, 'rgba(180, 34, 160, 0)');
     ctx.fillStyle = g2;
     ctx.fillRect(0, 0, W, H);
 
@@ -406,7 +385,6 @@
     v.addColorStop(1, 'rgba(0,0,0,0.55)');
     ctx.fillStyle = v;
     ctx.fillRect(0, 0, W, H);
-    return false;
   }
 
   var RING = { cx: 540, cy: 553, r: 408 };
@@ -458,7 +436,8 @@
     g.addColorStop(0.62, '#f6e3f3');
     g.addColorStop(1, '#ea99d8');
     n.fillStyle = g;
-    drawSpacedCentered(n, text, W / 2, 500, spacing);
+    // Centered exactly on the ring's midpoint.
+    drawSpacedCentered(n, text, W / 2, RING.cy, spacing);
 
     // frozen surface: grain trapped inside the digits only
     n.globalCompositeOperation = 'source-atop';
@@ -506,30 +485,6 @@
     ctx.restore();
   }
 
-  var placeholderCache = null;
-  function placeholderImage() {
-    // Stand-in silhouette, built once as a cutout so it runs through the same
-    // compositing pipeline as a real uploaded photo.
-    if (placeholderCache) return placeholderCache;
-    var c = document.createElement('canvas');
-    c.width = 760;
-    c.height = 900;
-    var g = c.getContext('2d');
-    g.fillStyle = '#10121a';
-    g.beginPath();
-    g.arc(380, 215, 132, 0, Math.PI * 2);
-    g.fill();
-    g.fillRect(330, 305, 100, 85);
-    g.beginPath();
-    g.moveTo(85, 900);
-    g.bezierCurveTo(90, 525, 220, 372, 380, 372);
-    g.bezierCurveTo(540, 372, 670, 525, 675, 900);
-    g.closePath();
-    g.fill();
-    placeholderCache = c;
-    return c;
-  }
-
   // Color spill masked to the subject's alpha, cached per image and size so
   // slider drags do not rebuild it every frame.
   var spillCache = { img: null, w: 0, h: 0, canvas: null };
@@ -555,7 +510,9 @@
   }
 
   function drawPhoto() {
-    var img = state.photo || placeholderImage();
+    // No stand-in figure: the poster stays clean until a photo is uploaded.
+    if (!state.photo) return;
+    var img = state.photo;
     var baseH = 900 * state.photoScale;
     var s = baseH / img.height;
     var dw = img.width * s, dh = baseH;
@@ -763,17 +720,14 @@
   // The 10K Challenge template. Future templates get their own render
   // function and a dispatch branch below.
   function renderTemplate10k() {
-    var baked = drawBackground();
-    var procedural = !baked && shouldDrawProceduralArt();
-    if (procedural) {
-      drawRing();
-      drawBigNumber();
-    }
+    drawBackground();
+    drawRing();
+    drawBigNumber();
     drawPhoto();
     drawBottomOverlay();
     drawHeadline();
     drawStatement();
-    if (procedural) drawLogo();
+    drawLogo();
     drawSignature();
     drawFinish();
   }
@@ -781,10 +735,6 @@
   function render() {
     ctx.clearRect(0, 0, W, H);
     if (state.template.id === '10k-challenge') renderTemplate10k();
-  }
-
-  function shouldDrawProceduralArt() {
-    return !bgArtReady && bgArtFailed;
   }
 
   // ---------- wiring ----------
