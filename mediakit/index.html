@@ -14,8 +14,9 @@
 <meta property="og:title" content="SportIn &middot; Media Kit">
 <meta property="og:description" content="Create your personal #10KChallenge poster and share that you walk 10,000 steps in 24 hours.">
 <meta property="og:url" content="https://sportin.io/mediakit">
-<meta property="og:image" content="https://sportin.io/mediakit/10k-challenge-bg.png">
+<meta property="og:image" content="https://sportin.io/mediakit/10k-challenge-bg.jpg">
 
+<link rel="preload" as="image" href="/mediakit/10k-challenge-bg.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:wght@800&family=Archivo+Black&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
@@ -266,7 +267,7 @@
   // draw function dispatched from render(). Entries with ready:false render
   // as disabled "coming soon" placeholders in the strip.
   var TEMPLATES = [
-    { id: '10k-challenge', name: '10K Challenge', ready: true, thumb: '/mediakit/10k-challenge-bg.png' },
+    { id: '10k-challenge', name: '10K Challenge', ready: true, thumb: '/mediakit/10k-challenge-bg.jpg' },
     { id: 'template-2', name: 'Coming soon', ready: false },
     { id: 'template-3', name: 'Coming soon', ready: false },
     { id: 'template-4', name: 'Coming soon', ready: false }
@@ -323,13 +324,20 @@
 
   // The approved campaign background (ring, glow, number, and logo baked in).
   // When it loads, the procedural ring/number/logo layers are skipped entirely.
+  // The procedural layers are drawn ONLY if the art definitively fails to
+  // load. While it is still in flight the poster stays clean, so a refresh
+  // never flashes a second, differently-styled number under the artwork.
   var bgArt = new Image();
   var bgArtReady = false;
+  var bgArtFailed = false;
   bgArt.onload = function () { bgArtReady = true; render(); };
+  bgArt.onerror = function () { bgArtFailed = true; render(); };
   // Absolute path: /mediakit without a trailing slash serves this page too, and
   // a relative path would resolve to the site root there and 404.
-  if (!/[?&]noart/.test(location.search)) {
-    bgArt.src = '/mediakit/10k-challenge-bg.png';
+  if (/[?&]noart/.test(location.search)) {
+    bgArtFailed = true;
+  } else {
+    bgArt.src = '/mediakit/10k-challenge-bg.jpg';
   }
 
   // ---------- text helpers (manual letter spacing: identical on every browser) ----------
@@ -756,7 +764,8 @@
   // function and a dispatch branch below.
   function renderTemplate10k() {
     var baked = drawBackground();
-    if (!baked) {
+    var procedural = !baked && shouldDrawProceduralArt();
+    if (procedural) {
       drawRing();
       drawBigNumber();
     }
@@ -764,7 +773,7 @@
     drawBottomOverlay();
     drawHeadline();
     drawStatement();
-    if (!baked) drawLogo();
+    if (procedural) drawLogo();
     drawSignature();
     drawFinish();
   }
@@ -772,6 +781,10 @@
   function render() {
     ctx.clearRect(0, 0, W, H);
     if (state.template.id === '10k-challenge') renderTemplate10k();
+  }
+
+  function shouldDrawProceduralArt() {
+    return !bgArtReady && bgArtFailed;
   }
 
   // ---------- wiring ----------
