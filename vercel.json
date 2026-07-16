@@ -1,4 +1,8 @@
 {
+  "redirects": [
+    { "source": "/mediakit", "destination": "https://try.sportin.io/mediakit", "permanent": false },
+    { "source": "/mediakit/:path*", "destination": "https://try.sportin.io/mediakit", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/10k/:token([0-9a-fA-F-]{36})", "destination": "/api/10k?token=:token" },
     { "source": "/ref", "destination": "/api/ref?code=" },
