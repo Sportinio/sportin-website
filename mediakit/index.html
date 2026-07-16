@@ -19,7 +19,7 @@
 <link rel="preload" as="image" href="/mediakit/10k-challenge-bg.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:wght@800&family=Archivo+Black&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:wght@800&family=Bebas+Neue&family=Manrope:wght@600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #06060C;
@@ -633,8 +633,8 @@
     ctx.save();
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    var spacing = 2;
-    fitFont(ctx, text, '400', "'Archivo Black', sans-serif", 118, spacing, 990);
+    var spacing = 8;
+    fitFont(ctx, text, '400', "'Bebas Neue', sans-serif", 150, spacing, 990);
 
     var g = ctx.createLinearGradient(60, 0, W - 60, 0);
     g.addColorStop(0, '#ffffff');
@@ -650,7 +650,7 @@
   function drawStatement() {
     var text = 'I’ve accepted the #10KChallenge to walk 10,000 steps in 24 hours and highlight the importance of everyday movement.';
     ctx.save();
-    ctx.font = "600 25px 'Montserrat', sans-serif";
+    ctx.font = "600 25px 'Manrope', sans-serif";
     ctx.fillStyle = '#c3c8d3';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
@@ -812,7 +812,8 @@
   if (document.fonts && document.fonts.ready) {
     Promise.all([
       document.fonts.load("800 340px 'Saira Extra Condensed'"),
-      document.fonts.load("400 118px 'Archivo Black'"),
+      document.fonts.load("400 150px 'Bebas Neue'"),
+      document.fonts.load("600 25px 'Manrope'"),
       document.fonts.load("800 31px 'Montserrat'"),
       document.fonts.load("600 17px 'Montserrat'")
     ]).then(render).catch(render);
