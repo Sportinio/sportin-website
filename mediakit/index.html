@@ -442,37 +442,137 @@
     ctx.restore();
   }
 
-  function drawPlaceholderPerson() {
-    // Stand-in silhouette so the composition reads before a photo is uploaded.
-    ctx.save();
-    ctx.fillStyle = 'rgba(16, 18, 26, 0.96)';
-    ctx.shadowColor = 'rgba(0,0,0,0.65)';
-    ctx.shadowBlur = 50;
-    ctx.beginPath();
-    // head
-    ctx.arc(540, 545, 150, 0, Math.PI * 2);
-    ctx.fill();
-    // shoulders and torso
-    ctx.beginPath();
-    ctx.moveTo(205, 1350);
-    ctx.bezierCurveTo(210, 920, 360, 730, 540, 730);
-    ctx.bezierCurveTo(720, 730, 870, 920, 875, 1350);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
+  var placeholderCache = null;
+  function placeholderImage() {
+    // Stand-in silhouette, built once as a cutout so it runs through the same
+    // compositing pipeline as a real uploaded photo.
+    if (placeholderCache) return placeholderCache;
+    var c = document.createElement('canvas');
+    c.width = 760;
+    c.height = 900;
+    var g = c.getContext('2d');
+    g.fillStyle = '#10121a';
+    g.beginPath();
+    g.arc(380, 215, 132, 0, Math.PI * 2);
+    g.fill();
+    g.fillRect(330, 305, 100, 85);
+    g.beginPath();
+    g.moveTo(85, 900);
+    g.bezierCurveTo(90, 525, 220, 372, 380, 372);
+    g.bezierCurveTo(540, 372, 670, 525, 675, 900);
+    g.closePath();
+    g.fill();
+    placeholderCache = c;
+    return c;
+  }
+
+  // Color spill masked to the subject's alpha, cached per image and size so
+  // slider drags do not rebuild it every frame.
+  var spillCache = { img: null, w: 0, h: 0, canvas: null };
+  function spillFor(img, w, h) {
+    if (spillCache.img === img && spillCache.w === w && spillCache.h === h) {
+      return spillCache.canvas;
+    }
+    var c = document.createElement('canvas');
+    c.width = Math.max(1, w);
+    c.height = Math.max(1, h);
+    var g = c.getContext('2d');
+    var grad = g.createLinearGradient(0, 0, c.width, 0);
+    grad.addColorStop(0, 'rgba(64, 130, 255, 0.6)');
+    grad.addColorStop(0.3, 'rgba(64, 130, 255, 0)');
+    grad.addColorStop(0.7, 'rgba(255, 79, 216, 0)');
+    grad.addColorStop(1, 'rgba(255, 79, 216, 0.6)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, c.width, c.height);
+    g.globalCompositeOperation = 'destination-in';
+    g.drawImage(img, 0, 0, c.width, c.height);
+    spillCache = { img: img, w: w, h: h, canvas: c };
+    return c;
   }
 
   function drawPhoto() {
-    if (!state.photo) { drawPlaceholderPerson(); return; }
-    var img = state.photo;
+    var img = state.photo || placeholderImage();
     var baseH = 900 * state.photoScale;
     var s = baseH / img.height;
     var dw = img.width * s, dh = baseH;
+    var x = (W - dw) / 2;
     var bottom = 1350 + state.photoY;   // anchored to the poster bottom, slider shifts it
+    var y = bottom - dh;
+
+    // 1) Grounding shadow behind the torso seats the subject in the scene.
+    var gs = ctx.createRadialGradient(540, y + dh * 0.72, 40, 540, y + dh * 0.72, dw * 0.62);
+    gs.addColorStop(0, 'rgba(0, 0, 0, 0.5)');
+    gs.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = gs;
+    ctx.fillRect(0, 0, W, H);
+
+    // 2) Neon rim light. The image is drawn far off-canvas and only its offset
+    // shadow lands on the poster: a colored silhouette hugging each edge.
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.55)';
-    ctx.shadowBlur = 60;
-    ctx.drawImage(img, (W - dw) / 2, bottom - dh, dw, dh);
+    ctx.shadowBlur = 34;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowColor = 'rgba(64, 130, 255, 0.55)';
+    ctx.shadowOffsetX = 10000 - 15;
+    ctx.drawImage(img, x - 10000, y, dw, dh);
+    ctx.shadowColor = 'rgba(255, 79, 216, 0.55)';
+    ctx.shadowOffsetX = 10000 + 15;
+    ctx.drawImage(img, x - 10000, y, dw, dh);
+    ctx.restore();
+
+    // 3) The subject, graded slightly toward the artwork's light, with a soft
+    // cast shadow that falls down and away.
+    ctx.save();
+    ctx.filter = 'saturate(1.06) contrast(1.05) brightness(0.97)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 48;
+    ctx.shadowOffsetY = 14;
+    ctx.drawImage(img, x, y, dw, dh);
+    ctx.restore();
+
+    // 4) The ring's blue and magenta catch the subject's edges.
+    ctx.save();
+    ctx.globalAlpha = 0.45;
+    ctx.drawImage(spillFor(img, Math.round(dw), Math.round(dh)), x, y);
+    ctx.restore();
+  }
+
+  var grainCache = null;
+  function grainTile() {
+    if (grainCache) return grainCache;
+    var c = document.createElement('canvas');
+    c.width = 256;
+    c.height = 256;
+    var g = c.getContext('2d');
+    var d = g.createImageData(256, 256);
+    for (var i = 0; i < d.data.length; i += 4) {
+      // mid-gray is neutral under the overlay blend, so grain never shifts tone
+      var v = 128 + Math.round(Math.random() * 26 - 13);
+      d.data[i] = d.data[i + 1] = d.data[i + 2] = v;
+      d.data[i + 3] = 255;
+    }
+    g.putImageData(d, 0, 0);
+    grainCache = c;
+    return c;
+  }
+
+  function drawFinish() {
+    // Gentle vignette pulls the eye to the subject.
+    var v = ctx.createRadialGradient(W / 2, H * 0.46, H * 0.35, W / 2, H * 0.46, H * 0.92);
+    v.addColorStop(0, 'rgba(0,0,0,0)');
+    v.addColorStop(1, 'rgba(0,0,0,0.3)');
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, W, H);
+
+    // Film grain unifies the uploaded photo with the artwork.
+    ctx.save();
+    ctx.globalAlpha = 0.05;
+    ctx.globalCompositeOperation = 'overlay';
+    var t = grainTile();
+    for (var gy = 0; gy < H; gy += 256) {
+      for (var gx = 0; gx < W; gx += 256) {
+        ctx.drawImage(t, gx, gy);
+      }
+    }
     ctx.restore();
   }
 
@@ -594,6 +694,7 @@
     drawStatement();
     if (!baked) drawLogo();
     drawSignature();
+    drawFinish();
   }
 
   function render() {
