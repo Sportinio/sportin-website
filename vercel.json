@@ -1,20 +1,61 @@
 {
   "redirects": [
-    { "source": "/mediakit", "destination": "https://try.sportin.io/mediakit", "permanent": false },
-    { "source": "/mediakit/:path*", "destination": "https://try.sportin.io/mediakit", "permanent": false }
+    {
+      "source": "/game-of-run",
+      "destination": "https://game-of-run.com",
+      "permanent": true
+    },
+    {
+      "source": "/game-of-run/:path*",
+      "destination": "https://game-of-run.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/gameofrun",
+      "destination": "https://game-of-run.com",
+      "permanent": true
+    },
+    {
+      "source": "/mediakit",
+      "destination": "https://try.sportin.io/mediakit",
+      "permanent": false
+    },
+    {
+      "source": "/mediakit/:path*",
+      "destination": "https://try.sportin.io/mediakit",
+      "permanent": false
+    }
   ],
   "rewrites": [
-    { "source": "/10k/:token([0-9a-fA-F-]{36})", "destination": "/api/10k?token=:token" },
-    { "source": "/ref", "destination": "/api/ref?code=" },
-    { "source": "/ref/", "destination": "/api/ref?code=" },
-    { "source": "/ref/:code((?!.*\\.).*)", "destination": "/api/ref?code=:code" }
+    {
+      "source": "/10k/:token([0-9a-fA-F-]{36})",
+      "destination": "/api/10k?token=:token"
+    },
+    {
+      "source": "/ref",
+      "destination": "/api/ref?code="
+    },
+    {
+      "source": "/ref/",
+      "destination": "/api/ref?code="
+    },
+    {
+      "source": "/ref/:code((?!.*\\.).*)",
+      "destination": "/api/ref?code=:code"
+    }
   ],
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",
       "headers": [
-        { "key": "Content-Type", "value": "application/json" },
-        { "key": "Cache-Control", "value": "public, max-age=300" }
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
       ]
     }
   ]
