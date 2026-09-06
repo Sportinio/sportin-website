@@ -1122,6 +1122,42 @@
     margin-top: 10px;
   }
 
+  /* Sealed kingdoms: opened one at a time */
+  .square.locked { cursor: default; }
+  .square.locked .square-flag { filter: saturate(0.18) brightness(0.72); }
+  .square.locked:hover {
+    transform: none;
+    border-color: rgba(201, 162, 75, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(245, 228, 168, 0.10),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+      0 6px 18px rgba(0, 0, 0, 0.45);
+  }
+  .square.locked .square-arrow { color: rgba(201, 162, 75, 0.7); }
+  .square.locked .square-arrow::after { content: ''; }
+  .square-seal {
+    position: absolute;
+    top: 26px;
+    right: 26px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    background: rgba(6, 5, 10, 0.78);
+    border: 1px solid rgba(201, 162, 75, 0.5);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(201, 162, 75, 0.9);
+  }
+  .square-seal .lock { margin-right: 6px; letter-spacing: 0; }
+  .square-seal.live {
+    border-color: var(--gold-2);
+    color: var(--gold-1);
+    background: rgba(201, 162, 75, 0.18);
+  }
+
   /* Chapters grid */
   .chapters {
     display: grid;
@@ -1674,12 +1710,9 @@
   <div class="nav-brand">Game <span class="dot">·</span> of <span class="dot">·</span> Run</div>
   <div class="nav-links">
     <a href="/game-of-run" class="current">Overture</a>
+    <a href="#chapters">Chapters</a>
     <a href="/game-of-run/realm">Realm</a>
-    <a href="/game-of-run/ladder">Ladder</a>
-    <a href="/game-of-run/tiers">Tiers</a>
-    <a href="/game-of-run/claim">Claim</a>
-    <a href="/game-of-run/houses">Houses</a>
-    <a href="/game-of-run/season">Season</a>
+    <a href="#waitlist">Oath</a>
   </div>
   <a class="nav-sportin" href="/">← SportIn</a>
 </nav>
@@ -1822,41 +1855,43 @@
   </div>
 
   <div class="squares">
-    <a class="square" href="/game-of-run/realm">
+    <div class="square locked">
       <div class="square-flag">
         <svg viewBox="0 0 30 20" preserveAspectRatio="none" aria-hidden="true">
           <rect width="30" height="20" fill="#AA151B"/>
           <rect y="5" width="30" height="10" fill="#F1BF00"/>
         </svg>
       </div>
+      <div class="square-seal"><span class="lock">&#9679;</span>Sealed</div>
       <div class="square-body">
         <div>
-          <div class="square-eyebrow">Chapter I</div>
+          <div class="square-eyebrow">Chapter II</div>
           <div class="square-name">España</div>
-          <div class="square-meta">8 zones · Madrid + Barcelona</div>
+          <div class="square-meta">Madrid and Barcelona · surveyed, not opened</div>
         </div>
-        <div class="square-points">17<small>Points</small></div>
+        <div class="square-points">50<small>Counties</small></div>
       </div>
-      <div class="square-arrow">Enter the Kingdom</div>
-    </a>
+      <div class="square-arrow">Opens when România closes</div>
+    </div>
 
-    <a class="square" href="/game-of-run/realm">
+    <div class="square locked">
       <div class="square-flag">
         <svg viewBox="0 0 30 20" preserveAspectRatio="none" aria-hidden="true">
           <rect width="12" height="20" fill="#006600"/>
           <rect x="12" width="18" height="20" fill="#FF0000"/>
         </svg>
       </div>
+      <div class="square-seal"><span class="lock">&#9679;</span>Sealed</div>
       <div class="square-body">
         <div>
-          <div class="square-eyebrow">Chapter II</div>
+          <div class="square-eyebrow">Chapter III</div>
           <div class="square-name">Portugal</div>
-          <div class="square-meta">8 zones · Lisbon</div>
+          <div class="square-meta">Lisboa and the coast · surveyed, not opened</div>
         </div>
-        <div class="square-points">17<small>Points</small></div>
+        <div class="square-points">18<small>Districts</small></div>
       </div>
-      <div class="square-arrow">Enter the Kingdom</div>
-    </a>
+      <div class="square-arrow">Opens when România closes</div>
+    </div>
 
     <a class="square" href="/game-of-run/realm">
       <div class="square-flag">
@@ -1866,13 +1901,14 @@
           <rect x="20" width="10" height="20" fill="#CE1126"/>
         </svg>
       </div>
+      <div class="square-seal live">Live</div>
       <div class="square-body">
         <div>
-          <div class="square-eyebrow">Chapter III</div>
+          <div class="square-eyebrow">Chapter I</div>
           <div class="square-name">România</div>
-          <div class="square-meta">8 zones · Bucharest</div>
+          <div class="square-meta">42 counties · 52,6 km&sup2; per hexagon</div>
         </div>
-        <div class="square-points">17<small>Points</small></div>
+        <div class="square-points">4.418<small>Hexagons</small></div>
       </div>
       <div class="square-arrow">Enter the Kingdom</div>
     </a>
@@ -1891,16 +1927,16 @@
   <!-- Stats -->
   <div class="stats">
     <div class="stat">
-      <div class="stat-value">3</div>
-      <div class="stat-label">Kingdoms</div>
+      <div class="stat-value">1</div>
+      <div class="stat-label">Kingdom</div>
     </div>
     <div class="stat">
-      <div class="stat-value">24</div>
-      <div class="stat-label">Zones</div>
+      <div class="stat-value">42</div>
+      <div class="stat-label">Counties</div>
     </div>
     <div class="stat">
-      <div class="stat-value">17</div>
-      <div class="stat-label">Points Per Kingdom</div>
+      <div class="stat-value">4.418</div>
+      <div class="stat-label">Hexagons</div>
     </div>
     <div class="stat">
       <div class="stat-value">1</div>
@@ -1908,58 +1944,50 @@
     </div>
   </div>
 
-  <div class="divider" style="margin-top: 80px;">
-    <span class="line"></span>
-    <span class="lozenge"></span>
-    <span class="line"></span>
-  </div>
+<div class="chapters" id="chapters">
 
-  <div class="section-title">The Seven Chapters</div>
-  <div class="section-sub">Read in order or roam at will. Each chapter stands on its own.</div>
-
-  <div class="chapters">
+    <div class="chapter">
+      <div class="chapter-num">Chapter I</div>
+      <div class="chapter-title">The Realm</div>
+      <div class="chapter-desc">România, cut into forty two counties. Each county tiled with hexagons of 52,6 square kilometres. The map stays under fog until someone moves through it.</div>
+    </div>
 
     <a href="/game-of-run/realm" class="chapter">
       <div class="chapter-num">Chapter II</div>
-      <div class="chapter-title">The Realm</div>
-      <div class="chapter-desc">Europe split into Three Kingdoms. Each kingdom holds eight zones. Twenty-four battlegrounds, one crown apiece.</div>
-      <div class="chapter-arrow">Enter the Realm</div>
+      <div class="chapter-title">The Hexagon</div>
+      <div class="chapter-desc">A hexagon is the smallest thing you can own. Every one carries a toll in kilometres: 10 at the rim of a county, 50 at its heart.</div>
+      <div class="chapter-arrow">Open the map</div>
     </a>
 
-    <a href="/game-of-run/ladder" class="chapter">
+    <div class="chapter">
       <div class="chapter-num">Chapter III</div>
       <div class="chapter-title">The Ladder</div>
-      <div class="chapter-desc">Landlord, Baron, Lord, King of City, Sovereign of Country. Five titles earned in points and crown zones.</div>
-      <div class="chapter-arrow">Climb the Ladder</div>
-    </a>
+      <div class="chapter-desc">Five titles, earned by hexagons held. Landlord at one, Baron at ten, Lord at fifty, King of County at the county crown, Sovereign of Country at the High Seat.</div>
+    </div>
 
-    <a href="/game-of-run/tiers" class="chapter">
+    <div class="chapter">
       <div class="chapter-num">Chapter IV</div>
-      <div class="chapter-title">The Tiers</div>
-      <div class="chapter-desc">Yellow, Orange, Red, Crown. Four tiers, four weights. One to four points. Seventeen points to rule a kingdom.</div>
-      <div class="chapter-arrow">Know the Tiers</div>
-    </a>
-
-    <a href="/game-of-run/claim" class="chapter">
-      <div class="chapter-num">Chapter V</div>
       <div class="chapter-title">The Claim</div>
-      <div class="chapter-desc">Break the Record in twenty-four hours. Win, muster your house, settle it in a match within seven days.</div>
-      <div class="chapter-arrow">Learn the Claim</div>
-    </a>
+      <div class="chapter-desc">The first kilometre logged inside a hexagon opens its window. The House then has twenty four hours to pay the toll, and at most five runners count toward it. Fall short and the ledger is wiped at midnight.</div>
+    </div>
 
-    <a href="/game-of-run/houses" class="chapter">
-      <div class="chapter-num">Chapter VI</div>
+    <div class="chapter">
+      <div class="chapter-num">Chapter V</div>
       <div class="chapter-title">The Houses</div>
-      <div class="chapter-desc">Claim your first zone, raise your house. Named after your surname. Invite up to eight. Ride as one banner.</div>
-      <div class="chapter-arrow">Raise a House</div>
-    </a>
+      <div class="chapter-desc">A House carries a surname and up to nine names beneath it. Hexagons held by members count to the House. Counties are won by Houses, not by lone runners.</div>
+    </div>
 
-    <a href="/game-of-run/season" class="chapter">
-      <div class="chapter-num">Chapter VII</div>
+    <div class="chapter">
+      <div class="chapter-num">Chapter VI</div>
       <div class="chapter-title">The Season</div>
-      <div class="chapter-desc">Throne Run. Twelve weeks of competition. Weekly skirmishes, seasonal coronations, eternal Chronicles.</div>
-      <div class="chapter-arrow">Begin the Season</div>
-    </a>
+      <div class="chapter-desc">Twelve weeks. Weekly sieges on contested counties, a settlement every seventh day, and a closing week where every hexagon is worth double.</div>
+    </div>
+
+    <div class="chapter">
+      <div class="chapter-num">Chapter VII</div>
+      <div class="chapter-title">The Crown</div>
+      <div class="chapter-desc">One crown per county, forty two in all. Hold the most hexagons in a county at season end and the crown is yours. Hold the most crowns and you take the High Seat.</div>
+    </div>
 
   </div>
 
