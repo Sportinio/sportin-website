@@ -32,6 +32,10 @@
       "destination": "/api/10k?token=:token"
     },
     {
+      "source": "/race/:raceId([0-9a-fA-F-]{36})",
+      "destination": "/api/race?raceId=:raceId"
+    },
+    {
       "source": "/ref",
       "destination": "/api/ref?code="
     },
