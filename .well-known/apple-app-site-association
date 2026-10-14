@@ -5,7 +5,8 @@
         "appIDs": ["K6MXFP8G8G.io.sportin.app"],
         "components": [
           { "/": "/ref/*", "comment": "Existing SportIn referrals" },
-          { "/": "/10k/*", "comment": "Invitation Challenges" }
+          { "/": "/10k/*", "comment": "Invitation Challenges" },
+          { "/": "/race/*", "comment": "Virtual race invites" }
         ]
       }
     ]
