@@ -3,11 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="theme-color" content="#0A0A12">
+<meta name="description" content="Every MEP becomes a game, with competitions, rewards and proprietary AI built for Myzone.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SportIn × Myzone">
+<meta property="og:description" content="Every MEP becomes a game, with competitions, rewards and proprietary AI built for Myzone.">
+<meta property="og:url" content="https://sportin.io/myzone/">
+<meta property="og:image" content="https://sportin.io/myzone/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.svg">
+<link rel="apple-touch-icon" href="assets/sportin-icon.png">
 <title>SportIn × Myzone Proposal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Lato:wght@300;400;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
 html,body{margin:0}
@@ -68,7 +79,7 @@ p{margin:0}
 .grad-text{background:linear-gradient(90deg,#6B4EFF,#1A8CFF); -webkit-background-clip:text; background-clip:text; color:transparent}
 
 /* glass card (GlassStyle.swift: ultraThinMaterial over white .04, hairline .08, shadow 0 8 20 .3) */
-.glass{background:var(--card); border:1px solid var(--hair); border-radius:16px; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.glass{background:var(--card); border:1px solid var(--hair); border-radius:16px;  box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .cards{display:grid; gap:16px}
 .c4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .c3{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -175,7 +186,7 @@ p{margin:0}
 .pod.p2 .ring{background:conic-gradient(#FFFFFF,#C8CDD8,#7D8494,#E4E7EE,#C8CDD8,#FFFFFF)}
 .pod.p3 .ring{background:conic-gradient(#F3C18B,#CD7F32,#7A4A1C,#E6A766,#CD7F32,#F3C18B)}
 .ava{width:100%; height:100%; border-radius:50%; display:grid; place-items:center; font-weight:700; font-size:15px; color:#fff}
-.pod .tierb{position:absolute; top:12px; left:calc(50% + 14px); width:22px; height:22px}
+.pod .tierb{position:absolute; top:22px; left:calc(50% + 14px); width:22px; height:22px}
 .pod .medal{width:20px; height:20px; margin-top:auto}
 .pod .pn{font-size:13px; font-weight:800; line-height:1.15}
 .pod .pn2{font-size:13px; font-weight:300; line-height:1.15}
@@ -211,13 +222,13 @@ p{margin:0}
 .trophy{display:flex; align-items:center; gap:12px}
 .trophy img{width:56px; height:56px; object-fit:contain}
 .chips{display:flex; flex-wrap:wrap; gap:8px}
-.chip{font-family:var(--mono); font-size:12px; letter-spacing:.06em; padding:8px 14px; border-radius:999px; background:var(--row); border:1px solid var(--hair); color:var(--text-2)}
+.chip{font-family:var(--mono); font-size:12px; letter-spacing:.06em; padding:8px 14px; border-radius:14px; background:var(--row); border:1px solid var(--hair); color:var(--text-2)}
 .float{animation:float 5s ease-in-out infinite}
 .float:nth-child(2){animation-delay:-1s} .float:nth-child(3){animation-delay:-2s} .float:nth-child(4){animation-delay:-2.7s} .float:nth-child(5){animation-delay:-3.5s} .float:nth-child(6){animation-delay:-4.2s}
 @keyframes float{0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)}}
 
 /* ---------- reward card (sportin-website .rw-card) ---------- */
-.rw-card{background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:20px; padding:28px 24px 24px; backdrop-filter:blur(16px); position:relative; overflow:hidden; transition:transform .5s var(--ease-out), box-shadow .4s ease}
+.rw-card{background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:20px; padding:28px 24px 24px; position:relative; overflow:hidden; transition:transform .5s var(--ease-out), box-shadow .4s ease}
 .rw-card:hover{transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,0,0,.3)}
 .rw-card::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--mint),transparent); opacity:0; transition:opacity .4s}
 .rw-card.done::before{opacity:1}
@@ -368,7 +379,7 @@ h2.big{font-size:clamp(40px,5.6vw,84px); line-height:.95}
 .phase{padding:28px}
 
 /* ---------- app demo device + medals ---------- */
-.device{width:390px; height:844px; zoom:.7; border-radius:54px; padding:12px; background:#05060a; border:1px solid rgba(255,255,255,.14); box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.05)}
+.device{width:390px; height:844px; zoom:.78; border-radius:54px; padding:12px; background:#05060a; border:1px solid rgba(255,255,255,.14); box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.05)}
 .device iframe{width:100%; height:100%; border:0; border-radius:42px; display:block; background:#0d0d14}
 .medrow{display:grid; gap:12px}
 .meds{display:grid; gap:12px}
@@ -386,21 +397,21 @@ h2.big{font-size:clamp(38px,4.6vw,68px); line-height:.94}
 .stack{gap:var(--s2)}
 .slide{padding-block:clamp(72px,10vh,120px) 88px}
 .statement h2.big{font-size:clamp(56px,7vw,104px)}
-.statement .wrap{place-content:center; min-height:60vh}
+.statement .wrap{align-content:center; justify-items:start; min-height:60vh}
 .slide.act-open::before{background:linear-gradient(180deg,#161624 0%, #0D0D14 55%, #080810 100%)}
 .slide.act-open{border-top:1px solid rgba(255,255,255,.10)}
 .cover .stack{gap:var(--s2)}
 .cover h1 + .lead{margin-top:0}
 .cover .lead + .cover-meta{margin-top:16px}
 .layer{min-height:200px; display:flex; flex-direction:column; justify-content:space-between}
-.layer h3{margin-top:auto; margin-bottom:auto}
+.layer{align-content:space-between}
 .lt{gap:6px}
 .lt-row{padding:8px 14px}
 .rank img{width:96px; height:96px}
 .ranks{align-items:start}
 .cbar{height:10px}
 .stage .bar{height:180px}
-.stage .bar i{background:rgba(255,255,255,.22)}
+.stage .bar i{background:linear-gradient(180deg,rgba(26,140,255,.55),rgba(107,78,255,.35))}
 .stage.now .bar i{background:linear-gradient(180deg,#1A8CFF,#6B4EFF)}
 .podium{padding-top:20px}
 .tier img, .med img{height:96px; width:96px; object-fit:contain}
@@ -409,15 +420,16 @@ h2.big{font-size:clamp(38px,4.6vw,68px); line-height:.94}
 .tiers{align-items:start}
 .coach canvas, #coachSphere{width:440px; height:440px; max-width:100%}
 .comm{gap:20px}
-.big-pills{padding:0; gap:16px; max-width:760px}
+.big-pills{padding:0; gap:16px; max-width:none; width:100%}
 .big-pills .pill{padding:20px 0; border-radius:16px}
 .big-pills .pill span{font-size:12px; letter-spacing:1px}
 .big-pills .pill b{font-size:34px}
 .coming{display:grid; gap:12px}
 .coming .chip{font-size:13px; opacity:.85}
+.coming .num{font-family:var(--mono); font-size:12px; letter-spacing:.12em; color:var(--blue-bright); margin:0}
 ol.asks li{font-size:20px}
 .way{min-height:220px}
-#ways .wrap > .lead{margin-top:-8px}
+#ways .wrap > .lead{border-top:1px solid var(--hair); padding-top:20px; max-width:none}
 .count{left:auto; right:max(16px, env(safe-area-inset-right, 0px)); bottom:calc(16px + env(safe-area-inset-bottom, 0px))}
 .rail a.act-gap{margin-top:12px}
 .tier.float, .med.float{animation:none}
@@ -461,10 +473,13 @@ ol.asks li{font-size:20px}
 .cta-play .i-pause{display:none}
 .cta-play.playing .i-play{display:none} .cta-play.playing .i-pause{display:block}
 .cta-play:disabled{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.14); color:rgba(255,255,255,.46); cursor:default}
-.cta-prog{width:220px; height:3px; border-radius:2px; background:rgba(255,255,255,.10); overflow:hidden}
+.cta-prog{width:220px; height:3px; border-radius:2px; background:rgba(255,255,255,.10); overflow:hidden; opacity:0; transition:opacity .3s}
+.cta-play.playing + .cta-prog, .cta-prog.on{opacity:1}
 .cta-prog i{display:block; height:100%; width:0; background:#0751FB; transition:width .3s linear}
 .player .cta-play{margin-top:28px}
-.coach .cta-play{margin-top:-24px}
+.coach .cta-play{margin-top:-48px}
+.coach{position:relative}
+.coach::before{content:""; position:absolute; left:50%; top:220px; width:420px; height:420px; transform:translate(-50%,-50%); background:radial-gradient(closest-side, rgba(7,81,251,.18), transparent); pointer-events:none}
 /* ---------- League of Brands group stage ---------- */
 .cl{display:grid; gap:16px; justify-items:start; min-width:0}
 .cl-matches{display:flex; gap:16px; flex-wrap:wrap}
@@ -486,7 +501,7 @@ ol.asks li{font-size:20px}
 @media (max-width:560px){ .cl-groups{grid-template-columns:1fr} .cl-matches .lmc{width:100%} }
 /* ---------- Game of Run, UK ---------- */
 .realm-col{display:grid; justify-items:center; gap:10px}
-.realm.uk{aspect-ratio:.7; width:auto; height:min(640px,72vh); max-width:100%}
+.realm.uk{aspect-ratio:.7; width:auto; height:min(600px,66vh); max-width:100%}
 .gor-legend{display:flex; flex-wrap:wrap; gap:8px 16px; justify-content:center; font-family:var(--gor-caps); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gor-text)}
 .gor-legend span{display:inline-flex; align-items:center; gap:6px}
 .gor-legend i{width:10px; height:10px; border-radius:2px; display:inline-block}
@@ -495,9 +510,60 @@ ol.asks li{font-size:20px}
 .ranks.small .rank b{font-size:10px; letter-spacing:.14em}
 .cl .num{font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:var(--blue-bright); margin:0}
 .gt .num{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--text-3); margin:0}
+/* ---------- League of Brands formats ---------- */
+.ctl{display:grid; gap:8px}
+.ctl-l{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-3)}
+.lob-view{display:grid; gap:12px; justify-items:start}
+.lob-view[hidden]{display:none}
+.lob-view:not([hidden]){animation:rise .5s var(--ease-out) both}
+.bracket{display:grid; grid-template-columns:auto 28px 170px; align-items:center}
+.br-col{display:grid; gap:12px}
+.br-join{align-self:stretch; margin:44px 0; border:1.5px solid rgba(255,255,255,.18); border-left:0; border-radius:0 12px 12px 0; position:relative}
+.br-join::after{content:""; position:absolute; right:-28px; top:50%; width:28px; border-top:1.5px solid rgba(255,255,255,.18)}
+.br-final{margin-left:28px; display:grid; gap:4px; justify-items:center; text-align:center; padding:18px 14px; border-radius:20px; background:linear-gradient(160deg, rgba(107,78,255,.22), rgba(26,140,255,.12)); border:1px solid rgba(129,140,248,.4); font-family:var(--app)}
+.br-final b{font-size:14px; font-weight:700}
+.br-final i{font-style:normal; font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:var(--text-3)}
+.br-date{font-family:var(--mono); font-size:10px; color:var(--text-3); margin-top:6px}
+.bracket .lmc{width:230px; padding:8px 12px}
+.bracket .lmc .lmc-row{height:28px}
+.bracket .lmc .lmc-score{font-size:24px}
+.bracket .lmc .lmc-score.wide{font-size:19px; width:74px}
+.bracket .lmc .mom{margin-top:8px}
+.gt-rows.nat{width:min(516px,100%)}
+.gt-rows.nat .gt-row{grid-template-columns:14px 28px minmax(0,1fr) 28px 30px; padding:6px 12px}
+.gt-row.head{background:none; border-color:transparent; padding-block:0; font-size:11px; color:rgba(255,255,255,.5); font-weight:600}
+/* ---------- Game of Run realms + House ---------- */
+.gor-tabs{background:rgba(201,162,75,.08); border-color:var(--gor-border)}
+.gor-tabs button{font-family:var(--gor-caps); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--gor-text)}
+.gor-tabs button[aria-pressed="true"]{background:linear-gradient(180deg,var(--gold-1),var(--gold-3)); color:#14100a}
+.house{display:flex; align-items:center; gap:18px}
+.house img{width:104px; height:104px; object-fit:contain; filter:drop-shadow(0 10px 22px rgba(0,0,0,.6)); flex:0 0 104px}
+.house{border-top:1px solid var(--gor-border); padding-top:18px}
+.house .eyebrow{font-size:14px; color:var(--gold-2)}
+/* ---------- review round 2 ---------- */
+.ctl-help{font-size:14px; color:var(--text-3); max-width:42ch; margin:0}
+.rail a{position:relative}
+.rail a::after{content:""; position:absolute; inset:-8px}
+@media (max-width:560px){
+  .tabs button{padding:12px 16px}
+  .bracket{grid-template-columns:1fr; gap:12px}
+  .br-join{display:none}
+  .br-final{margin-left:0}
+  .bracket .lmc, .cl-matches .lmc{width:100%}
+  .tier img, .med img{width:100%; max-width:64px; height:auto}
+  .m5{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .device{zoom:.9}
+  .stages{overflow-x:auto}
+  .phone-zoom[style*="1.75"]{zoom:1.1 !important}
+  .realm.uk{height:auto; width:100%}
+  .big-pills{flex-wrap:wrap} .big-pills .pill{flex:1 1 40%}
+  .gor-legend{font-size:10px}
+}
+.wrap > *{min-width:0}
+@media print{ .slide{min-height:auto; break-after:page} .rail,.count{display:none} *{-webkit-print-color-adjust:exact; print-color-adjust:exact} }
 @media print{ .in *{animation:none !important} }
-#trophies .med img{width:80px; height:80px}
-#trophies .wrap{gap:28px}
+#trophies .med img{width:72px; height:72px}
+#trophies .wrap{gap:20px}
 
 @media (max-width: 900px){
   .split{grid-template-columns:1fr}
@@ -535,7 +601,7 @@ ol.asks li{font-size:20px}
 </head>
 <body>
 <nav class="rail" id="rail" aria-label="Slides"></nav>
-<div class="count" id="count" aria-live="polite">01 / 18</div>
+<div class="count" id="count" aria-live="polite">01 / 21</div>
 
 <main id="deck">
 <!-- cover -->
@@ -545,10 +611,10 @@ ol.asks li{font-size:20px}
       <img class="wordmark" src="assets/sportin-wordmark-white.png" alt="SportIn">
       <p class="kicker">A proposal for Myzone</p>
       <h1><span>Every MEP</span><span class="grad-text">becomes a game</span></h1>
-      <p class="lead">Every minute of effort becomes a match to win, a map to claim, a reward to keep.</p>
+      <p class="lead">Each minute of effort turns into a match to win, a map to claim, a reward to keep.</p>
       <p class="cover-meta"><span>October 2026</span><span>Confidential</span></p>
     </div>
-    <div style="display:grid; justify-items:center"><div class="phone-zoom"><div class="lmc" data-lmc="cover"></div></div></div>
+    <div style="display:grid; justify-items:center"><div class="phone-zoom" style="zoom:1.75"><div class="lmc" data-lmc="cover"></div></div></div>
   </div>
 </section>
 
@@ -556,7 +622,7 @@ ol.asks li{font-size:20px}
 <section class="slide statement" id="fit" data-act="0" data-name="The fit">
   <div class="wrap">
     <h2 class="big">Measured by Myzone.<br><span class="grad-text">Played on SportIn.</span></h2>
-    <p class="lead">Together, honest effort becomes a game members play every day, all year.</p>
+    <p class="lead">Together we turn honest effort into a game members play every day, all year.</p>
   </div>
 </section>
 
@@ -566,10 +632,10 @@ ol.asks li{font-size:20px}
     <h2 class="big">Four layers.<br><span class="grad-text">One engine.</span></h2>
     <p class="lead">Built by SportIn, running live with real teams, ready for any app.</p>
     <div class="cards c4">
-      <div class="glass tile layer r"><h3>Competitive framework</h3><p class="num">01</p></div>
-      <div class="glass tile layer r"><h3>Gamification</h3><p class="num">02</p></div>
-      <div class="glass tile layer r"><h3>Reward system</h3><p class="num">03</p></div>
-      <div class="glass tile layer solid r"><h3>Proprietary technology</h3><p class="num" style="color:#fff">04</p></div>
+      <div class="glass tile layer r"><p class="num">01</p><h3>Competitive framework</h3></div>
+      <div class="glass tile layer r"><p class="num">02</p><h3>Gamification</h3></div>
+      <div class="glass tile layer r"><p class="num">03</p><h3>Reward system</h3></div>
+      <div class="glass tile layer solid r"><p class="num" style="color:#fff">04</p><h3>Proprietary technology</h3></div>
     </div>
   </div>
 </section>
@@ -579,21 +645,37 @@ ol.asks li{font-size:20px}
   <div class="wrap split" style="align-items:center">
     <div class="stack" style="gap:24px">
       <p class="kicker">01 · Competitive framework · League of Brands</p>
-      <h2 class="big">Individuals or teams.<br><span class="grad-text">Any format.</span></h2>
-      <p class="lead">Group stages, knockouts or full leagues, scored live on the index you choose.</p>
-      <div class="tabs" id="lobIndex" role="group" aria-label="Scoring index"><button type="button" data-i="steps" aria-pressed="false">Steps</button><button type="button" data-i="mi" aria-pressed="true">Movement Index</button><button type="button" data-i="combo" aria-pressed="false">Steps + MI</button></div>
+      <h2 class="big">Two formats.<br><span class="grad-text">One league engine.</span></h2>
+      <p class="lead">Run it like the Champions League or like a national division, for individuals or teams.</p>
+      <div class="ctl"><span class="ctl-l">Format</span><div class="tabs" id="lobFormat" role="group" aria-label="Competition format"><button type="button" data-f="cl" aria-pressed="true">Champions League</button><button type="button" data-f="nat" aria-pressed="false">National division</button></div></div>
+      <div class="ctl"><span class="ctl-l">Scoring</span><div class="tabs" id="lobIndex" role="group" aria-label="Scoring index"><button type="button" data-i="steps" aria-pressed="false">Steps</button><button type="button" data-i="mi" aria-pressed="true">Movement Index</button><button type="button" data-i="combo" aria-pressed="false">Steps + MI</button></div><p class="ctl-help" id="lobHelp">Movement Index turns steps into a fair 0 to 10 score, so every team size competes equally.</p></div>
     </div>
-    <div class="cl" aria-label="Example group stage">
-      <p class="num">MATCHDAY 3 · GROUP STAGE</p>
-      <div class="cl-matches">
-        <div class="cl-m"><span class="cl-g">Group A</span><div class="lmc" id="clA"></div></div>
-        <div class="cl-m"><span class="cl-g">Group B</span><div class="lmc" id="clB"></div></div>
+    <div class="cl" aria-live="polite">
+      <div class="lob-view" id="lobView-cl">
+        <p class="num">GROUP STAGE · TOP TWO QUALIFY · EXAMPLE</p>
+        <div class="cl-groups">
+          <div class="gt"><p class="num">GROUP A</p><div class="gt-rows" id="gtA"></div></div>
+          <div class="gt"><p class="num">GROUP B</p><div class="gt-rows" id="gtB"></div></div>
+        </div>
+        <p class="num" style="margin-top:6px">KNOCKOUTS · SEMI-FINALS LIVE</p>
+        <div class="bracket">
+          <div class="br-col">
+            <div class="cl-m"><span class="cl-g">Semi-final 1 · A1 vs B2</span><div class="lmc" id="sf1"></div></div>
+            <div class="cl-m"><span class="cl-g">Semi-final 2 · B1 vs A2</span><div class="lmc" id="sf2"></div></div>
+          </div>
+          <div class="br-join" aria-hidden="true"></div>
+          <div class="br-final"><span class="cl-g">Final</span><b>Winner SF1</b><i>vs</i><b>Winner SF2</b><span class="br-date">Sunday · 00:00 to 24:00</span></div>
+        </div>
       </div>
-      <div class="cl-groups">
-        <div class="gt"><p class="num">GROUP A</p><div class="gt-rows" id="gtA"></div></div>
-        <div class="gt"><p class="num">GROUP B</p><div class="gt-rows" id="gtB"></div></div>
+      <div class="lob-view" id="lobView-nat" hidden>
+        <p class="num">MATCHDAY 12 · LIVE · EXAMPLE</p>
+        <div class="cl-matches">
+          <div class="cl-m"><div class="lmc" id="clA"></div></div>
+          <div class="cl-m"><div class="lmc" id="clB"></div></div>
+        </div>
+        <p class="num" style="margin-top:6px">DIVISION ONE · STANDINGS</p>
+        <div class="gt-rows nat" id="natTable"></div>
       </div>
-      <p class="note">Example group stage · top two qualify for the knockouts</p>
     </div>
   </div>
 </section>
@@ -604,34 +686,32 @@ ol.asks li{font-size:20px}
     <div class="stack" style="gap:22px">
       <p class="eyebrow">SportIn presents · Game of Run</p>
       <h2><span class="metal">Your city is unclaimed</span></h2>
-      <p class="lore">Run it, claim it, hold it. Any country becomes a map of landmarks to conquer, <em>one validated kilometre at a time.</em></p>
+      <p class="lore">Claim any country or a kingdom of our own, <em>one validated kilometre at a time.</em></p>
+      <div class="tabs gor-tabs" id="realmPick" role="group" aria-label="Choose the realm"><button type="button" data-r="uk" aria-pressed="true">United Kingdom</button><button type="button" data-r="virtual" aria-pressed="false">Virtual kingdom</button></div>
       <div class="gor-stats">
         <div class="plate"><b class="metal" id="gorTerr">30</b><span>Territories</span></div>
-        <div class="plate"><b class="metal" id="gorMarks">4.600</b><span>Landmarks</span></div>
+        <div class="plate"><b class="metal" id="gorMarks">4.548</b><span>Landmarks</span></div>
         <div class="plate"><b class="metal">10</b><span>Per team</span></div>
         <div class="plate"><b class="metal">24h</b><span>To claim</span></div>
       </div>
-      <div class="ranks small">
-        <div class="rank"><img src="assets/gor/frames/bronze.webp" alt=""><b>Bronze</b></div>
-        <div class="rank"><img src="assets/gor/frames/silver.webp" alt=""><b>Silver</b></div>
-        <div class="rank"><img src="assets/gor/frames/gold.webp" alt=""><b>Gold</b></div>
-        <div class="rank"><img src="assets/gor/frames/diamond.webp" alt=""><b>Diamond</b></div>
-        <div class="rank"><img src="assets/gor/frames/platinum.webp" alt=""><b>Platinum</b></div>
+      <div class="house">
+        <img src="assets/gor/house-of-sportin.webp" alt="House of SportIn crest">
+        <div><p class="eyebrow" style="letter-spacing:.3em">B2B2C by design</p><p class="lore" style="font-size:19px">Brands and clubs found a House. Their members conquer in its name.</p></div>
       </div>
     </div>
     <div class="realm-col">
-      <div class="realm uk"><canvas id="realmStill" aria-label="Map of the United Kingdom divided into hexagonal landmarks across 30 territories, with five teams spreading out from their home cities and claiming landmarks"></canvas></div>
+      <div class="realm uk"><canvas id="realmStill" aria-label="Map of the United Kingdom divided into hexagonal landmarks, with five teams spreading out from their home cities"></canvas></div>
       <div class="gor-legend" id="gorLegend"></div>
-      <div class="realm-cap"><span>A season, played out · UK example</span><span id="realmCount"></span></div>
+      <div class="realm-cap"><span>A season, played out</span><span id="realmCount"></span></div>
     </div>
   </div>
 </section>
 
 <!-- race -->
 <section class="slide" id="race" data-act="1" data-name="Multiplayer race">
-  <div class="wrap split" style="align-items:start">
-    <div class="stack" style="gap:24px; padding-top:40px">
-      <p class="kicker">Multiplayer race</p>
+  <div class="wrap split" style="align-items:center">
+    <div class="stack" style="gap:24px">
+      <p class="kicker">01 · Competitive framework · Multiplayer race</p>
       <h2 class="big">Race anyone.<br><span class="grad-text">Anywhere. Live.</span></h2>
       <p class="lead">Different cities, one shared track, every runner live to the second.</p>
     </div>
@@ -655,6 +735,7 @@ ol.asks li{font-size:20px}
 <!-- challenges -->
 <section class="slide" id="challenges" data-act="1" data-name="Challenges">
   <div class="wrap">
+    <p class="kicker">01 · Competitive framework · Challenges</p>
     <h2 class="big">Challenges<br><span class="grad-text">for every rhythm</span></h2>
     <p class="lead">From a two-day sprint to a year-long quest, every member finds their challenge.</p>
     <div class="cards c3">
@@ -683,8 +764,9 @@ ol.asks li{font-size:20px}
 <section class="slide" id="leaderboard" data-act="2" data-name="Leaderboard">
   <div class="wrap split">
     <div class="stack" style="gap:24px">
+      <p class="kicker">02 · Gamification · Leaderboard</p>
       <h2 class="big">A leaderboard<br><span class="grad-text">that never sits still</span></h2>
-      <p class="lead">Steps, pace, kilometres or MEPs: every effort moves you up, live.</p>
+      <p class="lead">Rank by steps, pace, kilometres or MEPs, and watch every move happen live.</p>
       <div class="tabs" id="metricTabs" role="group" aria-label="Leaderboard metric"><button type="button" data-m="steps" aria-pressed="false">Steps</button><button type="button" data-m="pace" aria-pressed="false">Pace</button><button type="button" data-m="km" aria-pressed="false">Km</button><button type="button" data-m="mep" aria-pressed="true">MEPs</button></div>
     </div>
     <div style="display:grid; justify-items:center"><div class="phone-zoom" style="zoom:1.05"><div class="lb" id="lb" aria-label="Example leaderboard"></div></div></div>
@@ -694,28 +776,29 @@ ol.asks li{font-size:20px}
 <!-- levels -->
 <section class="slide" id="levels" data-act="2" data-name="Levels">
   <div class="wrap">
+    <p class="kicker">02 · Gamification · Levels</p>
     <h2 class="big">Six tiers.<br><span class="grad-text">One climb.</span></h2>
     <p class="lead">Everyone competes at their own level, so a beginner and an athlete can both win today.</p>
     <div class="tiers">
-      <div class="tier float"><img src="assets/tiers/tier_bronze.png" alt=""><span style="color:#CC8033">Bronze</span></div>
-      <div class="tier float"><img src="assets/tiers/tier_silver.png" alt=""><span style="color:#BFBFC7">Silver</span></div>
-      <div class="tier float"><img src="assets/tiers/tier_gold.png" alt=""><span style="color:#FFC208">Gold</span></div>
-      <div class="tier float"><img src="assets/tiers/tier_platinum.png" alt=""><span style="color:#99D1E0">Platinum</span></div>
-      <div class="tier float"><img src="assets/tiers/tier_diamond.png" alt=""><span style="color:#99A6FF">Diamond</span></div>
-      <div class="tier float"><img src="assets/tiers/tier_master.png" alt=""><span style="color:#FF4D4D">Master</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_bronze.png" alt="" loading="lazy" decoding="async"><span style="color:#CC8033">Bronze</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_silver.png" alt="" loading="lazy" decoding="async"><span style="color:#BFBFC7">Silver</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_gold.png" alt="" loading="lazy" decoding="async"><span style="color:#FFC208">Gold</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_platinum.png" alt="" loading="lazy" decoding="async"><span style="color:#99D1E0">Platinum</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_diamond.png" alt="" loading="lazy" decoding="async"><span style="color:#99A6FF">Diamond</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_master.png" alt="" loading="lazy" decoding="async"><span style="color:#FF4D4D">Master</span></div>
     </div>
-    <div class="medrow"><p class="num">DAILY MEDALS</p><div class="meds m8"><div class="med float"><img src="assets/medals/target/sloth.png" alt=""><span>Sloth</span></div><div class="med float"><img src="assets/medals/target/turtle.png" alt=""><span>Turtle</span></div><div class="med float"><img src="assets/medals/target/elephant.png" alt=""><span>Elephant</span></div><div class="med float"><img src="assets/medals/target/puma-silver.png" alt=""><span>Silver Puma</span></div><div class="med float"><img src="assets/medals/target/puma-gold.png" alt=""><span>Gold Puma</span></div><div class="med float"><img src="assets/medals/target/puma-platinum.png" alt=""><span>Platinum Puma</span></div><div class="med float"><img src="assets/medals/target/puma-diamond.png" alt=""><span>Diamond Puma</span></div><div class="med float"><img src="assets/medals/target/puma-master.png" alt=""><span>Master Puma</span></div></div>
   </div>
 </section>
 
 <!-- trophies -->
 <section class="slide" id="trophies" data-act="2" data-name="Medals and trophies">
   <div class="wrap">
+    <p class="kicker">02 · Gamification · Medals and trophies</p>
     <h2 class="big">Win the day.<br><span class="grad-text">Keep the trophy.</span></h2>
-    <p class="lead">Rare trophies, daily podiums and streaks that turn one good week into a habit.</p>
-    <div class="medrow"><p class="num">DAILY MEDALS</p><div class="meds m8"><div class="med float"><img src="assets/medals/target/sloth.png" alt=""><span>Sloth</span></div><div class="med float"><img src="assets/medals/target/turtle.png" alt=""><span>Turtle</span></div><div class="med float"><img src="assets/medals/target/elephant.png" alt=""><span>Elephant</span></div><div class="med float"><img src="assets/medals/target/puma-silver.png" alt=""><span>Silver Puma</span></div><div class="med float"><img src="assets/medals/target/puma-gold.png" alt=""><span>Gold Puma</span></div><div class="med float"><img src="assets/medals/target/puma-platinum.png" alt=""><span>Platinum Puma</span></div><div class="med float"><img src="assets/medals/target/puma-diamond.png" alt=""><span>Diamond Puma</span></div><div class="med float"><img src="assets/medals/target/puma-master.png" alt=""><span>Master Puma</span></div></div></div>
-    <div class="medrow"><p class="num">RARE TROPHIES</p><div class="meds m5"><div class="med float"><img src="assets/medals/target/dolphin.png" alt=""><span>Dolphin</span></div><div class="med float"><img src="assets/medals/target/eagle.png" alt=""><span>Eagle</span></div><div class="med float"><img src="assets/medals/target/dragon.png" alt=""><span>Dragon</span></div><div class="med float"><img src="assets/medals/target/bear.png" alt=""><span>Bear</span></div><div class="med float"><img src="assets/medals/target/phoenix.png" alt=""><span>Phoenix</span></div></div></div>
-    <div class="medrow"><p class="num">PODIUM AND STREAKS</p><div class="meds m6"><div class="med float"><img src="assets/medals/medal_gold.png" alt=""><span>Gold</span></div><div class="med float"><img src="assets/medals/medal_silver.png" alt=""><span>Silver</span></div><div class="med float"><img src="assets/medals/medal_bronze.png" alt=""><span>Bronze</span></div><div class="med float"><img src="assets/crests/crest_wolf.png" alt=""><span>Wolf · 7 days</span></div><div class="med float"><img src="assets/crests/crest_dragon.png" alt=""><span>Dragon · 15 days</span></div><div class="med float"><img src="assets/crests/crest_phoenix.png" alt=""><span>Phoenix · 30 days</span></div></div></div>
+    <p class="lead">Medals, podiums, rare trophies and streaks turn one good week into a habit.</p>
+    <div class="medrow"><p class="num">DAILY MEDALS</p><div class="meds m8"><div class="med float"><img src="assets/medals/target/sloth.png" alt="" loading="lazy" decoding="async"><span>Sloth</span></div><div class="med float"><img src="assets/medals/target/turtle.png" alt="" loading="lazy" decoding="async"><span>Turtle</span></div><div class="med float"><img src="assets/medals/target/elephant.png" alt="" loading="lazy" decoding="async"><span>Elephant</span></div><div class="med float"><img src="assets/medals/target/puma-silver.png" alt="" loading="lazy" decoding="async"><span>Silver Puma</span></div><div class="med float"><img src="assets/medals/target/puma-gold.png" alt="" loading="lazy" decoding="async"><span>Gold Puma</span></div><div class="med float"><img src="assets/medals/target/puma-platinum.png" alt="" loading="lazy" decoding="async"><span>Platinum Puma</span></div><div class="med float"><img src="assets/medals/target/puma-diamond.png" alt="" loading="lazy" decoding="async"><span>Diamond Puma</span></div><div class="med float"><img src="assets/medals/target/puma-master.png" alt="" loading="lazy" decoding="async"><span>Master Puma</span></div></div></div>
+    <div class="medrow"><p class="num">RARE TROPHIES</p><div class="meds m5"><div class="med float"><img src="assets/medals/target/dolphin.png" alt="" loading="lazy" decoding="async"><span>Dolphin</span></div><div class="med float"><img src="assets/medals/target/eagle.png" alt="" loading="lazy" decoding="async"><span>Eagle</span></div><div class="med float"><img src="assets/medals/target/dragon.png" alt="" loading="lazy" decoding="async"><span>Dragon</span></div><div class="med float"><img src="assets/medals/target/bear.png" alt="" loading="lazy" decoding="async"><span>Bear</span></div><div class="med float"><img src="assets/medals/target/phoenix.png" alt="" loading="lazy" decoding="async"><span>Phoenix</span></div></div></div>
+    <div class="medrow"><p class="num">PODIUM AND STREAKS</p><div class="meds m6"><div class="med float"><img src="assets/medals/medal_gold.png" alt="" loading="lazy" decoding="async"><span>Gold</span></div><div class="med float"><img src="assets/medals/medal_silver.png" alt="" loading="lazy" decoding="async"><span>Silver</span></div><div class="med float"><img src="assets/medals/medal_bronze.png" alt="" loading="lazy" decoding="async"><span>Bronze</span></div><div class="med float"><img src="assets/crests/crest_wolf.png" alt="" loading="lazy" decoding="async"><span>Wolf · 7 days</span></div><div class="med float"><img src="assets/crests/crest_dragon.png" alt="" loading="lazy" decoding="async"><span>Dragon · 15 days</span></div><div class="med float"><img src="assets/crests/crest_phoenix.png" alt="" loading="lazy" decoding="async"><span>Phoenix · 30 days</span></div></div></div>
   </div>
 </section>
 
@@ -725,7 +808,7 @@ ol.asks li{font-size:20px}
     <div class="stack" style="gap:24px">
       <p class="kicker">03 · Reward system</p>
       <h2 class="big">Rewards that<br><span class="grad-text">unlock themselves</span></h2>
-      <p class="lead">Members earn the reward, the engine unlocks it and partners fund it, all automatically.</p>
+      <p class="lead">Partners fund the reward, members earn it, and the engine delivers it automatically.</p>
     </div>
     <div style="display:grid; justify-items:center">
       <div class="device"><iframe src="assets/brand-rewards-demo.html" title="Brand Rewards, the SportIn app's interactive rewards screens" loading="lazy"></iframe></div>
@@ -738,7 +821,7 @@ ol.asks li{font-size:20px}
   <div class="wrap">
     <p class="kicker">04 · Proprietary technology</p>
     <h2 class="big">Technology we built.<br><span class="grad-text">Technology we own.</span></h2>
-    <p class="lead">Live AI commentary, a real-time voice coach and a motion engine, all built by SportIn.</p>
+    <p class="lead">Three systems power the game: live AI commentary, a real-time voice coach and a motion engine.</p>
   </div>
 </section>
 
@@ -746,7 +829,7 @@ ol.asks li{font-size:20px}
 <section class="slide" id="commentary" data-act="4" data-name="AI commentary">
   <div class="wrap split">
     <div class="stack" style="gap:24px">
-      <p class="kicker">04 · Proprietary technology</p>
+      <p class="kicker">04 · Proprietary technology · AI commentary</p>
       <h2 class="big">AI that calls<br><span class="grad-text">the match</span></h2>
       <p class="lead">Our proprietary broadcast engine writes and voices every match live, straight from the data.</p>
     </div>
@@ -765,10 +848,10 @@ ol.asks li{font-size:20px}
 </section>
 
 <!-- coach -->
-<section class="slide" id="coach" data-act="4" data-name="AI Coach">
+<section class="slide" id="coach" data-act="4" data-name="Sportinho">
   <div class="wrap split">
     <div class="stack" style="gap:24px">
-      <p class="kicker">04 · Proprietary technology</p>
+      <p class="kicker">04 · Proprietary technology · Sportinho</p>
       <h2 class="big">Meet<br><span class="grad-text">Sportinho</span></h2>
       <p class="lead">Our proprietary AI persona knows each member’s game and coaches them in real time, voice to voice.</p>
     </div>
@@ -789,9 +872,9 @@ ol.asks li{font-size:20px}
 <!-- sdk -->
 <section class="slide" id="sdk" data-act="4" data-name="Real-time movement">
   <div class="wrap">
-    <div class="stack"><p class="kicker">04 · Proprietary technology</p>
+    <div class="stack"><p class="kicker">04 · Proprietary technology · Motion engine</p>
       <h2 class="big">Every step.<br><span class="grad-text">Live, in your app.</span></h2>
-      <p class="lead">Our proprietary motion engine reads steps, pace and kilometres live from the phone, licensed and never handed over.</p></div>
+      <p class="lead">Our proprietary motion engine reads steps, pace and kilometres from the phone in real time.</p></div>
     <div class="pills big-pills" id="sdkPills" aria-label="Live motion readout">
       <div class="pill" style="--a:#2ECC71"><span>DIST</span><b id="sDist">2.4km</b></div>
       <div class="pill" style="--a:#FFFFFF"><span>PACE</span><b id="sPace">5:12</b></div>
@@ -809,7 +892,7 @@ ol.asks li{font-size:20px}
       <div class="glass tile way r"><p class="num">OPTION 1</p><h3>White-label app</h3><p>Our app, your brand.</p></div>
       <div class="glass tile way solid r"><p class="num" style="color:#fff">OPTION 2</p><h3>Engine API</h3><p>Our engine, your app. Or a brand-new one.</p></div>
     </div>
-    <p class="lead">Either way, every member stays in Myzone’s database, always.</p>
+    <p class="lead">Either way, every member and their data stay with Myzone.</p>
   </div>
 </section>
 
@@ -819,20 +902,20 @@ ol.asks li{font-size:20px}
     <div class="stack"><p class="kicker">Option 2 · Engine API</p><h2 class="big">Our engine.<br><span class="grad-text">Your screens.</span></h2>
       <p class="lead">Your app keeps its look and feel while our engine runs the game underneath.</p></div>
     <svg class="arch" viewBox="0 0 1000 330" role="img" aria-label="Myzone's app and servers send MEPs and member actions to the SportIn engine, which returns boards, scores and rewards, and pushes live events back.">
-      <defs><linearGradient id="eng" x1="0" x2="1"><stop offset="0" stop-color="#6B4EFF"/><stop offset="1" stop-color="#1A8CFF"/></linearGradient></defs>
+      <defs><linearGradient id="eng" x1="0" x2="1"><stop offset="0" stop-color="#6B4EFF"/><stop offset="1" stop-color="#1A8CFF"/></linearGradient><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#C8CAD4"/></marker></defs>
       <rect x="10" y="40" width="250" height="110" rx="16" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)"/>
       <text x="34" y="104" fill="#fff" font-size="24" font-weight="700">Myzone app</text>
       <rect x="10" y="180" width="250" height="110" rx="16" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)"/>
       <text x="34" y="244" fill="#fff" font-size="24" font-weight="700">Myzone servers</text>
       <rect x="690" y="30" width="300" height="270" rx="20" fill="#0D1219" stroke="url(#eng)" stroke-width="2.5"/>
-      <text x="840" y="175" fill="#fff" font-size="30" font-weight="800" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" letter-spacing="1">SPORTIN ENGINE</text>
-      <path d="M262 95 H688" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
+      <text x="840" y="92" fill="#fff" font-size="30" font-weight="800" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" letter-spacing="1">SPORTIN ENGINE</text><g font-family="IBM Plex Mono, monospace" font-size="15" fill="#9AA0B4" text-anchor="middle"><text x="840" y="140">Competitive framework</text><text x="840" y="175">Gamification</text><text x="840" y="210">Reward system</text><text x="840" y="245">Proprietary technology</text></g>
+      <path d="M688 95 H266" stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
       <path class="flow back" d="M262 95 H688" stroke="#12E094" stroke-width="3" fill="none" stroke-linecap="round"/>
       <text x="300" y="83" fill="#C8CAD4" font-size="16">Boards, scores, rewards</text>
-      <path d="M688 160 C 560 160, 420 150, 262 130" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
+      <path d="M688 160 C 560 160, 420 150, 266 131" stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
       <path class="flow back" d="M688 160 C 560 160, 420 150, 262 130" stroke="#F27272" stroke-width="3" fill="none" stroke-linecap="round"/>
       <text x="430" y="140" fill="#C8CAD4" font-size="16">Live events</text>
-      <path d="M262 235 H688" stroke="rgba(255,255,255,.12)" stroke-width="2" fill="none"/>
+      <path d="M262 235 H684" stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
       <path class="flow" d="M262 235 H688" stroke="#3B7BFF" stroke-width="3" fill="none" stroke-linecap="round"/>
       <text x="300" y="223" fill="#C8CAD4" font-size="16">MEPs and actions</text>
     </svg>
@@ -845,8 +928,8 @@ ol.asks li{font-size:20px}
     <h2 class="big">You license it.<br><span class="grad-text">We run it.</span></h2>
     <p class="lead">Your members stay yours: we see an ID and effort, never a name.</p>
     <div class="cards c2">
-      <div class="glass tile r" style="padding:30px"><p class="num">MYZONE</p><ul class="ticks"><li>Every game framework</li><li>Our technology, as a service</li><li>Every member, and their data</li></ul></div>
-      <div class="glass tile solid r" style="padding:30px"><p class="num" style="color:#fff">SPORTIN</p><ul class="ticks"><li>The source code</li><li>The AI and its voices</li><li>The engine and its IP</li></ul></div>
+      <div class="glass tile solid r" style="padding:30px"><p class="num" style="color:#fff">MYZONE</p><ul class="ticks"><li>Every game format</li><li>SportIn technology, as a service</li><li>Every member and their data</li></ul></div>
+      <div class="glass tile r" style="padding:30px"><p class="num">SPORTIN</p><ul class="ticks"><li>The source code</li><li>The AI and its voices</li><li>The engine and its IP</li></ul></div>
     </div>
   </div>
 </section>
@@ -855,7 +938,7 @@ ol.asks li{font-size:20px}
 <section class="slide" id="commercial" data-act="5" data-name="Commercial model">
   <div class="wrap">
     <h2 class="big">Grows as members play</h2>
-    <p class="lead">Four simple parts, built to scale with every member who plays.</p>
+    <p class="lead">Four simple parts, and the price scales with every active player.</p>
     <div class="chips big-chips"><span class="chip">One-time setup</span><span class="chip">Platform licence</span><span class="chip">Per active player</span><span class="chip">Premium add-ons</span></div>
   </div>
 </section>
@@ -863,10 +946,11 @@ ol.asks li{font-size:20px}
 <!-- roadmap -->
 <section class="slide" id="roadmap" data-act="5" data-name="Path to launch">
   <div class="wrap">
-    <h2 class="big">Pilot. Prove. Scale.</h2>
+    <h2 class="big">Pilot. Launch. Scale.</h2>
+    <p class="lead">Start with a handful of clubs, prove the lift, then switch it on everywhere.</p>
     <div class="cards c3">
       <div class="glass phase r" style="--c:#3B7BFF"><p class="ph">Pilot</p><p class="muted">Selected clubs</p></div>
-      <div class="glass phase r" style="--c:#818CF8"><p class="ph">Launch</p><p class="muted">Every engine</p></div>
+      <div class="glass phase r" style="--c:#818CF8"><p class="ph">Launch</p><p class="muted">Every club</p></div>
       <div class="glass phase r" style="--c:#12E094"><p class="ph">Scale</p><p class="muted">Every market</p></div>
     </div>
   </div>
@@ -910,7 +994,7 @@ var io = new IntersectionObserver(function(entries){
 }, {threshold:0.55});
 slides.forEach(function(s){ io.observe(s); });
 addEventListener("keydown", function(e){
-  if(e.target.closest && e.target.closest("button, input, textarea")) return;
+  if(e.target.closest && e.target.closest("input, textarea, select")) return;
   var k = e.key, to = null;
   if(k === "ArrowDown" || k === "ArrowRight" || k === "PageDown" || k === " ") to = Math.min(total-1, current+1);
   if(k === "ArrowUp" || k === "ArrowLeft" || k === "PageUp") to = Math.max(0, current-1);
@@ -960,7 +1044,7 @@ document.querySelectorAll("[data-lmc]").forEach(function(el, i){
 });
 if(!REDUCED) setInterval(function(){ cards.forEach(function(c){ c.tick(); }); }, 2600);
 
-/* ---------- League of Brands group stage: real LiveMatchCard markup, three scoring indexes ---------- */
+/* ---------- League of Brands: two formats (Champions League, national division), three scoring indexes ---------- */
 (function(){
   var T = {
     sportin:{n:"SportIn", logo:"assets/sportin-icon.png", dark:true},
@@ -972,26 +1056,29 @@ if(!REDUCED) setInterval(function(){ cards.forEach(function(c){ c.tick(); }); },
     fry:{n:"FRY", logo:"assets/brands/fry.png"},
     togo:{n:"5toGo", logo:"assets/brands/5togo.png"}
   };
-  var GROUPS = { A:[["sportin",3,2,1,0,7],["decathlon",3,2,0,1,6],["carrefour",3,1,0,2,3],["urban",3,0,1,2,1]],
-                 B:[["fry",3,2,1,0,7],["emag",3,1,2,0,5],["togo",3,1,0,2,3],["pizzahut",3,0,1,2,1]] };
+  var GROUPS = { A:[["sportin",3,7],["decathlon",3,6],["carrefour",3,3],["urban",3,1]],
+                 B:[["fry",3,7],["emag",3,5],["togo",3,3],["pizzahut",3,1]] };
+  var DIVISION = [["sportin",11,25],["fry",11,23],["decathlon",11,20],["emag",11,18],["carrefour",11,14],["togo",11,12],["urban",11,8],["pizzahut",11,5]];
   /* Movement Index: the app's Hill curve, 10 * s^1.5 / (s^1.5 + 10000^1.5) */
   function MI(s){ var a = Math.pow(s,1.5); return 10*a/(a + 1e6); }
   var idx = "mi";
   function val(t){ return idx === "steps" ? t.steps : idx === "combo" ? (MI(t.steps) + Math.min(10, t.steps/1000))/2 : MI(t.steps); }
   function show(t){ return idx === "steps" ? fmt(t.steps) : val(t).toFixed(1); }
-  var M = [ {el:"clA", h:"sportin", a:"decathlon", hs:9840, as:9120}, {el:"clB", h:"emag", a:"fry", hs:8410, as:9370} ];
+  var M = [ {el:"sf1", h:"sportin", a:"emag", hs:9840, as:9310}, {el:"sf2", h:"fry", a:"decathlon", hs:9520, as:9690},
+            {el:"clA", h:"sportin", a:"decathlon", hs:9840, as:9120}, {el:"clB", h:"emag", a:"fry", hs:8410, as:9370} ];
   function tile(key, side){ var t = T[key]; return '<span class="ltile ' + side + (t.dark ? "" : " light") + '"><img src="' + t.logo + '" alt=""></span>'; }
   M.forEach(function(m){
-    var el = document.getElementById(m.el);
+    var el = document.getElementById(m.el); if(!el) return;
     el.innerHTML = '<div class="lmc-status"><span class="live-dot"></span>LIVE</div>' +
       '<div class="lmc-row">' + tile(m.h,"home") + '<span class="lmc-name own">' + T[m.h].n + '</span><span class="lmc-score" data-s="h"></span></div>' +
       '<div class="lmc-row">' + tile(m.a,"away") + '<span class="lmc-name">' + T[m.a].n + '</span><span class="lmc-score" data-s="a"></span></div>' +
       '<div class="mom"><div class="mom-track"></div><div class="mom-marker"></div></div>';
     m.home = {steps:m.hs}; m.away = {steps:m.as};
   });
-  function render(bumpSide){
+  function render(bump){
     M.forEach(function(m){
-      var el = document.getElementById(m.el), hs = el.querySelector('[data-s="h"]'), as = el.querySelector('[data-s="a"]');
+      var el = document.getElementById(m.el); if(!el) return;
+      var hs = el.querySelector('[data-s="h"]'), as = el.querySelector('[data-s="a"]');
       hs.textContent = show(m.home); as.textContent = show(m.away);
       hs.classList.toggle("wide", idx === "steps"); as.classList.toggle("wide", idx === "steps");
       var hv = val(m.home), av = val(m.away), tie = show(m.home) === show(m.away);
@@ -999,28 +1086,36 @@ if(!REDUCED) setInterval(function(){ cards.forEach(function(c){ c.tick(); }); },
       el.querySelector(".mom").style.setProperty("--split", (hv/(hv + av)).toFixed(3));
       el.setAttribute("role","img");
       el.setAttribute("aria-label", "Live. " + T[m.h].n + " " + show(m.home) + ", " + T[m.a].n + " " + show(m.away) + ".");
-      if(bumpSide && bumpSide.m === m){ var n = bumpSide.s === "h" ? hs : as; n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump"); }
+      if(bump && bump.m === m){ var n = bump.s === "h" ? hs : as; n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump"); }
     });
   }
-  ["A","B"].forEach(function(g){
-    document.getElementById("gt" + g).innerHTML = GROUPS[g].map(function(r, i){
-      var t = T[r[0]];
-      return '<div class="gt-row' + (i < 2 ? " q" : "") + '"><span class="pos">' + (i+1) + '</span><span class="lt-logo' + (t.dark ? " dark" : "") + '"><img src="' + t.logo + '" alt=""></span><span class="n">' + t.n + '</span><span class="v">' + r[1] + '</span><span class="pts">' + r[5] + '</span></div>';
-    }).join("");
-  });
+  function row(r, i, cls){ var t = T[r[0]]; return '<div class="gt-row' + cls + '"><span class="pos">' + (i+1) + '</span><span class="lt-logo' + (t.dark ? " dark" : "") + '"><img src="' + t.logo + '" alt=""></span><span class="n">' + t.n + '</span><span class="v">' + r[1] + '</span><span class="pts">' + r[2] + '</span></div>'; }
+  var HEAD = '<div class="gt-row head"><span>#</span><span></span><span>Team</span><span class="v">P</span><span class="pts">Pts</span></div>';
+  ["A","B"].forEach(function(g){ document.getElementById("gt" + g).innerHTML = HEAD + GROUPS[g].map(function(r,i){ return row(r, i, i < 2 ? " q" : ""); }).join(""); });
+  document.getElementById("natTable").innerHTML = '<div class="gt-row head"><span>#</span><span></span><span>Team</span><span class="v">P</span><span class="pts">Pts</span></div>' +
+    DIVISION.map(function(r,i){ return row(r, i, i === 0 ? " q" : ""); }).join("");
   render();
-  document.querySelectorAll("#lobIndex button").forEach(function(b){
-    b.addEventListener("click", function(){
-      idx = b.dataset.i;
-      document.querySelectorAll("#lobIndex button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-      render();
+  function wire(groupId, key, on){
+    document.querySelectorAll("#" + groupId + " button").forEach(function(b){
+      b.addEventListener("click", function(){
+        document.querySelectorAll("#" + groupId + " button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        on(b.dataset[key]);
+      });
     });
+  }
+  var HELP = {steps:"Raw daily steps, averaged across every member of the team.", mi:"Movement Index turns steps into a fair 0 to 10 score, so every team size competes equally.", combo:"Steps and Movement Index weighted together, rewarding volume and consistency."};
+  wire("lobIndex", "i", function(v){ idx = v; render(); var h = document.getElementById("lobHelp"); if(h) h.textContent = HELP[v]; });
+  wire("lobFormat", "f", function(v){
+    document.getElementById("lobView-cl").hidden = v !== "cl";
+    document.getElementById("lobView-nat").hidden = v !== "nat";
   });
   if(!REDUCED) setInterval(function(){
-    var m = M[Math.floor(Math.random()*M.length)], side = Math.random() < 0.5 ? "h" : "a";
+    var live = M.filter(function(m){ var el = document.getElementById(m.el); return el && el.offsetParent !== null; });
+    if(!live.length) return;
+    var m = live[Math.floor(Math.random()*live.length)], side = Math.random() < 0.5 ? "h" : "a";
     (side === "h" ? m.home : m.away).steps += 40 + Math.round(Math.random()*160);
     render({m:m, s:side});
-  }, 2200);
+  }, 2000);
 })();
 
 /* ---------- Leaderboard (LeaderboardRowView + LeaderboardPodiumHeader), four metrics ---------- */
@@ -1115,7 +1210,10 @@ document.querySelectorAll("#metricTabs button").forEach(function(b){
     renderList(!REDUCED, true);
   });
 });
+var lbVisible = false;
+new IntersectionObserver(function(e){ lbVisible = e[0].isIntersecting; }).observe(lb);
 if(!REDUCED) setInterval(function(){
+  if(!lbVisible) return;
   var m = METRIC[metric];
   var p = people[Math.floor(Math.random()*people.length)];
   p[metric] = Math.max(1, p[metric] + m.bump());
@@ -1151,7 +1249,7 @@ if(!REDUCED) setInterval(function(){
     {n:"Liam",   ini:"LI", col:"#1fdd8f", v:0.0349},
     {n:"Lucía",  ini:"LU", col:"#ff9500", v:0.0341}
   ];
-  runners.forEach(function(r, i){ r.d = 0.9 + i*-0.05; r.time = 0; });
+  runners.forEach(function(r, i){ r.d = 2.4 - i*0.18; r.time = 150 + i*9; });
   var me = runners[0], list = document.getElementById("raceList");
   var pDist = document.getElementById("pDist"), pLap = document.getElementById("pLap"), pSeg = document.getElementById("pSeg"), pSteps = document.getElementById("pSteps");
   function seg(p0, p1, color, w, dx, dy){ ctx.beginPath(); ctx.moveTo(p0[0]+(dx||0), p0[1]+(dy||0)); ctx.lineTo(p1[0]+(dx||0), p1[1]+(dy||0)); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.stroke(); }
@@ -1310,7 +1408,7 @@ function wirePlayer(o){
     setup(); if(actx && actx.state === "suspended") actx.resume();
     audio.play().catch(function(){ label.textContent = "Tap again to play"; });
   });
-  audio.addEventListener("play", function(){ st.playing = true; btn.classList.add("playing"); btn.setAttribute("aria-pressed","true"); label.textContent = "Pause"; });
+  audio.addEventListener("play", function(){ if(bar.parentNode) bar.parentNode.classList.add("on"); st.playing = true; btn.classList.add("playing"); btn.setAttribute("aria-pressed","true"); label.textContent = "Pause"; });
   audio.addEventListener("pause", function(){ st.playing = false; btn.classList.remove("playing"); btn.setAttribute("aria-pressed","false"); label.textContent = audio.currentTime > 0 && !audio.ended ? "Resume" : o.idleLabel; });
   audio.addEventListener("ended", function(){ audio.currentTime = 0; });
   audio.addEventListener("timeupdate", function(){
@@ -1396,7 +1494,8 @@ function makeSphere(canvasId, st){
     render();
     if(visible && !REDUCED) raf = requestAnimationFrame(frame);
   }
-  step(); render();
+  for(var pre=0; pre<90; pre++) step();
+  render();
 }
 wirePlayer({audio:"commAudio", btn:"playBtn", label:"playLabel", bar:"progBar", time:"playTime", title:"AI commentary", idleLabel:"Play the commentary"});
 makeSphere("coachSphere", wirePlayer({audio:"coachAudio", btn:"coachBtn", label:"coachLabel", bar:"coachBar", time:"coachTime", title:"Voice to voice", idleLabel:"Hear Sportinho", missingLabel:"Sportinho sample coming soon",
@@ -1421,12 +1520,12 @@ function hash32(str){ var h = 2166136261 >>> 0; for(var i=0;i<str.length;i++){ h
 function rng(seed){ var a = seed >>> 0; return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
 /* Great Britain and Northern Ireland, simplified coastlines (lon, lat). */
-var BORDERS = [
+var UK_BORDERS = [
  [[-3.07,58.64],[-3.3,58.4],[-3.9,57.92],[-4.1,57.58],[-3.6,57.66],[-2.6,57.68],[-2.0,57.69],[-1.78,57.5],[-2.08,57.15],[-2.47,56.7],[-2.8,56.45],[-2.58,56.28],[-3.0,56.08],[-2.5,56.0],[-2.0,55.77],[-1.6,55.4],[-1.43,55.0],[-1.2,54.65],[-0.6,54.49],[-0.08,54.12],[0.12,53.6],[0.35,53.15],[0.2,52.9],[0.9,52.97],[1.3,52.93],[1.73,52.6],[1.75,52.47],[1.35,51.96],[1.15,51.79],[0.6,51.5],[1.44,51.38],[1.33,51.13],[0.97,50.91],[0.25,50.73],[-0.14,50.8],[-0.79,50.73],[-1.1,50.78],[-1.98,50.7],[-2.45,50.52],[-2.95,50.72],[-3.4,50.6],[-3.64,50.22],[-4.14,50.36],[-5.2,49.96],[-5.71,50.06],[-5.48,50.21],[-5.08,50.42],[-4.53,51.01],[-3.48,51.2],[-2.7,51.5],[-3.17,51.45],[-3.95,51.58],[-4.3,51.66],[-5.3,51.75],[-5.3,51.88],[-4.7,52.1],[-4.08,52.41],[-4.15,52.85],[-4.75,52.8],[-4.6,53.1],[-4.6,53.4],[-4.1,53.3],[-3.83,53.33],[-3.05,53.42],[-3.05,53.82],[-2.9,54.07],[-3.23,54.11],[-3.64,54.49],[-3.4,54.95],[-4.4,54.7],[-4.86,54.64],[-5.1,54.9],[-4.65,55.46],[-4.9,55.8],[-5.3,55.9],[-5.7,55.3],[-5.6,55.75],[-5.5,56.4],[-5.95,56.6],[-6.23,56.73],[-5.85,57.0],[-5.7,57.28],[-5.8,57.73],[-5.25,57.9],[-5.0,58.62],[-3.53,58.6]],
  [[-6.2,55.25],[-5.7,54.8],[-5.43,54.45],[-5.55,54.2],[-6.1,54.0],[-6.6,54.05],[-7.0,54.2],[-7.6,54.15],[-8.15,54.45],[-7.75,54.62],[-7.55,54.95],[-7.25,55.15],[-6.75,55.2]]
 ];
 /* Territories: [code, name, seat lon, seat lat, weight] (a city takes a smaller share). */
-var SEATS = [
+var UK_SEATS = [
  ["LDN","London",-0.12,51.51,3.2],["KNT","Kent",0.9,51.25,1],["SSX","Sussex",-0.3,50.92,1],["HMP","Hampshire",-1.3,51.05,1],
  ["OXF","Oxford",-1.26,51.75,1],["CAM","Cambridge",0.12,52.2,1],["NFK","Norfolk",1.0,52.65,1],["BRS","Bristol",-2.6,51.45,1.4],
  ["DEV","Devon",-3.8,50.7,1],["CRN","Cornwall",-4.95,50.35,1],["BHM","Birmingham",-1.9,52.48,1.4],["NTM","Nottingham",-1.15,52.95,1],
@@ -1437,17 +1536,41 @@ var SEATS = [
  ["BEL","Belfast",-5.93,54.6,1.2],["ULS","West Ulster",-7.3,54.55,1]
 ];
 /* Five teams, from the Game of Run banners, each starting from its home city. */
-var TEAMS = [
+var TEAMS_ALL = [
  {n:"Golden Stags",  c:[201,162,75],  home:"LDN"},
- {n:"Iron Wolves",   c:[214,222,231], home:"MAN"},
+ {n:"Iron Wolves",   c:[174,184,198], home:"MAN"},
  {n:"Ashen Crown",   c:[184,115,51],  home:"GLA"},
  {n:"Ravens of the Veil", c:[142,99,201], home:"BRS"},
  {n:"Nightstride",   c:[26,140,255],  home:"NCL"}
 ];
 
-var KX = 111.32*Math.cos(54*Math.PI/180), KY = 110.57;
-function proj(lon,lat){ return [lon*KX, -lat*KY]; }
 function insidePoly(poly, lon, lat){ var hit = false; for(var i=0,j=poly.length-1;i<poly.length;j=i++){ var xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1]; if((yi>lat)!==(yj>lat) && lon < (xj-xi)*(lat-yi)/(yj-yi)+xi) hit = !hit; } return hit; }
+
+/* A realm of our own: a generated kingdom with its own coast and capitals. */
+function virtualKingdom(){
+  var rnd = rng(hash32("kingdom:sportin")), cx = -2.2, cy = 54.2, main = [], isle = [];
+  for(var i=0;i<64;i++){ var a = i/64*TAU, r = 4.0*(1 + 0.16*Math.sin(3*a + 1) + 0.09*Math.sin(7*a) + 0.05*Math.sin(13*a + 2));
+    main.push([cx + r*Math.cos(a)/Math.cos(cy*Math.PI/180)*0.62, cy + r*Math.sin(a)*0.98]); }
+  for(var j=0;j<24;j++){ var b = j/24*TAU, rr = 0.85*(1 + 0.2*Math.sin(4*b)); isle.push([cx + 5.6 + rr*Math.cos(b)*1.6, cy - 2.6 + rr*Math.sin(b)]); }
+  var names = ["Kingsreach","Ironhold","Stormvale","Ashmere","Highmoor","Ravenfall","Goldcrest","Wolfden","Duskwatch","Brightwater","Thornwick","Frostpeak","Emberfield","Silverrun","Oakhaven","Mistral Bay","Saltmarsh","Greywater"];
+  var seats = [], tries = 0;
+  while(seats.length < names.length && tries++ < 5000){
+    var lon = cx - 5 + rnd()*12, lat = cy - 4.4 + rnd()*8.8;
+    if(!(insidePoly(main, lon, lat) || insidePoly(isle, lon, lat))) continue;
+    if(seats.some(function(s){ return Math.hypot((s[2]-lon)*0.6, s[3]-lat) < 1.1; })) continue;
+    seats.push([names[seats.length].slice(0,3).toUpperCase(), names[seats.length], lon, lat, seats.length === 0 ? 1.6 : 1]);
+  }
+  return {id:"virtual", lat:cy, borders:[main, isle], seats:seats, homes:[seats[0][0], seats[3][0], seats[6][0], seats[9][0], seats[12][0]]};
+}
+var REALMS = {
+  uk: {id:"uk", lat:54, borders:UK_BORDERS, seats:UK_SEATS, homes:["LDN","MAN","GLA","BRS","NCL"]},
+  virtual: null
+};
+function build(cfg){
+var BORDERS = cfg.borders, SEATS = cfg.seats;
+var TEAMS = TEAMS_ALL.map(function(t, k){ return {n:t.n, c:t.c, home:cfg.homes[k]}; });
+var KX = 111.32*Math.cos(cfg.lat*Math.PI/180), KY = 110.57;
+function proj(lon,lat){ return [lon*KX, -lat*KY]; }
 function inside(lon,lat){ for(var k=0;k<BORDERS.length;k++) if(insidePoly(BORDERS[k],lon,lat)) return true; return false; }
 var R = 4.5, HEX_C = [];
 for(var i=0;i<6;i++) HEX_C.push([R*Math.cos(i*TAU/6), R*Math.sin(i*TAU/6)]);
@@ -1478,7 +1601,7 @@ hexes.forEach(function(h){ for(var d=0;d<6;d++){ var nb = byKey.get((h.q+DIRS[d]
 /* The season: teams grow out from their home cities until 72% of the realm is held. */
 var ORDER = [];
 (function(){
-  var rnd = rng(hash32("season:uk")), claimed = new Array(hexes.length).fill(-1), front = TEAMS.map(function(){ return []; });
+  var rnd = rng(hash32("season:" + cfg.id)), claimed = new Array(hexes.length).fill(-1), front = TEAMS.map(function(){ return []; });
   TEAMS.forEach(function(tm, k){ var ti = SEATS.findIndex(function(s){ return s[0] === tm.home; }), s = seats[ti], best = -1, bd = Infinity;
     hexes.forEach(function(h,i){ var d = Math.hypot(h.x-s[0], h.y-s[1]); if(d<bd){ bd=d; best=i; } }); front[k].push(best); });
   var target = Math.floor(hexes.length*0.72), guard = 0;
@@ -1495,7 +1618,7 @@ var ORDER = [];
 var set = function(id, v){ var el = document.getElementById(id); if(el) el.textContent = v; };
 set("gorTerr", terr.length);
 set("gorMarks", hexes.length.toLocaleString("de-DE"));
-set("realmCount", terr.length + " territories · " + hexes.length.toLocaleString("de-DE") + " landmarks");
+set("realmCount", "");
 var legend = document.getElementById("gorLegend");
 if(legend) legend.innerHTML = TEAMS.map(function(t){ return '<span><i style="background:rgb(' + t.c.join(",") + ')"></i>' + t.n + '</span>'; }).join("");
 
@@ -1540,7 +1663,7 @@ function draw(){
   });
 }
 function applyStep(n){ while(step < n && step < ORDER.length){ var o = ORDER[step++]; hexes[o[0]].team = o[1]; hexes[o[0]].at = frame; } }
-function reset(){ hexes.forEach(function(h){ h.team = -1; }); step = 0; }
+function reset(){ hexes.forEach(function(h){ h.team = -1; }); step = 0; applyStep(Math.floor(ORDER.length*0.2)); }
 var PER_FRAME = Math.max(2, Math.ceil(ORDER.length/(60*14)));
 function tick(){
   raf = 0; frame++;
@@ -1552,13 +1675,37 @@ function tick(){
 function pick(px,py){ var wx = (px - view.ox)/view.k, wy = (py - view.oy)/view.k, q = Math.round(wx/(R*1.5)), rb = wy/(R*sq3) - q/2, best = null, bd = Infinity;
   for(var dq=-1;dq<=1;dq++) for(var dr=-2;dr<=2;dr++){ var idx = byKey.get((q+dq)+","+(Math.round(rb)+dr)); if(idx === undefined) continue; var h = hexes[idx], d = Math.hypot(h.x-wx, h.y-wy); if(d<bd){ bd=d; best=h; } }
   return best && bd < R*1.05 ? best : null; }
-cv.addEventListener("pointermove", function(e){ var h = pick(e.offsetX, e.offsetY), t = h ? terr[h.t] : null; if(t !== hover){ hover = t; if(!raf) draw(); } });
-cv.addEventListener("pointerleave", function(){ hover = null; if(!raf) draw(); });
-if(REDUCED){ applyStep(ORDER.length); frame = 999; }
-new IntersectionObserver(function(e){ visible = e[0].isIntersecting; if(visible && !REDUCED && !raf) raf = requestAnimationFrame(tick); }).observe(cv);
-if("ResizeObserver" in window) new ResizeObserver(function(){ if(fit()) draw(); }).observe(cv);
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ if(fit()) draw(); });
+if(REDUCED){ applyStep(ORDER.length); frame = 999; } else { applyStep(Math.floor(ORDER.length*0.35)); frame = 999; }
+var api = {
+  move: function(e){ var h = pick(e.offsetX, e.offsetY), t = h ? terr[h.t] : null; if(t !== hover){ hover = t; if(!raf) draw(); } },
+  leave: function(){ hover = null; if(!raf) draw(); },
+  show: function(v){ visible = v; if(visible && !REDUCED && !raf) raf = requestAnimationFrame(tick); },
+  redraw: function(){ if(fit()) draw(); },
+  stop: function(){ visible = false; if(raf) cancelAnimationFrame(raf); raf = 0; }
+};
 if(fit()) draw();
+return api;
+}
+var current = null, visible = false;
+function use(key){
+  if(key === "virtual" && !REALMS.virtual) REALMS.virtual = virtualKingdom();
+  if(current) current.stop();
+  current = build(REALMS[key]);
+  current.show(visible);
+}
+cv.addEventListener("pointermove", function(e){ if(current) current.move(e); });
+cv.addEventListener("pointerleave", function(){ if(current) current.leave(); });
+new IntersectionObserver(function(e){ visible = e[0].isIntersecting; if(current) current.show(visible); }).observe(cv);
+if("ResizeObserver" in window) new ResizeObserver(function(){ if(current) current.redraw(); }).observe(cv);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ if(current) current.redraw(); });
+document.querySelectorAll("#realmPick button").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll("#realmPick button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    use(b.dataset.r);
+    cv.setAttribute("aria-label", b.dataset.r === "uk" ? "Map of the United Kingdom divided into hexagonal landmarks, with five teams spreading out from their home cities" : "Map of a generated kingdom divided into hexagonal landmarks, with five teams spreading out from their capitals");
+  });
+});
+use("uk");
 })();
 </script>
 </body>
