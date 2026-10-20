@@ -159,8 +159,9 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Hero / Why ---------- */
 .hero { padding: calc(var(--nav-h) + clamp(40px, 5.5vw, 76px)) 0 clamp(64px, 8vw, 110px); overflow: hidden; }
-/* The company sentence is the main title: long, so it sits below the display sizes. */
-.hero__title { font-size: clamp(34px, 4.4vw, 66px); line-height: 1.08; max-width: 21ch; }
+.hero__title { max-width: 15ch; }
+/* The company sentence is the hero description. */
+.hero__lede { max-width: 38em; color: var(--ink); }
 .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 40px; }
 .pulse { margin-top: clamp(56px, 7vw, 96px); }
 .pulse__frame { position: relative; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
