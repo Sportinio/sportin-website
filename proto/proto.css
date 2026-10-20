@@ -1,0 +1,54 @@
+/* Hero options A, B and C. Builds on /assets/site/site.css tokens. Local prototypes only. */
+.proto-switch { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; gap: 6px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 999px; box-shadow: var(--shadow-sm); font-size: 14px; }
+.proto-switch a { padding: 6px 14px; border-radius: 999px; text-decoration: none; color: var(--slate); }
+.proto-switch a.is-on { background: var(--ink); color: #fff; }
+
+.phone { position: relative; aspect-ratio: 9 / 19.5; border-radius: 34px; padding: 9px; background: #0b0d14; box-shadow: var(--shadow-sm); }
+.phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 26px; display: block; }
+
+/* ---------- A: photo card with a live card ---------- */
+.ha { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 clamp(56px, 7vw, 96px); }
+.ha__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+.ha__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 12ch; }
+.ha__media { position: relative; }
+.ha__photo { width: 100%; aspect-ratio: 1 / 1; max-height: calc(100vh - var(--nav-h) - 120px); object-fit: cover; object-position: center 35%; border-radius: 28px; display: block; }
+.ha__card { position: absolute; left: -36px; bottom: 36px; width: 290px; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-sm); }
+.ha__cardhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-weight: 700; font-size: 15px; }
+.ha__row { margin-top: 12px; }
+.ha__rowtop { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.ha__bar { height: 8px; border-radius: 999px; background: var(--infield); overflow: hidden; }
+.ha__fill { height: 100%; width: 0; border-radius: 999px; background: var(--blue); transition: width 1.6s var(--ease); }
+.ha__fill--b { background: var(--ink); }
+.ha__chip { position: absolute; right: 22px; top: 22px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; background: #fff; border-radius: 999px; box-shadow: var(--shadow-sm); font-size: 14px; font-weight: 700; }
+.ha__chip img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+
+/* ---------- B: centred title over a strip of real moments ---------- */
+.hb { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 clamp(48px, 6vw, 80px); overflow: hidden; text-align: center; }
+.hb__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 17ch; margin: 0 auto; }
+.hb .lede { margin-left: auto; margin-right: auto; }
+.hb .hero__actions { justify-content: center; }
+.hb__strip { margin-top: clamp(48px, 6vw, 72px); display: flex; justify-content: center; align-items: flex-start; gap: 18px; will-change: transform; }
+.hb__tile { flex: none; width: clamp(150px, 15vw, 220px); aspect-ratio: 9 / 16; border-radius: 26px; overflow: hidden; background: var(--infield); }
+.hb__tile video, .hb__tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hb__tile:nth-child(odd) { margin-top: 44px; }
+.hb__tile--phone { padding: 8px; background: #0b0d14; border-radius: 30px; }
+.hb__tile--phone img { border-radius: 22px; object-position: top; }
+
+/* ---------- C: product stage with three phones ---------- */
+.hc { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 0; text-align: center; }
+.hc__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 17ch; margin: 0 auto; }
+.hc .lede { margin-left: auto; margin-right: auto; }
+.hc .hero__actions { justify-content: center; }
+.hc__stage { margin: clamp(48px, 6vw, 72px) auto 0; width: var(--stage-w, min(1144px, calc(100% - 2 * var(--gutter)))); border-radius: var(--stage-r, 32px); background: linear-gradient(180deg, #e8eeff 0%, #f3f6ff 55%, #ffffff 100%); padding: 64px 24px 0; overflow: hidden; display: flex; justify-content: center; align-items: flex-end; gap: clamp(16px, 3vw, 40px); height: 560px; transition: border-radius 0.2s linear; }
+.hc__stage .phone { width: clamp(170px, 18vw, 250px); transform: translateY(var(--rise, 0)); }
+.hc__stage .phone:nth-child(1) { transform: translateY(calc(var(--rise, 0px) + 60px)) rotate(-6deg); }
+.hc__stage .phone:nth-child(2) { width: clamp(200px, 21vw, 290px); z-index: 1; }
+.hc__stage .phone:nth-child(3) { transform: translateY(calc(var(--rise, 0px) + 60px)) rotate(6deg); }
+
+@media (max-width: 900px) {
+  .ha__grid { grid-template-columns: 1fr; }
+  .ha__card { left: 12px; bottom: 12px; width: 250px; }
+  .hb__tile:nth-child(n + 4) { display: none; }
+  .hc__stage { height: 420px; }
+  .hc__stage .phone:nth-child(1), .hc__stage .phone:nth-child(3) { display: none; }
+}
