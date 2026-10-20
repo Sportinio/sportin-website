@@ -1,0 +1,1712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#0A0A12">
+<meta name="description" content="Every MEP becomes a game, with competitions, rewards and proprietary AI built for Myzone.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SportIn × Myzone">
+<meta property="og:description" content="Every MEP becomes a game, with competitions, rewards and proprietary AI built for Myzone.">
+<meta property="og:url" content="https://sportin.io/myzone/">
+<meta property="og:image" content="https://sportin.io/myzone/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg">
+<link rel="apple-touch-icon" href="assets/sportin-icon.png">
+<title>SportIn × Myzone Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Lato:wght@300;400;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+html,body{margin:0}
+/* Layout: full-height slides on SportIn ink, one idea each. App components render at their
+   real point sizes (scaled up with zoom), next to the claim they prove. Game of Run keeps its
+   own gold-and-ink world inside its slide. */
+:root{
+  color-scheme: dark;
+  /* SportIn brand (sportin-website + iOS SportInBrand tokens) */
+  --ink-0:#06060C; --ink-1:#0A0A12; --page:#0D0D14;
+  --text:#FFFFFF; --text-2:#C8CAD4; --text-3:#9AA0B4; --text-4:#7A8199;
+  --blue:#0751FB; --blue-bright:#3B7BFF; --brand-2:#6B4EFF; --accent:#818CF8;
+  --danger:#FF3B30; --live:#F27272; --success:#2ECC71; --mint:#12E094; --warn:#FF9500;
+  --hair:rgba(255,255,255,.08); --row:rgba(255,255,255,.06); --card:rgba(255,255,255,.04);
+  --match:#0D1219;
+  /* Game of Run */
+  --gor-ink:#06050A; --gold-1:#F5E4A8; --gold-2:#E9CE85; --gold-3:#C9A24B; --gold-4:#8B6818;
+  --gor-text:rgba(233,222,190,.82); --gor-border:rgba(201,162,75,.35);
+  /* Type */
+  --display:'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --body:'Lato', 'Helvetica Neue', Arial, sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --app:-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Lato', system-ui, sans-serif;
+  --app-round:ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Lato', sans-serif;
+  --gor-display:'Cinzel Decorative', 'Cinzel', Georgia, serif;
+  --gor-caps:'Cinzel', Georgia, serif;
+  --gor-body:'Cormorant Garamond', Georgia, serif;
+  /* Motion (web: cubic-bezier(.2,0,0,1); app spring 0.4/0.8 approximated) */
+  --ease:cubic-bezier(.2,0,0,1); --ease-out:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-snap-type:y proximity; scroll-behavior:smooth}
+body{background:var(--ink-1); color:var(--text); font-family:var(--body); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+img{max-width:100%}
+
+/* ---------- slide frame ---------- */
+.slide{position:relative; min-height:100svh; display:flex; align-items:center; scroll-snap-align:start;
+  padding-block:clamp(64px,9vh,104px);
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));
+  overflow:hidden; isolation:isolate}
+.slide::before{content:""; position:absolute; inset:0; z-index:-1;
+  background:radial-gradient(60% 50% at 85% 10%, rgba(7,81,251,.16), transparent 70%),
+             radial-gradient(50% 45% at 0% 100%, rgba(107,78,255,.10), transparent 70%), var(--ink-1)}
+.slide.alt::before{background:linear-gradient(180deg,#161624 0%, #0D0D14 55%, #080810 100%)}
+.wrap{width:min(1180px,100%); margin-inline:auto; display:grid; gap:clamp(28px,4vw,48px)}
+.split{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); gap:clamp(28px,5vw,72px); align-items:center}
+.split > *{min-width:0}
+.kicker{font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:.25em; text-transform:uppercase; color:var(--blue-bright)}
+h1,h2{font-family:var(--display); font-weight:800; text-transform:uppercase; line-height:.95; letter-spacing:.005em; margin:0; text-wrap:balance}
+h1{font-size:clamp(56px,10vw,148px)}
+h2{font-size:clamp(40px,6.2vw,86px)}
+h3{font-family:var(--body); font-weight:700; font-size:20px; margin:0; line-height:1.25}
+p{margin:0}
+.lead{font-size:clamp(18px,1.7vw,22px); font-weight:300; color:var(--text-2); max-width:58ch; line-height:1.55}
+.muted{color:var(--text-3)}
+.note{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-4)}
+.stack{display:grid; gap:18px; align-content:start}
+.grad-text{background:linear-gradient(90deg,#6B4EFF,#1A8CFF); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+/* glass card (GlassStyle.swift: ultraThinMaterial over white .04, hairline .08, shadow 0 8 20 .3) */
+.glass{background:var(--card); border:1px solid var(--hair); border-radius:16px;  box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.cards{display:grid; gap:16px}
+.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cards > *{min-width:0}
+.tile{padding:24px; display:grid; gap:10px; align-content:start}
+.tile p{color:var(--text-3); font-size:15px}
+.tile .num{font-family:var(--mono); font-size:12px; color:var(--blue-bright); letter-spacing:.12em}
+.tile.solid{background:linear-gradient(135deg, rgba(107,78,255,.9), rgba(26,140,255,.9)); border-color:transparent}
+.tile.solid h3, .tile.solid p{color:#fff}
+
+/* ---------- motion: entrances only play once a slide is on screen; at rest all is visible ---------- */
+@keyframes rise{from{opacity:0; transform:translateY(22px)} to{opacity:1; transform:none}}
+.in .r{animation:rise .8s var(--ease-out) both}
+.in .r:nth-child(2){animation-delay:.07s} .in .r:nth-child(3){animation-delay:.14s}
+.in .r:nth-child(4){animation-delay:.21s} .in .r:nth-child(5){animation-delay:.28s}
+.in .r:nth-child(6){animation-delay:.35s} .in .r:nth-child(7){animation-delay:.42s} .in .r:nth-child(8){animation-delay:.49s}
+
+/* ---------- navigation ---------- */
+.rail{position:fixed; right:max(14px, env(safe-area-inset-right, 0px)); top:50%; transform:translateY(-50%); display:grid; gap:8px; z-index:20}
+.rail a{width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.22); display:block; transition:transform .2s var(--ease), background .2s}
+.rail a[aria-current="true"]{background:#fff; transform:scale(1.4)}
+.rail a:focus-visible{outline:2px solid var(--blue-bright); outline-offset:3px}
+.count{position:fixed; left:max(16px, env(safe-area-inset-left, 0px)); bottom:calc(16px + env(safe-area-inset-bottom, 0px)); z-index:20; font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--text-3); background:rgba(10,10,18,.7); backdrop-filter:blur(10px); padding:6px 10px; border-radius:999px; border:1px solid var(--hair)}
+
+/* ---------- cover ---------- */
+.cover .wordmark{height:26px; width:auto}
+.cover h1 span{display:block}
+.cover-meta{display:flex; gap:24px; flex-wrap:wrap; font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-3)}
+
+/* ---------- iOS LiveMatchCard ("C3", LiveMatchCard.swift) at native points ---------- */
+.phone-zoom{zoom:1.45}
+.lmc{width:250px; font-family:var(--app); color:#fff; border-radius:24px; padding:10px 12px;
+  background:linear-gradient(90deg, rgba(7,81,251,.13), rgba(7,81,251,0) 50%, rgba(255,59,48,.12)), var(--match);
+  border:1px solid var(--hair); box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.lmc-status{height:13px; display:flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--live); margin-bottom:8px}
+.live-dot{width:7px; height:7px; border-radius:50%; background:var(--live); animation:livePulse 1.1s ease-in-out infinite alternate}
+@keyframes livePulse{from{opacity:.6} to{opacity:1}}
+.lmc-row{height:34px; display:flex; align-items:center; gap:8px}
+.lmc-row + .lmc-row{margin-top:6px}
+.ltile{width:22px; height:22px; border-radius:6px; flex:0 0 22px; overflow:hidden; display:grid; place-items:center; font-size:10px; font-weight:700}
+.ltile img{width:100%; height:100%; object-fit:cover}
+.ltile.home{background:var(--blue)} .ltile.away{background:var(--danger)}
+.lmc-name{flex:1; min-width:0; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lmc-name.own{font-weight:600}
+.lmc-score{width:62px; text-align:right; font-size:30px; font-weight:700; font-variant-numeric:tabular-nums; transition:opacity .24s ease-in-out}
+.lmc-score.trail{opacity:.72}
+.bump{animation:bump .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bump{0%{transform:scale(1)} 40%{transform:scale(1.12)} 100%{transform:scale(1)}}
+.mom{position:relative; height:18px; margin-top:12px}
+.mom-track{position:absolute; left:0; right:0; top:4px; height:10px; border-radius:5px; background:linear-gradient(90deg, var(--blue), rgba(255,255,255,.44), var(--danger))}
+.mom-marker{position:absolute; top:0; width:5px; height:18px; border-radius:2.5px; background:rgba(255,255,255,.95); box-shadow:0 1px 3px rgba(0,0,0,.42); left:calc(var(--split,.5) * 100% - 2.5px); transition:left .8s var(--ease)}
+
+/* ---------- Live Match room timeline (approved mockup v1, 2026-10-08) ---------- */
+.tl{display:grid; gap:8px; font-family:var(--app); font-size:12px; line-height:1.35; width:250px}
+.tl-cm,.tl-gm{border-radius:12px; padding:9px; display:flex; gap:9px; align-items:flex-start}
+.tl-cm{background:#221532; border:.5px solid #4a2a6a}
+.tl-gm{background:#0f2016; border:.5px solid #24502f}
+.tl-ic{width:28px; height:28px; border-radius:7px; flex:0 0 28px}
+.tl-cm .tl-ic{background:#3a2058} .tl-gm .tl-ic{background:#173d22}
+.tl b{font-weight:500; display:block; color:#fff}
+.tl small{font-size:11px; color:rgba(255,255,255,.58)}
+
+/* ---------- League table rows (leaderboard row surface, standings avatar 50/7) ---------- */
+.lt{display:grid; gap:8px; font-family:var(--app)}
+.lt-row{display:grid; grid-template-columns:22px 40px minmax(0,1fr) repeat(3,34px) 44px; align-items:center; gap:12px; padding:10px 14px; background:var(--row); border:1px solid var(--hair); border-radius:14px; font-size:14px}
+.lt-row.head{background:none; border-color:transparent; padding-block:0; font-size:11px; color:rgba(255,255,255,.5); font-weight:600; letter-spacing:.04em}
+.lt-row .pos{color:rgba(255,255,255,.5); font-weight:600; font-variant-numeric:tabular-nums}
+.lt-logo{width:40px; height:40px; border-radius:7px; overflow:hidden; background:#fff; display:grid; place-items:center}
+.lt-logo img{width:100%; height:100%; object-fit:contain}
+.lt-logo.dark{background:#11131A}
+.lt-row .n{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lt-row .v{text-align:center; color:rgba(255,255,255,.62); font-variant-numeric:tabular-nums}
+.lt-row .pts{text-align:right; font-family:var(--app-round); font-weight:700; font-size:16px; font-variant-numeric:tabular-nums}
+.lt-row.me{background:rgba(7,81,251,.08); border:.5px solid rgba(7,81,251,.4)}
+
+/* ---------- AI commentary: sphere + play control (sportin-website brands page) ---------- */
+.comm{display:grid; justify-items:center; gap:10px}
+.comm canvas{width:300px; height:300px; max-width:100%}
+.commentary-play{display:inline-flex; align-items:center; gap:9px; padding:11px 20px; border-radius:999px; border:1px solid rgba(7,81,251,.45); background:rgba(7,81,251,.14); color:#fff; cursor:pointer; font-family:var(--mono); font-size:12px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; transition:background .2s, border-color .2s, transform .15s}
+.commentary-play:hover{background:rgba(7,81,251,.24); border-color:rgba(59,123,255,.7); transform:translateY(-1px)}
+.commentary-play:focus-visible{outline:2px solid var(--blue-bright); outline-offset:2px}
+.commentary-play svg{width:15px; height:15px; fill:var(--blue-bright)}
+.commentary-play .i-pause{display:none}
+.commentary-play.playing .i-play{display:none} .commentary-play.playing .i-pause{display:inline}
+.prog{width:260px; height:3px; border-radius:2px; background:rgba(255,255,255,.1); overflow:hidden}
+.prog i{display:block; height:100%; width:0; background:var(--blue-bright)}
+.voices{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+.voice{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:6px 12px; border-radius:999px; border:1px solid var(--hair); color:var(--text-2)}
+.facts{display:grid; gap:12px}
+.fact{display:grid; grid-template-columns:120px minmax(0,1fr); gap:14px; padding:14px 0; border-top:1px solid var(--hair)}
+.fact dt{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-4); padding-top:3px}
+.fact dd{margin:0; color:var(--text-2)}
+
+/* ---------- iOS LeaderboardRowView + LeaderboardPodiumHeader ---------- */
+.lb{width:361px; font-family:var(--app); color:#fff}
+.podium{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; align-items:end; margin-bottom:14px; padding-top:28px}
+.pod{position:relative; border-radius:14px; display:flex; flex-direction:column; align-items:center; text-align:center; padding:34px 6px 12px; gap:4px}
+.pod.p1{height:182px; background:linear-gradient(180deg,#402F11,#241A09); border:1px solid rgba(255,215,0,.28)}
+.pod.p2{height:156px; background:#212431; border:1px solid rgba(200,205,216,.20)}
+.pod.p3{height:134px; background:linear-gradient(180deg,#321F14,#24140C); border:1px solid rgba(205,127,50,.24)}
+.pod .ring{position:absolute; top:-26px; left:50%; width:52px; height:52px; margin-left:-26px; border-radius:50%; padding:2.2px}
+.pod.p1 .ring{background:conic-gradient(#FFF3B0,#FFD700,#B8860B,#FFE97A,#FFD700,#FFF3B0)}
+.pod.p2 .ring{background:conic-gradient(#FFFFFF,#C8CDD8,#7D8494,#E4E7EE,#C8CDD8,#FFFFFF)}
+.pod.p3 .ring{background:conic-gradient(#F3C18B,#CD7F32,#7A4A1C,#E6A766,#CD7F32,#F3C18B)}
+.ava{width:100%; height:100%; border-radius:50%; display:grid; place-items:center; font-weight:700; font-size:15px; color:#fff}
+.pod .tierb{position:absolute; top:22px; left:calc(50% + 14px); width:22px; height:22px}
+.pod .medal{width:20px; height:20px; margin-top:auto}
+.pod .pn{font-size:13px; font-weight:800; line-height:1.15}
+.pod .pn2{font-size:13px; font-weight:300; line-height:1.15}
+.pod .pv{font-family:var(--app-round); font-size:12px; font-weight:700; color:rgba(255,255,255,.7); font-variant-numeric:tabular-nums}
+.lb-list{display:flex; flex-direction:column; gap:8px; position:relative}
+.lbr{position:relative; display:flex; align-items:center; padding:12px 14px; background:var(--row); border:1px solid var(--hair); border-radius:14px; will-change:transform}
+.lbr.me{background:rgba(7,81,251,.08); border:.5px solid rgba(7,81,251,.4)}
+.lbr .glow{position:absolute; top:0; left:16px; right:16px; height:1.5px; border-radius:1px}
+.rb{position:relative; width:32px; height:46px; flex:0 0 32px; border-radius:8px; background:rgba(255,255,255,.04); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px}
+.rb svg{position:absolute; inset:0}
+.rb b{font-size:13px; font-weight:600; position:relative}
+.rb i{font-style:normal; font-size:8px; font-weight:700; position:relative; line-height:1}
+.up{color:#2ECC71} .down{color:#E74C3C} .flat{color:rgba(255,255,255,.2)}
+.av-wrap{position:relative; width:44px; height:44px; margin-left:12px; flex:0 0 44px}
+.av-wrap .ava{border:1px solid rgba(255,255,255,.1); font-size:14px}
+.av-wrap .tb{position:absolute; width:20px; height:20px; left:12px; bottom:-8px}
+.lbt{margin-left:12px; flex:1; min-width:0; display:grid; gap:3px}
+.lbt .l1{display:flex; align-items:center; gap:6px; min-width:0}
+.flag{width:14.4px; height:14.4px; border-radius:50%; object-fit:cover; flex:0 0 14.4px}
+.lbt .nm{font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lbt .sub{font-size:12px; color:rgba(255,255,255,.3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.lbv{display:grid; justify-items:end; gap:3px; margin-left:8px}
+.lbv .val{font-family:var(--app-round); font-size:15px; font-weight:700; font-variant-numeric:tabular-nums}
+.lbv .val small{font-size:9px; font-weight:500; color:rgba(255,255,255,.5); margin-left:2px}
+.lbv img{width:18px; height:18px}
+
+/* ---------- levels ---------- */
+.tiers{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px}
+.tier{display:grid; justify-items:center; gap:8px; padding:18px 8px; text-align:center}
+.tier img{width:64px; height:64px}
+.tier span{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase}
+.trophies{display:flex; gap:24px; flex-wrap:wrap; align-items:center}
+.trophy{display:flex; align-items:center; gap:12px}
+.trophy img{width:56px; height:56px; object-fit:contain}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font-family:var(--mono); font-size:12px; letter-spacing:.06em; padding:8px 14px; border-radius:14px; background:var(--row); border:1px solid var(--hair); color:var(--text-2)}
+.float{animation:float 5s ease-in-out infinite}
+.float:nth-child(2){animation-delay:-1s} .float:nth-child(3){animation-delay:-2s} .float:nth-child(4){animation-delay:-2.7s} .float:nth-child(5){animation-delay:-3.5s} .float:nth-child(6){animation-delay:-4.2s}
+@keyframes float{0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)}}
+
+/* ---------- reward card (sportin-website .rw-card) ---------- */
+.rw-card{background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:20px; padding:28px 24px 24px; position:relative; overflow:hidden; transition:transform .5s var(--ease-out), box-shadow .4s ease}
+.rw-card:hover{transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.rw-card::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--mint),transparent); opacity:0; transition:opacity .4s}
+.rw-card.done::before{opacity:1}
+.rw-header{display:flex; align-items:center; gap:14px; margin-bottom:20px}
+.rw-logo{width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); display:grid; place-items:center; font-family:var(--display); font-weight:800; font-size:18px; color:var(--text-2); flex-shrink:0}
+.rw-brand{font-weight:700; font-size:15px; line-height:1.2}
+.rw-brand-sub{font-size:11px; color:var(--text-4); margin-top:2px}
+.rw-label{font-family:var(--mono); font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-4); margin-bottom:6px}
+.rw-name{font-family:var(--display); font-weight:700; font-size:22px; text-transform:uppercase; letter-spacing:.03em; line-height:1.2; margin-bottom:20px}
+.rw-pl{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; font-family:var(--mono); font-size:11px}
+.rw-pl .t{color:var(--text-4)} .rw-pl .s{font-weight:600; color:var(--blue-bright)} .rw-card.done .rw-pl .s{color:var(--mint)}
+.rw-bars{display:flex; gap:4px; height:28px}
+.rw-bar{flex:1; border-radius:3px; background:rgba(255,255,255,.06); position:relative; overflow:hidden}
+.rw-fill{position:absolute; bottom:0; left:0; right:0; height:0; border-radius:3px; background:var(--blue); transition:height .6s var(--ease-out)}
+.rw-card.done .rw-fill{background:var(--mint); box-shadow:0 0 8px rgba(18,224,148,.3)}
+.rw-days{display:flex; gap:4px; margin-top:4px}
+.rw-days span{flex:1; text-align:center; font-family:var(--mono); font-size:9px; color:rgba(255,255,255,.3)}
+.rw-foot{display:flex; align-items:center; justify-content:space-between; padding-top:12px; margin-top:12px; border-top:1px solid rgba(255,255,255,.05); font-family:var(--mono); font-size:11px; color:var(--text-4)}
+.rw-foot strong{color:var(--text-3)}
+.rw-badge{font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.08em; padding:4px 10px; border-radius:999px; background:rgba(7,81,251,.12); color:var(--blue-bright); border:1px solid rgba(7,81,251,.25)}
+.rw-card.done .rw-badge{background:rgba(18,224,148,.12); color:var(--mint); border-color:rgba(18,224,148,.25)}
+
+/* ---------- Game of Run (game-of-run site tokens) ---------- */
+.gor::before{background:radial-gradient(70% 60% at 70% 30%, rgba(107,63,160,.18), transparent 70%), radial-gradient(60% 50% at 10% 90%, rgba(201,162,75,.10), transparent 70%), var(--gor-ink)}
+.gor{color:var(--gor-text); font-family:var(--gor-body)}
+.gor .eyebrow{font-family:var(--gor-caps); font-size:12px; letter-spacing:.45em; text-transform:uppercase; color:var(--gold-3)}
+.gor h2{font-family:var(--gor-display); font-weight:900; text-transform:none; letter-spacing:.06em; font-size:clamp(36px,5.4vw,72px); line-height:1.05}
+.metal{background:linear-gradient(180deg,var(--gold-1) 0%,var(--gold-2) 45%,var(--gold-3) 70%,var(--gold-4) 100%); -webkit-background-clip:text; background-clip:text; color:transparent}
+.gor .lore{font-size:22px; line-height:1.6; max-width:42ch}
+.gor .lore em{color:var(--gold-2)}
+.gor-stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
+.plate{background:linear-gradient(160deg,#221c2a,#0c0916); border:1px solid var(--gor-border); padding:14px 12px; position:relative; text-align:center}
+.plate::before,.plate::after{content:""; position:absolute; width:10px; height:10px; border:1px solid var(--gold-3)}
+.plate::before{top:3px; left:3px; border-right:none; border-bottom:none}
+.plate::after{bottom:3px; right:3px; border-left:none; border-top:none}
+.plate b{display:block; font-family:var(--gor-display); font-weight:900; font-size:30px; line-height:1.1}
+.plate span{font-family:var(--gor-caps); font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold-3)}
+.realm{position:relative; width:100%; aspect-ratio:1.42; max-width:100%; background:#070A16; border:1px solid var(--gor-border); box-shadow:0 30px 80px rgba(0,0,0,.6), inset 0 0 60px rgba(0,0,0,.6)}
+.realm canvas{position:absolute; inset:0; width:100%; height:100%}
+.realm-cap{display:flex; justify-content:space-between; gap:12px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:rgba(201,162,75,.8); margin-top:10px; flex-wrap:wrap}
+.ranks{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px}
+.rank{display:grid; justify-items:center; gap:6px; text-align:center}
+.rank img{width:84px; height:84px; object-fit:contain}
+.rank b{font-family:var(--gor-caps); font-weight:600; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-2)}
+.rank span{font-size:15px; line-height:1.25}
+
+/* ---------- architecture diagram ---------- */
+.arch{width:100%; height:auto}
+.arch .flow{stroke-dasharray:4 14; animation:flow 1.6s linear infinite}
+.arch .flow.back{animation-direction:reverse}
+@keyframes flow{to{stroke-dashoffset:-36}}
+.arch text{font-family:var(--body)}
+
+/* ---------- comparison table ---------- */
+.tbl-wrap{overflow-x:auto; border:1px solid var(--hair); border-radius:16px}
+table{border-collapse:collapse; width:100%; min-width:720px; font-size:15px}
+th,td{padding:16px 18px; text-align:left; vertical-align:top; border-top:1px solid var(--hair)}
+thead th{border-top:none; font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--blue-bright); background:rgba(255,255,255,.03)}
+tbody th{font-weight:700; color:#fff; width:20%}
+td{color:var(--text-2)}
+tr.hl td{color:#fff}
+
+/* ---------- phases ---------- */
+.phase{padding:26px; display:grid; gap:12px; align-content:start; border-top:3px solid var(--c)}
+.phase .ph{font-family:var(--display); font-weight:800; font-size:30px; text-transform:uppercase; color:var(--c)}
+.phase ul{margin:0; padding-left:18px; color:var(--text-2); display:grid; gap:6px}
+
+ol.asks{margin:0; padding:0; list-style:none; counter-reset:a; display:grid; gap:10px}
+ol.asks li{counter-increment:a; display:grid; grid-template-columns:44px minmax(0,1fr); gap:14px; align-items:baseline; padding:14px 0; border-top:1px solid var(--hair); font-size:18px; color:var(--text-2)}
+ol.asks li::before{content:counter(a,decimal-leading-zero); font-family:var(--mono); font-size:13px; color:var(--blue-bright)}
+
+/* ---------- iOS virtual race (VirtualRaceCanvasView, RaceStatPills, VirtualRaceLeaderboardRow) ---------- */
+.race{width:340px; background:#080D1E; border-radius:20px; overflow:hidden; font-family:var(--app); color:#fff; border:1px solid var(--hair); box-shadow:0 18px 50px rgba(0,0,0,.45)}
+#raceTrack{display:block; width:340px; height:400px; max-width:100%}
+.pills{display:flex; gap:6px; padding:10px 12px}
+.pill{flex:1; display:grid; justify-items:center; gap:2px; padding:10px 0; border-radius:10px; background:color-mix(in srgb, var(--a) 8%, transparent); border:.5px solid color-mix(in srgb, var(--a) 20%, transparent)}
+.pill span{font-size:7px; font-weight:700; letter-spacing:.5px; color:rgba(255,255,255,.4)}
+.pill b{font-family:var(--app-round); font-size:16px; font-weight:800; color:var(--a); font-variant-numeric:tabular-nums}
+.rlist{display:grid; padding-bottom:6px}
+.rrow{display:flex; align-items:center; gap:12px; padding:10px 16px}
+.rrow.me{background:rgba(26,140,255,.08)}
+.rrow .rk{width:24px; font-size:14px; font-weight:700; color:rgba(255,255,255,.5); text-align:center}
+.rav{width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font-size:11px; font-weight:700; background:rgba(26,140,255,.2); border:1.5px solid rgba(255,255,255,.15)}
+.rn{flex:1; min-width:0; display:grid; gap:2px} .rn b{font-size:13px; font-weight:600} .rrow.me .rn b{font-weight:700} .rn small{font-size:10px; color:rgba(255,255,255,.4)}
+.rr{text-align:right; display:grid; gap:2px} .rr b{font-size:12px; font-weight:600} .rr small{font-size:10px; font-family:ui-monospace, Menlo, monospace; color:rgba(255,255,255,.5)}
+
+/* ---------- seasons and stages ---------- */
+.stages{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:8px; align-items:end}
+.stage{display:grid; gap:8px; justify-items:center; min-width:0}
+.stage .bar{width:100%; height:150px; border-radius:8px; background:rgba(255,255,255,.05); position:relative; overflow:hidden}
+.stage .bar i{position:absolute; left:0; right:0; bottom:0; height:var(--h); background:linear-gradient(180deg,#1A8CFF,#6B4EFF); border-radius:8px; transition:height .9s var(--ease-out)}
+.stage.now .bar{box-shadow:inset 0 0 0 1.5px #3B7BFF}
+.stage b{font-family:var(--app-round); font-size:12px; font-variant-numeric:tabular-nums; color:var(--text-2)}
+.stage span{font-family:var(--mono); font-size:11px; color:var(--text-3); text-transform:uppercase}
+.stage.now span{color:var(--blue-bright)}
+
+/* ---------- metrics, challenges, licence ---------- */
+.metric b{font-family:var(--app-round); font-size:44px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums}
+.metric b small{font-size:14px; color:var(--text-3); margin-left:4px; font-weight:600}
+.tile.solid.metric b small{color:rgba(255,255,255,.8)}
+.cbar{height:8px; border-radius:4px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:6px}
+.cbar i{display:block; height:100%; width:var(--w); background:linear-gradient(90deg,#6B4EFF,#1A8CFF); border-radius:4px}
+.in .cbar i{animation:grow 1.3s var(--ease-out) both .2s}
+@keyframes grow{from{width:0}}
+.cmeta{display:flex; justify-content:space-between; gap:8px; font-family:var(--mono); font-size:11px; color:var(--text-3)}
+ul.ticks{margin:0; padding:0; list-style:none; display:grid; gap:10px}
+ul.ticks li{padding-left:22px; position:relative; font-size:17px; color:var(--text-2)}
+.solid ul.ticks li{color:#fff}
+ul.ticks li::before{content:""; position:absolute; left:0; top:.5em; width:10px; height:10px; border-radius:50%; background:var(--blue-bright)}
+.solid ul.ticks li::before{background:#fff}
+.c5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.tabs{display:inline-flex; flex-wrap:wrap; padding:3px; border-radius:999px; background:var(--row); border:1px solid var(--hair); gap:2px; justify-self:start}
+.tabs button{border:0; background:none; color:var(--text-3); font:600 13px var(--app); padding:7px 14px; border-radius:999px; cursor:pointer; transition:background .2s, color .2s}
+.tabs button[aria-pressed="true"]{background:#fff; color:#0A0A12}
+.tabs button:focus-visible{outline:2px solid var(--blue-bright); outline-offset:2px}
+.flowline{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase}
+.flowline span{padding:8px 14px; border-radius:999px; background:var(--row); border:1px solid var(--hair); color:var(--text-2)}
+.flowline span:nth-child(3){background:rgba(18,224,148,.12); border-color:rgba(18,224,148,.3); color:var(--mint)}
+.flowline i{width:22px; height:1px; background:var(--text-4)}
+
+/* ---------- AI Coach ---------- */
+.coach{display:grid; justify-items:center; gap:12px}
+.coach canvas{width:300px; height:300px; max-width:100%}
+.convo{display:grid; gap:8px; width:min(380px,100%)}
+.say{padding:10px 14px; border-radius:16px; font-family:var(--app); font-size:14px; line-height:1.4; max-width:85%; border:1px solid var(--hair); color:var(--text-3); background:var(--card); transition:color .3s, background .3s, border-color .3s}
+.say.me{justify-self:end; border-bottom-right-radius:6px}
+.say.ai{justify-self:start; border-bottom-left-radius:6px}
+.say.on{color:#fff; border-color:rgba(59,123,255,.5); background:rgba(7,81,251,.16)}
+.say.me.on{background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25)}
+ol.cflow{margin:0; padding:0; list-style:none; display:grid; gap:0}
+ol.cflow li{display:grid; grid-template-columns:96px minmax(0,1fr); gap:14px; padding:10px 0; border-top:1px solid var(--hair)}
+ol.cflow b{font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--blue-bright); padding-top:3px}
+ol.cflow span{color:var(--text-2); font-size:15px}
+
+/* ---------- less text, bigger titles ---------- */
+h2.big{font-size:clamp(40px,5.6vw,84px); line-height:.95}
+.wrap{gap:clamp(32px,5vw,56px)}
+.lead{font-size:clamp(20px,2vw,26px)}
+.big-chips{gap:12px}
+.big-chips .chip{font-family:var(--display); font-weight:700; font-size:clamp(20px,2.2vw,30px); letter-spacing:.02em; text-transform:uppercase; padding:14px 26px; color:#fff}
+.layer h3, .way h3{font-family:var(--display); font-weight:800; font-size:clamp(28px,2.6vw,38px); text-transform:uppercase; line-height:1}
+.layer{padding:28px; min-height:180px; align-content:space-between}
+.way{padding:32px}
+.way p{font-size:20px}
+.comm canvas{width:320px; height:320px}
+.commentary-play:disabled{opacity:.55; cursor:default; transform:none}
+.phase .ph{font-size:40px}
+.phase{padding:28px}
+
+/* ---------- app demo device + medals ---------- */
+.device{width:390px; height:844px; zoom:.78; border-radius:54px; padding:12px; background:#05060a; border:1px solid rgba(255,255,255,.14); box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.05)}
+.device iframe{width:100%; height:100%; border:0; border-radius:42px; display:block; background:#0d0d14}
+.medrow{display:grid; gap:12px}
+.meds{display:grid; gap:12px}
+.m8{grid-template-columns:repeat(8,minmax(0,1fr))} .m5{grid-template-columns:repeat(5,minmax(0,1fr)); max-width:640px} .m6{grid-template-columns:repeat(6,minmax(0,1fr)); max-width:780px}
+.med{display:grid; justify-items:center; gap:6px; text-align:center; min-width:0}
+.med img{width:min(84px,100%); aspect-ratio:1; object-fit:cover; border-radius:50%; filter:drop-shadow(0 8px 16px rgba(0,0,0,.45))}
+.med span{font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-3)}
+
+/* ---------- design pass (designer review, 2026-10-20) ---------- */
+:root{ --s1:16px; --s2:24px; --s3:40px; --s4:72px }
+h1{font-size:clamp(52px,7.6vw,112px)}
+h2.big{font-size:clamp(38px,4.6vw,68px); line-height:.94}
+.lead{font-size:21px; line-height:1.5; max-width:46ch}
+.wrap{gap:var(--s3)}
+.stack{gap:var(--s2)}
+.slide{padding-block:clamp(72px,10vh,120px) 88px}
+.statement h2.big{font-size:clamp(56px,7vw,104px)}
+.statement .wrap{align-content:center; justify-items:start; min-height:60vh}
+.slide.act-open::before{background:linear-gradient(180deg,#161624 0%, #0D0D14 55%, #080810 100%)}
+.slide.act-open{border-top:1px solid rgba(255,255,255,.10)}
+.cover .stack{gap:var(--s2)}
+.cover h1 + .lead{margin-top:0}
+.cover .lead + .cover-meta{margin-top:16px}
+.layer{min-height:200px; display:flex; flex-direction:column; justify-content:space-between}
+.layer{align-content:space-between}
+.lt{gap:6px}
+.lt-row{padding:8px 14px}
+.rank img{width:96px; height:96px}
+.ranks{align-items:start}
+.cbar{height:10px}
+.stage .bar{height:180px}
+.stage .bar i{background:linear-gradient(180deg,rgba(26,140,255,.55),rgba(107,78,255,.35))}
+.stage.now .bar i{background:linear-gradient(180deg,#1A8CFF,#6B4EFF)}
+.podium{padding-top:20px}
+.tier img, .med img{height:96px; width:96px; object-fit:contain}
+.med img{object-fit:cover}
+.tier, .med{align-content:start}
+.tiers{align-items:start}
+.coach canvas, #coachSphere{width:440px; height:440px; max-width:100%}
+.comm{gap:20px}
+.big-pills{padding:0; gap:16px; max-width:none; width:100%}
+.big-pills .pill{padding:20px 0; border-radius:16px}
+.big-pills .pill span{font-size:12px; letter-spacing:1px}
+.big-pills .pill b{font-size:34px}
+.coming{display:grid; gap:12px}
+.coming .chip{font-size:13px; opacity:.85}
+.coming .num{font-family:var(--mono); font-size:12px; letter-spacing:.12em; color:var(--blue-bright); margin:0}
+ol.asks li{font-size:20px}
+.way{min-height:220px}
+#ways .wrap > .lead{border-top:1px solid var(--hair); padding-top:20px; max-width:none}
+.count{left:auto; right:max(16px, env(safe-area-inset-right, 0px)); bottom:calc(16px + env(safe-area-inset-bottom, 0px))}
+.rail a.act-gap{margin-top:12px}
+.tier.float, .med.float{animation:none}
+.tier.float img, .med.float img{animation:float 5s ease-in-out infinite}
+.med.float:nth-child(2n) img, .tier.float:nth-child(2n) img{animation-delay:-1.7s}
+.med.float:nth-child(3n) img, .tier.float:nth-child(3n) img{animation-delay:-3.1s}
+.medrow .num{font-family:var(--mono); font-size:12px; letter-spacing:.12em; color:var(--blue-bright); margin:0}
+/* ---------- big clean play buttons ---------- */
+.player{justify-items:center; gap:18px}
+.match-tag{font-family:var(--display); font-weight:800; font-size:clamp(28px,3vw,40px); text-transform:uppercase; letter-spacing:.01em; text-align:center}
+.match-tag{display:grid; justify-items:center; gap:2px; line-height:1}
+.match-tag b{font-weight:800; white-space:nowrap}
+.match-tag span{color:var(--text-4); font-family:var(--mono); font-size:13px; letter-spacing:.2em; margin:6px 0}
+.player .bigplay{margin-top:18px}
+.coach .bigplay{margin-top:-36px}
+.bigplay{position:relative; width:112px; height:112px; border-radius:50%; border:0; padding:0; cursor:pointer; display:grid; place-items:center;
+  background:linear-gradient(135deg,#6B4EFF,#1A8CFF); box-shadow:0 18px 50px rgba(26,140,255,.35), inset 0 1px 0 rgba(255,255,255,.25);
+  transition:transform .25s var(--ease-out), box-shadow .25s}
+.bigplay.xl{width:156px; height:156px}
+.bigplay:hover{transform:scale(1.05); box-shadow:0 24px 64px rgba(26,140,255,.5), inset 0 1px 0 rgba(255,255,255,.25)}
+.bigplay:active{transform:scale(.97)}
+.bigplay:focus-visible{outline:3px solid #fff; outline-offset:6px}
+.bigplay .i-play, .bigplay .i-pause{width:38%; height:38%; fill:#fff; grid-area:1/1}
+.bigplay .i-play{margin-left:6%}
+.bigplay .i-pause{display:none}
+.bigplay.playing .i-play{display:none} .bigplay.playing .i-pause{display:block}
+.bp-ring{position:absolute; inset:-14px; width:calc(100% + 28px); height:calc(100% + 28px); transform:rotate(-90deg); pointer-events:none}
+.bp-trk{fill:none; stroke:rgba(255,255,255,.10); stroke-width:2.5}
+.bp-prg{fill:none; stroke:#fff; stroke-width:2.5; stroke-linecap:round; stroke-dasharray:289.03; stroke-dashoffset:289.03; transition:stroke-dashoffset .3s linear}
+.bigplay:not(.playing)::after{content:""; position:absolute; inset:0; border-radius:50%; border:2px solid rgba(107,78,255,.6); animation:bp-pulse 2.4s ease-out infinite; pointer-events:none}
+@keyframes bp-pulse{from{transform:scale(1); opacity:.9} to{transform:scale(1.45); opacity:0}}
+.bigplay:disabled{opacity:.5; cursor:default}
+.bigplay:disabled::after{display:none}
+.bp-label{font-family:var(--body); font-weight:700; font-size:20px; letter-spacing:.01em; margin-top:10px}
+/* ---------- play CTA: the app's primary pill (Brand Rewards .sh-cta) ---------- */
+.cta-play{display:inline-flex; align-items:center; justify-content:center; gap:10px; height:48px; min-width:220px; padding:0 24px; border:1px solid rgba(255,255,255,.22); border-radius:999px; background:#0751FB; color:#fff; font:700 15px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", Lato, system-ui, sans-serif; letter-spacing:-.01em; cursor:pointer; transition:background .2s, transform .15s}
+.cta-play:hover{background:#2E6BFF}
+.cta-play:active{background:#0644d4; transform:translateY(1px)}
+.cta-play:focus-visible{outline:2px solid #fff; outline-offset:3px}
+.cta-play svg{width:16px; height:16px; fill:#fff; flex:0 0 16px}
+.cta-play .i-pause{display:none}
+.cta-play.playing .i-play{display:none} .cta-play.playing .i-pause{display:block}
+.cta-play:disabled{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.14); color:rgba(255,255,255,.46); cursor:default}
+.cta-prog{width:220px; height:3px; border-radius:2px; background:rgba(255,255,255,.10); overflow:hidden; opacity:0; transition:opacity .3s}
+.cta-play.playing + .cta-prog, .cta-prog.on{opacity:1}
+.cta-prog i{display:block; height:100%; width:0; background:#0751FB; transition:width .3s linear}
+.player .cta-play{margin-top:28px}
+.coach .cta-play{margin-top:-48px}
+.coach{position:relative}
+.coach::before{content:""; position:absolute; left:50%; top:220px; width:420px; height:420px; transform:translate(-50%,-50%); background:radial-gradient(closest-side, rgba(7,81,251,.18), transparent); pointer-events:none}
+/* ---------- League of Brands group stage ---------- */
+.cl{display:grid; gap:16px; justify-items:start; min-width:0}
+.cl-matches{display:flex; gap:16px; flex-wrap:wrap}
+.cl-m{display:grid; gap:8px}
+.cl-g{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-3)}
+.cl-m .lmc{box-shadow:0 12px 32px rgba(0,0,0,.4)}
+.ltile.light{background:#fff}
+.lmc-score.wide{width:86px; font-size:24px}
+.cl-groups{display:grid; grid-template-columns:repeat(2,minmax(0,250px)); gap:16px; font-family:var(--app)}
+.gt{display:grid; gap:6px}
+.gt-rows{display:grid; gap:6px}
+.gt-row{display:grid; grid-template-columns:14px 28px minmax(0,1fr) 18px 24px; align-items:center; gap:10px; padding:7px 12px; background:var(--row); border:1px solid var(--hair); border-radius:12px; font-size:13px}
+.gt-row.q{background:rgba(7,81,251,.08); border-color:rgba(7,81,251,.32)}
+.gt-row .pos{color:rgba(255,255,255,.5); font-weight:600}
+.gt-row .lt-logo{width:28px; height:28px; border-radius:6px}
+.gt-row .n{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.gt-row .v{color:rgba(255,255,255,.5); text-align:center; font-variant-numeric:tabular-nums}
+.gt-row .pts{text-align:right; font-family:var(--app-round); font-weight:700; font-variant-numeric:tabular-nums}
+@media (max-width:560px){ .cl-groups{grid-template-columns:1fr} .cl-matches .lmc{width:100%} }
+/* ---------- Game of Run, UK ---------- */
+.realm-col{display:grid; justify-items:center; gap:10px}
+.realm.uk{aspect-ratio:.7; width:auto; height:min(600px,66vh); max-width:100%}
+.gor-legend{display:flex; flex-wrap:wrap; gap:8px 16px; justify-content:center; font-family:var(--gor-caps); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gor-text)}
+.gor-legend span{display:inline-flex; align-items:center; gap:6px}
+.gor-legend i{width:10px; height:10px; border-radius:2px; display:inline-block}
+.ranks.small{grid-template-columns:repeat(5,minmax(0,72px)); gap:10px}
+.ranks.small .rank img{width:64px; height:64px}
+.ranks.small .rank b{font-size:10px; letter-spacing:.14em}
+.cl .num{font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:var(--blue-bright); margin:0}
+.gt .num{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--text-3); margin:0}
+/* ---------- League of Brands formats ---------- */
+.ctl{display:grid; gap:8px}
+.ctl-l{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-3)}
+.lob-view{display:grid; gap:12px; justify-items:start}
+.lob-view[hidden]{display:none}
+.lob-view:not([hidden]){animation:rise .5s var(--ease-out) both}
+.bracket{display:grid; grid-template-columns:auto 28px 170px; align-items:center}
+.br-col{display:grid; gap:12px}
+.br-join{align-self:stretch; margin:44px 0; border:1.5px solid rgba(255,255,255,.18); border-left:0; border-radius:0 12px 12px 0; position:relative}
+.br-join::after{content:""; position:absolute; right:-28px; top:50%; width:28px; border-top:1.5px solid rgba(255,255,255,.18)}
+.br-final{margin-left:28px; display:grid; gap:4px; justify-items:center; text-align:center; padding:18px 14px; border-radius:20px; background:linear-gradient(160deg, rgba(107,78,255,.22), rgba(26,140,255,.12)); border:1px solid rgba(129,140,248,.4); font-family:var(--app)}
+.br-final b{font-size:14px; font-weight:700}
+.br-final i{font-style:normal; font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:var(--text-3)}
+.br-date{font-family:var(--mono); font-size:10px; color:var(--text-3); margin-top:6px}
+.bracket .lmc{width:230px; padding:8px 12px}
+.bracket .lmc .lmc-row{height:28px}
+.bracket .lmc .lmc-score{font-size:24px}
+.bracket .lmc .lmc-score.wide{font-size:19px; width:74px}
+.bracket .lmc .mom{margin-top:8px}
+.gt-rows.nat{width:min(516px,100%)}
+.gt-rows.nat .gt-row{grid-template-columns:14px 28px minmax(0,1fr) 28px 30px; padding:6px 12px}
+.gt-row.head{background:none; border-color:transparent; padding-block:0; font-size:11px; color:rgba(255,255,255,.5); font-weight:600}
+/* ---------- Game of Run realms + House ---------- */
+.gor-tabs{background:rgba(201,162,75,.08); border-color:var(--gor-border)}
+.gor-tabs button{font-family:var(--gor-caps); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--gor-text)}
+.gor-tabs button[aria-pressed="true"]{background:linear-gradient(180deg,var(--gold-1),var(--gold-3)); color:#14100a}
+.house{display:flex; align-items:center; gap:18px}
+.house img{width:104px; height:104px; object-fit:contain; filter:drop-shadow(0 10px 22px rgba(0,0,0,.6)); flex:0 0 104px}
+.house{border-top:1px solid var(--gor-border); padding-top:18px}
+.house .eyebrow{font-size:14px; color:var(--gold-2)}
+/* ---------- review round 2 ---------- */
+.ctl-help{font-size:14px; color:var(--text-3); max-width:42ch; margin:0}
+.rail a{position:relative}
+.rail a::after{content:""; position:absolute; inset:-8px}
+@media (max-width:560px){
+  .tabs button{padding:12px 16px}
+  .bracket{grid-template-columns:1fr; gap:12px}
+  .br-join{display:none}
+  .br-final{margin-left:0}
+  .bracket .lmc, .cl-matches .lmc{width:100%}
+  .tier img, .med img{width:100%; max-width:64px; height:auto}
+  .m5{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .device{zoom:.9}
+  .stages{overflow-x:auto}
+  .phone-zoom[style*="1.75"]{zoom:1.1 !important}
+  .realm.uk{height:auto; width:100%}
+  .big-pills{flex-wrap:wrap} .big-pills .pill{flex:1 1 40%}
+  .gor-legend{font-size:10px}
+}
+.wrap > *{min-width:0}
+@media print{ .slide{min-height:auto; break-after:page} .rail,.count{display:none} *{-webkit-print-color-adjust:exact; print-color-adjust:exact} }
+@media print{ .in *{animation:none !important} }
+#trophies .med img{width:72px; height:72px}
+#trophies .wrap{gap:20px}
+
+@media (max-width: 900px){
+  .split{grid-template-columns:1fr}
+  .c4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c3{grid-template-columns:1fr}
+  .tiers{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .phone-zoom{zoom:1.15}
+  .gor-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c5{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .m8{grid-template-columns:repeat(4,minmax(0,1fr))} .m6{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .device{zoom:.6}
+  .stages{gap:4px}
+  .stage .bar{height:110px}
+}
+@media (max-width: 560px){
+  .c4,.c2{grid-template-columns:1fr}
+  .phone-zoom{zoom:1}
+  .lb{width:100%}
+  .ranks{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .rail{display:none}
+  .lt-row{grid-template-columns:18px 32px minmax(0,1fr) 40px; }
+  .lt-row .v{display:none}
+  .lt-logo{width:32px; height:32px}
+  .fact{grid-template-columns:1fr; gap:4px}
+  .c5{grid-template-columns:1fr}
+  .stage b{display:none}
+  .stage span{font-size:9px}
+  .race{width:100%}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none !important; transition:none !important}
+}
+</style>
+</head>
+<body>
+<nav class="rail" id="rail" aria-label="Slides"></nav>
+<div class="count" id="count" aria-live="polite">01 / 21</div>
+
+<main id="deck">
+<!-- cover -->
+<section class="slide cover" id="cover" data-act="0" data-name="Cover">
+  <div class="wrap split">
+    <div class="stack" style="gap:28px">
+      <img class="wordmark" src="assets/sportin-wordmark-white.png" alt="SportIn">
+      <p class="kicker">A proposal for Myzone</p>
+      <h1><span>Every MEP</span><span class="grad-text">becomes a game</span></h1>
+      <p class="lead">Each minute of effort turns into a match to win, a map to claim, a reward to keep.</p>
+      <p class="cover-meta"><span>October 2026</span><span>Confidential</span></p>
+    </div>
+    <div style="display:grid; justify-items:center"><div class="phone-zoom" style="zoom:1.75"><div class="lmc" data-lmc="cover"></div></div></div>
+  </div>
+</section>
+
+<!-- fit -->
+<section class="slide statement" id="fit" data-act="0" data-name="The fit">
+  <div class="wrap">
+    <h2 class="big">Measured by Myzone.<br><span class="grad-text">Played on SportIn.</span></h2>
+    <p class="lead">Together we turn honest effort into a game members play every day, all year.</p>
+  </div>
+</section>
+
+<!-- offer -->
+<section class="slide act-open" id="offer" data-act="1" data-name="What we offer">
+  <div class="wrap">
+    <h2 class="big">Four layers.<br><span class="grad-text">One engine.</span></h2>
+    <p class="lead">Built by SportIn, running live with real teams, ready for any app.</p>
+    <div class="cards c4">
+      <div class="glass tile layer r"><p class="num">01</p><h3>Competitive framework</h3></div>
+      <div class="glass tile layer r"><p class="num">02</p><h3>Gamification</h3></div>
+      <div class="glass tile layer r"><p class="num">03</p><h3>Reward system</h3></div>
+      <div class="glass tile layer solid r"><p class="num" style="color:#fff">04</p><h3>Proprietary technology</h3></div>
+    </div>
+  </div>
+</section>
+
+<!-- lob -->
+<section class="slide" id="lob" data-act="1" data-name="League of Brands">
+  <div class="wrap split" style="align-items:center">
+    <div class="stack" style="gap:24px">
+      <p class="kicker">01 · Competitive framework · League of Brands</p>
+      <h2 class="big">Two formats.<br><span class="grad-text">One league engine.</span></h2>
+      <p class="lead">Run it like the Champions League or like a national division, for individuals or teams.</p>
+      <div class="ctl"><span class="ctl-l">Format</span><div class="tabs" id="lobFormat" role="group" aria-label="Competition format"><button type="button" data-f="cl" aria-pressed="true">Champions League</button><button type="button" data-f="nat" aria-pressed="false">National division</button></div></div>
+      <div class="ctl"><span class="ctl-l">Scoring</span><div class="tabs" id="lobIndex" role="group" aria-label="Scoring index"><button type="button" data-i="steps" aria-pressed="false">Steps</button><button type="button" data-i="mi" aria-pressed="true">Movement Index</button><button type="button" data-i="combo" aria-pressed="false">Steps + MI</button></div><p class="ctl-help" id="lobHelp">Movement Index turns steps into a fair 0 to 10 score, so every team size competes equally.</p></div>
+    </div>
+    <div class="cl" aria-live="polite">
+      <div class="lob-view" id="lobView-cl">
+        <p class="num">GROUP STAGE · TOP TWO QUALIFY · EXAMPLE</p>
+        <div class="cl-groups">
+          <div class="gt"><p class="num">GROUP A</p><div class="gt-rows" id="gtA"></div></div>
+          <div class="gt"><p class="num">GROUP B</p><div class="gt-rows" id="gtB"></div></div>
+        </div>
+        <p class="num" style="margin-top:6px">KNOCKOUTS · SEMI-FINALS LIVE</p>
+        <div class="bracket">
+          <div class="br-col">
+            <div class="cl-m"><span class="cl-g">Semi-final 1 · A1 vs B2</span><div class="lmc" id="sf1"></div></div>
+            <div class="cl-m"><span class="cl-g">Semi-final 2 · B1 vs A2</span><div class="lmc" id="sf2"></div></div>
+          </div>
+          <div class="br-join" aria-hidden="true"></div>
+          <div class="br-final"><span class="cl-g">Final</span><b>Winner SF1</b><i>vs</i><b>Winner SF2</b><span class="br-date">Sunday · 00:00 to 24:00</span></div>
+        </div>
+      </div>
+      <div class="lob-view" id="lobView-nat" hidden>
+        <p class="num">MATCHDAY 12 · LIVE · EXAMPLE</p>
+        <div class="cl-matches">
+          <div class="cl-m"><div class="lmc" id="clA"></div></div>
+          <div class="cl-m"><div class="lmc" id="clB"></div></div>
+        </div>
+        <p class="num" style="margin-top:6px">DIVISION ONE · STANDINGS</p>
+        <div class="gt-rows nat" id="natTable"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- gor -->
+<section class="slide gor" id="gor" data-act="1" data-name="Game of Run">
+  <div class="wrap split" style="align-items:center">
+    <div class="stack" style="gap:22px">
+      <p class="eyebrow">SportIn presents · Game of Run</p>
+      <h2><span class="metal">Your city is unclaimed</span></h2>
+      <p class="lore">Claim any country or a kingdom of our own, <em>one validated kilometre at a time.</em></p>
+      <div class="tabs gor-tabs" id="realmPick" role="group" aria-label="Choose the realm"><button type="button" data-r="uk" aria-pressed="true">United Kingdom</button><button type="button" data-r="virtual" aria-pressed="false">Virtual kingdom</button></div>
+      <div class="gor-stats">
+        <div class="plate"><b class="metal" id="gorTerr">30</b><span>Territories</span></div>
+        <div class="plate"><b class="metal" id="gorMarks">4.548</b><span>Landmarks</span></div>
+        <div class="plate"><b class="metal">10</b><span>Per team</span></div>
+        <div class="plate"><b class="metal">24h</b><span>To claim</span></div>
+      </div>
+      <div class="house">
+        <img src="assets/gor/house-of-sportin.webp" alt="House of SportIn crest">
+        <div><p class="eyebrow" style="letter-spacing:.3em">B2B2C by design</p><p class="lore" style="font-size:19px">Brands and clubs found a House. Their members conquer in its name.</p></div>
+      </div>
+    </div>
+    <div class="realm-col">
+      <div class="realm uk"><canvas id="realmStill" aria-label="Map of the United Kingdom divided into hexagonal landmarks, with five teams spreading out from their home cities"></canvas></div>
+      <div class="gor-legend" id="gorLegend"></div>
+      <div class="realm-cap"><span>A season, played out</span><span id="realmCount"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- race -->
+<section class="slide" id="race" data-act="1" data-name="Multiplayer race">
+  <div class="wrap split" style="align-items:center">
+    <div class="stack" style="gap:24px">
+      <p class="kicker">01 · Competitive framework · Multiplayer race</p>
+      <h2 class="big">Race anyone.<br><span class="grad-text">Anywhere. Live.</span></h2>
+      <p class="lead">Different cities, one shared track, every runner live to the second.</p>
+    </div>
+    <div style="display:grid; justify-items:center">
+      <div class="phone-zoom" style="zoom:1">
+        <div class="race" id="raceView" aria-label="Example multiplayer race on the oval track">
+          <canvas id="raceTrack" width="340" height="400"></canvas>
+          <div class="pills">
+            <div class="pill" style="--a:#2ECC71"><span>DIST</span><b id="pDist">0.0km</b></div>
+            <div class="pill" style="--a:#FFFFFF"><span>LAP</span><b id="pLap">1/5</b></div>
+            <div class="pill" style="--a:#FF9500"><span>SEG</span><b id="pSeg">S1</b></div>
+            <div class="pill" style="--a:#1A8CFF"><span>STEPS</span><b id="pSteps">0</b></div>
+          </div>
+          <div class="rlist" id="raceList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- challenges -->
+<section class="slide" id="challenges" data-act="1" data-name="Challenges">
+  <div class="wrap">
+    <p class="kicker">01 · Competitive framework · Challenges</p>
+    <h2 class="big">Challenges<br><span class="grad-text">for every rhythm</span></h2>
+    <p class="lead">From a two-day sprint to a year-long quest, every member finds their challenge.</p>
+    <div class="cards c3">
+      <div class="glass tile chal r"><p class="num">SHORT</p><h3>Hit the target</h3>
+        <div class="cbar"><i style="--w:72%"></i></div><div class="cmeta"><span>216 / 300 MEP</span><span>2 days</span></div></div>
+      <div class="glass tile chal r"><p class="num">LONG</p><h3>Beat the field</h3>
+        <div class="cbar"><i style="--w:45%"></i></div><div class="cmeta"><span>Rank 4 of 128</span><span>Week 3 of 6</span></div></div>
+      <div class="glass tile chal r"><p class="num">ALL YEAR</p><h3>Go the distance</h3>
+        <div class="cbar"><i style="--w:61%"></i></div><div class="cmeta"><span>612 / 1.000 km</span><span>Stage 8</span></div></div>
+    </div>
+    <div class="coming"><p class="num">FIVE MORE FORMATS COMING</p><div class="chips"><span class="chip">Knockout cup</span><span class="chip">Groups and rounds</span><span class="chip">Head-to-head</span><span class="chip">Team challenges</span><span class="chip">Live races</span></div></div>
+  </div>
+</section>
+
+<!-- seasons -->
+<section class="slide act-open" id="seasons" data-act="2" data-name="Seasons and stages">
+  <div class="wrap">
+    <div class="stack"><p class="kicker">02 · Gamification</p>
+      <h2 class="big">Year-long seasons.<br><span class="grad-text">Month-long stages.</span></h2>
+      <p class="lead">Stage after stage, every member watches a year of effort take shape.</p></div>
+    <div class="glass" style="padding:28px"><div class="stages" id="stages"></div></div>
+  </div>
+</section>
+
+<!-- leaderboard -->
+<section class="slide" id="leaderboard" data-act="2" data-name="Leaderboard">
+  <div class="wrap split">
+    <div class="stack" style="gap:24px">
+      <p class="kicker">02 · Gamification · Leaderboard</p>
+      <h2 class="big">A leaderboard<br><span class="grad-text">that never sits still</span></h2>
+      <p class="lead">Rank by steps, pace, kilometres or MEPs, and watch every move happen live.</p>
+      <div class="tabs" id="metricTabs" role="group" aria-label="Leaderboard metric"><button type="button" data-m="steps" aria-pressed="false">Steps</button><button type="button" data-m="pace" aria-pressed="false">Pace</button><button type="button" data-m="km" aria-pressed="false">Km</button><button type="button" data-m="mep" aria-pressed="true">MEPs</button></div>
+    </div>
+    <div style="display:grid; justify-items:center"><div class="phone-zoom" style="zoom:1.05"><div class="lb" id="lb" aria-label="Example leaderboard"></div></div></div>
+  </div>
+</section>
+
+<!-- levels -->
+<section class="slide" id="levels" data-act="2" data-name="Levels">
+  <div class="wrap">
+    <p class="kicker">02 · Gamification · Levels</p>
+    <h2 class="big">Six tiers.<br><span class="grad-text">One climb.</span></h2>
+    <p class="lead">Everyone competes at their own level, so a beginner and an athlete can both win today.</p>
+    <div class="tiers">
+      <div class="tier float"><img src="assets/tiers/tier_bronze.png" alt="" loading="lazy" decoding="async"><span style="color:#CC8033">Bronze</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_silver.png" alt="" loading="lazy" decoding="async"><span style="color:#BFBFC7">Silver</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_gold.png" alt="" loading="lazy" decoding="async"><span style="color:#FFC208">Gold</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_platinum.png" alt="" loading="lazy" decoding="async"><span style="color:#99D1E0">Platinum</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_diamond.png" alt="" loading="lazy" decoding="async"><span style="color:#99A6FF">Diamond</span></div>
+      <div class="tier float"><img src="assets/tiers/tier_master.png" alt="" loading="lazy" decoding="async"><span style="color:#FF4D4D">Master</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- trophies -->
+<section class="slide" id="trophies" data-act="2" data-name="Medals and trophies">
+  <div class="wrap">
+    <p class="kicker">02 · Gamification · Medals and trophies</p>
+    <h2 class="big">Win the day.<br><span class="grad-text">Keep the trophy.</span></h2>
+    <p class="lead">Medals, podiums, rare trophies and streaks turn one good week into a habit.</p>
+    <div class="medrow"><p class="num">DAILY MEDALS</p><div class="meds m8"><div class="med float"><img src="assets/medals/target/sloth.png" alt="" loading="lazy" decoding="async"><span>Sloth</span></div><div class="med float"><img src="assets/medals/target/turtle.png" alt="" loading="lazy" decoding="async"><span>Turtle</span></div><div class="med float"><img src="assets/medals/target/elephant.png" alt="" loading="lazy" decoding="async"><span>Elephant</span></div><div class="med float"><img src="assets/medals/target/puma-silver.png" alt="" loading="lazy" decoding="async"><span>Silver Puma</span></div><div class="med float"><img src="assets/medals/target/puma-gold.png" alt="" loading="lazy" decoding="async"><span>Gold Puma</span></div><div class="med float"><img src="assets/medals/target/puma-platinum.png" alt="" loading="lazy" decoding="async"><span>Platinum Puma</span></div><div class="med float"><img src="assets/medals/target/puma-diamond.png" alt="" loading="lazy" decoding="async"><span>Diamond Puma</span></div><div class="med float"><img src="assets/medals/target/puma-master.png" alt="" loading="lazy" decoding="async"><span>Master Puma</span></div></div></div>
+    <div class="medrow"><p class="num">RARE TROPHIES</p><div class="meds m5"><div class="med float"><img src="assets/medals/target/dolphin.png" alt="" loading="lazy" decoding="async"><span>Dolphin</span></div><div class="med float"><img src="assets/medals/target/eagle.png" alt="" loading="lazy" decoding="async"><span>Eagle</span></div><div class="med float"><img src="assets/medals/target/dragon.png" alt="" loading="lazy" decoding="async"><span>Dragon</span></div><div class="med float"><img src="assets/medals/target/bear.png" alt="" loading="lazy" decoding="async"><span>Bear</span></div><div class="med float"><img src="assets/medals/target/phoenix.png" alt="" loading="lazy" decoding="async"><span>Phoenix</span></div></div></div>
+    <div class="medrow"><p class="num">PODIUM AND STREAKS</p><div class="meds m6"><div class="med float"><img src="assets/medals/medal_gold.png" alt="" loading="lazy" decoding="async"><span>Gold</span></div><div class="med float"><img src="assets/medals/medal_silver.png" alt="" loading="lazy" decoding="async"><span>Silver</span></div><div class="med float"><img src="assets/medals/medal_bronze.png" alt="" loading="lazy" decoding="async"><span>Bronze</span></div><div class="med float"><img src="assets/crests/crest_wolf.png" alt="" loading="lazy" decoding="async"><span>Wolf · 7 days</span></div><div class="med float"><img src="assets/crests/crest_dragon.png" alt="" loading="lazy" decoding="async"><span>Dragon · 15 days</span></div><div class="med float"><img src="assets/crests/crest_phoenix.png" alt="" loading="lazy" decoding="async"><span>Phoenix · 30 days</span></div></div></div>
+  </div>
+</section>
+
+<!-- rewards -->
+<section class="slide act-open" id="rewards" data-act="3" data-name="Reward system">
+  <div class="wrap split">
+    <div class="stack" style="gap:24px">
+      <p class="kicker">03 · Reward system</p>
+      <h2 class="big">Rewards that<br><span class="grad-text">unlock themselves</span></h2>
+      <p class="lead">Partners fund the reward, members earn it, and the engine delivers it automatically.</p>
+    </div>
+    <div style="display:grid; justify-items:center">
+      <div class="device"><iframe src="assets/brand-rewards-demo.html" title="Brand Rewards, the SportIn app's interactive rewards screens" loading="lazy"></iframe></div>
+    </div>
+  </div>
+</section>
+
+<!-- tech -->
+<section class="slide act-open statement" id="tech" data-act="4" data-name="Proprietary technology">
+  <div class="wrap">
+    <p class="kicker">04 · Proprietary technology</p>
+    <h2 class="big">Technology we built.<br><span class="grad-text">Technology we own.</span></h2>
+    <p class="lead">Three systems power the game: live AI commentary, a real-time voice coach and a motion engine.</p>
+  </div>
+</section>
+
+<!-- commentary -->
+<section class="slide" id="commentary" data-act="4" data-name="AI commentary">
+  <div class="wrap split">
+    <div class="stack" style="gap:24px">
+      <p class="kicker">04 · Proprietary technology · AI commentary</p>
+      <h2 class="big">AI that calls<br><span class="grad-text">the match</span></h2>
+      <p class="lead">Our proprietary broadcast engine writes and voices every match live, straight from the data.</p>
+    </div>
+    <div class="comm player">
+      <div class="phone-zoom" style="zoom:1.45"><div class="lmc" data-lmc="comm" data-home="Planet Fitness" data-away="Anytime Fitness"></div></div>
+      <button class="cta-play" id="playBtn" type="button" aria-pressed="false">
+        <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+        <span id="playLabel">Play the commentary</span>
+      </button>
+      <div class="cta-prog" aria-hidden="true"><i id="progBar"></i></div>
+      <p class="note" id="playTime">AI commentary · 2:44</p>
+      <audio id="commAudio" src="assets/commentary-pf-af.mp3" preload="metadata"></audio>
+    </div>
+  </div>
+</section>
+
+<!-- coach -->
+<section class="slide" id="coach" data-act="4" data-name="Sportinho">
+  <div class="wrap split">
+    <div class="stack" style="gap:24px">
+      <p class="kicker">04 · Proprietary technology · Sportinho</p>
+      <h2 class="big">Meet<br><span class="grad-text">Sportinho</span></h2>
+      <p class="lead">Our proprietary AI persona knows each member’s game and coaches them in real time, voice to voice.</p>
+    </div>
+    <div class="comm coach">
+      <canvas id="coachSphere" aria-hidden="true"></canvas>
+      <button class="cta-play" id="coachBtn" type="button" aria-pressed="false">
+        <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+        <span id="coachLabel">Hear Sportinho</span>
+      </button>
+      <div class="cta-prog" aria-hidden="true"><i id="coachBar"></i></div>
+      <p class="note" id="coachTime">Voice to voice · 3:04</p>
+      <audio id="coachAudio" src="assets/sportinho.mp3" preload="metadata"></audio>
+    </div>
+  </div>
+</section>
+
+<!-- sdk -->
+<section class="slide" id="sdk" data-act="4" data-name="Real-time movement">
+  <div class="wrap">
+    <div class="stack"><p class="kicker">04 · Proprietary technology · Motion engine</p>
+      <h2 class="big">Every step.<br><span class="grad-text">Live, in your app.</span></h2>
+      <p class="lead">Our proprietary motion engine reads steps, pace and kilometres from the phone in real time.</p></div>
+    <div class="pills big-pills" id="sdkPills" aria-label="Live motion readout">
+      <div class="pill" style="--a:#2ECC71"><span>DIST</span><b id="sDist">2.4km</b></div>
+      <div class="pill" style="--a:#FFFFFF"><span>PACE</span><b id="sPace">5:12</b></div>
+      <div class="pill" style="--a:#FF9500"><span>SEG</span><b id="sSeg">S3</b></div>
+      <div class="pill" style="--a:#1A8CFF"><span>STEPS</span><b id="sSteps">3.168</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ways -->
+<section class="slide" id="ways" data-act="5" data-name="Two ways">
+  <div class="wrap">
+    <h2 class="big">Two ways in</h2>
+    <div class="cards c2">
+      <div class="glass tile way r"><p class="num">OPTION 1</p><h3>White-label app</h3><p>Our app, your brand.</p></div>
+      <div class="glass tile way solid r"><p class="num" style="color:#fff">OPTION 2</p><h3>Engine API</h3><p>Our engine, your app. Or a brand-new one.</p></div>
+    </div>
+    <p class="lead">Either way, every member and their data stay with Myzone.</p>
+  </div>
+</section>
+
+<!-- opt2 -->
+<section class="slide" id="opt2" data-act="5" data-name="Option 2">
+  <div class="wrap">
+    <div class="stack"><p class="kicker">Option 2 · Engine API</p><h2 class="big">Our engine.<br><span class="grad-text">Your screens.</span></h2>
+      <p class="lead">Your app keeps its look and feel while our engine runs the game underneath.</p></div>
+    <svg class="arch" viewBox="0 0 1000 330" role="img" aria-label="Myzone's app and servers send MEPs and member actions to the SportIn engine, which returns boards, scores and rewards, and pushes live events back.">
+      <defs><linearGradient id="eng" x1="0" x2="1"><stop offset="0" stop-color="#6B4EFF"/><stop offset="1" stop-color="#1A8CFF"/></linearGradient><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#C8CAD4"/></marker></defs>
+      <rect x="10" y="40" width="250" height="110" rx="16" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)"/>
+      <text x="34" y="104" fill="#fff" font-size="24" font-weight="700">Myzone app</text>
+      <rect x="10" y="180" width="250" height="110" rx="16" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)"/>
+      <text x="34" y="244" fill="#fff" font-size="24" font-weight="700">Myzone servers</text>
+      <rect x="690" y="30" width="300" height="270" rx="20" fill="#0D1219" stroke="url(#eng)" stroke-width="2.5"/>
+      <text x="840" y="92" fill="#fff" font-size="30" font-weight="800" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif" letter-spacing="1">SPORTIN ENGINE</text><g font-family="IBM Plex Mono, monospace" font-size="15" fill="#9AA0B4" text-anchor="middle"><text x="840" y="140">Competitive framework</text><text x="840" y="175">Gamification</text><text x="840" y="210">Reward system</text><text x="840" y="245">Proprietary technology</text></g>
+      <path d="M688 95 H266" stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+      <path class="flow back" d="M262 95 H688" stroke="#12E094" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text x="300" y="83" fill="#C8CAD4" font-size="16">Boards, scores, rewards</text>
+      <path d="M688 160 C 560 160, 420 150, 266 131" stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+      <path class="flow back" d="M688 160 C 560 160, 420 150, 262 130" stroke="#F27272" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text x="430" y="140" fill="#C8CAD4" font-size="16">Live events</text>
+      <path d="M262 235 H684" stroke="rgba(255,255,255,.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+      <path class="flow" d="M262 235 H688" stroke="#3B7BFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text x="300" y="223" fill="#C8CAD4" font-size="16">MEPs and actions</text>
+    </svg>
+  </div>
+</section>
+
+<!-- license -->
+<section class="slide" id="license" data-act="5" data-name="Licensed vs kept">
+  <div class="wrap">
+    <h2 class="big">You license it.<br><span class="grad-text">We run it.</span></h2>
+    <p class="lead">Your members stay yours: we see an ID and effort, never a name.</p>
+    <div class="cards c2">
+      <div class="glass tile solid r" style="padding:30px"><p class="num" style="color:#fff">MYZONE</p><ul class="ticks"><li>Every game format</li><li>SportIn technology, as a service</li><li>Every member and their data</li></ul></div>
+      <div class="glass tile r" style="padding:30px"><p class="num">SPORTIN</p><ul class="ticks"><li>The source code</li><li>The AI and its voices</li><li>The engine and its IP</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- commercial -->
+<section class="slide" id="commercial" data-act="5" data-name="Commercial model">
+  <div class="wrap">
+    <h2 class="big">Grows as members play</h2>
+    <p class="lead">Four simple parts, and the price scales with every active player.</p>
+    <div class="chips big-chips"><span class="chip">One-time setup</span><span class="chip">Platform licence</span><span class="chip">Per active player</span><span class="chip">Premium add-ons</span></div>
+  </div>
+</section>
+
+<!-- roadmap -->
+<section class="slide" id="roadmap" data-act="5" data-name="Path to launch">
+  <div class="wrap">
+    <h2 class="big">Pilot. Launch. Scale.</h2>
+    <p class="lead">Start with a handful of clubs, prove the lift, then switch it on everywhere.</p>
+    <div class="cards c3">
+      <div class="glass phase r" style="--c:#3B7BFF"><p class="ph">Pilot</p><p class="muted">Selected clubs</p></div>
+      <div class="glass phase r" style="--c:#818CF8"><p class="ph">Launch</p><p class="muted">Every club</p></div>
+      <div class="glass phase r" style="--c:#12E094"><p class="ph">Scale</p><p class="muted">Every market</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+"use strict";
+var REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+var fmt = function(n){ return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+
+/* ---------- navigation: dot rail, counter, keyboard ---------- */
+var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+var rail = document.getElementById("rail"), count = document.getElementById("count");
+var total = slides.length, current = 0;
+function pad(n){ return (n < 10 ? "0" : "") + n; }
+slides.forEach(function(s, i){
+  var a = document.createElement("a");
+  a.href = "#" + s.id; a.setAttribute("aria-label", (i+1) + ". " + s.dataset.name);
+  if(i > 0 && s.dataset.act !== slides[i-1].dataset.act) a.className = "act-gap";
+  rail.appendChild(a);
+});
+var dots = rail.querySelectorAll("a");
+function setCurrent(i){
+  current = i;
+  dots.forEach(function(d, j){ d.setAttribute("aria-current", j === i ? "true" : "false"); });
+  count.textContent = pad(i+1) + " / " + pad(total);
+}
+setCurrent(0);
+var io = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting){
+      var i = slides.indexOf(e.target);
+      setCurrent(i);
+      if(!REDUCED) e.target.classList.add("in");
+      e.target.dispatchEvent(new CustomEvent("slidein"));
+    }
+  });
+}, {threshold:0.55});
+slides.forEach(function(s){ io.observe(s); });
+addEventListener("keydown", function(e){
+  if(e.target.closest && e.target.closest("input, textarea, select")) return;
+  var k = e.key, to = null;
+  if(k === "ArrowDown" || k === "ArrowRight" || k === "PageDown" || k === " ") to = Math.min(total-1, current+1);
+  if(k === "ArrowUp" || k === "ArrowLeft" || k === "PageUp") to = Math.max(0, current-1);
+  if(k === "Home") to = 0; if(k === "End") to = total-1;
+  if(to !== null){ e.preventDefault(); slides[to].scrollIntoView({behavior: REDUCED ? "auto" : "smooth"}); }
+});
+
+/* ---------- LiveMatchCard (LiveMatchCard.swift "C3") ---------- */
+function LiveMatch(el, home, away){
+  el.innerHTML =
+    '<div class="lmc-status"><span class="live-dot"></span>LIVE</div>' +
+    row("home", home) + row("away", away) +
+    '<div class="mom"><div class="mom-track"></div><div class="mom-marker"></div></div>';
+  function row(side, t){
+    return '<div class="lmc-row"><span class="ltile ' + side + '">' + (t.logo ? '<img src="' + t.logo + '" alt="">' : t.name.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase()) +
+      '</span><span class="lmc-name' + (t.own ? " own" : "") + '">' + t.name + '</span><span class="lmc-score" data-side="' + side + '"></span></div>';
+  }
+  var hs = el.querySelector('[data-side="home"]'), as = el.querySelector('[data-side="away"]');
+  var mom = el.querySelector(".mom");
+  el.setAttribute("role", "img");
+  function render(bump){
+    hs.textContent = home.mi.toFixed(1); as.textContent = away.mi.toFixed(1);
+    var tie = home.mi.toFixed(1) === away.mi.toFixed(1);
+    hs.classList.toggle("trail", !tie && home.mi < away.mi);
+    as.classList.toggle("trail", !tie && away.mi < home.mi);
+    mom.style.setProperty("--split", (home.mi / (home.mi + away.mi)).toFixed(3));
+    el.setAttribute("aria-label", "Live. " + home.name + " " + home.mi.toFixed(1) + ", " + away.name + " " + away.mi.toFixed(1) + ". " + (tie ? "Level." : (home.mi > away.mi ? home.name : away.name) + " leads."));
+    if(bump){ [bump].forEach(function(n){ n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump"); }); }
+  }
+  render();
+  return {
+    tick: function(){
+      var side = Math.random() < 0.52 ? home : away;
+      var cap = 9.6;
+      if(side.mi >= cap) return;
+      side.mi = Math.min(cap, side.mi + 0.1 + Math.round(Math.random()*2)/10);
+      render(side === home ? hs : as);
+    }
+  };
+}
+var sportin = {name:"SportIn", logo:"assets/sportin-icon.png", own:true};
+var urban = {name:"Urban FM", logo:"assets/brands/urban-fm.svg"};
+var cards = [];
+document.querySelectorAll("[data-lmc]").forEach(function(el, i){
+  var home = el.dataset.home ? {name: el.dataset.home} : sportin, away = el.dataset.away ? {name: el.dataset.away} : urban;
+  cards.push(LiveMatch(el, Object.assign({mi: i ? 6.8 : 5.9}, home), Object.assign({mi: i ? 6.4 : 6.2}, away)));
+});
+if(!REDUCED) setInterval(function(){ cards.forEach(function(c){ c.tick(); }); }, 2600);
+
+/* ---------- League of Brands: two formats (Champions League, national division), three scoring indexes ---------- */
+(function(){
+  var T = {
+    sportin:{n:"SportIn", logo:"assets/sportin-icon.png", dark:true},
+    carrefour:{n:"Carrefour", logo:"assets/brands/carrefour.png"},
+    decathlon:{n:"Decathlon", logo:"assets/brands/decathlon.png"},
+    urban:{n:"Urban FM", logo:"assets/brands/urban-fm.svg", dark:true},
+    emag:{n:"eMAG", logo:"assets/brands/emag.png"},
+    pizzahut:{n:"Pizza Hut", logo:"assets/brands/pizzahut.png"},
+    fry:{n:"FRY", logo:"assets/brands/fry.png"},
+    togo:{n:"5toGo", logo:"assets/brands/5togo.png"}
+  };
+  var GROUPS = { A:[["sportin",3,7],["decathlon",3,6],["carrefour",3,3],["urban",3,1]],
+                 B:[["fry",3,7],["emag",3,5],["togo",3,3],["pizzahut",3,1]] };
+  var DIVISION = [["sportin",11,25],["fry",11,23],["decathlon",11,20],["emag",11,18],["carrefour",11,14],["togo",11,12],["urban",11,8],["pizzahut",11,5]];
+  /* Movement Index: the app's Hill curve, 10 * s^1.5 / (s^1.5 + 10000^1.5) */
+  function MI(s){ var a = Math.pow(s,1.5); return 10*a/(a + 1e6); }
+  var idx = "mi";
+  function val(t){ return idx === "steps" ? t.steps : idx === "combo" ? (MI(t.steps) + Math.min(10, t.steps/1000))/2 : MI(t.steps); }
+  function show(t){ return idx === "steps" ? fmt(t.steps) : val(t).toFixed(1); }
+  var M = [ {el:"sf1", h:"sportin", a:"emag", hs:9840, as:9310}, {el:"sf2", h:"fry", a:"decathlon", hs:9520, as:9690},
+            {el:"clA", h:"sportin", a:"decathlon", hs:9840, as:9120}, {el:"clB", h:"emag", a:"fry", hs:8410, as:9370} ];
+  function tile(key, side){ var t = T[key]; return '<span class="ltile ' + side + (t.dark ? "" : " light") + '"><img src="' + t.logo + '" alt=""></span>'; }
+  M.forEach(function(m){
+    var el = document.getElementById(m.el); if(!el) return;
+    el.innerHTML = '<div class="lmc-status"><span class="live-dot"></span>LIVE</div>' +
+      '<div class="lmc-row">' + tile(m.h,"home") + '<span class="lmc-name own">' + T[m.h].n + '</span><span class="lmc-score" data-s="h"></span></div>' +
+      '<div class="lmc-row">' + tile(m.a,"away") + '<span class="lmc-name">' + T[m.a].n + '</span><span class="lmc-score" data-s="a"></span></div>' +
+      '<div class="mom"><div class="mom-track"></div><div class="mom-marker"></div></div>';
+    m.home = {steps:m.hs}; m.away = {steps:m.as};
+  });
+  function render(bump){
+    M.forEach(function(m){
+      var el = document.getElementById(m.el); if(!el) return;
+      var hs = el.querySelector('[data-s="h"]'), as = el.querySelector('[data-s="a"]');
+      hs.textContent = show(m.home); as.textContent = show(m.away);
+      hs.classList.toggle("wide", idx === "steps"); as.classList.toggle("wide", idx === "steps");
+      var hv = val(m.home), av = val(m.away), tie = show(m.home) === show(m.away);
+      hs.classList.toggle("trail", !tie && hv < av); as.classList.toggle("trail", !tie && av < hv);
+      el.querySelector(".mom").style.setProperty("--split", (hv/(hv + av)).toFixed(3));
+      el.setAttribute("role","img");
+      el.setAttribute("aria-label", "Live. " + T[m.h].n + " " + show(m.home) + ", " + T[m.a].n + " " + show(m.away) + ".");
+      if(bump && bump.m === m){ var n = bump.s === "h" ? hs : as; n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump"); }
+    });
+  }
+  function row(r, i, cls){ var t = T[r[0]]; return '<div class="gt-row' + cls + '"><span class="pos">' + (i+1) + '</span><span class="lt-logo' + (t.dark ? " dark" : "") + '"><img src="' + t.logo + '" alt=""></span><span class="n">' + t.n + '</span><span class="v">' + r[1] + '</span><span class="pts">' + r[2] + '</span></div>'; }
+  var HEAD = '<div class="gt-row head"><span>#</span><span></span><span>Team</span><span class="v">P</span><span class="pts">Pts</span></div>';
+  ["A","B"].forEach(function(g){ document.getElementById("gt" + g).innerHTML = HEAD + GROUPS[g].map(function(r,i){ return row(r, i, i < 2 ? " q" : ""); }).join(""); });
+  document.getElementById("natTable").innerHTML = '<div class="gt-row head"><span>#</span><span></span><span>Team</span><span class="v">P</span><span class="pts">Pts</span></div>' +
+    DIVISION.map(function(r,i){ return row(r, i, i === 0 ? " q" : ""); }).join("");
+  render();
+  function wire(groupId, key, on){
+    document.querySelectorAll("#" + groupId + " button").forEach(function(b){
+      b.addEventListener("click", function(){
+        document.querySelectorAll("#" + groupId + " button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        on(b.dataset[key]);
+      });
+    });
+  }
+  var HELP = {steps:"Raw daily steps, averaged across every member of the team.", mi:"Movement Index turns steps into a fair 0 to 10 score, so every team size competes equally.", combo:"Steps and Movement Index weighted together, rewarding volume and consistency."};
+  wire("lobIndex", "i", function(v){ idx = v; render(); var h = document.getElementById("lobHelp"); if(h) h.textContent = HELP[v]; });
+  wire("lobFormat", "f", function(v){
+    document.getElementById("lobView-cl").hidden = v !== "cl";
+    document.getElementById("lobView-nat").hidden = v !== "nat";
+  });
+  if(!REDUCED) setInterval(function(){
+    var live = M.filter(function(m){ var el = document.getElementById(m.el); return el && el.offsetParent !== null; });
+    if(!live.length) return;
+    var m = live[Math.floor(Math.random()*live.length)], side = Math.random() < 0.5 ? "h" : "a";
+    (side === "h" ? m.home : m.away).steps += 40 + Math.round(Math.random()*160);
+    render({m:m, s:side});
+  }, 2000);
+})();
+
+/* ---------- Leaderboard (LeaderboardRowView + LeaderboardPodiumHeader), four metrics ---------- */
+var MEDAL = {1:"#FFD700", 2:"#C8CDD8", 3:"#CD7F32"};
+var AVC = ["#6B4EFF","#1A8CFF","#E67E22","#9B59B6","#2ECC71","#3498DB","#E74C3C","#F4C430"];
+var METRIC = {
+  steps:{unit:"st", goal:10000, asc:false, show:function(v){ return fmt(v); }, bump:function(){ return 60 + Math.random()*260; }},
+  pace: {unit:"/km", goal:330, asc:true, show:function(v){ v = Math.round(v); return Math.floor(v/60) + ":" + (v%60 < 10 ? "0" : "") + (v%60); }, bump:function(){ return -(1 + Math.random()*4); }},
+  km:   {unit:"km", goal:40, asc:false, show:function(v){ return v.toFixed(1); }, bump:function(){ return 0.1 + Math.random()*0.6; }},
+  mep:  {unit:"MEP", goal:1100, asc:false, show:function(v){ return fmt(v); }, bump:function(){ return 18 + Math.random()*70; }}
+};
+var metric = "mep";
+var people = [
+  {n:"Sophie Turner", c:"gb", club:"Northside Studio", t:"master",   steps:14820, pace:281, km:46.2, mep:1284},
+  {n:"Liam O’Brien",  c:"ie", club:"Harbour Fitness",  t:"diamond",  steps:13910, pace:297, km:44.8, mep:1211},
+  {n:"Lucía Romero",  c:"es", club:"Club Riverside",   t:"diamond",  steps:12640, pace:305, km:41.5, mep:1176},
+  {n:"Andrei Popescu",c:"ro", club:"Northside Studio", t:"platinum", steps:11980, pace:312, km:38.9, mep:1032, me:true},
+  {n:"Daan de Vries", c:"nl", club:"Harbour Fitness",  t:"gold",     steps:10570, pace:326, km:35.1, mep:998}
+];
+people.forEach(function(p, i){ p.id = i; p.rank = i+1; p.prev = i+1; p.col = AVC[i % AVC.length]; });
+function val(p){ return p[metric]; }
+function showVal(p){ return METRIC[metric].show(val(p)); }
+function frac(p){ var m = METRIC[metric]; return m.asc ? m.goal / val(p) : val(p) / m.goal; }
+function initials(n){ return n.split(" ").map(function(s){ return s[0]; }).join("").slice(0,2); }
+function ringColor(p){ var f = frac(p); return f < 0.5 ? "#FF3B30" : (f < 1 ? "#FF9500" : "#34C759"); }
+var lb = document.getElementById("lb");
+lb.innerHTML = '<div class="podium" id="pod"></div><div class="lb-list" id="lbList"></div>';
+var pod = document.getElementById("pod"), list = document.getElementById("lbList");
+var rowEls = {};
+people.forEach(function(p){
+  var el = document.createElement("div");
+  el.className = "lbr" + (p.me ? " me" : "");
+  el.innerHTML =
+    '<span class="glow"></span>' +
+    '<div class="rb"><svg viewBox="0 0 32 46" aria-hidden="true"><rect x="1" y="1" width="30" height="44" rx="7" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="2"/><rect class="pr" x="1" y="1" width="30" height="44" rx="7" fill="none" stroke-width="2" stroke-linecap="round" pathLength="100" stroke-dashoffset="-5.9"/></svg><b></b><i></i></div>' +
+    '<div class="av-wrap"><div class="ava" style="background:' + p.col + '">' + initials(p.n) + '</div><img class="tb" src="assets/tiers/tier_' + p.t + '.png" alt=""></div>' +
+    '<div class="lbt"><div class="l1"><img class="flag" src="assets/flags/' + p.c + '.png" alt=""><span class="nm">' + p.n + '</span></div><div class="sub">' + p.club + '</div></div>' +
+    '<div class="lbv"><span class="val"></span><img class="md" alt="" hidden></div>';
+  rowEls[p.id] = el;
+});
+function renderPodium(sorted){
+  var order = [sorted[1], sorted[0], sorted[2]], cls = ["p2","p1","p3"], rk = [2,1,3];
+  var medals = {1:"medal_gold", 2:"medal_silver", 3:"medal_bronze"};
+  pod.innerHTML = order.map(function(p, i){
+    var parts = p.n.split(" ");
+    return '<div class="pod ' + cls[i] + '"><div class="ring"><div class="ava" style="background:' + p.col + '">' + initials(p.n) + '</div></div>' +
+      '<img class="tierb" src="assets/tiers/tier_' + p.t + '.png" alt="">' +
+      '<span class="pn">' + parts[0] + '</span><span class="pn2">' + parts.slice(1).join(" ") + '</span>' +
+      '<span class="pv">' + showVal(p) + ' ' + METRIC[metric].unit + '</span><img class="medal" src="assets/medals/' + medals[rk[i]] + '.png" alt="Rank ' + rk[i] + '"></div>';
+  }).join("");
+}
+function renderList(animate, resetChevrons){
+  var asc = METRIC[metric].asc;
+  var sorted = people.slice().sort(function(a,b){ return asc ? val(a) - val(b) : val(b) - val(a); });
+  sorted.forEach(function(p, i){ p.prev = resetChevrons ? i+1 : p.rank; p.rank = i+1; });
+  renderPodium(sorted);
+  var first = {};
+  if(animate) sorted.forEach(function(p){ var el = rowEls[p.id]; if(el.isConnected) first[p.id] = el.getBoundingClientRect().top; });
+  sorted.forEach(function(p){
+    var el = rowEls[p.id];
+    el.querySelector(".rb b").textContent = p.rank;
+    var ch = el.querySelector(".rb i");
+    if(p.rank < p.prev){ ch.textContent = "▲"; ch.className = "up"; }
+    else if(p.rank > p.prev){ ch.textContent = "▼"; ch.className = "down"; }
+    else { ch.textContent = "—"; ch.className = "flat"; }
+    var pr = el.querySelector(".pr");
+    pr.setAttribute("stroke", ringColor(p));
+    pr.setAttribute("stroke-dasharray", Math.min(100, frac(p) * 100).toFixed(1) + " 100");
+    el.querySelector(".val").innerHTML = showVal(p) + "<small>" + METRIC[metric].unit + "</small>";
+    var glow = el.querySelector(".glow"), md = el.querySelector(".md");
+    if(p.rank <= 3){
+      glow.style.background = "linear-gradient(90deg, transparent, " + MEDAL[p.rank] + ", transparent)";
+      md.src = "assets/medals/medal_" + ["gold","silver","bronze"][p.rank-1] + ".png"; md.hidden = false;
+    } else { glow.style.background = "none"; md.hidden = true; }
+    list.appendChild(el);
+  });
+  if(animate){
+    sorted.forEach(function(p){
+      var el = rowEls[p.id];
+      if(first[p.id] === undefined) return;
+      var dy = first[p.id] - el.getBoundingClientRect().top;
+      if(!dy) return;
+      el.animate([{transform:"translateY(" + dy + "px)"},{transform:"none"}], {duration:240, easing:"ease-in-out"});
+    });
+  }
+}
+renderList(false, true);
+document.querySelectorAll("#metricTabs button").forEach(function(b){
+  b.addEventListener("click", function(){
+    metric = b.dataset.m;
+    document.querySelectorAll("#metricTabs button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    renderList(!REDUCED, true);
+  });
+});
+var lbVisible = false;
+new IntersectionObserver(function(e){ lbVisible = e[0].isIntersecting; }).observe(lb);
+if(!REDUCED) setInterval(function(){
+  if(!lbVisible) return;
+  var m = METRIC[metric];
+  var p = people[Math.floor(Math.random()*people.length)];
+  p[metric] = Math.max(1, p[metric] + m.bump());
+  people.forEach(function(q){ if(q !== p && Math.random() < 0.35) q[metric] = Math.max(1, q[metric] + m.bump()*0.25); });
+  renderList(true, false);
+}, 2400);
+
+/* ---------- Virtual race (OvalTrackPath + VirtualRaceCanvasView geometry, RACE_COLORS) ---------- */
+(function(){
+  var cv = document.getElementById("raceTrack"); if(!cv) return;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2), W = 340, H = 400;
+  cv.width = W*dpr; cv.height = H*dpr; var ctx = cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  var field = "#080D1E", trackW = 53, pad = 18;
+  var rect = {x:pad, y:pad, w:W-pad*2, h:H-pad*2};
+  var cx = rect.x + rect.w/2, cy = rect.y + rect.h/2, rx = (rect.w - trackW)/2, straightH = Math.max(0, (rect.h - trackW)/2 - rx);
+  var curveLen = Math.PI*rx, perim = curveLen*2 + straightH*2;
+  function point(t){
+    t = ((t % 1) + 1) % 1; var d = t*perim;
+    if(d < curveLen){ var a = Math.PI + d/rx; return [cx + Math.cos(a)*rx, cy - straightH + Math.sin(a)*rx]; }
+    var d1 = curveLen;
+    if(d < d1 + straightH){ var p = (d - d1)/Math.max(straightH,.01); return [cx + rx, cy - straightH + p*straightH*2]; }
+    var d2 = d1 + straightH;
+    if(d < d2 + curveLen){ var a2 = (d - d2)/rx; return [cx + Math.cos(a2)*rx, cy + straightH + Math.sin(a2)*rx]; }
+    var d3 = d2 + curveLen, p2 = (d - d3)/Math.max(straightH,.01); return [cx - rx, cy + straightH - p2*straightH*2];
+  }
+  var clock = {nine:0, twelve:(curveLen/2)/perim, three:(curveLen + straightH/2)/perim, six:(curveLen + straightH + curveLen/2)/perim};
+  function segIndex(t){ return t < clock.twelve ? 0 : t < clock.three ? 1 : t < clock.six ? 2 : 3; }
+  var SEG = ["rgb(7,81,251)","rgb(77,136,255)","rgb(255,149,0)","rgb(230,57,70)"];
+  var LAPS = 5;
+  var runners = [
+    {n:"Andrei", ini:"AN", col:"#0751FB", me:true, v:0.0360},
+    {n:"Sophie", ini:"SO", col:"#e63946", v:0.0372},
+    {n:"Liam",   ini:"LI", col:"#1fdd8f", v:0.0349},
+    {n:"Lucía",  ini:"LU", col:"#ff9500", v:0.0341}
+  ];
+  runners.forEach(function(r, i){ r.d = 2.4 - i*0.18; r.time = 150 + i*9; });
+  var me = runners[0], list = document.getElementById("raceList");
+  var pDist = document.getElementById("pDist"), pLap = document.getElementById("pLap"), pSeg = document.getElementById("pSeg"), pSteps = document.getElementById("pSteps");
+  function seg(p0, p1, color, w, dx, dy){ ctx.beginPath(); ctx.moveTo(p0[0]+(dx||0), p0[1]+(dy||0)); ctx.lineTo(p1[0]+(dx||0), p1[1]+(dy||0)); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.stroke(); }
+  function drawTrack(progress){
+    ctx.fillStyle = field; ctx.fillRect(0,0,W,H); ctx.lineCap = "butt";
+    var steps = 400, i, t0, t1;
+    function run(from, to, color, w, dx, dy){
+      ctx.beginPath(); var p = point(from); ctx.moveTo(p[0]+(dx||0), p[1]+(dy||0));
+      for(var k=1;k<=Math.ceil((to-from)*steps);k++){ p = point(Math.min(to, from + k/steps)); ctx.lineTo(p[0]+(dx||0), p[1]+(dy||0)); }
+      if(to >= 1 && from <= 0) ctx.closePath();
+      ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineJoin = "round"; ctx.stroke();
+    }
+    run(0, 1, "rgba(0,0,0,0.3)", trackW, 2, 6);
+    run(0, 1, "rgba(255,255,255,0.06)", trackW + 2);
+    run(0, 1, "rgba(255,255,255,0.18)", trackW);
+    var bounds = [0, clock.twelve, clock.three, clock.six, 1];
+    for(i=0;i<4;i++){ var a = bounds[i], b = Math.min(bounds[i+1], progress); if(b > a) run(a, b, SEG[i], trackW); }
+    for(i=0;i<200;i+=4){ seg(point(i/200), point((i+2)/200), "rgba(255,255,255,0.08)", 1); }
+    [clock.nine, clock.twelve, clock.three, clock.six].forEach(function(t){ var p = point(t);
+      ctx.beginPath(); ctx.arc(p[0], p[1], 3, 0, Math.PI*2); ctx.fillStyle = "#fff"; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = field; ctx.stroke(); });
+    var o = point(0);
+    ctx.font = "700 8px -apple-system, BlinkMacSystemFont, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = "rgba(255,255,255,0.1)"; roundRect(o[0]-20, o[1]-8, 40, 16, 8); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.fillText("START", o[0], o[1]);
+    var fy = o[1] + trackW/2 + 14;
+    for(i=0;i<8;i++){ ctx.fillStyle = i % 2 ? "#000" : "#fff"; ctx.fillRect(o[0]-12 + i*3, fy-6, 3, 5); }
+    ctx.font = "700 7px -apple-system, BlinkMacSystemFont, sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.5)"; ctx.fillText("FINISH", o[0], fy + 6);
+  }
+  function roundRect(x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r); ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); ctx.closePath(); }
+  function bubble(r, bounce){
+    var p = point(r.d % 1), size = r.me ? 38 : 30, y = p[1] + (r.me ? Math.sin(bounce)*2 : 0);
+    ctx.save(); ctx.filter = "blur(6px)"; ctx.beginPath(); ctx.arc(p[0], y+4, (size+2)/2, 0, Math.PI*2); ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.arc(p[0], y, (size+4)/2, 0, Math.PI*2); ctx.fillStyle = field; ctx.fill();
+    ctx.beginPath(); ctx.arc(p[0], y, size/2, 0, Math.PI*2); ctx.fillStyle = r.col + "33"; ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = r.col; ctx.stroke();
+    ctx.fillStyle = "#fff"; ctx.font = "700 " + Math.round(size*0.3) + "px -apple-system, BlinkMacSystemFont, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(r.ini, p[0], y + 0.5);
+  }
+  function mmss(s){ s = Math.round(s); return Math.floor(s/60) + ":" + (s%60 < 10 ? "0" : "") + (s%60); }
+  function renderList(){
+    var sorted = runners.slice().sort(function(a,b){ return b.d - a.d; });
+    list.innerHTML = sorted.map(function(r, i){
+      var laps = Math.min(LAPS, Math.floor(r.d)), done = r.d >= LAPS;
+      return '<div class="rrow' + (r.me ? " me" : "") + '"><span class="rk">' + (i+1) + '</span><span class="rav" style="border-color:' + r.col + '">' + r.ini.charAt(0) + '</span>' +
+        '<span class="rn"><b>' + r.n + '</b><small style="' + (done ? "color:#2ECC71" : "") + '">' + (done ? "Finished" : "Running") + '</small></span>' +
+        '<span class="rr"><b>' + laps + ' laps</b><small>' + mmss(r.time) + '</small></span></div>';
+    }).join("");
+  }
+  function renderPills(){
+    var km = Math.min(LAPS, me.d); pDist.textContent = km.toFixed(1) + "km";
+    pLap.textContent = Math.min(LAPS, Math.floor(me.d) + 1) + "/" + LAPS;
+    pSeg.textContent = "S" + (segIndex(me.d % 1) + 1);
+    pSteps.textContent = fmt(km * 1320);
+  }
+  var bounce = 0, last = 0, visible = false, listTick = 0, raf = 0;
+  function frame(ts){
+    raf = 0;
+    var dt = last ? Math.min(0.1, (ts - last)/1000) : 0; last = ts;
+    runners.forEach(function(r){ if(r.d < LAPS){ r.d = Math.min(LAPS, r.d + r.v*dt*(0.9 + Math.random()*0.2)); r.time += dt*14; } });
+    if(runners.every(function(r){ return r.d >= LAPS; })){ runners.forEach(function(r, i){ r.d = 0.02 + (3 - i)*0.03; r.time = 0; }); }
+    bounce += dt*Math.PI*2/3;
+    drawTrack(me.d >= LAPS ? 1 : me.d % 1);
+    runners.slice().reverse().forEach(function(r){ bubble(r, bounce); });
+    renderPills();
+    listTick += dt; if(listTick > 0.5){ listTick = 0; renderList(); }
+    if(visible && !REDUCED) raf = requestAnimationFrame(frame);
+  }
+  new IntersectionObserver(function(e){ visible = e[0].isIntersecting; if(visible && !raf){ last = 0; raf = requestAnimationFrame(frame); } }).observe(cv);
+  drawTrack(me.d % 1); runners.slice().reverse().forEach(function(r){ bubble(r, 0); }); renderPills(); renderList();
+})();
+
+/* ---------- Seasons and stages: example member, MEPs per stage ---------- */
+(function(){
+  var host = document.getElementById("stages"); if(!host) return;
+  var M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var V = [2810,3120,2950,3400,3610,3380,2900,3050,3720,3890,null,null], NOW = 9, MAX = 4000;
+  host.innerHTML = M.map(function(m, i){
+    var v = V[i];
+    return '<div class="stage' + (i === NOW ? " now" : "") + '"><b>' + (v ? fmt(v) : "") + '</b><div class="bar"><i style="--h:' + (v ? (v/MAX*100).toFixed(1) : 0) + '%"></i></div><span>' + m + '</span></div>';
+  }).join("");
+  host.setAttribute("aria-label", "Example member's MEPs per stage in season 2026: " + M.slice(0, NOW+1).map(function(m, i){ return m + " " + fmt(V[i]); }).join(", ") + ". November and December still to come.");
+  host.setAttribute("role", "img");
+  document.getElementById("seasons").addEventListener("slidein", function(){
+    if(REDUCED) return;
+    var bars = host.querySelectorAll(".bar i");
+    bars.forEach(function(b){ b.style.transition = "none"; b.dataset.h = b.style.getPropertyValue("--h"); b.style.setProperty("--h", "0%"); });
+    void host.offsetWidth;
+    bars.forEach(function(b, i){ b.style.transition = ""; b.style.transitionDelay = (i*60) + "ms"; b.style.setProperty("--h", b.dataset.h); });
+  });
+})();
+
+/* ---------- Motion engine readout: the race screen's pills, ticking ---------- */
+(function(){
+  var host = document.getElementById("sdkPills"); if(!host) return;
+  var km = 2.4, seg = 3, t0 = 0, visible = false;
+  var dist = document.getElementById("sDist"), pace = document.getElementById("sPace"), sg = document.getElementById("sSeg"), st = document.getElementById("sSteps");
+  new IntersectionObserver(function(e){ visible = e[0].isIntersecting; }).observe(host);
+  if(REDUCED) return;
+  setInterval(function(){
+    if(!visible) return;
+    km += 0.01; t0++;
+    dist.textContent = km.toFixed(1) + "km";
+    st.textContent = fmt(km*1320);
+    var p = 306 + Math.round(Math.sin(t0/6)*9); pace.textContent = Math.floor(p/60) + ":" + (p%60 < 10 ? "0" : "") + (p%60);
+    if(t0 % 25 === 0){ seg = seg % 4 + 1; sg.textContent = "S" + seg; }
+  }, 400);
+})();
+
+/* ---------- Audio players: AI commentary and Sportinho coach ---------- */
+var actx = null;
+function mmss(s){ s = Math.max(0, Math.round(s)); return Math.floor(s/60) + ":" + (s%60 < 10 ? "0" : "") + (s%60); }
+function wirePlayer(o){
+  var audio = document.getElementById(o.audio), btn = document.getElementById(o.btn), label = document.getElementById(o.label);
+  var bar = document.getElementById(o.bar), time = document.getElementById(o.time);
+  var st = {playing:false, level:0}, analyser = null, data = null, missing = false;
+  /* Which voice is talking right now. With a turn map (Sportinho's own turns, measured from
+     the clip), the sphere speaks only on those turns and listens on the member's. */
+  st.mode = function(){
+    if(!st.playing) return "idle";
+    if(!o.turns) return "speaking";
+    var t = audio.currentTime;
+    for(var i=0;i<o.turns.length;i++) if(t >= o.turns[i][0] && t <= o.turns[i][1]) return "speaking";
+    return "listening";
+  };
+  function setup(){
+    if(analyser) return;
+    try{
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      var src = actx.createMediaElementSource(audio);
+      analyser = actx.createAnalyser(); analyser.fftSize = 1024;
+      data = new Float32Array(analyser.fftSize);
+      src.connect(analyser); analyser.connect(actx.destination);
+    }catch(e){ analyser = null; }
+  }
+  /* SportinhoAudioLevelRenderer: RMS of the PCM, smoothed at 0.35, mapped from
+     -24..-6 dBFS onto speakingBase 0.42 .. speakingPeak 0.80. AssistantVeilVoice reads it
+     through a 24 fps TimelineView, so the level is resampled at 24 Hz here too. */
+  var smoothedRMS = 0, lastSample = 0;
+  st.sample = function(now){
+    if(st.mode() !== "speaking"){ smoothedRMS = 0; st.level = 0; return; }
+    if(now - lastSample < 1000/24) return;
+    lastSample = now;
+    if(!analyser){ st.level = 0.42; return; }
+    analyser.getFloatTimeDomainData(data);
+    var sum = 0; for(var i=0;i<data.length;i++) sum += data[i]*data[i];
+    var rms = Math.sqrt(sum/data.length);
+    smoothedRMS += (rms - smoothedRMS)*0.35;
+    if(smoothedRMS <= 0){ st.level = 0.42; return; }
+    var t = (20*Math.log10(smoothedRMS) + 24)/18;
+    st.level = 0.42 + Math.min(1, Math.max(0, t))*(0.80 - 0.42);
+  };
+  audio.addEventListener("error", function(){ missing = true; btn.disabled = true; label.textContent = o.missingLabel || "Sample coming soon"; });
+  btn.addEventListener("click", function(){
+    if(missing) return;
+    if(st.playing){ audio.pause(); return; }
+    document.querySelectorAll("audio").forEach(function(a){ if(a !== audio) a.pause(); });
+    setup(); if(actx && actx.state === "suspended") actx.resume();
+    audio.play().catch(function(){ label.textContent = "Tap again to play"; });
+  });
+  audio.addEventListener("play", function(){ if(bar.parentNode) bar.parentNode.classList.add("on"); st.playing = true; btn.classList.add("playing"); btn.setAttribute("aria-pressed","true"); label.textContent = "Pause"; });
+  audio.addEventListener("pause", function(){ st.playing = false; btn.classList.remove("playing"); btn.setAttribute("aria-pressed","false"); label.textContent = audio.currentTime > 0 && !audio.ended ? "Resume" : o.idleLabel; });
+  audio.addEventListener("ended", function(){ audio.currentTime = 0; });
+  audio.addEventListener("timeupdate", function(){
+    if(!audio.duration) return;
+    var frac = audio.currentTime / audio.duration;
+    if(bar.tagName.toLowerCase() === "circle") bar.style.strokeDashoffset = (289.03*(1 - frac)).toFixed(1); else bar.style.width = (frac*100) + "%";
+    time.textContent = o.title + " · " + mmss(audio.currentTime) + " / " + mmss(audio.duration);
+  });
+  return st;
+}
+
+/* ---------- Sportinho sphere: a 2D port of the app's Metal SignalSphereView
+   (same particle lattice, wave terms, tanh soft limit, projection, depth alpha and
+   point sizes), with the app's default `.steady` aura (core #0751FB, crest #BBD4FF)
+   and SportinhoSphereMotion idle/speaking states. ---------- */
+function makeSphere(canvasId, st){
+  var canvas = document.getElementById(canvasId); if(!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2), css = canvas.clientWidth || 320, S = Math.round(css*dpr);
+  canvas.width = S; canvas.height = S;
+  var half = S/2; /* Metal point sizes, scaled to read like the 3x iPhone render */
+  var P = [];
+  for(var lat=0; lat<=52; lat++){
+    var phi = lat/52*Math.PI, y0 = Math.cos(phi), ringR = Math.sin(phi), n = Math.max(1, Math.round(104*ringR));
+    for(var lon=0; lon<n; lon++){ var th = lon/n*Math.PI*2; P.push([phi, th, ringR*Math.cos(th), y0, ringR*Math.sin(th)]); }
+  }
+  var STEADY = [[7,81,251],[187,212,255]], ATTENTIVE = [[154,167,182],[233,240,247]];   /* SportinhoAura */
+  var CORE = STEADY[0].slice(), HIGH = STEADY[1].slice();
+  var IDLE = [1,1,1], SPEAKING = [3.97,1.02,1], LISTENING = [0.47,0.84,0.30];        /* SportinhoSphereMotion */
+  var time = 0, rotY = 0, wp = 0, smoothAudio = 0, sWave = 1, sScale = 1, sAmp = 1;
+  var visible = true, raf = 0, last = 0, acc = 0, lastVoice = false;
+  new IntersectionObserver(function(e){ visible = e[0].isIntersecting; if(visible && !raf){ last = 0; raf = requestAnimationFrame(frame); } }).observe(canvas);
+  /* One step of SphereMetalView.draw(in:), which is pinned to 60 fps. */
+  function step(){
+    var mode = st.mode ? st.mode() : (st.playing ? "speaking" : "idle"), voice = mode !== "idle";
+    /* SportinhoSphereLevel: speaking reads the voice level, listening breathes 0.08..0.20 over 2.4 s */
+    var audioLevel = mode === "speaking" ? (st.level || 0.42)
+      : mode === "listening" ? 0.08 + (Math.sin(performance.now()/1000/2.4*2*Math.PI) + 1)/2*0.12 : 0;
+    smoothAudio += (audioLevel - smoothAudio)*(audioLevel > smoothAudio ? 0.18 : 0.12);
+    var m = mode === "speaking" ? SPEAKING : mode === "listening" ? LISTENING : IDLE;
+    var aura = mode === "listening" ? ATTENTIVE : STEADY;
+    for(var k=0;k<3;k++){ CORE[k] += (aura[0][k] - CORE[k])*0.06; HIGH[k] += (aura[1][k] - HIGH[k])*0.06; }
+    lastVoice = voice;
+    sWave += (m[0] - sWave)*0.06; sScale += (m[1] - sScale)*0.06; sAmp += (m[2] - sAmp)*0.06;
+    var intensity = voice ? smoothAudio : 0.15;
+    var ts = 0.010 + intensity*(voice ? 0.0168 : 0.0072);
+    time += ts; wp += ts*sWave; rotY += 0.004 + intensity*(voice ? 0.0036 : 0.003);
+  }
+  function render(){
+    var voice = lastVoice, level = smoothAudio, cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    var Rp = (0.52 - level*0.12)*half;
+    var intensity = voice ? level : 0.15;
+    var dotPulse = 1 + intensity*0.3*Math.sin(time*2.5);
+    var dotR = voice ? dotPulse + level*0.15 : dotPulse;
+    var swell = level*0.06*Math.sin(time*3.2), ampV = 1 + level*1.44 + level*(0.5 + 0.5*Math.sin(time*1.7))*0.96;
+    ctx.clearRect(0,0,S,S);
+    for(var i=0;i<P.length;i++){
+      var p = P[i], ph = p[0], t = p[1];
+      var w = 0.16*Math.sin(ph*5 + t*2 + wp) + 0.09*Math.sin(ph*8 - t*3 + wp*0.85) + 0.06*Math.sin(ph*3 + t*7 + wp*1.4) + 0.04*Math.sin(ph*11 + t*4 - wp*0.6);
+      if(voice){
+        var eq = Math.pow(1 - Math.abs(ph - 1.5707963)/1.5707963, 1.3);
+        w += level*eq*(0.32*Math.sin(t*3 + wp*5.5) + 0.22*Math.sin(t*5 - wp*4.8) + 0.16*Math.sin(t*8 + wp*7.2) + 0.10*Math.sin(t*13 - wp*3.5));
+        w += level*0.6*(0.12*Math.sin(ph*7 + t*4 + wp*3.8) + 0.08*Math.sin(ph*12 - t*6 + wp*6.0) + 0.06*Math.sin(ph*4 + t*11 - wp*4.5));
+        w += swell; w *= ampV;
+      }
+      w *= sAmp; w = 1.5*Math.tanh(w/1.5);
+      var r = sScale*(1 + w), x = p[2]*r, y = p[3]*r, z = p[4]*r;
+      var rx = x*cosY + z*sinY, depth = -x*sinY + z*cosY, bright = Math.max(0, depth);
+      var a = depth < 0 ? 0.04 + (depth + 1)*0.06 : 0.18 + bright*0.72;
+      var c = Math.min(1, Math.max(0, w*2.2));
+      var size = (depth < 0 ? dotR*1.4 : dotR*(1.4 + bright*1.4))*0.6*dpr;
+      ctx.fillStyle = "rgba(" + Math.round(CORE[0] + (HIGH[0]-CORE[0])*c) + "," + Math.round(CORE[1] + (HIGH[1]-CORE[1])*c) + "," + Math.round(CORE[2] + (HIGH[2]-CORE[2])*c) + "," + a.toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(half + rx*Rp, half - y*Rp, Math.max(0.6, size*0.5), 0, 6.2832); ctx.fill();
+    }
+  }
+  function frame(now){
+    raf = 0;
+    if(st.sample) st.sample(now);
+    if(!REDUCED){
+      acc += last ? Math.min(100, now - last) : 1000/60; last = now;
+      var n = 0; while(acc >= 1000/60 && n < 4){ step(); acc -= 1000/60; n++; }
+    }
+    render();
+    if(visible && !REDUCED) raf = requestAnimationFrame(frame);
+  }
+  for(var pre=0; pre<90; pre++) step();
+  render();
+}
+wirePlayer({audio:"commAudio", btn:"playBtn", label:"playLabel", bar:"progBar", time:"playTime", title:"AI commentary", idleLabel:"Play the commentary"});
+makeSphere("coachSphere", wirePlayer({audio:"coachAudio", btn:"coachBtn", label:"coachLabel", bar:"coachBar", time:"coachTime", title:"Voice to voice", idleLabel:"Hear Sportinho", missingLabel:"Sportinho sample coming soon",
+  turns:[[0.1,14.95],[20.9,52.8],[54.95,75.55],[76.8,95.4],[98.1,111.15],[114.75,145.95],[150.25,166.4]]}));
+
+})();
+</script>
+
+<script>
+/* Game of Run realm, UK edition. Same engine as game-of-run/index.html (#realmStill): a flat-top
+   hex grid of 4,5 km landmarks clipped to the country, each landmark owned by its nearest
+   territory seat, drawn in the site's gold-and-ink style. Any country works by swapping BORDERS
+   and SEATS. Here the claims are animated: five teams spread from their home cities, landmark
+   by landmark, the way a season plays out. */
+(function(){
+"use strict";
+var cv = document.getElementById("realmStill");
+if(!cv) return;
+var REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+var TAU = Math.PI*2;
+function hash32(str){ var h = 2166136261 >>> 0; for(var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h,16777619); } return h >>> 0; }
+function rng(seed){ var a = seed >>> 0; return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+/* Great Britain and Northern Ireland, simplified coastlines (lon, lat). */
+var UK_BORDERS = [
+ [[-3.07,58.64],[-3.3,58.4],[-3.9,57.92],[-4.1,57.58],[-3.6,57.66],[-2.6,57.68],[-2.0,57.69],[-1.78,57.5],[-2.08,57.15],[-2.47,56.7],[-2.8,56.45],[-2.58,56.28],[-3.0,56.08],[-2.5,56.0],[-2.0,55.77],[-1.6,55.4],[-1.43,55.0],[-1.2,54.65],[-0.6,54.49],[-0.08,54.12],[0.12,53.6],[0.35,53.15],[0.2,52.9],[0.9,52.97],[1.3,52.93],[1.73,52.6],[1.75,52.47],[1.35,51.96],[1.15,51.79],[0.6,51.5],[1.44,51.38],[1.33,51.13],[0.97,50.91],[0.25,50.73],[-0.14,50.8],[-0.79,50.73],[-1.1,50.78],[-1.98,50.7],[-2.45,50.52],[-2.95,50.72],[-3.4,50.6],[-3.64,50.22],[-4.14,50.36],[-5.2,49.96],[-5.71,50.06],[-5.48,50.21],[-5.08,50.42],[-4.53,51.01],[-3.48,51.2],[-2.7,51.5],[-3.17,51.45],[-3.95,51.58],[-4.3,51.66],[-5.3,51.75],[-5.3,51.88],[-4.7,52.1],[-4.08,52.41],[-4.15,52.85],[-4.75,52.8],[-4.6,53.1],[-4.6,53.4],[-4.1,53.3],[-3.83,53.33],[-3.05,53.42],[-3.05,53.82],[-2.9,54.07],[-3.23,54.11],[-3.64,54.49],[-3.4,54.95],[-4.4,54.7],[-4.86,54.64],[-5.1,54.9],[-4.65,55.46],[-4.9,55.8],[-5.3,55.9],[-5.7,55.3],[-5.6,55.75],[-5.5,56.4],[-5.95,56.6],[-6.23,56.73],[-5.85,57.0],[-5.7,57.28],[-5.8,57.73],[-5.25,57.9],[-5.0,58.62],[-3.53,58.6]],
+ [[-6.2,55.25],[-5.7,54.8],[-5.43,54.45],[-5.55,54.2],[-6.1,54.0],[-6.6,54.05],[-7.0,54.2],[-7.6,54.15],[-8.15,54.45],[-7.75,54.62],[-7.55,54.95],[-7.25,55.15],[-6.75,55.2]]
+];
+/* Territories: [code, name, seat lon, seat lat, weight] (a city takes a smaller share). */
+var UK_SEATS = [
+ ["LDN","London",-0.12,51.51,3.2],["KNT","Kent",0.9,51.25,1],["SSX","Sussex",-0.3,50.92,1],["HMP","Hampshire",-1.3,51.05,1],
+ ["OXF","Oxford",-1.26,51.75,1],["CAM","Cambridge",0.12,52.2,1],["NFK","Norfolk",1.0,52.65,1],["BRS","Bristol",-2.6,51.45,1.4],
+ ["DEV","Devon",-3.8,50.7,1],["CRN","Cornwall",-4.95,50.35,1],["BHM","Birmingham",-1.9,52.48,1.4],["NTM","Nottingham",-1.15,52.95,1],
+ ["MAN","Manchester",-2.24,53.48,1.6],["LPL","Liverpool",-2.95,53.42,1.4],["LDS","Leeds",-1.55,53.8,1.2],["YRK","York",-1.08,54.1,1],
+ ["NCL","Newcastle",-1.6,54.98,1],["CUM","Cumbria",-3.0,54.55,1],["CDF","Cardiff",-3.18,51.6,1.2],["SWA","West Wales",-4.3,51.95,1],
+ ["NWL","North Wales",-3.8,52.95,1],["GLA","Glasgow",-4.25,55.86,1.3],["EDI","Edinburgh",-3.19,55.95,1.3],["BOR","Borders",-2.9,55.4,1],
+ ["DND","Dundee",-3.0,56.46,1],["ABD","Aberdeen",-2.4,57.2,1],["INV","Highlands",-4.6,57.6,1],["ARG","Argyll",-5.3,56.3,1],
+ ["BEL","Belfast",-5.93,54.6,1.2],["ULS","West Ulster",-7.3,54.55,1]
+];
+/* Five teams, from the Game of Run banners, each starting from its home city. */
+var TEAMS_ALL = [
+ {n:"Golden Stags",  c:[201,162,75],  home:"LDN"},
+ {n:"Iron Wolves",   c:[174,184,198], home:"MAN"},
+ {n:"Ashen Crown",   c:[184,115,51],  home:"GLA"},
+ {n:"Ravens of the Veil", c:[142,99,201], home:"BRS"},
+ {n:"Nightstride",   c:[26,140,255],  home:"NCL"}
+];
+
+function insidePoly(poly, lon, lat){ var hit = false; for(var i=0,j=poly.length-1;i<poly.length;j=i++){ var xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1]; if((yi>lat)!==(yj>lat) && lon < (xj-xi)*(lat-yi)/(yj-yi)+xi) hit = !hit; } return hit; }
+
+/* A realm of our own: a generated kingdom with its own coast and capitals. */
+function virtualKingdom(){
+  var rnd = rng(hash32("kingdom:sportin")), cx = -2.2, cy = 54.2, main = [], isle = [];
+  for(var i=0;i<64;i++){ var a = i/64*TAU, r = 4.0*(1 + 0.16*Math.sin(3*a + 1) + 0.09*Math.sin(7*a) + 0.05*Math.sin(13*a + 2));
+    main.push([cx + r*Math.cos(a)/Math.cos(cy*Math.PI/180)*0.62, cy + r*Math.sin(a)*0.98]); }
+  for(var j=0;j<24;j++){ var b = j/24*TAU, rr = 0.85*(1 + 0.2*Math.sin(4*b)); isle.push([cx + 5.6 + rr*Math.cos(b)*1.6, cy - 2.6 + rr*Math.sin(b)]); }
+  var names = ["Kingsreach","Ironhold","Stormvale","Ashmere","Highmoor","Ravenfall","Goldcrest","Wolfden","Duskwatch","Brightwater","Thornwick","Frostpeak","Emberfield","Silverrun","Oakhaven","Mistral Bay","Saltmarsh","Greywater"];
+  var seats = [], tries = 0;
+  while(seats.length < names.length && tries++ < 5000){
+    var lon = cx - 5 + rnd()*12, lat = cy - 4.4 + rnd()*8.8;
+    if(!(insidePoly(main, lon, lat) || insidePoly(isle, lon, lat))) continue;
+    if(seats.some(function(s){ return Math.hypot((s[2]-lon)*0.6, s[3]-lat) < 1.1; })) continue;
+    seats.push([names[seats.length].slice(0,3).toUpperCase(), names[seats.length], lon, lat, seats.length === 0 ? 1.6 : 1]);
+  }
+  return {id:"virtual", lat:cy, borders:[main, isle], seats:seats, homes:[seats[0][0], seats[3][0], seats[6][0], seats[9][0], seats[12][0]]};
+}
+var REALMS = {
+  uk: {id:"uk", lat:54, borders:UK_BORDERS, seats:UK_SEATS, homes:["LDN","MAN","GLA","BRS","NCL"]},
+  virtual: null
+};
+function build(cfg){
+var BORDERS = cfg.borders, SEATS = cfg.seats;
+var TEAMS = TEAMS_ALL.map(function(t, k){ return {n:t.n, c:t.c, home:cfg.homes[k]}; });
+var KX = 111.32*Math.cos(cfg.lat*Math.PI/180), KY = 110.57;
+function proj(lon,lat){ return [lon*KX, -lat*KY]; }
+function inside(lon,lat){ for(var k=0;k<BORDERS.length;k++) if(insidePoly(BORDERS[k],lon,lat)) return true; return false; }
+var R = 4.5, HEX_C = [];
+for(var i=0;i<6;i++) HEX_C.push([R*Math.cos(i*TAU/6), R*Math.sin(i*TAU/6)]);
+var DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+var DIR_EDGE = DIRS.map(function(d){ var dx = R*1.5*d[0], dy = R*Math.sqrt(3)*(d[1] + d[0]/2), len = Math.hypot(dx,dy);
+  var sc = HEX_C.map(function(c,i){ return {i:i, d:(c[0]*dx + c[1]*dy)/len}; }); sc.sort(function(a,b){ return b.d-a.d; }); return [sc[0].i, sc[1].i].sort(function(a,b){ return a-b; }); });
+var bbox = {x0:1e9,x1:-1e9,y0:1e9,y1:-1e9};
+BORDERS.forEach(function(poly){ poly.forEach(function(p){ var q = proj(p[0],p[1]); bbox.x0=Math.min(bbox.x0,q[0]); bbox.x1=Math.max(bbox.x1,q[0]); bbox.y0=Math.min(bbox.y0,q[1]); bbox.y1=Math.max(bbox.y1,q[1]); }); });
+var hexes = [], byKey = new Map(), sq3 = Math.sqrt(3);
+for(var q=Math.floor(bbox.x0/(R*1.5))-1; q<=Math.ceil(bbox.x1/(R*1.5))+1; q++){
+  var x = R*1.5*q;
+  for(var r=Math.floor(bbox.y0/(R*sq3) - q/2)-1; r<=Math.ceil(bbox.y1/(R*sq3) - q/2)+1; r++){
+    var y = R*sq3*(r + q/2);
+    if(!inside(x/KX, -y/KY)) continue;
+    hexes.push({q:q, r:r, x:x, y:y, t:-1, team:-1, at:0}); byKey.set(q+","+r, hexes.length-1);
+  }
+}
+var seats = SEATS.map(function(s){ return proj(s[2], s[3]); });
+var terr = SEATS.map(function(s,i){ return {i:i, code:s[0], name:s[1], hexes:[], outline:[], mx:0, my:0}; });
+hexes.forEach(function(h){ var best=0, bd=Infinity; for(var i=0;i<seats.length;i++){ var dx=h.x-seats[i][0], dy=h.y-seats[i][1], d=(dx*dx+dy*dy)*SEATS[i][4]; if(d<bd){ bd=d; best=i; } } h.t = best; terr[best].hexes.push(h); });
+terr.forEach(function(t){ var sx=0, sy=0; t.hexes.forEach(function(h){ sx+=h.x; sy+=h.y; }); t.mx = sx/Math.max(1,t.hexes.length); t.my = sy/Math.max(1,t.hexes.length); });
+var edgesTerr = [], edgesRealm = [];
+hexes.forEach(function(h){ for(var d=0;d<6;d++){ var nb = byKey.get((h.q+DIRS[d][0])+","+(h.r+DIRS[d][1])), e = DIR_EDGE[d];
+  var seg = [h.x+HEX_C[e[0]][0], h.y+HEX_C[e[0]][1], h.x+HEX_C[e[1]][0], h.y+HEX_C[e[1]][1]];
+  if(nb === undefined){ edgesRealm.push(seg); terr[h.t].outline.push(seg); }
+  else if(hexes[nb].t !== h.t){ terr[h.t].outline.push(seg); if(hexes[nb].t > h.t) edgesTerr.push(seg); } } });
+
+/* The season: teams grow out from their home cities until 72% of the realm is held. */
+var ORDER = [];
+(function(){
+  var rnd = rng(hash32("season:" + cfg.id)), claimed = new Array(hexes.length).fill(-1), front = TEAMS.map(function(){ return []; });
+  TEAMS.forEach(function(tm, k){ var ti = SEATS.findIndex(function(s){ return s[0] === tm.home; }), s = seats[ti], best = -1, bd = Infinity;
+    hexes.forEach(function(h,i){ var d = Math.hypot(h.x-s[0], h.y-s[1]); if(d<bd){ bd=d; best=i; } }); front[k].push(best); });
+  var target = Math.floor(hexes.length*0.72), guard = 0;
+  while(ORDER.length < target && guard++ < hexes.length*20){
+    var k = Math.floor(rnd()*TEAMS.length); if(!front[k].length) continue;
+    var pick = Math.floor(rnd()*Math.min(front[k].length, 6)), idx = front[k].splice(front[k].length-1-pick,1)[0];
+    if(claimed[idx] !== -1) continue;
+    claimed[idx] = k; ORDER.push([idx,k]);
+    var h = hexes[idx];
+    for(var d=0; d<6; d++){ var nb = byKey.get((h.q+DIRS[d][0])+","+(h.r+DIRS[d][1])); if(nb !== undefined && claimed[nb] === -1) front[k].push(nb); }
+  }
+})();
+
+var set = function(id, v){ var el = document.getElementById(id); if(el) el.textContent = v; };
+set("gorTerr", terr.length);
+set("gorMarks", hexes.length.toLocaleString("de-DE"));
+set("realmCount", "");
+var legend = document.getElementById("gorLegend");
+if(legend) legend.innerHTML = TEAMS.map(function(t){ return '<span><i style="background:rgb(' + t.c.join(",") + ')"></i>' + t.n + '</span>'; }).join("");
+
+var ctx = cv.getContext("2d"), view = {W:0,H:0,k:1,ox:0,oy:0}, hover = null, step = REDUCED ? ORDER.length : 0, frame = 0, hold = 0, visible = false, raf = 0;
+function fit(){ var dpr = Math.min(devicePixelRatio||1,2), W = cv.clientWidth, H = cv.clientHeight; if(!W || !H) return false;
+  cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); var pad = 14;
+  var k = Math.min((W-pad*2)/(bbox.x1-bbox.x0), (H-pad*2)/(bbox.y1-bbox.y0));
+  view = {W:W, H:H, k:k, ox:W/2 - k*(bbox.x0+bbox.x1)/2, oy:H/2 - k*(bbox.y0+bbox.y1)/2}; return true; }
+function sx(x){ return view.ox + view.k*x; } function sy(y){ return view.oy + view.k*y; }
+function hexPath(px,py,rr){ ctx.beginPath(); for(var i=0;i<6;i++){ var a=i*TAU/6; var X=px+rr*Math.cos(a), Y=py+rr*Math.sin(a); i ? ctx.lineTo(X,Y) : ctx.moveTo(X,Y); } ctx.closePath(); }
+function draw(){
+  if(!view.W) return; var rr = R*view.k; ctx.clearRect(0,0,view.W,view.H);
+  for(var i=0;i<hexes.length;i++){ var h = hexes[i]; hexPath(sx(h.x), sy(h.y), rr*1.002);
+    if(h.team < 0){ ctx.fillStyle = "#1E1F24"; }
+    else { var c = TEAMS[h.team].c, age = frame - h.at, f = Math.max(0, 1 - age/40);
+      ctx.fillStyle = "rgba(" + Math.round(c[0] + (247-c[0])*f) + "," + Math.round(c[1] + (234-c[1])*f) + "," + Math.round(c[2] + (192-c[2])*f) + "," + (0.62 + 0.35*f).toFixed(2) + ")"; }
+    ctx.fill(); ctx.lineWidth = Math.max(0.4, rr*0.042); ctx.strokeStyle = "rgba(150,154,172,0.30)"; ctx.stroke(); }
+  ctx.beginPath(); edgesTerr.forEach(function(e){ ctx.moveTo(sx(e[0]),sy(e[1])); ctx.lineTo(sx(e[2]),sy(e[3])); });
+  ctx.lineWidth = Math.max(1.4, view.k*1.1); ctx.strokeStyle = "rgba(6,5,10,0.7)"; ctx.stroke();
+  ctx.lineWidth = Math.max(0.7, view.k*0.6); ctx.strokeStyle = "rgba(220,186,106,0.6)"; ctx.stroke();
+  ctx.beginPath(); edgesRealm.forEach(function(e){ ctx.moveTo(sx(e[0]),sy(e[1])); ctx.lineTo(sx(e[2]),sy(e[3])); }); ctx.lineJoin = "round";
+  ctx.lineWidth = Math.max(2.2, view.k*1.4); ctx.strokeStyle = "rgba(6,5,10,0.9)"; ctx.stroke();
+  ctx.lineWidth = Math.max(1.1, view.k*0.85); ctx.strokeStyle = "rgba(190,150,64,0.95)"; ctx.stroke();
+  if(hover){ ctx.beginPath(); hover.outline.forEach(function(e){ ctx.moveTo(sx(e[0]),sy(e[1])); ctx.lineTo(sx(e[2]),sy(e[3])); });
+    ctx.lineWidth = Math.max(2.4, view.k*1.5); ctx.strokeStyle = "rgba(6,5,10,0.8)"; ctx.stroke(); ctx.lineWidth = Math.max(1.3, view.k*0.85); ctx.strokeStyle = "#F7EAC0"; ctx.stroke(); }
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; var placed = [];
+  terr.slice().sort(function(a,b){ return (hover && hover.i===b.i ? 1 : 0) - (hover && hover.i===a.i ? 1 : 0) || b.hexes.length - a.hexes.length; }).forEach(function(t){
+    var focus = hover && hover.i === t.i, px = sx(t.mx), py = sy(t.my);
+    var counts = TEAMS.map(function(){ return 0; }); t.hexes.forEach(function(h){ if(h.team >= 0) counts[h.team]++; });
+    var lead = counts.indexOf(Math.max.apply(null, counts)), pct = t.hexes.length ? Math.round(counts[lead]/t.hexes.length*100) : 0;
+    var label = t.name.toUpperCase(), sub = pct > 0 ? pct + "% " + TEAMS[lead].n.split(" ").pop().toUpperCase() : "UNCLAIMED";
+    var size = focus ? 13 : 10;
+    ctx.font = "600 " + size + "px Cinzel, Georgia, serif"; var w1 = ctx.measureText(label).width;
+    ctx.font = "500 " + (focus ? 10 : 8) + "px 'IBM Plex Mono', monospace"; var w2 = ctx.measureText(sub).width;
+    var w = Math.max(w1,w2) + 16, bh = focus ? 36 : 30, box = {x:px-w/2, y:py-bh/2, w:w, h:bh};
+    if(placed.some(function(o){ return box.x < o.x+o.w+3 && box.x+box.w+3 > o.x && box.y < o.y+o.h+3 && box.y+box.h+3 > o.y; }) && !focus) return;
+    placed.push(box);
+    ctx.fillStyle = focus ? "rgba(6,5,10,0.92)" : "rgba(6,5,10,0.62)"; ctx.fillRect(box.x, box.y, box.w, box.h);
+    if(focus){ ctx.strokeStyle = "rgba(247,234,192,0.8)"; ctx.lineWidth = 1.2; ctx.strokeRect(box.x, box.y, box.w, box.h); }
+    ctx.font = "600 " + size + "px Cinzel, Georgia, serif"; ctx.fillStyle = focus ? "#F7EAC0" : "rgba(233,222,190,0.85)"; ctx.fillText(label, px, py - (focus ? 7 : 6));
+    ctx.font = "500 " + (focus ? 10 : 8) + "px 'IBM Plex Mono', monospace"; ctx.fillStyle = pct > 0 ? "rgb(" + TEAMS[lead].c.join(",") + ")" : "rgba(201,162,75,0.6)"; ctx.fillText(sub, px, py + (focus ? 9 : 8));
+  });
+}
+function applyStep(n){ while(step < n && step < ORDER.length){ var o = ORDER[step++]; hexes[o[0]].team = o[1]; hexes[o[0]].at = frame; } }
+function reset(){ hexes.forEach(function(h){ h.team = -1; }); step = 0; applyStep(Math.floor(ORDER.length*0.2)); }
+var PER_FRAME = Math.max(2, Math.ceil(ORDER.length/(60*14)));
+function tick(){
+  raf = 0; frame++;
+  if(step < ORDER.length) applyStep(step + PER_FRAME);
+  else if(++hold > 180){ hold = 0; reset(); }
+  draw();
+  if(visible) raf = requestAnimationFrame(tick);
+}
+function pick(px,py){ var wx = (px - view.ox)/view.k, wy = (py - view.oy)/view.k, q = Math.round(wx/(R*1.5)), rb = wy/(R*sq3) - q/2, best = null, bd = Infinity;
+  for(var dq=-1;dq<=1;dq++) for(var dr=-2;dr<=2;dr++){ var idx = byKey.get((q+dq)+","+(Math.round(rb)+dr)); if(idx === undefined) continue; var h = hexes[idx], d = Math.hypot(h.x-wx, h.y-wy); if(d<bd){ bd=d; best=h; } }
+  return best && bd < R*1.05 ? best : null; }
+if(REDUCED){ applyStep(ORDER.length); frame = 999; } else { applyStep(Math.floor(ORDER.length*0.35)); frame = 999; }
+var api = {
+  move: function(e){ var h = pick(e.offsetX, e.offsetY), t = h ? terr[h.t] : null; if(t !== hover){ hover = t; if(!raf) draw(); } },
+  leave: function(){ hover = null; if(!raf) draw(); },
+  show: function(v){ visible = v; if(visible && !REDUCED && !raf) raf = requestAnimationFrame(tick); },
+  redraw: function(){ if(fit()) draw(); },
+  stop: function(){ visible = false; if(raf) cancelAnimationFrame(raf); raf = 0; }
+};
+if(fit()) draw();
+return api;
+}
+var current = null, visible = false;
+function use(key){
+  if(key === "virtual" && !REALMS.virtual) REALMS.virtual = virtualKingdom();
+  if(current) current.stop();
+  current = build(REALMS[key]);
+  current.show(visible);
+}
+cv.addEventListener("pointermove", function(e){ if(current) current.move(e); });
+cv.addEventListener("pointerleave", function(){ if(current) current.leave(); });
+new IntersectionObserver(function(e){ visible = e[0].isIntersecting; if(current) current.show(visible); }).observe(cv);
+if("ResizeObserver" in window) new ResizeObserver(function(){ if(current) current.redraw(); }).observe(cv);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ if(current) current.redraw(); });
+document.querySelectorAll("#realmPick button").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll("#realmPick button").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    use(b.dataset.r);
+    cv.setAttribute("aria-label", b.dataset.r === "uk" ? "Map of the United Kingdom divided into hexagonal landmarks, with five teams spreading out from their home cities" : "Map of a generated kingdom divided into hexagonal landmarks, with five teams spreading out from their capitals");
+  });
+});
+use("uk");
+})();
+</script>
+</body>
+</html>
