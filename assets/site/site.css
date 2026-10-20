@@ -137,8 +137,7 @@ button { font: inherit; color: inherit; }
 .nav.is-scrolled { border-bottom-color: var(--line); }
 .nav__inner { height: 100%; display: flex; align-items: center; gap: 28px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-/* Official SportIn artwork (assets/site/logo): blue S mark beside the wordmark. */
-.brand__mark { width: 22px; height: 24px; }
+/* Official SportIn artwork (assets/site/logo): the wordmark leads; the S mark sits at the foot of the page. */
 .brand__word { width: 125px; height: 15px; }
 .nav__links { display: flex; gap: 26px; margin-left: auto; list-style: none; padding: 0; }
 .nav__link { font-size: 15px; text-decoration: none; color: var(--slate); position: relative; padding: 6px 0; transition: color 0.2s; }
@@ -503,7 +502,8 @@ button { font: inherit; color: inherit; }
 .foot__list a { text-decoration: none; color: var(--ink); }
 .foot__list a:hover { color: var(--blue); }
 .foot__tag { color: var(--slate); font-size: var(--fs-small); max-width: 22em; margin: 14px 0 0; }
-.foot__base { margin-top: 56px; display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--slate); }
+.foot__base { margin-top: 56px; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 14px; color: var(--slate); }
+.foot__mark { width: 22px; height: 24px; }
 
 /* ---------- Scroll reveal ---------- */
 .js [data-reveal] {
