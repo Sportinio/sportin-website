@@ -389,3 +389,48 @@
     }
   });
 })();
+
+// Hero teams: grey dots light up in waves (everyone joins), the field splits into four teams,
+// then a random member scores now and then and the team's kilometres tick up. Demo motion.
+(() => {
+  const field = document.getElementById('teams');
+  if (!field) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ROWS = 8;
+  const COLS = 12;
+  const teams = [...field.querySelectorAll('.team')].map((team) => {
+    const grid = team.querySelector('.tdots');
+    const dots = [];
+    for (let i = 0; i < ROWS * COLS; i++) {
+      const d = document.createElement('i');
+      d.className = 'tdot';
+      grid.appendChild(d);
+      dots.push(d);
+    }
+    const km = team.querySelector('.team__km');
+    return { dots, km, value: Number(km.dataset.km) };
+  });
+  const all = teams.flatMap((t) => t.dots);
+
+  if (reduced) { all.forEach((d) => d.classList.add('is-on')); field.classList.add('is-split'); return; }
+
+  // Join in waves: a shuffled order, sped up as more people join.
+  const order = all.map((d) => ({ d, r: Math.random() })).sort((a, b) => a.r - b.r).map((o) => o.d);
+  const start = () => {
+    order.forEach((d, k) => setTimeout(() => d.classList.add('is-on'), 200 + Math.pow(k / order.length, 0.7) * 2200));
+    setTimeout(() => field.classList.add('is-split'), 2700);
+    setTimeout(score, 3600);
+  };
+  // Someone scores: one dot pulses, the team's kilometres go up.
+  function score() {
+    const t = teams[Math.floor(Math.random() * teams.length)];
+    const d = t.dots[Math.floor(Math.random() * t.dots.length)];
+    d.classList.add('is-pulse');
+    setTimeout(() => d.classList.remove('is-pulse'), 380);
+    t.value += 1;
+    t.km.textContent = `${t.value} km`;
+    setTimeout(score, 500 + Math.random() * 700);
+  }
+  const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); start(); } }, { threshold: 0.3 });
+  io.observe(field);
+})();
