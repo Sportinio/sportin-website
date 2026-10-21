@@ -152,12 +152,11 @@
     if (!stage || film.readyState < 2) return;
     const vw = film.videoWidth;
     const vh = film.videoHeight;
-    // Only the top half of each screen shows film (the app sheet starts at 437 of 874 points).
-    // Fit the film to the stage width and centre the runners in that strip.
-    const band = stage.height * (437 / 874);
+    // Watermark mode: the film fills the whole screen; the app marks sit on top of it.
+    const band = stage.height;
     const scale = Math.max(stage.width / vw, band / vh);
     const offX = (vw * scale - stage.width) / 2;
-    const offY = Math.min(Math.max(vh * scale * 0.42 - band / 2, 0), vh * scale - band);
+    const offY = Math.min(Math.max(vh * scale * 0.5 - band / 2, 0), vh * scale - band);
     canvases.forEach((c, i) => {
       if (!c.width) return;
       const x = +c.dataset.x, y = +c.dataset.y, w = +c.dataset.w, h = +c.dataset.h;
@@ -185,7 +184,7 @@
   const PITCH = 78; // 70 row + 8 gap
   const de = (n, d = 0) => n.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
   const clock = (sec) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
-  const RING = (pct, color) => `<svg viewBox="0 0 32 46" width="32" height="46" aria-hidden="true"><rect x="1" y="1" width="30" height="44" rx="7" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="2"/><rect x="1" y="1" width="30" height="44" rx="7" fill="none" stroke="${color}" stroke-width="2" pathLength="100" stroke-dasharray="${pct} 100" stroke-dashoffset="-12.5" stroke-linecap="round"/></svg>`;
+  const RING = (pct, color) => `<svg viewBox="0 0 32 46" width="32" height="46" aria-hidden="true"><rect x="1" y="1" width="30" height="44" rx="7" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2"/><rect x="1" y="1" width="30" height="44" rx="7" fill="none" stroke="rgba(255,255,255,.95)" data-c="${color}" stroke-width="2" pathLength="100" stroke-dasharray="${pct} 100" stroke-dashoffset="-12.5" stroke-linecap="round"/></svg>`;
   const stepColor = (v) => (v < 5000 ? '#FF3B30' : v < 10000 ? '#FF9500' : '#34C759');
 
   // Number roll over 600 ms, ease-out (AnimatedStepNumber.swift:33-37).
