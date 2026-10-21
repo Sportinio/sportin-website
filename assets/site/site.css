@@ -590,3 +590,28 @@ button { font: inherit; color: inherit; }
   .sentence__stick { position: static; height: auto; padding: 120px 0; }
   .sentence__w { opacity: 1; }
 }
+
+/* ---------- Rounded blocks (founder, 2026-10-21, after Calendly) ----------
+   Every section is a white block with soft corners on a SportIn blue-to-lilac field.
+   overflow: clip keeps the corners without breaking the sticky scenes inside. */
+:root { --block-r: 32px; --block-gap: 14px; --field: linear-gradient(165deg, #2f5bff 0%, #5d74fb 22%, #8d82f6 48%, #c39cf0 72%, #f1c1df 100%); }
+html { scroll-padding-top: calc(var(--nav-h) + 24px); }
+body { background: #2f5bff var(--field) fixed; }
+main { padding: calc(var(--block-gap)) var(--block-gap) 0; display: flex; flex-direction: column; gap: var(--block-gap); }
+main > section { background: #fff; border-radius: var(--block-r); overflow: clip; }
+main > .sec--infield { background: #f7f8fc; }
+main > .closing { background: var(--blue); }
+.belief { padding-bottom: clamp(40px, 6vw, 80px); }
+.foot { margin: var(--block-gap); border-radius: var(--block-r); background: #fff; border-top: 0; }
+
+/* Floating rounded menu bar. */
+.nav { inset: 12px var(--block-gap) auto var(--block-gap); max-width: 1440px; margin: 0 auto; border-radius: 16px; background: #fff; border-bottom: 0; box-shadow: var(--shadow-sm); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.nav.is-scrolled { border-bottom: 0; }
+.hero { padding-top: calc(var(--nav-h) + 12px + clamp(40px, 5.5vw, 76px)); }
+
+@media (max-width: 960px) {
+  .nav__links { top: calc(var(--nav-h) + 20px); left: var(--block-gap); right: var(--block-gap); border-radius: 16px; border-bottom: 0; box-shadow: var(--shadow-sm); }
+}
+@media (max-width: 600px) {
+  :root { --block-r: 24px; --block-gap: 8px; }
+}
