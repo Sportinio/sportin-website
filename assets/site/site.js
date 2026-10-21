@@ -347,3 +347,22 @@
     }, () => { cancelAnimationFrame(raf); raf = null; });
   })();
 })();
+
+// Light/dark switch. The device setting decides until the visitor chooses; the choice is
+// remembered on this device only.
+(() => {
+  const btn = document.getElementById('themeToggle');
+  if (!btn) return;
+  const root = document.documentElement;
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const isDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : media.matches);
+  const label = () => btn.setAttribute('aria-label', isDark() ? 'Switch to light mode' : 'Switch to dark mode');
+  btn.addEventListener('click', () => {
+    const next = isDark() ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('sportin-theme', next); } catch (e) { /* storage blocked: choice lasts this visit */ }
+    label();
+  });
+  media.addEventListener('change', label);
+  label();
+})();
