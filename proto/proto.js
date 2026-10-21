@@ -155,7 +155,8 @@
     // Cover: scale the film so it fills the whole stage, centred.
     const scale = Math.max(stage.width / vw, stage.height / vh);
     const offX = (vw * scale - stage.width) / 2;
-    const offY = (vh * scale - stage.height) / 2;
+    // Anchor the crop high, so runners keep their heads.
+    const offY = (vh * scale - stage.height) * 0.22;
     canvases.forEach((c, i) => {
       if (!c.width) return;
       const x = +c.dataset.x, y = +c.dataset.y, w = +c.dataset.w, h = +c.dataset.h;
@@ -170,4 +171,122 @@
   window.addEventListener('resize', () => { measure(); draw(); });
   // The row fades in with a transform; measure again once it has settled.
   row.addEventListener('reveal', () => setTimeout(() => { measure(); draw(); }, 950));
+})();
+
+// E: live app rows on each phone. Demo data, fictional names; ranks change as values tick.
+(() => {
+  const row = document.getElementById('heRow');
+  if (!row) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const COLORS = ['#0751fb', '#f2552c', '#12a876', '#8b5cf6', '#e2a400', '#0ea5c6'];
+  const ROW_H = 40;
+  const pace = (secPerKm) => `${Math.floor(secPerKm / 60)}:${String(Math.round(secPerKm % 60)).padStart(2, '0')} /km`;
+
+  const BOARDS = {
+    steps: {
+      title: 'Steps today',
+      people: [['Ana M.', 7840], ['Luca R.', 7790], ['Sofia D.', 7610], ['Jonas K.', 7480], ['Maya L.', 7350], ['Ravi S.', 7210]],
+      value: (p) => Math.round(p.v).toLocaleString('en-US'),
+      tick: (p) => { p.v += rand(4, 26); },
+    },
+    run: {
+      title: 'Running',
+      people: [['Elena V.', 5.42, 298], ['Tom B.', 5.37, 305], ['Ines G.', 5.21, 289], ['Marc P.', 5.08, 312], ['Zoe H.', 4.96, 301], ['Omar F.', 4.81, 318]],
+      value: (p) => `${p.v.toFixed(2)} km`,
+      sub: (p) => pace(p.s),
+      tick: (p) => { p.s = Math.max(270, Math.min(340, p.s + rand(-4, 4))); p.v += 20 / p.s * rand(0.6, 1.4); },
+    },
+    bike: {
+      title: 'Cycling',
+      people: [['Paul D.', 18.4, 27], ['Lea W.', 18.1, 29], ['Hugo C.', 17.6, 26], ['Nina R.', 17.2, 28], ['Ivan T.', 16.9, 25], ['Sara E.', 16.5, 27]],
+      value: (p) => `${p.v.toFixed(1)} km`,
+      sub: (p) => `${Math.round(p.s)} km/h`,
+      tick: (p) => { p.s = Math.max(22, Math.min(34, p.s + rand(-1, 1))); p.v += p.s / 3600 * 12 * rand(0.7, 1.3); },
+    },
+    league: {
+      title: 'Team league',
+      people: [['Riverside', 31, 412], ['Northside', 30, 398], ['Old Town', 28, 385], ['Harbour', 27, 371], ['Hilltop', 25, 360]],
+      value: (p) => `${p.v} pts`,
+      sub: (p) => `${Math.round(p.s)} km this week`,
+      tick: (p) => { p.s += rand(0.2, 1.4); if (Math.random() < 0.05) p.v += 1; },
+    },
+  };
+
+  function mountBoard(el, cfg) {
+    el.innerHTML = `<div class="pboard__head"><span>${cfg.title}</span><span class="live">Live</span></div><div class="pboard__list"></div>`;
+    const list = el.querySelector('.pboard__list');
+    const people = cfg.people.map(([n, v, s], i) => {
+      const r = document.createElement('div');
+      r.className = 'pboard__row';
+      const initials = n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2);
+      r.innerHTML = `<span class="pboard__pos"></span><span class="pboard__ava" style="background:${COLORS[i % COLORS.length]}">${initials}</span><span class="pboard__name">${n}<span class="pboard__sub"></span></span><span class="pboard__val"></span>`;
+      list.appendChild(r);
+      return { n, v, s, el: r, rank: i };
+    });
+    // Only as many rows as fit in the bottom half; the rest wait below and slide in when they climb.
+    const fit = () => {
+      const free = el.clientHeight - el.querySelector('.pboard__head').offsetHeight - 6;
+      const count = Math.max(2, Math.floor((free + 6) / ROW_H));
+      list.style.height = `${count * ROW_H - 6}px`;
+      list.style.overflow = 'hidden';
+    };
+    const render = () => {
+      [...people].sort((a, b) => b.v - a.v).forEach((p, i) => {
+        const up = i < p.rank;
+        p.rank = i;
+        p.el.style.transform = `translateY(${i * ROW_H}px)`;
+        p.el.querySelector('.pboard__pos').textContent = i + 1;
+        p.el.querySelector('.pboard__val').innerHTML = cfg.value(p) + '<span class="pboard__arrow">▲</span>';
+        if (cfg.sub) p.el.querySelector('.pboard__sub').textContent = cfg.sub(p);
+        p.el.classList.toggle('is-first', i === 0);
+        if (up) { p.el.classList.add('is-up'); setTimeout(() => p.el.classList.remove('is-up'), 1400); }
+      });
+    };
+    fit(); render();
+    window.addEventListener('resize', fit);
+    return () => {
+      people.forEach((p) => cfg.tick(p));
+      // Now and then someone puts in a burst, so places change.
+      if (Math.random() < 0.35) { const p = people[Math.floor(Math.random() * people.length)]; cfg.tick(p); cfg.tick(p); cfg.tick(p); }
+      render();
+    };
+  }
+
+  function mountPrize(el) {
+    const MEDALS = [['bronze', 'Bronze medal', '3,000 steps'], ['silver', 'Silver medal', '5,000 steps'], ['gold', 'Gold medal', '10,000 steps']];
+    let i = 0;
+    let fill = 0;
+    el.innerHTML = '<div class="prize__top"><img class="prize__medal" alt="" /><div><div class="prize__kicker">Next reward</div><div class="prize__title"></div></div></div><div class="prize__bar"><div class="prize__fill"></div></div><div class="prize__foot"><span class="prize__goal"></span><span class="prize__pct"></span></div>';
+    const img = el.querySelector('.prize__medal');
+    const show = (unlocked) => {
+      const [key, name, goal] = MEDALS[i];
+      img.src = `/medals/${key}.png`;
+      el.querySelector('.prize__kicker').textContent = unlocked ? 'Unlocked just now' : 'Next reward';
+      el.querySelector('.prize__title').textContent = unlocked ? `${name} unlocked` : name;
+      el.querySelector('.prize__goal').textContent = goal;
+    };
+    show(false);
+    return () => {
+      fill = Math.min(100, fill + rand(6, 14));
+      el.querySelector('.prize__fill').style.width = `${fill}%`;
+      el.querySelector('.prize__pct').textContent = `${Math.round(fill)}%`;
+      if (fill >= 100 && !el.classList.contains('is-new')) {
+        el.classList.add('is-new');
+        show(true);
+        setTimeout(() => { el.classList.remove('is-new'); i = (i + 1) % MEDALS.length; fill = 0; show(false); }, 2600);
+      }
+    };
+  }
+
+  const ticks = [];
+  row.querySelectorAll('[data-board]').forEach((el) => ticks.push(mountBoard(el, BOARDS[el.dataset.board])));
+  row.querySelectorAll('[data-prize]').forEach((el) => ticks.push(mountPrize(el)));
+  if (reduced) return;
+
+  let timer = null;
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && !timer) timer = setInterval(() => ticks.forEach((t) => t()), 800);
+    if (!e.isIntersecting) { clearInterval(timer); timer = null; }
+  }, { threshold: 0.15 }).observe(row);
 })();

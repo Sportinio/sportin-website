@@ -99,15 +99,49 @@
 .he__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 17ch; margin: 0 auto; }
 .he .lede { margin-left: auto; margin-right: auto; }
 .he .hero__actions { justify-content: center; }
-.he__row { position: relative; margin: clamp(48px, 6vw, 72px) auto 0; display: flex; justify-content: center; align-items: flex-start; gap: clamp(14px, 2vw, 28px); padding: 0 var(--gutter); }
-.iphone { position: relative; flex: none; width: clamp(150px, 15vw, 214px); aspect-ratio: 9 / 19.5; padding: 9px; border-radius: 42px; background: #0b0d14; box-shadow: var(--shadow-sm); }
-.iphone:nth-child(even) { margin-top: 36px; }
-.iphone__screen { position: relative; width: 100%; height: 100%; border-radius: 33px; overflow: hidden; background: #1b2233; }
+.he__row { position: relative; margin: clamp(48px, 6vw, 72px) auto 0; display: flex; justify-content: center; align-items: flex-start; gap: clamp(18px, 2.4vw, 34px); padding: 0 var(--gutter); }
+
+/* iPhone 15 Pro proportions (71.6 x 146.6 mm): titanium rim, black bezel, island, side buttons. */
+.iphone { position: relative; flex: none; width: clamp(160px, 15.5vw, 222px); aspect-ratio: 71.6 / 146.6; border-radius: 17.5% / 8.55%; padding: 0.9%; background: linear-gradient(135deg, #6e7075 0%, #2c2d30 14%, #1d1e20 50%, #2c2d30 86%, #707277 100%); box-shadow: var(--shadow-sm); }
+.iphone:nth-child(even) { margin-top: 40px; }
+.iphone::before, .iphone::after { content: ''; position: absolute; width: 1.6%; border-radius: 2px; background: linear-gradient(90deg, #5d6065, #2a2c2f); }
+.iphone::before { left: -1.4%; top: 17%; height: 4.5%; box-shadow: 0 calc(var(--btn-gap, 26px)) 0 #3a3c40, 0 calc(var(--btn-gap, 26px) * 2.1) 0 #3a3c40; }
+.iphone::after { right: -1.4%; top: 26%; height: 12%; }
+.iphone__bezel { width: 100%; height: 100%; padding: 2.4%; border-radius: 16.8% / 8.2%; background: #000; }
+.iphone__screen { position: relative; width: 100%; height: 100%; border-radius: 14.6% / 6.9%; overflow: hidden; background: #1b2233; }
+/* A soft dark floor under the app rows so white text reads over bright footage. */
+.iphone__screen::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 58%; z-index: 1; background: linear-gradient(180deg, rgba(5, 6, 10, 0) 0%, rgba(5, 6, 10, 0.55) 45%, rgba(5, 6, 10, 0.75) 100%); pointer-events: none; }
 .iphone__screen canvas { width: 100%; height: 100%; display: block; }
-.iphone__island { position: absolute; top: 9px; left: 50%; width: 32%; height: 22px; transform: translateX(-50%); border-radius: 999px; background: #0b0d14; z-index: 2; }
-.iphone__metric { position: absolute; left: 10px; right: 10px; bottom: 12px; z-index: 2; padding: 9px 12px; border-radius: 14px; background: rgba(255, 255, 255, 0.92); color: var(--ink); text-align: left; }
-.iphone__metric small { display: block; font-size: 11px; color: var(--slate); }
-.iphone__metric b { font-family: var(--display); font-stretch: var(--display-stretch); font-size: 18px; font-weight: 800; }
+.iphone__island { position: absolute; top: 2.4%; left: 50%; width: 33%; height: 4.4%; transform: translateX(-50%); border-radius: 999px; background: #000; z-index: 3; }
+.iphone__status { position: absolute; top: 2.9%; left: 9%; right: 9%; z-index: 3; display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #fff; pointer-events: none; }
+
+/* Live app rows: bottom half of the screen only, see-through over the film. */
+.pboard { position: absolute; left: 6%; right: 6%; bottom: 4.5%; height: 46%; z-index: 2; color: #fff; text-align: left; }
+.pboard__head { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px; white-space: nowrap; font-size: 10px; font-weight: 700; letter-spacing: 0.01em; }
+.pboard__head .live { color: #fff; font-size: 10px; }
+.pboard__head .live::before { background: #2ee6a6; }
+.pboard__list { position: relative; }
+.pboard__row { position: absolute; left: 0; right: 0; height: 34px; display: grid; grid-template-columns: 12px 20px minmax(0, 1fr) auto; align-items: center; gap: 6px; padding: 0 8px; border-radius: 12px; background: rgba(14, 16, 24, 0.6); transition: transform 0.7s var(--ease), background-color 0.4s; }
+.pboard__row.is-first { background: rgba(7, 81, 251, 0.62); }
+.pboard__row.is-up .pboard__arrow { opacity: 1; transform: none; }
+.pboard__pos { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 12px; opacity: 0.9; }
+.pboard__ava { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 9.5px; font-weight: 700; color: #fff; }
+.pboard__name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pboard__sub { display: block; font-size: 9px; font-weight: 400; opacity: 0.75; }
+.pboard__val { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 11px; white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+.pboard__arrow { display: inline-block; margin-left: 4px; color: #2ee6a6; font-size: 9px; opacity: 0; transform: translateY(3px); transition: opacity 0.3s, transform 0.3s; }
+
+/* The prize screen: one reward card that changes as medals unlock. */
+.prize { position: absolute; left: 6%; right: 6%; bottom: 4.5%; z-index: 2; padding: 12px; border-radius: 16px; background: rgba(14, 16, 24, 0.6); color: #fff; text-align: left; }
+.prize__top { display: flex; align-items: center; gap: 10px; }
+.prize__medal { width: 46px; height: 46px; flex: none; transition: transform 0.6s var(--ease); }
+.prize.is-new .prize__medal { animation: medal-in 0.8s var(--ease); }
+@keyframes medal-in { 0% { transform: scale(0.4) rotate(-20deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.prize__kicker { font-size: 9.5px; opacity: 0.75; }
+.prize__title { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 14px; line-height: 1.15; }
+.prize__bar { margin-top: 10px; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+.prize__fill { height: 100%; width: 0; border-radius: 999px; background: #fff; transition: width 0.4s linear; }
+.prize__foot { display: flex; justify-content: space-between; margin-top: 6px; font-size: 9.5px; opacity: 0.8; }
 
 @media (max-width: 900px) {
   .iphone:nth-child(n + 4) { display: none; }
