@@ -94,55 +94,93 @@
   .hd__scrim { background: linear-gradient(180deg, rgba(10, 16, 32, 0.55) 0%, rgba(10, 16, 32, 0.45) 30%, rgba(10, 16, 32, 0.8) 60%, rgba(10, 16, 32, 0.92) 100%); }
 }
 
-/* ---------- E: a row of iPhones that are windows onto one wide film ---------- */
-.he { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 clamp(56px, 7vw, 96px); text-align: center; overflow: hidden; }
-.he__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 17ch; margin: 0 auto; }
-.he .lede { margin-left: auto; margin-right: auto; }
-.he .hero__actions { justify-content: center; }
-.he__row { position: relative; margin: clamp(48px, 6vw, 72px) auto 0; display: flex; justify-content: center; align-items: flex-start; gap: clamp(18px, 2.4vw, 34px); padding: 0 var(--gutter); }
+/* ---------- E: a row of iPhones that are windows onto one wide film ----------
+   Spec: design lead audit 2026-10-21. In-screen sizes are the app's SwiftUI points
+   (rork-sportin-io/ios/SportInIo/Views/Explore/*), drawn at 402 x 874 and scaled. */
+.he { padding: calc(var(--nav-h) + 40px) 0 clamp(56px, 7vw, 96px); text-align: center; overflow: hidden; }
+.he__title { font-size: clamp(44px, 5vw, 76px); max-width: 17ch; margin: 0 auto; }
+.he__lede { font-size: 18px; max-width: 56ch; margin: 20px auto 0; color: var(--slate); }
+.he .hero__actions { justify-content: center; margin-top: 28px; }
+.he__row { position: relative; margin-top: 40px; display: flex; justify-content: center; align-items: flex-start; gap: clamp(16px, 1.8vw, 28px); }
 
-/* iPhone 15 Pro proportions (71.6 x 146.6 mm): titanium rim, black bezel, island, side buttons. */
-.iphone { position: relative; flex: none; width: clamp(160px, 15.5vw, 222px); aspect-ratio: 71.6 / 146.6; border-radius: 17.5% / 8.55%; padding: 0.9%; background: linear-gradient(135deg, #6e7075 0%, #2c2d30 14%, #1d1e20 50%, #2c2d30 86%, #707277 100%); box-shadow: var(--shadow-sm); }
-.iphone:nth-child(even) { margin-top: 40px; }
-.iphone::before, .iphone::after { content: ''; position: absolute; width: 1.6%; border-radius: 2px; background: linear-gradient(90deg, #5d6065, #2a2c2f); }
-.iphone::before { left: -1.4%; top: 17%; height: 4.5%; box-shadow: 0 calc(var(--btn-gap, 26px)) 0 #3a3c40, 0 calc(var(--btn-gap, 26px) * 2.1) 0 #3a3c40; }
-.iphone::after { right: -1.4%; top: 26%; height: 12%; }
-.iphone__bezel { width: 100%; height: 100%; padding: 2.4%; border-radius: 16.8% / 8.2%; background: #000; }
-.iphone__screen { position: relative; width: 100%; height: 100%; border-radius: 14.6% / 6.9%; overflow: hidden; background: #1b2233; }
-/* A soft dark floor under the app rows so white text reads over bright footage. */
-.iphone__screen::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 58%; z-index: 1; background: linear-gradient(180deg, rgba(5, 6, 10, 0) 0%, rgba(5, 6, 10, 0.55) 45%, rgba(5, 6, 10, 0.75) 100%); pointer-events: none; }
-.iphone__screen canvas { width: 100%; height: 100%; display: block; }
-.iphone__island { position: absolute; top: 2.4%; left: 50%; width: 33%; height: 4.4%; transform: translateX(-50%); border-radius: 999px; background: #000; z-index: 3; }
-.iphone__status { position: absolute; top: 2.9%; left: 9%; right: 9%; z-index: 3; display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #fff; pointer-events: none; }
+/* Device: solid rim with a hairline, black bezel, no side buttons (design lead's CSS fallback). */
+.iphone { --pw: min(15vw, 236px); position: relative; flex: none; width: var(--pw); aspect-ratio: 71.5 / 149.6; padding: calc(var(--pw) * 0.012); border-radius: calc(var(--pw) * 0.185); background: #1d1d1f; box-shadow: inset 0 0 0 1px #3a3a3c, var(--shadow-sm); }
+.iphone__bezel { width: 100%; height: 100%; padding: calc(var(--pw) * 0.032); border-radius: calc(var(--pw) * 0.173); background: #000; }
+.iphone__screen { position: relative; width: 100%; height: 100%; border-radius: calc(var(--pw) * 0.137); overflow: hidden; background: #0d0d14; }
+.iphone__screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-/* Live app rows: bottom half of the screen only, see-through over the film. */
-.pboard { position: absolute; left: 6%; right: 6%; bottom: 4.5%; height: 46%; z-index: 2; color: #fff; text-align: left; }
-.pboard__head { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px; white-space: nowrap; font-size: 10px; font-weight: 700; letter-spacing: 0.01em; }
-.pboard__head .live { color: #fff; font-size: 10px; }
-.pboard__head .live::before { background: #2ee6a6; }
-.pboard__list { position: relative; }
-.pboard__row { position: absolute; left: 0; right: 0; height: 34px; display: grid; grid-template-columns: 12px 20px minmax(0, 1fr) auto; align-items: center; gap: 6px; padding: 0 8px; border-radius: 12px; background: rgba(14, 16, 24, 0.6); transition: transform 0.7s var(--ease), background-color 0.4s; }
-.pboard__row.is-first { background: rgba(7, 81, 251, 0.62); }
-.pboard__row.is-up .pboard__arrow { opacity: 1; transform: none; }
-.pboard__pos { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 12px; opacity: 0.9; }
-.pboard__ava { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 9.5px; font-weight: 700; color: #fff; }
-.pboard__name { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pboard__sub { display: block; font-size: 9px; font-weight: 400; opacity: 0.75; }
-.pboard__val { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 11px; white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
-.pboard__arrow { display: inline-block; margin-left: 4px; color: #2ee6a6; font-size: 9px; opacity: 0; transform: translateY(3px); transition: opacity 0.3s, transform 0.3s; }
+/* The app screen at its own size; JS sets --s = screen width / 402. */
+.app { position: absolute; top: 0; left: 0; width: 402px; height: 874px; transform: scale(var(--s, 0.5)); transform-origin: top left; color: #fff; text-align: left; font-family: ui-rounded, -apple-system, 'SF Pro Rounded', 'SF Pro Text', system-ui, sans-serif; }
+.app__island { position: absolute; top: 11px; left: 50%; width: 126px; height: 37px; transform: translateX(-50%); border-radius: 20px; background: #000; }
+.app__status { position: absolute; top: 19px; left: 34px; right: 30px; display: flex; justify-content: space-between; align-items: center; font: 600 17px/1 -apple-system, 'SF Pro Text', system-ui, sans-serif; }
+.app__status svg { display: block; }
+/* Bottom sheet (LeaderboardBottomSheet.swift:22-26,169-189), without its shadow. */
+.sheet { position: absolute; left: 6px; right: 6px; top: 437px; bottom: 0; padding: 26px 12px 0; background: #151515; border: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 0; border-radius: 12px 12px 0 0; }
+.sheet::before { content: ''; position: absolute; top: 8px; left: 50%; width: 36px; height: 5px; transform: translateX(-50%); border-radius: 3px; background: #0751fb; }
+.sheet__head { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 12px; }
+.sheet__title { font-size: 17px; font-weight: 600; }
+.sheet__live { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.5); }
+.sheet__live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #34c759; }
+.sheet__list { position: relative; }
 
-/* The prize screen: one reward card that changes as medals unlock. */
-.prize { position: absolute; left: 6%; right: 6%; bottom: 4.5%; z-index: 2; padding: 12px; border-radius: 16px; background: rgba(14, 16, 24, 0.6); color: #fff; text-align: left; }
-.prize__top { display: flex; align-items: center; gap: 10px; }
-.prize__medal { width: 46px; height: 46px; flex: none; transition: transform 0.6s var(--ease); }
-.prize.is-new .prize__medal { animation: medal-in 0.8s var(--ease); }
-@keyframes medal-in { 0% { transform: scale(0.4) rotate(-20deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
-.prize__kicker { font-size: 9.5px; opacity: 0.75; }
-.prize__title { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 14px; line-height: 1.15; }
-.prize__bar { margin-top: 10px; height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
-.prize__fill { height: 100%; width: 0; border-radius: 999px; background: #fff; transition: width 0.4s linear; }
-.prize__foot { display: flex; justify-content: space-between; margin-top: 6px; font-size: 9.5px; opacity: 0.8; }
+/* Row (LeaderboardRowView.swift:63-121, GlassStyle.swift:97): 70 high, 8 apart. */
+.row { position: absolute; left: 0; right: 0; top: 0; height: 70px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.6s cubic-bezier(0.25, 1.1, 0.5, 1); }
+.row.is-climbing { z-index: 2; }
+/* Top 3: a fading 1.5px line on the top edge (LeaderboardSupportingRows.swift:99-113). */
+.row[data-podium]::before { content: ''; position: absolute; top: -1px; left: 16px; right: 16px; height: 1.5px; background: linear-gradient(90deg, transparent, var(--podium), transparent); }
+.row[data-podium='1'] { --podium: #ffd700; }
+.row[data-podium='2'] { --podium: #c0c0c0; }
+.row[data-podium='3'] { --podium: #cd7f32; }
+/* Rank badge (RankBadgeView.swift:16-50). */
+.rank { position: relative; width: 32px; height: 46px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.rank svg { position: absolute; inset: 0; }
+.rank b { position: relative; font-size: 13px; font-weight: 600; }
+.rank i { position: relative; font-style: normal; font-size: 8px; font-weight: 700; line-height: 1; color: rgba(255, 255, 255, 0.2); }
+.rank i.up { color: #2ecc71; }
+.rank i.down { color: #e74c3c; }
+/* Avatar (GlassAvatar.swift:34-37). */
+.ava { position: relative; width: 44px; height: 44px; flex: none; }
+.ava img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.ava .tier { position: absolute; left: 50%; bottom: -8px; width: 20px; height: 20px; border-radius: 0; box-shadow: none; transform: translateX(-50%); }
+.ava--team img { border-radius: 7px; }
+.ava--team { width: 50px; height: 50px; }
+.ava__crest { width: 50px; height: 50px; border-radius: 7px; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.who { flex: 1; min-width: 0; }
+.who__name { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.flag { width: 14.4px; height: 14.4px; flex: none; border-radius: 50%; overflow: hidden; display: grid; place-items: center; font-size: 17px; line-height: 1; }
+.who__sub { margin-top: 3px; font-size: 12px; color: rgba(255, 255, 255, 0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Value (LeaderboardRowView+Value.swift:22-41). */
+.val2 { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.val2 sup { font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.5); margin-left: 2px; vertical-align: baseline; }
+.val2 small { font-size: 11px; font-weight: 700; }
+.val2 small.up { color: #34c759; }
+.val2 small.down { color: #e24b4a; }
+.val2 small.muted { font-weight: 600; color: rgba(255, 255, 255, 0.3); }
 
-@media (max-width: 900px) {
+/* Next reward card (NextRewardHeroCard.swift:28-88), tier colours from Profile.swift:458-466. */
+.reward { padding: 16px; border-radius: 18px; background: rgba(255, 255, 255, 0.07); border: 1.5px solid color-mix(in srgb, var(--tier) 40%, transparent); }
+.reward__top { display: flex; align-items: center; gap: 12px; }
+.reward__icon { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--tier) 12%, transparent); }
+.reward__icon img { width: 32px; height: 32px; }
+.reward.is-unlocked .reward__icon img { animation: medal-pop 0.3s ease-out; }
+@keyframes medal-pop { from { transform: scale(0.9); } to { transform: scale(1); } }
+.reward__text { flex: 1; min-width: 0; }
+.reward__label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--tier); }
+.reward__title { margin-top: 2px; font-size: 15px; font-weight: 500; }
+.reward__pct { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.reward__bar { margin-top: 12px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.reward__fill { height: 100%; width: 0; border-radius: 2px; background: var(--tier); transition: width 0.6s ease-out; }
+.mrow { display: flex; align-items: center; gap: 12px; height: 58px; margin-top: 8px; padding: 0 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.08); font-size: 15px; font-weight: 600; }
+.mrow img { width: 30px; height: 30px; }
+.mrow span { flex: 1; }
+.mrow b { font-variant-numeric: tabular-nums; }
+
+/* Tablet: three phones. Phone: three phones, the middle one leading, the sides cut by the edge. */
+@media (max-width: 1199px) {
+  .iphone { --pw: 26vw; }
   .iphone:nth-child(n + 4) { display: none; }
+}
+@media (max-width: 700px) {
+  .iphone { --pw: 62vw; }
+  .he__row { gap: 14px; }
 }

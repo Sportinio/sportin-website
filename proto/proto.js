@@ -152,11 +152,12 @@
     if (!stage || film.readyState < 2) return;
     const vw = film.videoWidth;
     const vh = film.videoHeight;
-    // Cover: scale the film so it fills the whole stage, centred.
-    const scale = Math.max(stage.width / vw, stage.height / vh);
+    // Only the top half of each screen shows film (the app sheet starts at 437 of 874 points).
+    // Fit the film to the stage width and centre the runners in that strip.
+    const band = stage.height * (437 / 874);
+    const scale = Math.max(stage.width / vw, band / vh);
     const offX = (vw * scale - stage.width) / 2;
-    // Anchor the crop high, so runners keep their heads.
-    const offY = (vh * scale - stage.height) * 0.22;
+    const offY = Math.min(Math.max(vh * scale * 0.42 - band / 2, 0), vh * scale - band);
     canvases.forEach((c, i) => {
       if (!c.width) return;
       const x = +c.dataset.x, y = +c.dataset.y, w = +c.dataset.w, h = +c.dataset.h;
@@ -173,120 +174,184 @@
   row.addEventListener('reveal', () => setTimeout(() => { measure(); draw(); }, 950));
 })();
 
-// E: live app rows on each phone. Demo data, fictional names; ranks change as values tick.
+// E: the app's leaderboard sheet on each phone (spec: design lead audit 2026-10-21; components from
+// rork-sportin-io/ios/SportInIo/Views/Explore). Demo data with fictional names.
 (() => {
   const row = document.getElementById('heRow');
   if (!row) return;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const rand = (a, b) => a + Math.random() * (b - a);
-  const COLORS = ['#0751fb', '#f2552c', '#12a876', '#8b5cf6', '#e2a400', '#0ea5c6'];
-  const ROW_H = 40;
-  const pace = (secPerKm) => `${Math.floor(secPerKm / 60)}:${String(Math.round(secPerKm % 60)).padStart(2, '0')} /km`;
+  const M = '/assets/site/media/app/';
+  const PITCH = 78; // 70 row + 8 gap
+  const de = (n, d = 0) => n.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const clock = (sec) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
+  const RING = (pct, color) => `<svg viewBox="0 0 32 46" width="32" height="46" aria-hidden="true"><rect x="1" y="1" width="30" height="44" rx="7" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.1)" stroke-width="2"/><rect x="1" y="1" width="30" height="44" rx="7" fill="none" stroke="${color}" stroke-width="2" pathLength="100" stroke-dasharray="${pct} 100" stroke-dashoffset="-12.5" stroke-linecap="round"/></svg>`;
+  const stepColor = (v) => (v < 5000 ? '#FF3B30' : v < 10000 ? '#FF9500' : '#34C759');
+
+  // Number roll over 600 ms, ease-out (AnimatedStepNumber.swift:33-37).
+  function roll(el, from, to, fmt) {
+    if (reduced || from === to) { el.textContent = fmt(to); return; }
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / 600);
+      el.textContent = fmt(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
 
   const BOARDS = {
     steps: {
       title: 'Steps today',
-      people: [['Ana M.', 7840], ['Luca R.', 7790], ['Sofia D.', 7610], ['Jonas K.', 7480], ['Maya L.', 7350], ['Ravi S.', 7210]],
-      value: (p) => Math.round(p.v).toLocaleString('en-US'),
-      tick: (p) => { p.v += rand(4, 26); },
+      people: [['Emma Dubois', 'France', '🇫🇷', 'av_female1', 'silver', 11240], ['Laura Iacob', 'Romania', '🇷🇴', 'av_female2', 'gold', 10980], ['Jake Morrison', 'United States', '🇺🇸', 'av_male1', 'silver', 9860], ['Sofia Andersen', 'Sweden', '🇸🇪', 'av_female3', 'bronze', 9610], ['Mateo Ruiz', 'Spain', '🇪🇸', 'av_male2', 'silver', 8720]],
+      value: (v) => de(Math.round(v)), suffix: 'st',
+      sub: (p) => p.country,
+      ring: (p) => [Math.min(100, p.v / 100), stepColor(p.v)],
+      change: (p) => ({ text: `+${de(Math.round(p.gain))}`, cls: 'up' }),
+      inc: () => rand(18, 42),
     },
     run: {
       title: 'Running',
-      people: [['Elena V.', 5.42, 298], ['Tom B.', 5.37, 305], ['Ines G.', 5.21, 289], ['Marc P.', 5.08, 312], ['Zoe H.', 4.96, 301], ['Omar F.', 4.81, 318]],
-      value: (p) => `${p.v.toFixed(2)} km`,
-      sub: (p) => pace(p.s),
-      tick: (p) => { p.s = Math.max(270, Math.min(340, p.s + rand(-4, 4))); p.v += 20 / p.s * rand(0.6, 1.4); },
+      people: [['Lukas Weber', 'Germany', '🇩🇪', 'av_male3', 'gold', 5.42, 298], ['Ana Costa', 'Portugal', '🇵🇹', 'av_female2', 'silver', 5.21, 302], ['Noah Peeters', 'Belgium', '🇧🇪', 'av_male1', 'silver', 4.97, 291], ['Mia Rossi', 'Italy', '🇮🇹', 'av_female1', 'bronze', 4.76, 309], ['Leo Martin', 'France', '🇫🇷', 'av_male2', 'bronze', 4.55, 314]],
+      value: (v) => de(v, 2), suffix: 'km',
+      sub: (p) => `${clock(p.s)} /km · ${clock(p.v * p.s)}`,
+      ring: (p) => [Math.min(100, p.v * 10), '#1A8CFF'],
+      change: () => null,
+      inc: (p) => 9 / p.s * rand(0.85, 1.15),
     },
     bike: {
       title: 'Cycling',
-      people: [['Paul D.', 18.4, 27], ['Lea W.', 18.1, 29], ['Hugo C.', 17.6, 26], ['Nina R.', 17.2, 28], ['Ivan T.', 16.9, 25], ['Sara E.', 16.5, 27]],
-      value: (p) => `${p.v.toFixed(1)} km`,
-      sub: (p) => `${Math.round(p.s)} km/h`,
-      tick: (p) => { p.s = Math.max(22, Math.min(34, p.s + rand(-1, 1))); p.v += p.s / 3600 * 12 * rand(0.7, 1.3); },
+      people: [['Hugo Lefèvre', 'France', '🇫🇷', 'av_male2', 'platinum', 18.4, 27], ['Clara Vogel', 'Austria', '🇦🇹', 'av_female3', 'gold', 17.9, 28], ['Daan Visser', 'Netherlands', '🇳🇱', 'av_male3', 'gold', 17.3, 26], ['Elena Popa', 'Romania', '🇷🇴', 'av_female1', 'silver', 16.8, 27], ['Oscar Lind', 'Sweden', '🇸🇪', 'av_male1', 'silver', 16.2, 25]],
+      value: (v) => de(v, 1), suffix: 'km',
+      sub: (p) => `${Math.round(p.s)} km/h · ${clock(p.v / p.s * 60)}`,
+      ring: (p) => [Math.min(100, p.v * 4), '#1A8CFF'],
+      change: () => null,
+      inc: (p) => p.s / 3600 * 2.8 * rand(0.85, 1.15),
     },
     league: {
       title: 'Team league',
-      people: [['Riverside', 31, 412], ['Northside', 30, 398], ['Old Town', 28, 385], ['Harbour', 27, 371], ['Hilltop', 25, 360]],
-      value: (p) => `${p.v} pts`,
-      sub: (p) => `${Math.round(p.s)} km this week`,
-      tick: (p) => { p.s += rand(0.2, 1.4); if (Math.random() < 0.05) p.v += 1; },
+      teams: [['Northside Runners', 'NR', '#0751FB', 128, 412], ['Harbour Walkers', 'HW', '#6B4EFF', 96, 398], ['Old Town Movers', 'OT', '#E67E22', 141, 381], ['Riverside Club', 'RC', '#2ECC71', 87, 364], ['Hill Street Crew', 'HS', '#E2A400', 73, 347]],
+      value: (v) => de(Math.round(v)), suffix: 'km',
+      inc: () => rand(0.6, 1.6),
     },
   };
 
-  function mountBoard(el, cfg) {
-    el.innerHTML = `<div class="pboard__head"><span>${cfg.title}</span><span class="live">Live</span></div><div class="pboard__list"></div>`;
-    const list = el.querySelector('.pboard__list');
-    const people = cfg.people.map(([n, v, s], i) => {
-      const r = document.createElement('div');
-      r.className = 'pboard__row';
-      const initials = n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2);
-      r.innerHTML = `<span class="pboard__pos"></span><span class="pboard__ava" style="background:${COLORS[i % COLORS.length]}">${initials}</span><span class="pboard__name">${n}<span class="pboard__sub"></span></span><span class="pboard__val"></span>`;
-      list.appendChild(r);
-      return { n, v, s, el: r, rank: i };
+  function mountBoard(app, kind) {
+    const cfg = BOARDS[kind];
+    const sheet = app.querySelector('.sheet');
+    sheet.innerHTML = `<div class="sheet__head"><span class="sheet__title">${cfg.title}</span><span class="sheet__live">Live</span></div><div class="sheet__list"></div>`;
+    const list = sheet.querySelector('.sheet__list');
+    const isTeam = kind === 'league';
+    const src = isTeam ? cfg.teams : cfg.people;
+    const people = src.map((d, i) => {
+      const el = document.createElement('div');
+      el.className = 'row';
+      const p = isTeam
+        ? { name: d[0], v: d[4], members: d[3] }
+        : { name: d[0], country: d[1], v: d[5], s: d[6], gain: 0 };
+      const ava = isTeam
+        ? `<span class="ava ava--team"><span class="ava__crest" style="background:${d[2]}">${d[1]}</span></span>`
+        : `<span class="ava"><img src="${M}${d[3]}.jpg" alt=""><img class="tier" src="${M}tier_${d[4]}.png" alt=""></span>`;
+      const name = isTeam ? `<span class="who__name">${d[0]}</span>` : `<span class="who__name"><span class="flag">${d[2]}</span>${d[0]}</span>`;
+      el.innerHTML = `<span class="rank"><span class="rank__ring"></span><b></b><i>—</i></span>${ava}<span class="who">${name}<span class="who__sub"></span></span><span class="val2"><span><span class="val2__n"></span><sup>${cfg.suffix}</sup></span><small></small></span>`;
+      list.appendChild(el);
+      return Object.assign(p, { el, rank: i, shown: p.v });
     });
-    // Only as many rows as fit in the bottom half; the rest wait below and slide in when they climb.
-    const fit = () => {
-      const free = el.clientHeight - el.querySelector('.pboard__head').offsetHeight - 6;
-      const count = Math.max(2, Math.floor((free + 6) / ROW_H));
-      list.style.height = `${count * ROW_H - 6}px`;
-      list.style.overflow = 'hidden';
-    };
+    list.style.height = `${src.length * PITCH - 8}px`;
+
     const render = () => {
       [...people].sort((a, b) => b.v - a.v).forEach((p, i) => {
-        const up = i < p.rank;
+        if (i !== p.rank) {
+          const arrow = p.el.querySelector('.rank i');
+          arrow.textContent = i < p.rank ? '▲' : '▼';
+          arrow.className = i < p.rank ? 'up' : 'down';
+          p.el.classList.toggle('is-climbing', i < p.rank);
+          setTimeout(() => p.el.classList.remove('is-climbing'), 650);
+        }
         p.rank = i;
-        p.el.style.transform = `translateY(${i * ROW_H}px)`;
-        p.el.querySelector('.pboard__pos').textContent = i + 1;
-        p.el.querySelector('.pboard__val').innerHTML = cfg.value(p) + '<span class="pboard__arrow">▲</span>';
-        if (cfg.sub) p.el.querySelector('.pboard__sub').textContent = cfg.sub(p);
-        p.el.classList.toggle('is-first', i === 0);
-        if (up) { p.el.classList.add('is-up'); setTimeout(() => p.el.classList.remove('is-up'), 1400); }
+        p.el.style.transform = `translateY(${i * PITCH}px)`;
+        if (i < 3) p.el.dataset.podium = i + 1; else delete p.el.dataset.podium;
+        p.el.querySelector('.rank b').textContent = i + 1;
+        const [pct, color] = isTeam ? [Math.min(100, p.v / 5), '#1A8CFF'] : cfg.ring(p);
+        p.el.querySelector('.rank__ring').innerHTML = RING(pct, color);
+        roll(p.el.querySelector('.val2__n'), p.shown, p.v, cfg.value);
+        p.shown = p.v;
+        p.el.querySelector('.who__sub').textContent = isTeam ? `👥 ${p.members} members` : cfg.sub(p);
+        const small = p.el.querySelector('.val2 small');
+        const ch = isTeam ? { text: 'this week', cls: 'muted' } : cfg.change(p);
+        small.textContent = ch ? ch.text : '';
+        small.className = ch ? ch.cls : '';
       });
     };
-    fit(); render();
-    window.addEventListener('resize', fit);
+    render();
+
+    // Values rise steadily; about every six seconds one person puts in a burst and passes the one above.
+    let lastPass = performance.now();
     return () => {
-      people.forEach((p) => cfg.tick(p));
-      // Now and then someone puts in a burst, so places change.
-      if (Math.random() < 0.35) { const p = people[Math.floor(Math.random() * people.length)]; cfg.tick(p); cfg.tick(p); cfg.tick(p); }
+      const now = performance.now();
+      people.forEach((p) => { const g = cfg.inc(p); p.v += g; p.gain = g * 6; if (p.s && !isTeam && kind === 'run') p.s = Math.max(280, Math.min(330, p.s + rand(-3, 3))); });
+      if (now - lastPass > 6000) {
+        const order = [...people].sort((a, b) => b.v - a.v);
+        const k = 1 + Math.floor(Math.random() * (order.length - 1));
+        const climber = order[k];
+        const above = order[k - 1];
+        const g = above.v - climber.v + cfg.inc(climber) * 2;
+        climber.v += g;
+        climber.gain = g;
+        lastPass = now;
+      }
       render();
     };
   }
 
-  function mountPrize(el) {
-    const MEDALS = [['bronze', 'Bronze medal', '3,000 steps'], ['silver', 'Silver medal', '5,000 steps'], ['gold', 'Gold medal', '10,000 steps']];
+  function mountReward(app) {
+    const TIERS = [['bronze', 'Bronze', '#CC8033', '3.000 steps'], ['silver', 'Silver', '#BFBFC7', '5.000 steps'], ['gold', 'Gold', '#FFC208', '10.000 steps']];
+    const counts = { gold: 4, silver: 9, bronze: 15 };
     let i = 0;
-    let fill = 0;
-    el.innerHTML = '<div class="prize__top"><img class="prize__medal" alt="" /><div><div class="prize__kicker">Next reward</div><div class="prize__title"></div></div></div><div class="prize__bar"><div class="prize__fill"></div></div><div class="prize__foot"><span class="prize__goal"></span><span class="prize__pct"></span></div>';
-    const img = el.querySelector('.prize__medal');
+    let fill = 18;
+    const sheet = app.querySelector('.sheet');
+    sheet.innerHTML = '<div class="sheet__head"><span class="sheet__title">Rewards</span><span class="sheet__live">Live</span></div><div class="reward"><div class="reward__top"><span class="reward__icon"><img alt="" /></span><span class="reward__text"><span class="reward__label"></span><div class="reward__title"></div></span><span class="reward__pct"></span></div><div class="reward__bar"><div class="reward__fill"></div></div></div><div class="mrows"></div>';
+    const card = sheet.querySelector('.reward');
+    const rows = sheet.querySelector('.mrows');
+    const drawCounts = () => { rows.innerHTML = ['gold', 'silver', 'bronze'].map((k) => `<div class="mrow"><img src="${M}tier_${k}.png" alt=""><span>${k[0].toUpperCase() + k.slice(1)} medals</span><b>${counts[k]}</b></div>`).join(''); };
     const show = (unlocked) => {
-      const [key, name, goal] = MEDALS[i];
-      img.src = `/medals/${key}.png`;
-      el.querySelector('.prize__kicker').textContent = unlocked ? 'Unlocked just now' : 'Next reward';
-      el.querySelector('.prize__title').textContent = unlocked ? `${name} unlocked` : name;
-      el.querySelector('.prize__goal').textContent = goal;
+      const [key, name, color, goal] = TIERS[i];
+      card.style.setProperty('--tier', color);
+      card.querySelector('img').src = `${M}tier_${key}.png`;
+      card.querySelector('.reward__label').textContent = unlocked ? 'UNLOCKED' : 'NEXT REWARD';
+      card.querySelector('.reward__title').textContent = unlocked ? `${name} medal unlocked` : `${name} medal · ${goal}`;
+      card.classList.toggle('is-unlocked', unlocked);
     };
-    show(false);
+    const paint = () => { card.querySelector('.reward__fill').style.width = `${fill}%`; card.querySelector('.reward__pct').textContent = `${Math.round(fill)}%`; };
+    show(false); paint(); drawCounts();
     return () => {
-      fill = Math.min(100, fill + rand(6, 14));
-      el.querySelector('.prize__fill').style.width = `${fill}%`;
-      el.querySelector('.prize__pct').textContent = `${Math.round(fill)}%`;
-      if (fill >= 100 && !el.classList.contains('is-new')) {
-        el.classList.add('is-new');
+      if (card.classList.contains('is-unlocked')) return;
+      fill = Math.min(100, fill + rand(9, 16));
+      paint();
+      if (fill >= 100) {
         show(true);
-        setTimeout(() => { el.classList.remove('is-new'); i = (i + 1) % MEDALS.length; fill = 0; show(false); }, 2600);
+        counts[TIERS[i][0]] += 1;
+        drawCounts();
+        setTimeout(() => { i = (i + 1) % TIERS.length; fill = 8; show(false); paint(); }, 3000);
       }
     };
   }
 
-  const ticks = [];
-  row.querySelectorAll('[data-board]').forEach((el) => ticks.push(mountBoard(el, BOARDS[el.dataset.board])));
-  row.querySelectorAll('[data-prize]').forEach((el) => ticks.push(mountPrize(el)));
+  // Scale each 402-point app screen to the phone's screen width.
+  const scaleApps = () => row.querySelectorAll('.app').forEach((a) => a.style.setProperty('--s', (a.parentElement.clientWidth / 402).toFixed(4)));
+  scaleApps();
+  window.addEventListener('resize', scaleApps);
+
+  const boards = [...row.querySelectorAll('.app')].map((app) => (app.dataset.board === 'reward' ? mountReward(app) : mountBoard(app, app.dataset.board)));
   if (reduced) return;
 
-  let timer = null;
-  new IntersectionObserver(([e]) => {
-    if (e.isIntersecting && !timer) timer = setInterval(() => ticks.forEach((t) => t()), 800);
-    if (!e.isIntersecting) { clearInterval(timer); timer = null; }
-  }, { threshold: 0.15 }).observe(row);
+  // Each board keeps its own rhythm (2.4 to 3.2 s), offset from the others.
+  const timers = [];
+  const startAll = () => boards.forEach((tick, k) => {
+    if (timers[k]) return;
+    const run = () => { tick(); timers[k] = setTimeout(run, rand(2400, 3200)); };
+    timers[k] = setTimeout(run, 400 + k * 550);
+  });
+  const stopAll = () => timers.forEach((t, k) => { clearTimeout(t); timers[k] = null; });
+  new IntersectionObserver(([e]) => (e.isIntersecting ? startAll() : stopAll()), { threshold: 0.15 }).observe(row);
 })();
