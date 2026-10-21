@@ -728,7 +728,6 @@ body { background: var(--page); }
 .problem__n { margin-top: 14px; font-family: var(--mono); font-size: 12px; color: var(--slate); }
 .problem__label { margin-top: 4px; font-weight: 700; font-size: clamp(14px, 1.2vw, 16px); }
 .problem__step--last .problem__label { color: var(--blue); }
-.problem__note { margin-top: 28px; font-size: 13px; color: var(--slate); }
 @media (max-width: 760px) {
   .problem__steps { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
   .problem__arrow { display: none; }
