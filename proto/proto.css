@@ -71,8 +71,10 @@
 .hd__wall { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
 .hd__cell { position: relative; overflow: hidden; }
 .hd__cell video { position: absolute; inset: -6% 0; width: 100%; height: 112%; object-fit: cover; transform: translateY(var(--drift, 0)); }
+/* Brand colour wash, multiplied into the footage: SportIn blue to violet. */
+.hd__tint { position: absolute; inset: 0; mix-blend-mode: multiply; background: linear-gradient(115deg, #0751fb 0%, #3b6bff 38%, #6b4eff 72%, #c45cff 100%); opacity: 0.85; pointer-events: none; }
 /* A plain dark scrim so white text reads on any frame; no glow. */
-.hd__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 16, 32, 0.55) 0%, rgba(10, 16, 32, 0.1) 22%, rgba(10, 16, 32, 0.2) 50%, rgba(10, 16, 32, 0.85) 100%); }
+.hd__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 16, 32, 0.35) 0%, rgba(10, 16, 32, 0) 22%, rgba(10, 16, 32, 0) 50%, rgba(10, 16, 32, 0.6) 100%); }
 .hd__content { position: absolute; left: 0; right: 0; bottom: clamp(40px, 7vh, 88px); }
 .hd__title { font-size: clamp(44px, 6vw, 96px); max-width: 15ch; color: #fff; }
 .hd__title em { color: #fff; }
