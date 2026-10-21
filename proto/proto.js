@@ -56,3 +56,61 @@
 
   if (reduced) document.querySelectorAll('video').forEach((v) => { v.removeAttribute('autoplay'); v.pause(); });
 })();
+
+// D: film wall, see-through nav and today's kilometres.
+(() => {
+  const hero = document.getElementById('hd');
+  if (!hero) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nav = document.getElementById('nav');
+  const cells = [...hero.querySelectorAll('.hd__cell video')];
+
+  const onScroll = () => {
+    const y = window.scrollY;
+    nav.classList.toggle('is-solid', y > hero.offsetHeight - 80);
+    if (reduced) return;
+    // Columns drift at slightly different speeds, so the wall feels alive.
+    cells.forEach((v, i) => v.style.setProperty('--drift', `${y * (i % 2 ? 0.06 : -0.04)}px`));
+  };
+  window.addEventListener('scroll', () => requestAnimationFrame(onScroll), { passive: true });
+  onScroll();
+
+  // Today's kilometres. Real numbers only come from SportIn: set window.SPORTIN_KM_SOURCE to an
+  // endpoint returning {"kmToday": number, "kmPerHour": number}. Without one the page shows a demo
+  // figure and says so.
+  const out = document.getElementById('kmToday');
+  const demoTag = document.getElementById('kmDemo');
+  const fmt = (n) => Math.floor(n).toLocaleString('en-US');
+  let km = 0;
+  let perSecond = 0;
+
+  const start = (kmToday, kmPerHour, isDemo) => {
+    demoTag.hidden = !isDemo;
+    perSecond = kmPerHour / 3600;
+    const t0 = performance.now();
+    const from = 0;
+    const intro = (now) => {
+      const p = Math.min(1, (now - t0) / 1800);
+      km = from + (kmToday - from) * (1 - Math.pow(1 - p, 3));
+      out.textContent = fmt(km);
+      if (p < 1 && !reduced) requestAnimationFrame(intro);
+      else { km = kmToday; out.textContent = fmt(km); tick(); }
+    };
+    requestAnimationFrame(intro);
+  };
+  const tick = () => setInterval(() => { km += perSecond; out.textContent = fmt(km); }, 1000);
+
+  const demo = () => {
+    // Demo pace: 18,000 km a day, spread over the hours so far.
+    const d = new Date();
+    const dayShare = (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds()) / 86400;
+    start(18000 * dayShare, 18000 / 24, true);
+  };
+
+  const source = window.SPORTIN_KM_SOURCE;
+  if (!source) { demo(); return; }
+  fetch(source, { headers: { Accept: 'application/json' } })
+    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+    .then((d) => (Number.isFinite(d.kmToday) ? start(d.kmToday, Number(d.kmPerHour) || 0, false) : demo()))
+    .catch(demo);
+})();
