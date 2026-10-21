@@ -93,3 +93,22 @@
   .hd__cell:nth-child(n + 3), .hd__tag:nth-child(n + 3) { display: none; }
   .hd__scrim { background: linear-gradient(180deg, rgba(10, 16, 32, 0.55) 0%, rgba(10, 16, 32, 0.45) 30%, rgba(10, 16, 32, 0.8) 60%, rgba(10, 16, 32, 0.92) 100%); }
 }
+
+/* ---------- E: a row of iPhones that are windows onto one wide film ---------- */
+.he { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 clamp(56px, 7vw, 96px); text-align: center; overflow: hidden; }
+.he__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 17ch; margin: 0 auto; }
+.he .lede { margin-left: auto; margin-right: auto; }
+.he .hero__actions { justify-content: center; }
+.he__row { position: relative; margin: clamp(48px, 6vw, 72px) auto 0; display: flex; justify-content: center; align-items: flex-start; gap: clamp(14px, 2vw, 28px); padding: 0 var(--gutter); }
+.iphone { position: relative; flex: none; width: clamp(150px, 15vw, 214px); aspect-ratio: 9 / 19.5; padding: 9px; border-radius: 42px; background: #0b0d14; box-shadow: var(--shadow-sm); }
+.iphone:nth-child(even) { margin-top: 36px; }
+.iphone__screen { position: relative; width: 100%; height: 100%; border-radius: 33px; overflow: hidden; background: #1b2233; }
+.iphone__screen canvas { width: 100%; height: 100%; display: block; }
+.iphone__island { position: absolute; top: 9px; left: 50%; width: 32%; height: 22px; transform: translateX(-50%); border-radius: 999px; background: #0b0d14; z-index: 2; }
+.iphone__metric { position: absolute; left: 10px; right: 10px; bottom: 12px; z-index: 2; padding: 9px 12px; border-radius: 14px; background: rgba(255, 255, 255, 0.92); color: var(--ink); text-align: left; }
+.iphone__metric small { display: block; font-size: 11px; color: var(--slate); }
+.iphone__metric b { font-family: var(--display); font-stretch: var(--display-stretch); font-size: 18px; font-weight: 800; }
+
+@media (max-width: 900px) {
+  .iphone:nth-child(n + 4) { display: none; }
+}

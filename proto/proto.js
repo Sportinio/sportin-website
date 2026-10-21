@@ -114,3 +114,60 @@
     .then((d) => (Number.isFinite(d.kmToday) ? start(d.kmToday, Number(d.kmPerHour) || 0, false) : demo()))
     .catch(demo);
 })();
+
+// E: one film, five windows. Each phone draws the part of the frame that sits behind it, so
+// people crossing the film pass from one phone into the next.
+(() => {
+  const row = document.getElementById('heRow');
+  const film = document.getElementById('heFilm');
+  if (!row || !film) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const screens = [...row.querySelectorAll('.iphone__screen')];
+  const canvases = screens.map((s) => s.querySelector('canvas'));
+  const ctxs = canvases.map((c) => c.getContext('2d'));
+  let stage = null;
+
+  // The stage is the box around every visible screen; the film covers it like one big picture.
+  function measure() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const visible = screens.filter((s) => s.offsetParent);
+    const rects = visible.map((s) => s.getBoundingClientRect());
+    const left = Math.min(...rects.map((r) => r.left));
+    const top = Math.min(...rects.map((r) => r.top));
+    const right = Math.max(...rects.map((r) => r.right));
+    const bottom = Math.max(...rects.map((r) => r.bottom));
+    stage = { left, top, width: right - left, height: bottom - top };
+    screens.forEach((s, i) => {
+      const r = s.getBoundingClientRect();
+      canvases[i].width = Math.round(r.width * dpr);
+      canvases[i].height = Math.round(r.height * dpr);
+      canvases[i].dataset.x = r.left - left;
+      canvases[i].dataset.y = r.top - top;
+      canvases[i].dataset.w = r.width;
+      canvases[i].dataset.h = r.height;
+    });
+  }
+
+  function draw() {
+    if (!stage || film.readyState < 2) return;
+    const vw = film.videoWidth;
+    const vh = film.videoHeight;
+    // Cover: scale the film so it fills the whole stage, centred.
+    const scale = Math.max(stage.width / vw, stage.height / vh);
+    const offX = (vw * scale - stage.width) / 2;
+    const offY = (vh * scale - stage.height) / 2;
+    canvases.forEach((c, i) => {
+      if (!c.width) return;
+      const x = +c.dataset.x, y = +c.dataset.y, w = +c.dataset.w, h = +c.dataset.h;
+      ctxs[i].drawImage(film, (x + offX) / scale, (y + offY) / scale, w / scale, h / scale, 0, 0, c.width, c.height);
+    });
+  }
+
+  function loop() { draw(); requestAnimationFrame(loop); }
+
+  const start = () => { measure(); if (reduced) { film.pause(); draw(); } else { film.play().catch(() => {}); loop(); } };
+  film.addEventListener('loadeddata', start, { once: true });
+  window.addEventListener('resize', () => { measure(); draw(); });
+  // The row fades in with a transform; measure again once it has settled.
+  row.addEventListener('reveal', () => setTimeout(() => { measure(); draw(); }, 950));
+})();
