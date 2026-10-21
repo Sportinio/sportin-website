@@ -721,13 +721,15 @@ body { background: var(--page); }
 .problem__steps { margin-top: clamp(36px, 5vw, 56px); display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: start; gap: 0 clamp(12px, 1.8vw, 24px); }
 .problem__arrow { align-self: center; margin-top: -40px; color: var(--slate); font-size: 18px; opacity: 0.6; }
 .problem__step { display: flex; flex-direction: column; }
-.dots { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(5px, 0.7vw, 9px); padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-.dot { width: 100%; aspect-ratio: 1; border-radius: 50%; background: var(--line); transition: background-color 0.5s var(--ease); transition-delay: calc(var(--d, 0s) + var(--k, 0s)); }
+/* Whole-pixel dots, spread evenly: fractional sizes blur into uneven, oval-looking edges. */
+.dots { --dot: 10px; display: grid; grid-template-columns: repeat(12, var(--dot)); justify-content: space-between; row-gap: var(--dot); padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.dot { width: var(--dot); height: var(--dot); border-radius: 50%; background: var(--line); transition: background-color 0.5s var(--ease); transition-delay: calc(var(--d, 0s) + var(--k, 0s)); }
 .problem.is-in .dot.is-on { background: var(--blue); }
 .problem__step--last .dots { border-bottom: 1.5px solid var(--blue); }
 .problem__n { margin-top: 14px; font-family: var(--mono); font-size: 12px; color: var(--slate); }
 .problem__label { margin-top: 4px; font-weight: 700; font-size: clamp(14px, 1.2vw, 16px); }
 .problem__step--last .problem__label { color: var(--blue); }
+@media (max-width: 1100px) { .dots { --dot: 8px; } }
 @media (max-width: 760px) {
   .problem__steps { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
   .problem__arrow { display: none; }
