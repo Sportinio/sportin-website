@@ -366,3 +366,26 @@
   media.addEventListener('change', label);
   label();
 })();
+
+// The problem: one shuffled order shared by all four grids, so each stage is a subset of the
+// one before (everyone still active at stage 4 was active at stages 2 and 3).
+(() => {
+  const fig = document.getElementById('problem');
+  if (!fig) return;
+  const N = 108;
+  let seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const order = [...Array(N).keys()].map((i) => ({ i, r: rnd() })).sort((a, b) => a.r - b.r);
+  const rank = new Array(N);
+  order.forEach((o, k) => { rank[o.i] = k; });
+  fig.querySelectorAll('.problem__step').forEach((step) => {
+    const active = Math.round(N * Number(step.dataset.share));
+    const grid = step.querySelector('.dots');
+    for (let i = 0; i < N; i++) {
+      const d = document.createElement('i');
+      d.className = rank[i] < active ? 'dot is-on' : 'dot';
+      d.style.setProperty('--k', `${((i % 12) * 0.012 + Math.floor(i / 12) * 0.02).toFixed(3)}s`);
+      grid.appendChild(d);
+    }
+  });
+})();

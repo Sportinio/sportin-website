@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" />
-  <link rel="stylesheet" href="/assets/site/site.css?v=dark1" />
+  <link rel="stylesheet" href="/assets/site/site.css?v=problem2" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -55,31 +55,12 @@
         <a class="btn btn--ghost" href="#belief">See how we do it ↓</a>
       </div>
 
-      <figure class="pulse hero__chart" id="pulse" data-reveal="fade" style="--d:.2s">
-        <div class="pulse__frame">
-          <svg viewBox="0 0 1200 250" role="img" aria-label="Illustration: community activity spikes on event days and goes quiet in between. With SportIn, activity stays up every day.">
-            <defs>
-              <linearGradient id="pulseFill" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0" stop-color="#0751fb" stop-opacity=".14" />
-                <stop offset="1" stop-color="#0751fb" stop-opacity="0" />
-              </linearGradient>
-            </defs>
-            <line class="pulse__tick" x1="200" x2="200" y1="14" y2="205" />
-            <line class="pulse__tick" x1="600" x2="600" y1="14" y2="205" />
-            <line class="pulse__tick" x1="1000" x2="1000" y1="14" y2="205" />
-            <path class="pulse__area" d="M0,150 C60,120 100,110 150,105 S190,40 200,40 S240,95 280,92 S360,80 400,85 S470,70 520,78 S590,35 600,30 S650,80 690,76 S780,62 820,70 S900,55 950,60 S990,22 1000,18 S1050,62 1090,58 S1160,50 1200,48 L1200,205 L0,205 Z" />
-            <path class="pulse__quiet" d="M0,192 L170,190 L188,120 L200,44 L213,132 L232,188 L570,192 L588,112 L600,54 L613,140 L632,190 L970,192 L988,104 L1000,34 L1013,130 L1032,188 L1200,192" />
-            <path class="pulse__alive" d="M0,150 C60,120 100,110 150,105 S190,40 200,40 S240,95 280,92 S360,80 400,85 S470,70 520,78 S590,35 600,30 S650,80 690,76 S780,62 820,70 S900,55 950,60 S990,22 1000,18 S1050,62 1090,58 S1160,50 1200,48" />
-            <text class="pulse__event" x="200" y="232" text-anchor="middle">Match day</text>
-            <text class="pulse__event" x="600" y="232" text-anchor="middle">Launch</text>
-            <text class="pulse__event" x="1000" y="232" text-anchor="middle">Campaign</text>
-          </svg>
-        </div>
-        <figcaption class="pulse__legend">
-          <span class="pulse__key"><span class="pulse__swatch"></span>Community activity today</span>
-          <span class="pulse__key"><span class="pulse__swatch pulse__swatch--alive"></span>With SportIn</span>
-          <span class="pulse__note">Illustration</span>
-        </figcaption>
+      <figure class="problem hero__chart" id="problem" data-reveal="fade" style="--d:.2s" aria-labelledby="problemTitle">
+        <p class="eyebrow">The problem</p>
+        <h2 class="display problem__title" id="problemTitle">A large community is not the same as an active one.</h2>
+        <p class="problem__lede">Between events, most members have few ways to take part, come back or buy.</p>
+        <div class="problem__steps"><div class="problem__step" data-share="1" style="--d:0.00s"><div class="dots" aria-hidden="true"></div><span class="problem__n">01</span><span class="problem__label">Reachable members</span></div><span class="problem__arrow" aria-hidden="true">→</span><div class="problem__step" data-share="0.42" style="--d:0.35s"><div class="dots" aria-hidden="true"></div><span class="problem__n">02</span><span class="problem__label">Identified members</span></div><span class="problem__arrow" aria-hidden="true">→</span><div class="problem__step" data-share="0.16" style="--d:0.70s"><div class="dots" aria-hidden="true"></div><span class="problem__n">03</span><span class="problem__label">Recurring participants</span></div><span class="problem__arrow" aria-hidden="true">→</span><div class="problem__step problem__step--last" data-share="0.06" style="--d:1.05s"><div class="dots" aria-hidden="true"></div><span class="problem__n">04</span><span class="problem__label">Paying members</span></div></div>
+        <figcaption class="problem__note">Conceptual shapes, not measured conversion rates.</figcaption>
       </figure>
     </div>
   </section>
@@ -483,6 +464,6 @@
   </div>
 </footer>
 
-<script src="/assets/site/site.js?v=dark1" defer></script>
+<script src="/assets/site/site.js?v=problem1" defer></script>
 </body>
 </html>
