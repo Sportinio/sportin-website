@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" />
-  <link rel="stylesheet" href="/assets/site/site.css?v=blocks1" />
+  <link rel="stylesheet" href="/assets/site/site.css?v=layers2" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -43,7 +43,7 @@
 <main id="top">
 
   <!-- WHY: the opening belief -->
-  <section class="hero" id="why" aria-labelledby="heroTitle">
+  <section class="hero block" id="why" aria-labelledby="heroTitle">
     <div class="wrap">
       <p class="eyebrow" data-reveal><span class="eyebrow__dot"></span>What we do</p>
       <h1 class="display display--xl hero__title" id="heroTitle" data-reveal style="--d:.08s">Give every member a part to <em>play.</em></h1>
@@ -53,7 +53,7 @@
         <a class="btn btn--ghost" href="#belief">See how we do it ↓</a>
       </div>
 
-      <figure class="pulse" id="pulse" data-reveal="fade" style="--d:.2s">
+      <figure class="pulse hero__chart" id="pulse" data-reveal="fade" style="--d:.2s">
         <div class="pulse__frame">
           <svg viewBox="0 0 1200 250" role="img" aria-label="Illustration: community activity spikes on event days and goes quiet in between. With SportIn, activity stays up every day.">
             <defs>
@@ -141,7 +141,7 @@
   </section>
 
   <!-- ACTIVE ECOSYSTEMS -->
-  <section class="sec sec--infield" id="ecosystem" aria-labelledby="ecoTitle">
+  <section class="sec ends-round" id="ecosystem" aria-labelledby="ecoTitle">
     <div class="wrap">
       <div class="sec-head">
         <p class="from" data-reveal>Active ecosystems</p>
@@ -179,68 +179,8 @@
     </div>
   </section>
 
-  <!-- NEW REVENUE -->
-  <section class="sec" id="revenue" aria-labelledby="revTitle">
-    <div class="wrap split">
-      <div class="split__aside">
-        <p class="from" data-reveal>New revenue</p>
-        <h2 class="display display--l" id="revTitle" data-reveal style="--d:.06s">Participation becomes <em>revenue.</em></h2>
-        <p class="lede" data-reveal style="--d:.12s">When people show up every day, partners want to be part of it. The game creates new places to sell.</p>
-      </div>
-      <ul class="list">
-        <li class="list__item" data-reveal>
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></span>
-          <div><h3 class="h3 list__title">Sponsored leagues and seasons</h3><p class="list__text">A partner's name on the league, the season or the trophy, seen by every member, every day.</p></div>
-        </li>
-        <li class="list__item" data-reveal style="--d:.08s">
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span>
-          <div><h3 class="h3 list__title">Partners who found a House</h3><p class="list__text">Brands found a House on the map. Members run under its colours and claim territory in its name.</p></div>
-        </li>
-        <li class="list__item" data-reveal style="--d:.16s">
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1.5S9 8 12 8Zm0 0c2-4 6-4 6-1.5S15 8 12 8Z"/></svg></span>
-          <div><h3 class="h3 list__title">Brand-funded rewards</h3><p class="list__text">Partners fund the prizes members play for, and meet people at the moment they earn them.</p></div>
-        </li>
-        <li class="list__item" data-reveal style="--d:.24s">
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 0 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v3Z"/><path d="M14 5v14" stroke-dasharray="2 2.5"/></svg></span>
-          <div><h3 class="h3 list__title">Premium seasons and team entries</h3><p class="list__text">Members and teams pay to enter the seasons they care about most.</p></div>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- MEASURABLE IMPACT -->
-  <section class="sec sec--infield" id="impact" aria-labelledby="impactTitle">
-    <div class="wrap split">
-      <div class="split__aside">
-        <p class="from" data-reveal>Measurable impact</p>
-        <h2 class="display display--l" id="impactTitle" data-reveal style="--d:.06s">Impact you can <em>measure.</em></h2>
-        <p class="lede" data-reveal style="--d:.12s">Active members, return rate, kilometres moved and goals reached for a cause, in one report you can share with partners and your board.</p>
-      </div>
-      <div class="card report" id="report" data-reveal="scale">
-        <div class="report__head">
-          <span class="report__title">Season report</span>
-          <span class="report__tag">Sample, illustrative figures</span>
-        </div>
-        <div class="report__metrics">
-          <div class="metric"><div class="metric__num" data-count="1248">0</div><div class="metric__label">Active members</div></div>
-          <div class="metric"><div class="metric__num" data-count="71" data-suffix="%">0</div><div class="metric__label">Came back every week</div></div>
-          <div class="metric"><div class="metric__num" data-count="38420">0</div><div class="metric__label">Kilometres moved</div></div>
-          <div class="metric"><div class="metric__num" data-count="12" data-suffix=" / 12">0</div><div class="metric__label">Weeks with a live game</div></div>
-        </div>
-        <div class="bars" aria-hidden="true">
-          <i class="bars__bar" style="--h:34%"></i><i class="bars__bar" style="--h:42%"></i><i class="bars__bar" style="--h:47%"></i><i class="bars__bar" style="--h:55%"></i><i class="bars__bar" style="--h:58%"></i><i class="bars__bar" style="--h:66%"></i><i class="bars__bar" style="--h:63%"></i><i class="bars__bar" style="--h:72%"></i><i class="bars__bar" style="--h:78%"></i><i class="bars__bar" style="--h:84%"></i><i class="bars__bar" style="--h:88%"></i><i class="bars__bar" style="--h:96%"></i>
-        </div>
-        <div class="bars__axis"><span>Week 1</span><span>Weekly active members</span><span>Week 12</span></div>
-        <div class="goal">
-          <div class="goal__row"><span>Kilometres for a local charity</span><strong>82%</strong></div>
-          <div class="goal__track"><div class="goal__fill" style="--w:82%"></div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- GAMIFYING REAL-WORLD MOVEMENT -->
-  <section class="sec" id="games" aria-labelledby="gamesTitle">
+  <section class="sec band band--pale" id="games" aria-labelledby="gamesTitle">
     <div class="wrap">
       <div class="sec-head">
         <p class="from" data-reveal>Gamifying real-world movement</p>
@@ -323,7 +263,7 @@
   </section>
 
   <!-- HOW IT WORKS -->
-  <section class="sec sec--infield" id="how-it-works" aria-labelledby="howTitle">
+  <section class="sec" id="how-it-works" aria-labelledby="howTitle">
     <div class="wrap">
       <div class="sec-head">
         <p class="eyebrow" data-reveal>How it works</p>
@@ -353,6 +293,65 @@
         <div class="choice" data-reveal style="--d:.16s"><p class="choice__if">You want your own app</p><p class="choice__then">We launch a fully branded app for you.</p></div>
       </div>
     </div>
+  </section>
+
+  <!-- NEW REVENUE + MEASURABLE IMPACT, one inset block -->
+  <section class="sec block" id="revenue" aria-labelledby="revTitle">
+    <div class="wrap split">
+      <div class="split__aside">
+        <p class="from" data-reveal>New revenue</p>
+        <h2 class="display display--l" id="revTitle" data-reveal style="--d:.06s">Participation becomes <em>revenue.</em></h2>
+        <p class="lede" data-reveal style="--d:.12s">When people show up every day, partners want to be part of it. The game creates new places to sell.</p>
+      </div>
+      <ul class="list">
+        <li class="list__item" data-reveal>
+          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></span>
+          <div><h3 class="h3 list__title">Sponsored leagues and seasons</h3><p class="list__text">A partner's name on the league, the season or the trophy, seen by every member, every day.</p></div>
+        </li>
+        <li class="list__item" data-reveal style="--d:.08s">
+          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span>
+          <div><h3 class="h3 list__title">Partners who found a House</h3><p class="list__text">Brands found a House on the map. Members run under its colours and claim territory in its name.</p></div>
+        </li>
+        <li class="list__item" data-reveal style="--d:.16s">
+          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1.5S9 8 12 8Zm0 0c2-4 6-4 6-1.5S15 8 12 8Z"/></svg></span>
+          <div><h3 class="h3 list__title">Brand-funded rewards</h3><p class="list__text">Partners fund the prizes members play for, and meet people at the moment they earn them.</p></div>
+        </li>
+        <li class="list__item" data-reveal style="--d:.24s">
+          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 0 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v3Z"/><path d="M14 5v14" stroke-dasharray="2 2.5"/></svg></span>
+          <div><h3 class="h3 list__title">Premium seasons and team entries</h3><p class="list__text">Members and teams pay to enter the seasons they care about most.</p></div>
+        </li>
+      </ul>
+    </div>
+  
+    <div class="block__split" id="impact" aria-labelledby="impactTitle">
+    <div class="wrap split">
+      <div class="split__aside">
+        <p class="from" data-reveal>Measurable impact</p>
+        <h2 class="display display--l" id="impactTitle" data-reveal style="--d:.06s">Impact you can <em>measure.</em></h2>
+        <p class="lede" data-reveal style="--d:.12s">Active members, return rate, kilometres moved and goals reached for a cause, in one report you can share with partners and your board.</p>
+      </div>
+      <div class="card report" id="report" data-reveal="scale">
+        <div class="report__head">
+          <span class="report__title">Season report</span>
+          <span class="report__tag">Sample, illustrative figures</span>
+        </div>
+        <div class="report__metrics">
+          <div class="metric"><div class="metric__num" data-count="1248">0</div><div class="metric__label">Active members</div></div>
+          <div class="metric"><div class="metric__num" data-count="71" data-suffix="%">0</div><div class="metric__label">Came back every week</div></div>
+          <div class="metric"><div class="metric__num" data-count="38420">0</div><div class="metric__label">Kilometres moved</div></div>
+          <div class="metric"><div class="metric__num" data-count="12" data-suffix=" / 12">0</div><div class="metric__label">Weeks with a live game</div></div>
+        </div>
+        <div class="bars" aria-hidden="true">
+          <i class="bars__bar" style="--h:34%"></i><i class="bars__bar" style="--h:42%"></i><i class="bars__bar" style="--h:47%"></i><i class="bars__bar" style="--h:55%"></i><i class="bars__bar" style="--h:58%"></i><i class="bars__bar" style="--h:66%"></i><i class="bars__bar" style="--h:63%"></i><i class="bars__bar" style="--h:72%"></i><i class="bars__bar" style="--h:78%"></i><i class="bars__bar" style="--h:84%"></i><i class="bars__bar" style="--h:88%"></i><i class="bars__bar" style="--h:96%"></i>
+        </div>
+        <div class="bars__axis"><span>Week 1</span><span>Weekly active members</span><span>Week 12</span></div>
+        <div class="goal">
+          <div class="goal__row"><span>Kilometres for a local charity</span><strong>82%</strong></div>
+          <div class="goal__track"><div class="goal__fill" style="--w:82%"></div></div>
+        </div>
+      </div>
+    </div>
+      </div>
   </section>
 
   <!-- TECHNOLOGY WE OWN -->
@@ -392,7 +391,7 @@
   </section>
 
   <!-- WHO IT'S FOR -->
-  <section class="sec sec--infield" id="who" aria-labelledby="whoTitle">
+  <section class="sec ends-round" id="who" aria-labelledby="whoTitle">
     <div class="wrap">
       <div class="sec-head">
         <p class="eyebrow" data-reveal>Who it's for</p>
@@ -409,7 +408,7 @@
   </section>
 
   <!-- STORIES -->
-  <section class="sec" id="stories" aria-labelledby="storiesTitle">
+  <section class="sec band band--vivid" id="stories" aria-labelledby="storiesTitle">
     <div class="wrap">
       <div class="sec-head">
         <p class="eyebrow" data-reveal>Stories</p>
@@ -442,23 +441,23 @@
   </section>
 
   <!-- VISION + CLOSING -->
-  <section class="sec closing" id="demo" aria-labelledby="closingTitle">
+  <section class="sec closing rises" id="demo" aria-labelledby="closingTitle">
     <svg class="closing__lanes" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <path d="M600,40 H820 A260 260 0 0 1 820,560 H380 A260 260 0 0 1 380,40 Z" />
       <path d="M600,90 H820 A210 210 0 0 1 820,510 H380 A210 210 0 0 1 380,90 Z" />
       <path d="M600,140 H820 A160 160 0 0 1 820,460 H380 A160 160 0 0 1 380,140 Z" />
     </svg>
     <div class="wrap closing__inner">
-      <img class="closing__logo" src="/assets/site/logo/sportin-wordmark-white.svg" alt="SportIn" width="208" height="25" data-reveal />
+      <img class="closing__logo" src="/assets/site/logo/sportin-wordmark-black.svg" alt="SportIn" width="208" height="25" data-reveal />
       <p class="closing__vision" data-reveal>Every move brings us closer.</p>
       <h2 class="display display--xl" id="closingTitle" data-reveal style="--d:.06s">Start with a pilot.</h2>
       <p class="closing__text" data-reveal style="--d:.12s">Tell us about your community. We'll design a first game with you and launch it together.</p>
-      <div data-reveal style="--d:.18s"><a class="btn btn--white" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo <span class="btn__arrow" aria-hidden="true">→</span></a></div>
+      <div data-reveal style="--d:.18s"><a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo <span class="btn__arrow" aria-hidden="true">→</span></a></div>
     </div>
   </section>
 </main>
 
-<footer class="foot">
+<footer class="foot block">
   <div class="wrap">
     <div class="foot__grid">
       <div>
@@ -482,6 +481,6 @@
   </div>
 </footer>
 
-<script src="/assets/site/site.js?v=blocks1" defer></script>
+<script src="/assets/site/site.js?v=layers1" defer></script>
 </body>
 </html>

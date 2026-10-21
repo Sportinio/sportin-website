@@ -591,27 +591,63 @@ button { font: inherit; color: inherit; }
   .sentence__w { opacity: 1; }
 }
 
-/* ---------- Rounded blocks (founder, 2026-10-21, after Calendly) ----------
-   Every section is a white block with soft corners on a SportIn blue-to-lilac field.
-   overflow: clip keeps the corners without breaking the sticky scenes inside. */
-:root { --block-r: 32px; --block-gap: 14px; --field: linear-gradient(165deg, #2f5bff 0%, #5d74fb 22%, #8d82f6 48%, #c39cf0 72%, #f1c1df 100%); }
+/* ---------- Layer system (design lead spec, 2026-10-21, after Calendly) ----------
+   Three layer types, each with one job: inset blocks frame and bookend the page; plain
+   sections on white are for reading; two full-bleed bands carry colour (pale for the games,
+   vivid for the community stories). Sections meet in different ways: a gap, a block edge,
+   a rounded layer over a band, a soft fade. Sticky scenes only ever sit under overflow: clip. */
+:root {
+  --page: #fff; --inset: 12px; --r-block: 32px; --r-card: 24px; --r-layer: 40px;
+  --band-pale: #e8eeff;
+  --band-vivid: linear-gradient(165deg, #2f5bff 0%, #5d74fb 22%, #8d82f6 48%, #c39cf0 72%, #f1c1df 100%);
+  --sec-pad: clamp(72px, 9vw, 128px);
+  --chart-hang: 120px;
+}
+html, body { overflow-x: clip; }
 html { scroll-padding-top: calc(var(--nav-h) + 24px); }
-body { background: #2f5bff var(--field) fixed; }
-main { padding: calc(var(--block-gap)) var(--block-gap) 0; display: flex; flex-direction: column; gap: var(--block-gap); }
-main > section { background: #fff; border-radius: var(--block-r); overflow: clip; }
-main > .sec--infield { background: #f7f8fc; }
-main > .closing { background: var(--blue); }
-.belief { padding-bottom: clamp(40px, 6vw, 80px); }
-.foot { margin: var(--block-gap); border-radius: var(--block-r); background: #fff; border-top: 0; }
+body { background: var(--page); }
 
-/* Floating rounded menu bar. */
-.nav { inset: 12px var(--block-gap) auto var(--block-gap); max-width: 1440px; margin: 0 auto; border-radius: 16px; background: #fff; border-bottom: 0; box-shadow: var(--shadow-sm); backdrop-filter: none; -webkit-backdrop-filter: none; }
+/* Inset blocks: hero, revenue + impact, footer. */
+.block { margin-inline: var(--inset); border-radius: var(--r-block); background: var(--infield); overflow: clip; }
+.hero.block { display: flow-root; margin-top: var(--inset); overflow: visible; padding-top: calc(var(--nav-h) + 12px + clamp(40px, 5.5vw, 76px)); padding-bottom: 0; }
+/* The chart card hangs out of the hero onto the white page, like Calendly's product panel. */
+.hero__chart { position: relative; z-index: 2; margin: clamp(48px, 6vw, 72px) 0 calc(-1 * var(--chart-hang)); padding: 28px 28px 20px; border-radius: var(--r-card); background: #fff; border: 1px solid var(--line); }
+.hero__chart .pulse__frame { border: 0; }
+.hero + .belief { padding-top: calc(var(--chart-hang) + var(--sec-pad)); }
+.sec.block { padding-block: var(--sec-pad); }
+.block__split { margin-top: var(--sec-pad); padding-top: var(--sec-pad); border-top: 1px solid var(--line); }
+.foot.block { margin: var(--inset); border-top: 0; }
+
+/* Plain sections sit straight on the white page. */
+.belief { padding-bottom: var(--sec-pad); }
+.sentence { height: 160vh; }
+
+/* A white layer that ends in rounded corners over the band below it. */
+.ends-round { position: relative; z-index: 1; background: var(--page); border-radius: 0 0 var(--r-layer) var(--r-layer); }
+/* Full-bleed bands pull up under that layer by one radius and pad it back, so the band colour
+   fills the corners with no seam at any zoom. */
+.band { position: relative; z-index: 0; margin-top: calc(-1 * var(--r-layer)); padding-block: calc(var(--r-layer) + var(--sec-pad)) var(--sec-pad); overflow-x: clip; }
+.band--pale { background: linear-gradient(180deg, var(--band-pale) 0 72%, var(--page) 100%); }
+.band--vivid { background: var(--band-vivid); padding-bottom: calc(var(--r-layer) + var(--sec-pad)); }
+.band--vivid .eyebrow, .band--vivid .display, .band--vivid .display em { color: #fff; }
+.band--vivid .card { border-color: transparent; }
+/* The white layer that rises out of the vivid band with rounded top corners. */
+.rises { position: relative; z-index: 1; margin-top: calc(-1 * var(--r-layer)); background: var(--page); border-radius: var(--r-layer) var(--r-layer) 0 0; }
+.closing.rises { color: var(--ink); }
+.closing.rises .closing__vision { color: var(--slate); }
+.closing.rises .closing__text { color: var(--slate); }
+.closing.rises .closing__lanes path { stroke: rgba(7, 81, 251, 0.1); }
+
+/* Floating rounded menu bar (the one element allowed the small shadow). */
+.nav { inset: 12px var(--inset) auto var(--inset); max-width: 1440px; margin: 0 auto; border-radius: 16px; background: #fff; border-bottom: 0; box-shadow: var(--shadow-sm); backdrop-filter: none; -webkit-backdrop-filter: none; }
 .nav.is-scrolled { border-bottom: 0; }
-.hero { padding-top: calc(var(--nav-h) + 12px + clamp(40px, 5.5vw, 76px)); }
 
 @media (max-width: 960px) {
-  .nav__links { top: calc(var(--nav-h) + 20px); left: var(--block-gap); right: var(--block-gap); border-radius: 16px; border-bottom: 0; box-shadow: var(--shadow-sm); }
+  .nav__links { top: calc(var(--nav-h) + 20px); left: var(--inset); right: var(--inset); border-radius: 16px; border-bottom: 0; box-shadow: var(--shadow-sm); }
 }
 @media (max-width: 600px) {
-  :root { --block-r: 24px; --block-gap: 8px; }
+  :root { --inset: 8px; --r-block: 24px; --r-layer: 28px; --sec-pad: 64px; --chart-hang: 48px; }
+  .sentence { height: 140vh; }
+  .band--pale { background: linear-gradient(180deg, var(--band-pale) 0 85%, var(--page) 100%); }
+  .hero__chart { padding: 18px 14px 14px; }
 }
