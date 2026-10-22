@@ -378,7 +378,7 @@ function paint(t) {
   // Camera: close on the single plate (pulling back a little mid-flip), out for the split stack,
   // and at eye level for the standing chip, so it reads truly vertical.
   const aspectK = Math.max(1, 1.45 / (W / H));
-  const dist = (lerp(lerp(8.8, 18, split), 11, up) + 1.4 * bob) * aspectK;
+  const dist = (lerp(lerp(10.4, 18, split), 11, up) + 1.4 * bob) * aspectK;
   const look = new THREE.Vector3(0, lerp(lerp(0, 0.05, split), chip.position.y, up), 0);
   const ey = lerp(0.62, 0.1, up); const ez = Math.sqrt(1 - ey * ey);
   camera.position.set(look.x + dist * 0.05 * (1 - up), look.y + dist * ey, look.z + dist * ez);
