@@ -1,7 +1,7 @@
-/* Features: a grey rounded section after the engine. Scrolling down moves the feature panels
-   sideways, one panel per scroll step (snap points set in deck.js). Panel 1 is Competitions with
-   its two formats; the other panels follow the same frame. */
-.feat { position: relative; height: calc(100vh + 3 * 80vh); }
+/* Competitions: a grey rounded section after the engine. Scrolling down moves its panels
+   sideways, one per scroll step (snap points set in deck.js): League (Champions League style and
+   national division style), then Conquer (Game of Run). */
+.feat { position: relative; height: calc(100vh + 1 * 80vh); } /* two panels: League, Conquer */
 .feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--infield); }
 html.is-full .feat__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
 html.is-full .feat .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
@@ -70,8 +70,62 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .tbl__row--head span:nth-child(2) { font-family: var(--mono); font-size: 11px; color: var(--slate); }
 .tbl__row.is-up { background: var(--blue-soft); }
 
-/* Placeholder panels for the next features. */
-.feat__soon { display: grid; place-items: center; width: 100%; max-width: 1120px; height: min(420px, 100%); border-radius: 16px; background: var(--surface); border: 1px dashed var(--line); font-family: var(--mono); font-size: 12px; color: var(--slate); }
+/* Card rows for the other features. */
+.feat__cards { display: grid; gap: 20px; width: 100%; max-width: 1120px; align-items: stretch; }
+.feat__cards--3 { grid-template-columns: repeat(3, 1fr); }
+.feat__cards--lb { grid-template-columns: 1.4fr 1fr; }
+.feat__cards--rw { grid-template-columns: 1fr 1.2fr; }
+.fmt__foot { margin: auto 0 0; font-size: 13px; color: var(--slate); }
+.bar { height: 8px; border-radius: 4px; background: var(--infield); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 100%; border-radius: 4px; background: var(--blue); transform-origin: left; transform: scaleX(var(--f, 0)); transition: transform 1200ms cubic-bezier(0.23, 1, 0.32, 1); }
+
+/* Step challenge ring. */
+.ring { position: relative; display: grid; place-items: center; }
+.ring svg { width: min(190px, 80%); height: auto; transform: rotate(-90deg); }
+.ring__track, .ring__bar { fill: none; stroke-width: 10; }
+.ring__track { stroke: var(--infield); }
+.ring__bar { stroke: var(--blue); stroke-linecap: round; stroke-dasharray: 314.16; stroke-dashoffset: calc(314.16 * (1 - var(--f, 0))); transition: stroke-dashoffset 1400ms cubic-bezier(0.23, 1, 0.32, 1); }
+.ring__num { position: absolute; display: grid; justify-items: center; gap: 2px; }
+.ring__num b, .dist b, .pts b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.ring__num b { font-size: 30px; }
+.ring__num span, .dist span { font-size: 12px; color: var(--slate); }
+.dist { display: flex; align-items: baseline; gap: 8px; }
+.dist b { font-size: 44px; line-height: 1; }
+.mini, .teams, .feed, .perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.mini li { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 10px; background: var(--infield); font-size: 13px; color: var(--ink); }
+.mini em, .teams em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.teams li { display: grid; grid-template-columns: 96px 1fr 56px; align-items: center; gap: 10px; font-size: 13px; color: var(--ink); }
+.teams em { text-align: right; }
+
+/* Leaderboard. */
+.lanes { display: flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--infield); }
+.lanes span { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--slate); transition: background-color 300ms ease-out, color 300ms ease-out; }
+.lanes span.is-on { background: var(--blue); color: #fff; }
+.rank { position: relative; height: calc(5 * 52px); }
+.rank__row { position: absolute; left: 0; right: 0; top: 0; height: 44px; display: grid; grid-template-columns: 28px 1fr auto; align-items: center; padding: 0 14px; border-radius: 10px; background: var(--infield); font-size: 14px; color: var(--ink); transform: translateY(calc(var(--slot, 0) * 52px)); transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1), background-color 300ms ease-out, box-shadow 300ms ease-out; }
+.rank__row span:first-child { font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.rank__row em { font-style: normal; font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.rank__row.is-first { background: var(--surface); box-shadow: inset 0 0 0 2px var(--blue); }
+.rank__row.is-up { background: var(--blue-soft); }
+.live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--blue); animation: int-live 1.6s ease-in-out infinite; }
+.feed li { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--infield); font-size: 13px; color: var(--ink); animation: feed-in 500ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+.feed li em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--slate); white-space: nowrap; }
+@keyframes feed-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+
+/* Rewards. */
+.pts { display: flex; align-items: baseline; gap: 10px; }
+.pts b { font-size: 64px; line-height: 1; }
+.pts span { font-family: var(--mono); font-size: 16px; color: var(--blue); }
+.track { display: grid; gap: 10px; margin-top: auto; }
+.track__marks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.perks li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 12px; background: var(--infield); transition: background-color 300ms ease-out, box-shadow 300ms ease-out; }
+.perks li b { display: block; font-size: 15px; color: var(--ink); }
+.perks li span { font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.perks li em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--slate); }
+.perks li.is-on { background: #effaf5; box-shadow: inset 0 0 0 2px #0f9f6e; }
+.perks li.is-on em { color: #0f9f6e; }
+.perks li.is-redeem { background: #0f9f6e; box-shadow: none; }
+.perks li.is-redeem b, .perks li.is-redeem span, .perks li.is-redeem em { color: #fff; }
 
 /* Feature rail along the bottom: where you are, and a way to jump. */
 .feat__nav { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
@@ -82,9 +136,25 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .feat__nav button[aria-current="true"] { background: var(--blue-soft); color: var(--blue); }
 
 @media (max-width: 1100px) {
-  .feat__panel { grid-template-columns: 1fr; align-content: center; gap: 24px; }
-  .feat__formats { grid-template-columns: 1fr; }
+  .feat__formats, .feat__cards--3, .feat__cards--lb, .feat__cards--rw { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rail::after, .rail li, .rail li i, .cup [data-stage], .tbl__row { transition: none; }
+  .rail::after, .rail li, .rail li i, .cup [data-stage], .tbl__row, .bar i, .ring__bar, .rank__row { transition: none; }
+  .feed li, .live-dot { animation: none; }
 }
+
+/* Conquer: Game of Run territory map. */
+.feat__cards--conq { grid-template-columns: 1.6fr 1fr; }
+.fmt--map { gap: 12px; }
+.hexmap-f { width: 100%; height: auto; max-height: 380px; }
+.hexmap-f polygon { stroke: var(--surface); stroke-width: 2; transition: fill 400ms ease-out; }
+.hexmap-f .runner { fill: var(--surface); stroke: var(--blue); stroke-width: 3; }
+.terr { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.terr li { display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 14px; color: var(--ink); }
+.terr li > span { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.terr li > span i { width: 10px; height: 10px; border-radius: 3px; }
+.terr li em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--slate); justify-self: end; margin-top: -24px; }
+.terr li[data-team="0"] > span i, .terr li[data-team="0"] .bar i { background: #0751fb; }
+.terr li[data-team="1"] > span i, .terr li[data-team="1"] .bar i { background: #6f97ff; }
+.terr li[data-team="2"] > span i, .terr li[data-team="2"] .bar i { background: #9aa3b5; }
+@media (max-width: 1100px) { .feat__cards--conq { grid-template-columns: 1fr; } }

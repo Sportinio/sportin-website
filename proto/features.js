@@ -1,5 +1,6 @@
-// Features: the grey section after the engine. Scrolling down moves the panels sideways, one
-// panel per scroll step, at the same eased pace as the 3D scenes (scroll-follow.js).
+// Competitions: the grey section after the engine. Scrolling down moves the panels sideways, one
+// panel per scroll step, at the same eased pace as the 3D scenes (scroll-follow.js): League, then Conquer.
+// Demos for other feature panels stay ready (guarded) in case those panels come back.
 // Panel 1, Competitions, shows two formats that play themselves while the panel is on screen:
 // a Champions League style cup walks through its stages, and a national league plays a matchday
 // and updates its table.
@@ -78,20 +79,143 @@ if (sec) {
     setRow(climber, climber.dataset.after); setRow(passed, passed.dataset.after);
   }
 
-  // ---------- Run the demos only while Competitions is on screen ----------
-  let visible = false; let timer = 0; let tick = 0;
-  function startDemos() {
-    if (timer) return;
-    if (RM) { showStage(railItems.length - 1); leagueAfter(); return; }
-    tick = 0; showStage(0); leagueBefore();
-    timer = window.setInterval(() => {
-      tick += 1;
-      showStage(tick % railItems.length);
-      if (tick % 5 === 2) leagueAfter();
-      if (tick % 5 === 0) leagueBefore();
-    }, 1400);
+  // ---------- Small helpers for the other panels ----------
+  const fmtNum = (n) => Math.round(n).toLocaleString('en-US');
+  function countUp(el, to, ms, onStep) {
+    const t0 = performance.now(); let raf = 0;
+    const step = (now) => { const u = Math.min(1, (now - t0) / ms); const e = 1 - (1 - u) ** 3; el.textContent = fmtNum(to * e); if (onStep) onStep(to * e); if (u < 1) raf = requestAnimationFrame(step); };
+    if (RM) { el.textContent = fmtNum(to); if (onStep) onStep(to); return () => {}; }
+    raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
   }
-  function stopDemos() { window.clearInterval(timer); timer = 0; }
+  const panelOf = (name) => sec.querySelector(`[data-demo="${name}"]`);
+
+  // ---------- Demos, one per panel, running only while that panel is on screen ----------
+  const demos = {}; // keyed by each panel's data-demo name
+  // Competitions: the cup walks through its stages; the league plays a matchday.
+  { let timer = 0; let tick = 0;
+    demos.competitions = ({
+      start() {
+        if (RM) { showStage(railItems.length - 1); leagueAfter(); return; }
+        tick = 0; showStage(0); leagueBefore();
+        timer = window.setInterval(() => { tick += 1; showStage(tick % railItems.length); if (tick % 5 === 2) leagueAfter(); if (tick % 5 === 0) leagueBefore(); }, 1400);
+      },
+      stop() { window.clearInterval(timer); timer = 0; },
+    }); }
+  // Challenges: the ring and the bars fill, the numbers count up.
+  if (panelOf('challenges')) { const box = panelOf('challenges'); let cancels = [];
+    demos.challenges = ({
+      start() {
+        box.querySelector('.ring').style.setProperty('--f', '0.74');
+        box.querySelectorAll('.bar i').forEach((b) => { b.style.setProperty('--f', b.dataset.fill); });
+        cancels = [...box.querySelectorAll('[data-count]')].map((el) => countUp(el, Number(el.dataset.count), 1400));
+      },
+      stop() {
+        cancels.forEach((c) => c()); cancels = [];
+        box.querySelector('.ring').style.setProperty('--f', '0'); box.querySelectorAll('.bar i').forEach((b) => b.style.setProperty('--f', '0'));
+        box.querySelectorAll('[data-count]').forEach((el) => { el.textContent = '0'; });
+      },
+    }); }
+  // Leaderboards: the lanes switch, the ranking re-sorts (one member climbs), the live feed ticks.
+  if (panelOf('leaderboard')) { const box = panelOf('leaderboard'); const lanes = [...box.querySelectorAll('.lanes span')]; const rowsLb = [...box.querySelectorAll('.rank__row')];
+    const feed = box.querySelector('.feed');
+    const VALS = [[42, 39, 35, 33, 30], [18, 21, 15, 24, 12], [128, 121, 117, 134, 98]]; // per lane, per member
+    const UNIT = [' km', ' km', ' km'];
+    const EVENTS = [['Ana M. walked 2.4 km', 'now'], ['Mihai D. ran 5 km', 'now'], ['Ioana C. rode 18 km', '1 min'], ['Radu P. walked 6,200 steps', '2 min'], ['Elena S. ran 3 km', '3 min'], ['Park Crew joined the challenge', '4 min']];
+    let lane = 0; let timer = 0; let ev = 0;
+    function showLane(l) {
+      lane = l; lanes.forEach((sp, i) => sp.classList.toggle('is-on', i === l));
+      const order = VALS[l].map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]).map(([, i]) => i);
+      rowsLb.forEach((row, i) => {
+        const slot = order.indexOf(i); const was = Number(row.style.getPropertyValue('--slot') || i);
+        row.style.setProperty('--slot', String(slot));
+        row.classList.toggle('is-first', slot === 0); row.classList.toggle('is-up', slot < was && slot !== 0);
+        row.querySelector('span').textContent = String(slot + 1);
+        row.querySelector('em').textContent = `${VALS[l][i]}${UNIT[l]}`;
+      });
+    }
+    function pushEvent() {
+      const [txt, when] = EVENTS[ev % EVENTS.length]; ev += 1;
+      const li = document.createElement('li'); li.innerHTML = `<span>${txt}</span><em>${when}</em>`;
+      feed.prepend(li); while (feed.children.length > 5) feed.lastElementChild.remove();
+    }
+    demos.leaderboard = ({
+      start() {
+        feed.innerHTML = ''; ev = 0; for (let i = 0; i < 3; i++) pushEvent(); showLane(0);
+        if (RM) return;
+        let t = 0; timer = window.setInterval(() => { t += 1; pushEvent(); if (t % 2 === 0) showLane((lane + 1) % 3); }, 1300);
+      },
+      stop() { window.clearInterval(timer); timer = 0; },
+    }); }
+  // Rewards: points count up, perks unlock as the points pass them, the last one becomes Redeem.
+  if (panelOf('rewards')) { const box = panelOf('rewards'); const perks = [...box.querySelectorAll('.perks li')]; const bar = box.querySelector('.bar i');
+    const ptsEl = box.querySelector('[data-count]'); let cancel = () => {}; let timer = 0;
+    function run() {
+      perks.forEach((li) => { li.classList.remove('is-on', 'is-redeem'); li.querySelector('em').textContent = 'Locked'; });
+      bar.style.transition = 'none'; bar.style.setProperty('--f', '0');
+      cancel = countUp(ptsEl, 2500, 2600, (v) => {
+        bar.style.setProperty('--f', String(v / 2500));
+        perks.forEach((li, i) => {
+          const at = Number(li.dataset.at); const on = v >= at - 1;
+          if (on && !li.classList.contains('is-on')) { li.classList.add('is-on'); li.querySelector('em').textContent = 'Unlocked'; }
+          if (i === perks.length - 1 && v >= at - 1) { li.classList.add('is-redeem'); li.querySelector('em').textContent = 'Redeem'; }
+        });
+      });
+    }
+    demos.rewards = ({
+      start() { run(); if (!RM) timer = window.setInterval(run, 6000); },
+      stop() { cancel(); window.clearInterval(timer); timer = 0; },
+    }); }
+
+  // Conquer (Game of Run): a runner crosses the map and claims hexes; a rival takes some back;
+  // the territory shares update.
+  { const box = panelOf('conquer'); const svgMap = box.querySelector('.hexmap-f'); const NS = 'http://www.w3.org/2000/svg';
+    const COLORS = ['#0751fb', '#6f97ff', '#9aa3b5']; const FREE = '#e6e9ef';
+    const COLS_H = 13; const ROWS_H = 7; const R = 20; const HW = Math.sqrt(3) * R;
+    const hexes = [];
+    for (let r = 0; r < ROWS_H; r++) for (let q = 0; q < COLS_H; q++) {
+      const cx = HW * (q + 0.5 + (r % 2) * 0.5) + 4; const cy = R * 1.5 * r + R + 4;
+      const pts = Array.from({ length: 6 }, (_, i) => { const a = Math.PI / 180 * (60 * i - 30); return `${(cx + R * Math.cos(a)).toFixed(1)},${(cy + R * Math.sin(a)).toFixed(1)}`; }).join(' ');
+      const poly = document.createElementNS(NS, 'polygon'); poly.setAttribute('points', pts); svgMap.appendChild(poly);
+      hexes.push({ q, r, cx, cy, poly, owner: -1 });
+    }
+    svgMap.setAttribute('viewBox', `0 0 ${(HW * (COLS_H + 0.5) + 8).toFixed(0)} ${(R * 1.5 * (ROWS_H - 1) + 2 * R + 8).toFixed(0)}`);
+    const runner = document.createElementNS(NS, 'circle'); runner.setAttribute('r', '7'); runner.setAttribute('class', 'runner'); svgMap.appendChild(runner);
+    const terr = [...box.querySelectorAll('.terr li')];
+    const at = (q, r) => hexes[r * COLS_H + q];
+    // Start: three home areas. Then a fixed loop path for the runner (team 0) and a rival (team 1).
+    const HOME = [[[1, 1], [2, 1], [1, 2], [2, 2], [1, 3]], [[10, 1], [11, 1], [10, 2], [11, 2], [11, 3]], [[5, 5], [6, 5], [7, 5], [6, 6], [5, 6]]];
+    const PATH = [[2, 3], [3, 3], [4, 3], [5, 2], [6, 2], [7, 2], [8, 3], [8, 4], [7, 4], [6, 4], [5, 4], [4, 4], [3, 4], [3, 5], [4, 5]];
+    const RIVAL = [[9, 2], [9, 3], [8, 2], [7, 3], [9, 4]];
+    let timer = 0; let i = 0;
+    function own(h, team) { h.owner = team; h.poly.setAttribute('fill', team < 0 ? FREE : COLORS[team]); }
+    function shares() {
+      const n = hexes.length; const counts = [0, 0, 0]; hexes.forEach((h) => { if (h.owner >= 0) counts[h.owner] += 1; });
+      terr.forEach((li, k) => { const pct = Math.round((counts[k] / n) * 100); li.querySelector('.bar i').style.setProperty('--f', String(Math.min(1, pct / 30))); li.querySelector('em').textContent = `${pct}%`; });
+    }
+    function reset() {
+      hexes.forEach((h) => own(h, -1)); HOME.forEach((cells, team) => cells.forEach(([q, r]) => own(at(q, r), team)));
+      i = 0; const [q, r] = PATH[0]; runner.setAttribute('cx', at(q, r).cx); runner.setAttribute('cy', at(q, r).cy); shares();
+    }
+    function step() {
+      if (i < PATH.length) { const [q, r] = PATH[i]; const h = at(q, r); own(h, 0); runner.setAttribute('cx', h.cx); runner.setAttribute('cy', h.cy); }
+      if (i >= 6 && i - 6 < RIVAL.length) { const [q, r] = RIVAL[i - 6]; own(at(q, r), 1); }
+      shares(); i += 1;
+      if (i > PATH.length + 4) reset();
+    }
+    demos.conquer = {
+      start() { reset(); if (RM) { while (i < PATH.length) step(); return; } timer = window.setInterval(step, 420); },
+      stop() { window.clearInterval(timer); timer = 0; },
+    }; }
+
+  let visible = false; let running = '';
+  function runDemoFor(k) {
+    const holder = panels[k] && panels[k].querySelector('[data-demo]');
+    const want = visible && holder ? holder.dataset.demo : '';
+    if (want === running) return;
+    if (running && demos[running]) demos[running].stop();
+    running = want;
+    if (running && demos[running]) demos[running].start();
+  }
 
   // ---------- Sideways scroll ----------
   let current = -1;
@@ -103,7 +227,7 @@ if (sec) {
       nav.forEach((b, i) => b.setAttribute('aria-current', String(i === k)));
       panels.forEach((p, i) => p.toggleAttribute('inert', i !== k));
     }
-    if (visible && k === 0) startDemos(); else stopDemos();
+    runDemoFor(k);
   }
   const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint });
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; paint(follow.t); }).observe(sec);

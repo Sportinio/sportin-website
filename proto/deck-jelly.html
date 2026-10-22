@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
-  <link rel="stylesheet" href="/proto/features.css?v=2" />
+  <link rel="stylesheet" href="/proto/features.css?v=5" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -141,18 +141,18 @@
 
 
   <!-- FEATURES: a grey section that scrolls sideways, one feature per scroll -->
-  <section class="feat" id="features" data-steps="3" aria-label="Features">
+  <section class="feat" id="features" data-steps="1" aria-label="Competitions">
     <div class="feat__stick">
       <div class="feat__track">
         <article class="feat__panel" aria-labelledby="featCompTitle">
           <div class="feat__intro">
-            <p class="eng-k">Competitions</p>
-            <h2 class="feat__title" id="featCompTitle">Two formats, <em>one season</em></h2>
-            <p class="feat__lede">Run a cup like the Champions League, or a season like a national league. Both run themselves.</p>
+            <p class="eng-k">Competitions · League</p>
+            <h2 class="feat__title" id="featCompTitle">One league, <em>two styles</em></h2>
+            <p class="feat__lede">Run it like the Champions League, with groups and knockouts, or like a national division, with matches and a table.</p>
           </div>
-          <div class="feat__formats">
+          <div class="feat__formats" data-demo="competitions">
             <div class="fmt">
-              <div class="fmt__head"><h3 class="fmt__name">Champions League format</h3><span class="fmt__meta">Cup · 32 teams</span></div>
+              <div class="fmt__head"><h3 class="fmt__name">Champions League style</h3><span class="fmt__meta">Qualifying to final</span></div>
               <ol class="rail" aria-label="Stages"><li><i></i>Qualifying</li><li><i></i>Groups</li><li><i></i>Round of 16</li><li><i></i>Quarter-finals</li><li><i></i>Final</li></ol>
               <div class="cup" aria-hidden="true">
                   <div class="cup__qual" data-stage="0">
@@ -169,7 +169,7 @@
               </div>
             </div>
             <div class="fmt">
-              <div class="fmt__head"><h3 class="fmt__name">National league format</h3><span class="fmt__meta">Season · 10 teams</span></div>
+              <div class="fmt__head"><h3 class="fmt__name">National division style</h3><span class="fmt__meta">Matches and a table</span></div>
               <div class="league">
                 <div class="fix">
                   <span class="fix__day">Matchday 7</span>
@@ -189,11 +189,26 @@
             </div>
           </div>
         </article>
-        <article class="feat__panel" aria-label="Challenges"><div class="feat__intro"><p class="eng-k">Challenges</p><h2 class="feat__title">Done in <em>a weekend</em></h2><p class="feat__lede">Short goals anyone can join, from a step target to a weekend ride.</p></div><div class="feat__soon">Visual next</div></article>
-        <article class="feat__panel" aria-label="Leaderboards"><div class="feat__intro"><p class="eng-k">Leaderboards</p><h2 class="feat__title">Every move <em>counts live</em></h2><p class="feat__lede">Walks, runs and rides feed one ranking, updated as they happen.</p></div><div class="feat__soon">Visual next</div></article>
-        <article class="feat__panel" aria-label="Rewards"><div class="feat__intro"><p class="eng-k">Rewards</p><h2 class="feat__title">Effort earns <em>real perks</em></h2><p class="feat__lede">Points turn into perks your brand chooses, from a coffee to a spa day.</p></div><div class="feat__soon">Visual next</div></article>
+        <article class="feat__panel" aria-labelledby="featConqTitle">
+          <div class="feat__intro"><p class="eng-k">Competitions · Conquer</p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em></h2><p class="feat__lede">Every run claims ground on the map. Teams hold their territory, or lose it to faster rivals.</p></div>
+          <div class="feat__cards feat__cards--conq" data-demo="conquer">
+            <div class="fmt fmt--map">
+              <div class="fmt__head"><h3 class="fmt__name">Game of Run</h3><span class="fmt__meta"><i class="live-dot"></i>live map</span></div>
+              <svg class="hexmap-f" role="img" aria-label="A map of hexagons being claimed by three teams"></svg>
+            </div>
+            <div class="fmt">
+              <div class="fmt__head"><h3 class="fmt__name">Territory</h3><span class="fmt__meta">This week</span></div>
+              <ul class="terr">
+                <li data-team="0"><span><i></i>North Runners</span><div class="bar"><i></i></div><em>0%</em></li>
+                <li data-team="1"><span><i></i>Office Team</span><div class="bar"><i></i></div><em>0%</em></li>
+                <li data-team="2"><span><i></i>Harbour Gym</span><div class="bar"><i></i></div><em>0%</em></li>
+              </ul>
+              <p class="fmt__foot">A hex belongs to the last team that ran through it.</p>
+            </div>
+          </div>
+        </article>
       </div>
-      <nav class="feat__nav" aria-label="Features"><button type="button" aria-current="true">Competitions</button><button type="button">Challenges</button><button type="button">Leaderboards</button><button type="button">Rewards</button></nav>
+      <nav class="feat__nav" aria-label="Competition formats"><button type="button" aria-current="true">League</button><button type="button">Conquer</button></nav>
     </div>
   </section>
 
@@ -604,7 +619,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=24"></script>
-<script type="module" src="/proto/features.js?v=2"></script>
+<script type="module" src="/proto/features.js?v=5"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
