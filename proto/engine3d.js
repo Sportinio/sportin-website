@@ -1,0 +1,421 @@
+// Engine 3D mockup: the SportIn gamification engine as real 3D parts, driven by the scroll.
+// t runs 0..6 across the pinned section: 0 intro, 1 Competitions, 2 Challenges, 3 Leaderboard,
+// 4 Reward, 5 the three layers split apart and connect, 6 they press into one chip that stands up.
+// One plate shows the layers in turn by flipping over; at the split it becomes the bottom layer and
+// the other two drop in from above. Every payoff (champion, ring, points) lands while its caption
+// is fully on screen. The plates' screens are drawn on canvases, redrawn only when their state changes.
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const root = document.documentElement;
+const sec = document.getElementById('engine');
+const stage = sec.querySelector('.engine__stage');
+const canvas = document.getElementById('eng3d');
+const texts = [...sec.querySelectorAll('.eng-txt')];
+const cta = sec.querySelector('.eng-cta');
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const clamp = (v) => Math.max(0, Math.min(1, v));
+const sm = (u) => u * u * u * (u * (u * 6 - 15) + 10); // quintic: soft start and end
+const sc = (u) => u * u * (3 - 2 * u); // cubic: gentler, used for the flips
+const win = (t, a, b) => sm(clamp((t - a) / (b - a)));
+const winC = (t, a, b) => sc(clamp((t - a) / (b - a)));
+const lerp = (a, b, u) => a + (b - a) * u;
+const BLUE = '#0751fb'; const INK = '#0a1020'; const SLATE = '#5a6377'; const MUTE = '#8a93a6';
+
+// ---------- Renderer, camera, light ----------
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+} catch (e) {
+  root.classList.add('eng3d-failed'); // the page shows a still chip instead
+  throw e;
+}
+root.classList.add('eng3d-ready');
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
+// Studio light: a soft key from above and a gentle fill from the front left. No shadows.
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(2.5, 14, 5); scene.add(key);
+const fill = new THREE.DirectionalLight(0xffffff, 0.45); fill.position.set(-6, 4, 8); scene.add(fill);
+
+// ---------- Screen canvases ----------
+// Drawn at twice the size so the text stays sharp on a retina screen.
+const SW = 1040; const SH = 680;
+function makeScreen() {
+  const c = document.createElement('canvas'); c.width = SW * 2; c.height = SH * 2;
+  const ctx = c.getContext('2d'); ctx.scale(2, 2);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return { c, ctx, tex, key: '' };
+}
+const scr = { glass: makeScreen(), board: makeScreen(), reward: makeScreen() };
+function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function font(ctx, weight, size, fam = 'Instrument Sans', stretch = 'normal') { ctx.font = `${weight} ${size}px "${fam}", sans-serif`; if ('fontStretch' in ctx) ctx.fontStretch = stretch; }
+function card(ctx, x, y, w, h, r = 18, fill = '#fff', line = 'rgba(10,16,32,0.08)', lw = 2) { rr(ctx, x, y, w, h, r); ctx.fillStyle = fill; ctx.fill(); if (line) { ctx.strokeStyle = line; ctx.lineWidth = lw; ctx.stroke(); } }
+// Draws a polyline only up to fraction f of its length (lines that "draw" themselves).
+function polyline(ctx, pts, f) {
+  const segs = []; let total = 0;
+  for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); segs.push(l); total += l; }
+  let left = total * f; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length && left > 0; i++) {
+    const l = segs[i - 1]; const k = Math.min(1, left / l);
+    ctx.lineTo(lerp(pts[i - 1][0], pts[i][0], k), lerp(pts[i - 1][1], pts[i][1], k)); left -= l;
+  }
+  ctx.stroke();
+}
+// Layer label on the left, the client's brand on the right: the engine runs in their brand.
+function head(ctx, label) {
+  font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText(label, 44, 56);
+  ctx.textAlign = 'right'; ctx.fillStyle = SLATE; ctx.fillText('Your brand', SW - 44, 56);
+  const w = ctx.measureText('Your brand').width; ctx.textAlign = 'left';
+  ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(SW - 44 - w - 16, 48, 6, 0, Math.PI * 2); ctx.fill();
+}
+function title(ctx, text, meta, x, y) {
+  font(ctx, 700, 30); ctx.fillStyle = INK; ctx.fillText(text, x, y);
+  if (meta) { const w = ctx.measureText(text).width; font(ctx, 500, 30); ctx.fillStyle = MUTE; ctx.fillText(` · ${meta}`, x + w, y); }
+}
+
+function drawGlass(s) {
+  const { ctx } = scr.glass;
+  ctx.clearRect(0, 0, SW, SH);
+  const g = ctx.createLinearGradient(0, 0, SW, SH); g.addColorStop(0, 'rgba(255,255,255,0.97)'); g.addColorStop(1, 'rgba(240,244,252,0.94)');
+  card(ctx, 0, 0, SW, SH, 28, g, 'rgba(7,81,251,0.16)');
+  head(ctx, 'L1 · Competition');
+  // Competitions: a knockout, four teams to one champion.
+  ctx.globalAlpha = s.za; card(ctx, 40, 80, 600, 560);
+  title(ctx, 'Competitions', 'knockout', 68, 132);
+  const X0 = 68; const Y0 = 172; const BW = 544; const BH = 440;
+  const pill = (x, w, cy, label, on, alpha, solid) => {
+    if (alpha <= 0.01) return; ctx.save(); ctx.globalAlpha *= alpha;
+    card(ctx, x, cy - 32, w, 64, 14, solid ? BLUE : '#fff', solid ? null : (on ? BLUE : 'rgba(10,16,32,0.12)'), on ? 3 : 2);
+    font(ctx, solid ? 700 : 600, 28); ctx.fillStyle = solid ? '#fff' : (on ? BLUE : SLATE); ctx.fillText(label, x + 18, cy + 10); ctx.restore();
+  };
+  ctx.strokeStyle = BLUE; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+  const r1x = X0; const r1w = BW * 0.33; const r2x = X0 + BW * 0.41; const r2w = BW * 0.28; const r3x = X0 + BW * 0.72; const r3w = BW * 0.28;
+  const y = (f) => Y0 + BH * f; const jx = X0 + BW * 0.37; const kx = X0 + BW * 0.70;
+  polyline(ctx, [[r1x + r1w, y(0.12)], [jx, y(0.12)], [jx, y(0.23)], [r2x, y(0.23)]], s.k1);
+  polyline(ctx, [[r1x + r1w, y(0.34)], [jx, y(0.34)], [jx, y(0.23)]], s.k1);
+  polyline(ctx, [[r1x + r1w, y(0.66)], [jx, y(0.66)], [jx, y(0.77)], [r2x, y(0.77)]], s.k1);
+  polyline(ctx, [[r1x + r1w, y(0.88)], [jx, y(0.88)], [jx, y(0.77)]], s.k1);
+  polyline(ctx, [[r2x + r2w, y(0.23)], [kx, y(0.23)], [kx, y(0.5)], [r3x, y(0.5)]], s.k2);
+  polyline(ctx, [[r2x + r2w, y(0.77)], [kx, y(0.77)], [kx, y(0.5)]], s.k2);
+  pill(r1x, r1w, y(0.12), 'Team A', s.r1, s.o1); pill(r1x, r1w, y(0.34), 'Team B', false, s.o1);
+  pill(r1x, r1w, y(0.66), 'Team C', s.r1, s.o1); pill(r1x, r1w, y(0.88), 'Team D', false, s.o1);
+  pill(r2x, r2w, y(0.23), 'Team A', s.r2, s.o2); pill(r2x, r2w, y(0.77), 'Team C', false, s.o2);
+  pill(r3x, r3w, y(0.5), 'Team A', false, s.o3, true);
+  if (s.o3 > 0.01) { ctx.save(); ctx.globalAlpha *= s.o3; font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('Champion', r3x, y(0.5) - 46); ctx.restore(); }
+  ctx.globalAlpha = 1;
+  // Challenges: a short goal, the ring fills fast.
+  ctx.globalAlpha = s.zb; card(ctx, 660, 80, 340, 560);
+  title(ctx, 'Challenges', null, 688, 132);
+  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('3 days', 688, 172);
+  const cx = 830; const cy = 370; ctx.lineWidth = 22; ctx.lineCap = 'round';
+  ctx.strokeStyle = '#e9edf4'; ctx.beginPath(); ctx.arc(cx, cy, 100, 0, Math.PI * 2); ctx.stroke();
+  if (s.rp > 0.001) { ctx.strokeStyle = BLUE; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * 0.74 * s.rp); ctx.stroke(); }
+  font(ctx, 800, 58, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; ctx.textAlign = 'center';
+  ctx.fillText(Math.round(7412 * s.rp).toLocaleString('en-US'), cx, cy + 20);
+  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 10,000 steps', cx, 560); ctx.textAlign = 'left';
+  ctx.globalAlpha = 1; ctx.lineCap = 'butt';
+}
+
+// [initials, name, values per lane, slot before, slot after the overtake]
+const ROWS = [
+  ['AM', 'Ana M.', ['14,210', '42 km', '128 km'], 0, 0],
+  ['RP', 'Radu P.', ['13,880', '39 km', '121 km'], 1, 2],
+  ['IC', 'Ioana C.', ['12,940', '35 km', '117 km'], 2, 3],
+  ['MD', 'Mihai D.', ['12,105', '37 km', '124 km'], 3, 1],
+];
+const MOVER = 3;
+function drawBoard(s) {
+  const { ctx } = scr.board;
+  ctx.clearRect(0, 0, SW, SH);
+  card(ctx, 0, 0, SW, SH, 28, '#eceff4', 'rgba(10,16,32,0.12)');
+  // Etched traces, like a logic board.
+  ctx.strokeStyle = '#d4dae5'; ctx.lineWidth = 2;
+  [[[0, 150], [230, 150], [230, 60], [520, 60]], [[1040, 230], [800, 230], [800, 120], [600, 120]], [[0, 600], [180, 600], [180, 520], [420, 520], [420, 640], [680, 640]], [[1040, 560], [860, 560], [860, 640]]].forEach((p) => polyline(ctx, p, 1));
+  head(ctx, 'L2 · Leaderboard');
+  card(ctx, 40, 80, 960, 72, 16);
+  const lw = (960 - 12) / 3;
+  if (s.lo > 0.01) { ctx.save(); ctx.globalAlpha = s.lo; card(ctx, 46 + s.ln * lw, 86, lw, 60, 12, BLUE, null); ctx.restore(); }
+  ['Walking', 'Running', 'Cycling'].forEach((l, k) => { font(ctx, 600, 28); ctx.textAlign = 'center'; ctx.fillStyle = s.lo > 0.5 && Math.round(s.ln) === k ? '#fff' : MUTE; ctx.fillText(l, 46 + lw * k + lw / 2, 126); });
+  ctx.textAlign = 'left';
+  // Values roll like an odometer between lanes instead of jumping.
+  const a = Math.min(2, Math.floor(s.ln + 1e-6)); const u = s.ln - a;
+  [0, 1, 2, MOVER].forEach((i) => { // the mover is drawn last, on top
+    const [ini, name, vals, from, to] = ROWS[i];
+    const slot = lerp(from, to, s.ov); const y = 176 + slot * 116; const rank = Math.round(slot);
+    const mover = i === MOVER && s.ov > 0.001;
+    card(ctx, 40, y, 960, 96, 16, mover ? '#f2f6ff' : '#fff', rank === 0 ? BLUE : (mover ? 'rgba(7,81,251,0.35)' : 'rgba(10,16,32,0.07)'), rank === 0 ? 3 : 2);
+    font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText(String(rank + 1), 72, y + 58);
+    ctx.fillStyle = '#e8eeff'; ctx.beginPath(); ctx.arc(144, y + 48, 28, 0, Math.PI * 2); ctx.fill();
+    font(ctx, 700, 22); ctx.fillStyle = BLUE; ctx.textAlign = 'center'; ctx.fillText(ini, 144, y + 56); ctx.textAlign = 'left';
+    font(ctx, 600, 30); ctx.fillStyle = INK; ctx.fillText(name, 196, y + 59);
+    if (mover && s.ov > 0.5) { const nw = ctx.measureText(name).width; ctx.save(); ctx.globalAlpha = clamp((s.ov - 0.5) * 4); font(ctx, 600, 24, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('▲ 2', 196 + nw + 18, y + 58); ctx.restore(); }
+    ctx.save(); rr(ctx, 700, y + 8, 290, 80, 10); ctx.clip();
+    font(ctx, 500, 28, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'right';
+    if (u < 0.001) ctx.fillText(vals[a], 968, y + 58);
+    else {
+      ctx.globalAlpha = 1 - u; ctx.fillText(vals[a], 968, y + 58 - u * 40);
+      ctx.globalAlpha = u; ctx.fillText(vals[a + 1], 968, y + 58 + (1 - u) * 40);
+    }
+    ctx.restore(); ctx.textAlign = 'left';
+  });
+}
+
+const PERKS = [['Free coffee', 500], ['20% off running gear', 1500], ['Spa day pass', 2500]];
+function drawReward(s) {
+  const { ctx } = scr.reward;
+  ctx.clearRect(0, 0, SW, SH);
+  card(ctx, 0, 0, SW, SH, 28, '#e4e8ef', 'rgba(10,16,32,0.16)');
+  head(ctx, 'L3 · Reward');
+  card(ctx, 40, 80, 440, 560);
+  title(ctx, 'Earned', 'this week', 68, 132);
+  font(ctx, 800, 104, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; const pts = Math.round(2500 * s.pr).toLocaleString('en-US'); ctx.fillText(pts, 64, 290);
+  const pw = ctx.measureText(pts).width; font(ctx, 500, 30, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('pts', 78 + pw, 288);
+  const tx = 72; const tw = 376; const ty = 500;
+  card(ctx, tx, ty - 6, tw, 12, 6, '#e9edf4', null);
+  if (s.pr > 0.001) card(ctx, tx, ty - 6, tw * s.pr, 12, 6, BLUE, null);
+  [[0.2, '500'], [0.6, '1,500'], [1, '2,500']].forEach(([f, l]) => {
+    ctx.beginPath(); ctx.arc(tx + tw * f, ty, 12, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = s.pr >= f - 0.001 ? BLUE : '#cfd6e2'; ctx.stroke();
+    font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.textAlign = f === 1 ? 'right' : 'center'; ctx.fillText(l, tx + tw * f + (f === 1 ? 12 : 0), ty + 54); ctx.textAlign = 'left';
+  });
+  PERKS.forEach(([name, cost], k) => {
+    const on = s.pr >= [0.2, 0.6, 1][k] - 0.001; const redeem = k === 2 && s.pr >= 0.999;
+    const y = 80 + k * 196 - (on ? 8 : 0);
+    card(ctx, 500, y, 500, 168, 18, redeem ? BLUE : '#fff', redeem ? null : (on ? BLUE : 'rgba(10,16,32,0.09)'), on ? 3 : 2);
+    font(ctx, 700, 30); ctx.fillStyle = redeem ? '#fff' : INK; ctx.fillText(name, 530, y + 70);
+    font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = redeem ? 'rgba(255,255,255,0.8)' : SLATE; ctx.fillText(`${cost.toLocaleString('en-US')} pts`, 530, y + 134);
+    font(ctx, 700, 26); ctx.textAlign = 'right'; ctx.fillStyle = redeem ? '#fff' : (on ? BLUE : '#a3abbb'); ctx.fillText(redeem ? 'Redeem' : on ? 'Unlocked' : 'Locked', 972, y + 134); ctx.textAlign = 'left';
+  });
+}
+
+// ---------- The three plates ----------
+// Each layer has its own edge tone so they read apart on a white page: cool blue glass,
+// light grey board, darker brushed metal.
+const PW = 5.2; const PD = 3.4; const PT = 0.14;
+const plateGeo = new RoundedBoxGeometry(PW, PT, PD, 4, 0.08);
+const screenGeo = new THREE.PlaneGeometry(PW - 0.16, PD - 0.16); screenGeo.rotateX(-Math.PI / 2);
+function plate(bodyMat, screen) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(plateGeo, bodyMat); g.add(body);
+  const face = new THREE.Mesh(screenGeo, new THREE.MeshBasicMaterial({ map: screen.tex, transparent: true, toneMapped: false })); face.position.y = PT / 2 + 0.003; g.add(face);
+  g.userData = { body, face }; return g;
+}
+const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xdfe9ff, metalness: 0, roughness: 0.1, transmission: 0.55, thickness: 0.14, ior: 1.5, clearcoat: 1, clearcoatRoughness: 0.05, transparent: true });
+const boardMat = new THREE.MeshPhysicalMaterial({ color: 0xe3e7ee, metalness: 0.15, roughness: 0.55, clearcoat: 0.4, clearcoatRoughness: 0.4, transparent: true });
+const metalMat = new THREE.MeshPhysicalMaterial({ color: 0xc9d0da, metalness: 0.9, roughness: 0.3, transparent: true });
+const stack = new THREE.Group(); scene.add(stack);
+const pGlass = plate(glassMat, scr.glass); const pBoard = plate(boardMat, scr.board); const pReward = plate(metalMat, scr.reward);
+stack.add(pReward, pBoard, pGlass);
+
+// One plate that shows the layers one after another: it flips 180° to reveal the next layer on
+// its back. The body material switches while the plate is edge-on, so the change is never seen.
+const flipper = new THREE.Group(); stack.add(flipper);
+const fMats = { glass: glassMat.clone(), board: boardMat.clone(), metal: metalMat.clone() };
+const fBody = new THREE.Mesh(plateGeo, fMats.glass); flipper.add(fBody);
+const fTopMat = new THREE.MeshBasicMaterial({ map: scr.glass.tex, transparent: true, toneMapped: false });
+const fBotMat = new THREE.MeshBasicMaterial({ map: scr.board.tex, transparent: true, toneMapped: false });
+const fTop = new THREE.Mesh(screenGeo, fTopMat); fTop.position.y = PT / 2 + 0.003; flipper.add(fTop);
+const backGeo = screenGeo.clone(); backGeo.rotateX(Math.PI);
+const fBot = new THREE.Mesh(backGeo, fBotMat); fBot.position.y = -PT / 2 - 0.003; flipper.add(fBot);
+
+// Connections: blue rods at the two outer corners (the left and right tips of the stack as you see
+// it), outside the screens, with a small pad where each rod meets a plate and a dot that runs down.
+const CORNERS = [[PW / 2 - 0.08, -(PD / 2 - 0.08)], [-(PW / 2 - 0.08), PD / 2 - 0.08]];
+const rodGeo = new THREE.CylinderGeometry(0.022, 0.022, 1, 14); rodGeo.translate(0, -0.5, 0);
+const padGeo = new THREE.CylinderGeometry(0.075, 0.075, 0.012, 24);
+const dotGeo = new THREE.SphereGeometry(0.055, 20, 14);
+const rodMat = new THREE.MeshBasicMaterial({ color: 0xbfd2ff, transparent: true }); // very light blue
+const links = CORNERS.map(([x, z]) => {
+  const mk = (geo) => { const m = new THREE.Mesh(geo, rodMat); m.position.set(x, 0, z); stack.add(m); return m; };
+  return { r1: mk(rodGeo), r2: mk(rodGeo), pads: [mk(padGeo), mk(padGeo), mk(padGeo), mk(padGeo)], dot: mk(dotGeo) };
+});
+
+// ---------- The chip ----------
+// Built like a real package: a thin white ceramic substrate, a raised bright brushed-metal lid with
+// the engraving, a quiet row of small components around the lid, and contact pads along the edges.
+// It has the same footprint as the layers, which press into it.
+const chip = new THREE.Group(); scene.add(chip);
+const ST = 0.14; const LT = 0.16; const CT = ST + LT;
+const chipMats = [];
+const cm = (m) => { m.transparent = true; chipMats.push(m); return m; };
+const substrate = new THREE.Mesh(new RoundedBoxGeometry(PW, ST, PD, 4, 0.05), cm(new THREE.MeshPhysicalMaterial({ color: 0xf1f3f6, roughness: 0.42, metalness: 0.04, clearcoat: 0.35, clearcoatRoughness: 0.35 })));
+substrate.position.y = -CT / 2 + ST / 2; chip.add(substrate);
+// Brushed metal: fine streaks in the roughness, kept subtle.
+const bc = document.createElement('canvas'); bc.width = bc.height = 512; const bx = bc.getContext('2d');
+bx.fillStyle = 'rgb(120,120,120)'; bx.fillRect(0, 0, 512, 512);
+for (let i = 0; i < 1800; i++) { const v = 105 + Math.random() * 40; bx.fillStyle = `rgba(${v},${v},${v},0.3)`; bx.fillRect(Math.random() * 512, Math.random() * 512, 40 + Math.random() * 220, 1); }
+const brush = new THREE.CanvasTexture(bc); brush.wrapS = brush.wrapT = THREE.RepeatWrapping; brush.repeat.set(2, 2);
+const LW = PW * 0.62; const LD = PD * 0.64;
+const lidMat = cm(new THREE.MeshPhysicalMaterial({ color: 0xf4f6f9, metalness: 0.35, roughness: 0.32, roughnessMap: brush, clearcoat: 0.15, envMapIntensity: 1.4 }));
+if ('anisotropy' in lidMat) lidMat.anisotropy = 0.6;
+const lid = new THREE.Mesh(new RoundedBoxGeometry(LW, LT, LD, 5, 0.06), lidMat);
+lid.position.y = -CT / 2 + ST + LT / 2; chip.add(lid);
+// Laser engraving on the lid.
+const EW = 1024; const EH = Math.round(1024 * (LD / LW));
+const engr = document.createElement('canvas'); engr.width = EW; engr.height = EH; const ectx = engr.getContext('2d');
+const engrTex = new THREE.CanvasTexture(engr); engrTex.colorSpace = THREE.SRGBColorSpace; engrTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+const engrFace = new THREE.Mesh(new THREE.PlaneGeometry(LW - 0.16, LD - 0.16).rotateX(-Math.PI / 2), cm(new THREE.MeshStandardMaterial({ map: engrTex, metalness: 0.5, roughness: 0.45, depthWrite: false })));
+engrFace.position.y = CT / 2 + 0.002; chip.add(engrFace);
+const logo = new Image(); logo.src = '/assets/site/logo/sportin-wordmark-black.svg';
+function drawEngraving() {
+  ectx.clearRect(0, 0, EW, EH);
+  const cx = EW / 2;
+  if (logo.complete && logo.naturalWidth) { const w = 520; const h = w * (logo.naturalHeight / logo.naturalWidth); ectx.globalAlpha = 0.82; ectx.drawImage(logo, cx - w / 2, EH * 0.5 - h, w, h); ectx.globalAlpha = 1; }
+  font(ectx, 600, 44, 'IBM Plex Mono'); ectx.fillStyle = BLUE; ectx.textAlign = 'center'; ectx.fillText('GAMIFICATION ENGINE', cx, EH * 0.66);
+  font(ectx, 500, 20, 'IBM Plex Mono'); ectx.textAlign = 'left'; ectx.fillStyle = 'rgba(30,34,42,0.4)'; ectx.fillText('SI-E1', 46, EH - 46);
+  ectx.textAlign = 'right'; ectx.fillText('2026', EW - 46, EH - 46);
+  engrTex.needsUpdate = true;
+}
+logo.onload = drawEngraving;
+// Small components in light grey, every other slot, each with metal end caps.
+const topY = -CT / 2 + ST;
+const comps = []; const gapZ = (PD - LD) / 4; const gapX = (PW - LW) / 4;
+for (let x = -LW / 2 + 0.2; x <= LW / 2 - 0.2; x += 0.68) { comps.push([x, LD / 2 + gapZ, 0]); comps.push([x, -LD / 2 - gapZ, 0]); }
+for (let z = -LD / 2 + 0.25; z <= LD / 2 - 0.25; z += 0.68) { comps.push([LW / 2 + gapX, z, 1]); comps.push([-LW / 2 - gapX, z, 1]); }
+const body = new THREE.InstancedMesh(new THREE.BoxGeometry(0.15, 0.07, 0.08), cm(new THREE.MeshPhysicalMaterial({ color: 0x9aa3b2, roughness: 0.45, metalness: 0.15 })), comps.length);
+const caps = new THREE.InstancedMesh(new THREE.BoxGeometry(0.035, 0.074, 0.084), cm(new THREE.MeshPhysicalMaterial({ color: 0xcfd5dd, metalness: 1, roughness: 0.25 })), comps.length * 2);
+{ const m = new THREE.Matrix4(); const q = new THREE.Quaternion(); const one = new THREE.Vector3(1, 1, 1); const Y = new THREE.Vector3(0, 1, 0); let ci = 0;
+  comps.forEach(([x, z, rot], i) => {
+    q.setFromAxisAngle(Y, rot ? Math.PI / 2 : 0);
+    m.compose(new THREE.Vector3(x, topY + 0.035, z), q, one); body.setMatrixAt(i, m);
+    [-1, 1].forEach((sgn) => { const off = new THREE.Vector3(sgn * 0.075, 0, 0).applyQuaternion(q); m.compose(new THREE.Vector3(x + off.x, topY + 0.037, z + off.z), q, one); caps.setMatrixAt(ci++, m); });
+  }); }
+chip.add(body, caps);
+// Contact pads along the edges of the substrate.
+const NX = 24; const NZ = 15;
+const pads = new THREE.InstancedMesh(new THREE.BoxGeometry(0.07, 0.008, 0.14), cm(new THREE.MeshPhysicalMaterial({ color: 0xd2d7de, metalness: 1, roughness: 0.3 })), 2 * NX + 2 * NZ);
+{ const m = new THREE.Matrix4(); const q = new THREE.Quaternion(); const one = new THREE.Vector3(1, 1, 1); const Y = new THREE.Vector3(0, 1, 0); let i = 0;
+  for (let k = 0; k < NX; k++) { const x = -PW / 2 + 0.35 + k * ((PW - 0.7) / (NX - 1)); [PD / 2 - 0.12, -PD / 2 + 0.12].forEach((z) => { q.setFromAxisAngle(Y, 0); m.compose(new THREE.Vector3(x, topY + 0.004, z), q, one); pads.setMatrixAt(i++, m); }); }
+  for (let k = 0; k < NZ; k++) { const z = -PD / 2 + 0.35 + k * ((PD - 0.7) / (NZ - 1)); [PW / 2 - 0.12, -PW / 2 + 0.12].forEach((x) => { q.setFromAxisAngle(Y, Math.PI / 2); m.compose(new THREE.Vector3(x, topY + 0.004, z), q, one); pads.setMatrixAt(i++, m); }); } }
+chip.add(pads);
+
+// ---------- Layout ----------
+// The canvas covers the whole pinned screen, so nothing can ever be cut off at its edge. The camera
+// is still framed on the stage area below the text: the projection is widened to the full canvas.
+let W = 1; let H = 1;
+const stick = sec.querySelector('.engine__stick'); stick.prepend(canvas);
+function resize() {
+  const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
+  W = Math.max(1, r.width); H = Math.max(1, r.height);
+  renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
+  // Framed a little above the stage centre, so the near edge of a tilted layer never reaches the screen bottom.
+  camera.setViewOffset(W, H, f.left - r.left, f.top - r.top + H * 0.07, f.width, f.height);
+  camera.updateProjectionMatrix();
+}
+
+// ---------- Choreography ----------
+const GAP = 2.4;
+function setOpacity(g, o) { g.userData.body.material.opacity = o; g.userData.face.material.opacity = o; g.visible = o > 0.004; }
+function chipOpacity(o) { chipMats.forEach((m) => { m.opacity = o; }); chip.visible = o > 0.004; }
+
+function paint(t) {
+  // Copy: one block at a time. Reduced motion: a plain cross-fade, no blur or slide.
+  texts.forEach((el, k) => {
+    const d = Math.abs(t - k); const o = 1 - sm(clamp((d - 0.28) / 0.22));
+    el.style.opacity = String(o);
+    el.style.transform = RM ? 'none' : `translateY(${((t - k) * -18).toFixed(1)}px)`;
+    el.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none';
+  });
+
+  // Timeline (1 t is about 73vh of scroll).
+  const p1 = win(t, 0.05, 0.55); // the plate settles in
+  // Flips: gentler cubic curve; with reduced motion the screen simply changes.
+  const f1 = RM ? (t > 2.65 ? 1 : 0) : winC(t, 2.45, 2.85);
+  const f2 = RM ? (t > 3.65 ? 1 : 0) : winC(t, 3.45, 3.85);
+  const split = win(t, 4.4, 4.85); const fin = win(t, 4.4, 4.6);
+  const d1 = win(t, 4.65, 4.85); const d2 = win(t, 4.75, 4.95);
+  const m = win(t, 5.3, 5.5); const c = win(t, 5.48, 5.58); const up = win(t, 5.6, 6);
+  const bob = RM ? 0 : Math.sin(Math.PI * f1) + Math.sin(Math.PI * f2); // 1 at mid-flip
+
+  // The flipping plate. It is already partly in view on the intro, and dips while it turns so it
+  // never swings up into the text.
+  const ang = Math.PI * (f1 + f2); // 0 to 2π
+  flipper.position.y = lerp(-0.6, 0, p1) - 0.4 * bob; // rises gently from just below, never into the headline
+  flipper.rotation.x = ang;
+  const deg = (ang * 180) / Math.PI;
+  fBody.material = deg < 90 ? fMats.glass : deg < 270 ? fMats.board : fMats.metal;
+  fTopMat.map = deg < 180 ? scr.glass.tex : scr.reward.tex;
+  const fo = lerp(0.3, 1, p1) * (split > 0.001 ? 0 : 1);
+  [fMats.glass, fMats.board, fMats.metal, fTopMat, fBotMat].forEach((mt) => { mt.opacity = fo; });
+  flipper.visible = fo > 0.004;
+
+  // The split: the Reward plate takes the flipper's exact place and sinks to the bottom; the
+  // Competition and Leaderboard plates drop in from above. Then the gaps close to zero (a press)
+  // and only then the solid block cross-fades into the chip.
+  pReward.position.y = lerp(lerp(0, -GAP, split), 0, m);
+  pBoard.position.y = lerp(lerp(1.0, 0, split), 0.15, m);
+  pGlass.position.y = lerp(lerp(GAP + 1.2, GAP, split), 0.3, m);
+  const on = split > 0.001 ? 1 : 0;
+  setOpacity(pReward, on * (1 - c)); setOpacity(pBoard, fin * (1 - c)); setOpacity(pGlass, fin * (1 - c));
+
+  // Rods span exactly the live gap between neighbouring plates.
+  const gTop = pGlass.position.y - PT / 2; const bTop = pBoard.position.y + PT / 2;
+  const bBot = pBoard.position.y - PT / 2; const rTop = pReward.position.y + PT / 2;
+  const dotU = RM ? -1 : clamp((t - 4.95) / 0.35); // a pulse runs down once the rods are in
+  links.forEach((L) => {
+    L.r1.position.y = gTop; L.r1.scale.y = Math.max(0.0001, (gTop - bTop) * d1);
+    L.r2.position.y = bBot; L.r2.scale.y = Math.max(0.0001, (bBot - rTop) * d2);
+    L.r1.visible = d1 > 0.002 && m < 1; L.r2.visible = d2 > 0.002 && m < 1;
+    const pv = [d1 > 0.002, d1 > 0.98, d2 > 0.002, d2 > 0.98];
+    [gTop - 0.006, bTop + 0.006, bBot - 0.006, rTop + 0.006].forEach((py, i) => { L.pads[i].position.y = py; L.pads[i].visible = pv[i] && m < 1; });
+    const live = dotU > 0 && dotU < 1 && m < 0.01;
+    L.dot.visible = live; if (live) L.dot.position.y = lerp(gTop, rTop, dotU);
+  });
+  rodMat.opacity = 1 - m;
+
+  // Whole stack turned for the teardown angle; the chip turns to face you as it stands up.
+  stack.rotation.y = -0.6;
+  chip.position.y = lerp(0.15, 0.55, up);
+  chip.rotation.set(lerp(0, Math.PI / 2, up), lerp(-0.6, 0, up), 0, 'YXZ'); // fully upright at the end
+  chipOpacity(c);
+
+  // Camera: close on the single plate (pulling back a little mid-flip), out for the split stack,
+  // and at eye level for the standing chip, so it reads truly vertical.
+  const aspectK = Math.max(1, 1.45 / (W / H));
+  const dist = (lerp(lerp(10.4, 18, split), 11, up) + 1.4 * bob) * aspectK;
+  const look = new THREE.Vector3(0, lerp(lerp(0, 0.05, split), chip.position.y, up), 0);
+  const ey = lerp(0.62, 0.1, up); const ez = Math.sqrt(1 - ey * ey);
+  camera.position.set(look.x + dist * 0.05 * (1 - up), look.y + dist * ey, look.z + dist * ez);
+  camera.lookAt(look);
+
+  // Screens: redraw only when their state changes.
+  const za = t < 0.55 ? 1 : 0.4 + 0.6 * Math.max(win(t, 0.55, 0.7) * (1 - win(t, 1.45, 1.6)), t > 4.4 ? 1 : 0);
+  const zb = t < 1.45 ? (t < 0.55 ? 1 : 0.4) : 0.4 + 0.6 * Math.max(win(t, 1.45, 1.6), t > 4.4 ? 1 : 0);
+  const gs = { za, zb, o1: win(t, 0.55, 0.68), r1: t > 0.7, k1: win(t, 0.7, 0.82), o2: win(t, 0.8, 0.88), r2: t > 0.9, k2: win(t, 0.9, 1.0), o3: win(t, 0.98, 1.1), rp: win(t, 1.6, 2.15) };
+  const bs = { lo: win(t, 2.85, 2.95), ln: win(t, 3.0, 3.12) + win(t, 3.2, 3.32), ov: win(t, 3.0, 3.3) };
+  const rs = { pr: win(t, 3.85, 4.15) };
+  [[scr.glass, gs, drawGlass], [scr.board, bs, drawBoard], [scr.reward, rs, drawReward]].forEach(([s, st, fn]) => {
+    const k = JSON.stringify(st, (_, v) => (typeof v === 'number' ? Math.round(v * 400) / 400 : v));
+    if (k !== s.key) { s.key = k; fn(st); s.tex.needsUpdate = true; }
+  });
+
+  // Caption and the demo button arrive with the finished chip.
+  const cap = win(t, 5.8, 6);
+  sec.style.setProperty('--cap', String(cap));
+  if (cta) cta.classList.toggle('is-on', cap > 0.5);
+  renderer.render(scene, camera);
+}
+
+// ---------- Scroll ----------
+let shown = 0; let target = 0; let raf = 0; let last = 0;
+function progress() { const r = sec.getBoundingClientRect(); return Math.max(0, Math.min(6, (-r.top / (r.height - window.innerHeight)) * 6.6)); } // last part of the scroll holds the finished chip
+function loop(now) {
+  const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
+  shown += (target - shown) * (1 - Math.exp(-dt / 0.09));
+  if (Math.abs(target - shown) < 0.0008) shown = target;
+  paint(shown);
+  if (shown !== target) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
+}
+const kick = () => { target = progress(); if (!raf) raf = requestAnimationFrame(loop); };
+window.addEventListener('scroll', kick, { passive: true });
+window.addEventListener('resize', () => { resize(); paint(shown); });
+resize();
+document.fonts.ready.then(() => { drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); target = shown = progress(); paint(shown); });
+target = shown = progress(); paint(shown);
+window.engineAt = (v) => { target = shown = v; paint(v); };
