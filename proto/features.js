@@ -179,26 +179,28 @@ if (sec) {
       stop() { cancel(); window.clearInterval(timer); timer = 0; },
     }); }
 
-  // Conquer (Game of Run): a runner crosses the map and claims hexes; a rival takes some back;
+  // Conquer (Game of Run): one big hexagon of hexes. Each team starts from its home ground; a
+  // runner crosses the map and paints the hexes it runs through, a rival takes some back, and
   // the territory shares update.
   { const box = panelOf('conquer'); const svgMap = box.querySelector('.hexmap-f'); const NS = 'http://www.w3.org/2000/svg';
     const COLORS = ['#0751fb', '#6f97ff', '#9aa3b5']; const FREE = '#e6e9ef';
-    const COLS_H = 13; const ROWS_H = 7; const R = 20; const HW = Math.sqrt(3) * R;
-    const hexes = [];
-    for (let r = 0; r < ROWS_H; r++) for (let q = 0; q < COLS_H; q++) {
-      const cx = HW * (q + 0.5 + (r % 2) * 0.5) + 4; const cy = R * 1.5 * r + R + 4;
+    const N = 5; const R = 20; const HW = Math.sqrt(3) * R; // axial radius 5: 91 hexes
+    const OX = HW * (N + 0.5) + 4; const OY = R * (1.5 * N + 1) + 4;
+    const hexes = []; const byKey = new Map();
+    for (let r = -N; r <= N; r++) for (let q = -N; q <= N; q++) {
+      if (Math.abs(q + r) > N) continue;
+      const cx = OX + HW * (q + r / 2); const cy = OY + R * 1.5 * r;
       const pts = Array.from({ length: 6 }, (_, i) => { const a = Math.PI / 180 * (60 * i - 30); return `${(cx + R * Math.cos(a)).toFixed(1)},${(cy + R * Math.sin(a)).toFixed(1)}`; }).join(' ');
       const poly = document.createElementNS(NS, 'polygon'); poly.setAttribute('points', pts); svgMap.appendChild(poly);
-      hexes.push({ q, r, cx, cy, poly, owner: -1 });
+      const h = { q, r, cx, cy, poly, owner: -1 }; hexes.push(h); byKey.set(`${q},${r}`, h);
     }
-    svgMap.setAttribute('viewBox', `0 0 ${(HW * (COLS_H + 0.5) + 8).toFixed(0)} ${(R * 1.5 * (ROWS_H - 1) + 2 * R + 8).toFixed(0)}`);
+    svgMap.setAttribute('viewBox', `0 0 ${(2 * OX).toFixed(0)} ${(2 * OY).toFixed(0)}`);
     const runner = document.createElementNS(NS, 'circle'); runner.setAttribute('r', '7'); runner.setAttribute('class', 'runner'); svgMap.appendChild(runner);
     const terr = [...box.querySelectorAll('.terr li')];
-    const at = (q, r) => hexes[r * COLS_H + q];
-    // Start: three home areas. Then a fixed loop path for the runner (team 0) and a rival (team 1).
-    const HOME = [[[1, 1], [2, 1], [1, 2], [2, 2], [1, 3]], [[10, 1], [11, 1], [10, 2], [11, 2], [11, 3]], [[5, 5], [6, 5], [7, 5], [6, 6], [5, 6]]];
-    const PATH = [[2, 3], [3, 3], [4, 3], [5, 2], [6, 2], [7, 2], [8, 3], [8, 4], [7, 4], [6, 4], [5, 4], [4, 4], [3, 4], [3, 5], [4, 5]];
-    const RIVAL = [[9, 2], [9, 3], [8, 2], [7, 3], [9, 4]];
+    const at = (q, r) => byKey.get(`${q},${r}`);
+    const HOME = [[[-4, 0], [-4, 1], [-3, 0], [-3, 1], [-5, 2]], [[3, -4], [4, -4], [3, -3], [4, -3], [5, -4]], [[-1, 4], [0, 4], [1, 3], [0, 3], [-1, 5]]];
+    const PATH = [[-2, 0], [-1, 0], [0, -1], [1, -1], [2, -2], [2, -1], [2, 0], [1, 1], [0, 1], [-1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 1]];
+    const RIVAL = [[3, -2], [2, -2], [3, -1], [2, -1], [1, -2]]; // takes two of the runner's hexes back
     let timer = 0; let i = 0;
     function own(h, team) { h.owner = team; h.poly.setAttribute('fill', team < 0 ? FREE : COLORS[team]); }
     function shares() {
@@ -211,7 +213,7 @@ if (sec) {
     }
     function step() {
       if (i < PATH.length) { const [q, r] = PATH[i]; const h = at(q, r); own(h, 0); runner.setAttribute('cx', h.cx); runner.setAttribute('cy', h.cy); }
-      if (i >= 6 && i - 6 < RIVAL.length) { const [q, r] = RIVAL[i - 6]; own(at(q, r), 1); }
+      if (i >= 7 && i - 7 < RIVAL.length) { const [q, r] = RIVAL[i - 7]; own(at(q, r), 1); }
       shares(); i += 1;
       if (i > PATH.length + 4) reset();
     }

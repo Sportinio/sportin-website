@@ -16,6 +16,9 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .feat__intro .eng-k { margin: 0 0 14px; font-family: var(--mono); font-size: 12px; color: var(--slate); }
 .feat__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
 .feat__title em { font-style: normal; color: var(--blue); }
+.feat__defs { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 640px; margin: 20px auto 0; text-align: left; }
+.feat__defs dt { font-size: 15px; font-weight: 700; color: var(--ink); }
+.feat__defs dd { margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: var(--slate); }
 .feat__lede { margin: 14px auto 0; max-width: 60ch; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; color: var(--slate); }
 /* The opening page: one big title and its line, in the middle of the page. */
 .feat__panel--lead { grid-template-rows: 1fr; align-items: center; }
@@ -102,6 +105,7 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .terr { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
 .terr li { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; font-size: 16px; color: var(--ink); }
 .terr li > span { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.terr li > span small { margin-left: 2px; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--slate); }
 .terr li > span i { width: 12px; height: 12px; border-radius: 3px; }
 .terr li .bar { grid-column: 1 / -1; grid-row: 2; }
 .terr li em { font-style: normal; font-family: var(--mono); font-size: 14px; color: var(--slate); }

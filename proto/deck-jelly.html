@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
-  <link rel="stylesheet" href="/proto/features.css?v=17" />
+  <link rel="stylesheet" href="/proto/features.css?v=18" />
   <link rel="stylesheet" href="/proto/app-screens.css?v=4" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
@@ -193,21 +193,21 @@
           </div>
         </article>
         <article class="feat__panel" aria-labelledby="featConqTitle">
-          <div class="feat__intro"><p class="eng-k">Competition layer · Conquer format</p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em></h2><p class="feat__lede">Game of Run: every run claims ground on the map. Teams hold their territory, or lose it to faster rivals.</p></div>
+          <div class="feat__intro"><p class="eng-k">Competition layer · Conquer format</p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em></h2><p class="feat__lede">Game of Run: every run claims ground on the map.</p><dl class="feat__defs"><div><dt>Teams</dt><dd>Members run for their team. Every run paints the hexes it crosses.</dd></div><div><dt>Houses</dt><dd>Teams ride under a House. Hold most of a region and its House is yours.</dd></div></dl></div>
           <div class="big big--conq" data-demo="conquer">
-            <svg class="hexmap-f" role="img" aria-label="A map of hexagons being claimed by three teams"></svg>
+            <svg class="hexmap-f" role="img" aria-label="A hexagon-shaped map of hexes being claimed by three teams"></svg>
             <div class="terr-wrap">
               <ul class="terr">
-                <li data-team="0"><span><i></i>North Runners</span><div class="bar"><i></i></div><em>0%</em></li>
-                <li data-team="1"><span><i></i>Office Team</span><div class="bar"><i></i></div><em>0%</em></li>
-                <li data-team="2"><span><i></i>Harbour Gym</span><div class="bar"><i></i></div><em>0%</em></li>
+                <li data-team="0"><span><i></i>North Runners<small>House of the Wolf</small></span><div class="bar"><i></i></div><em>0%</em></li>
+                <li data-team="1"><span><i></i>Office Team<small>House of the Falcon</small></span><div class="bar"><i></i></div><em>0%</em></li>
+                <li data-team="2"><span><i></i>Harbour Gym<small>House of the Lion</small></span><div class="bar"><i></i></div><em>0%</em></li>
               </ul>
-              <p class="fmt__foot">A hex belongs to the last team that ran through it.</p>
+              <p class="fmt__foot">A hex belongs to the last team that ran through it. A House changes hands the moment the balance does.</p>
             </div>
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRankTitle">
-          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Walking</p><h2 class="feat__title" id="featRankTitle">Every step, <em>ranked live</em></h2><p class="feat__lede">The leaderboard, as members see it in the SportIn app.</p></div>
+          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Walking</p><h2 class="feat__title" id="featRankTitle">Every step, <em>ranked live</em></h2><p class="feat__lede">The steps board, as members see it in the SportIn app, in five views.</p></div>
           <div class="big big--app" data-demo="ranking">
             <div class="phone" aria-hidden="true">
               <div class="phone__screen"><div class="ios ios--lb" data-w="393">
@@ -223,10 +223,11 @@
               <img class="phone__frame" src="/proto/media/frames/phone-frame-open.png" alt="" />
             </div>
             <ul class="points">
-              <li><b>Tiers members climb</b><span>Bronze, Silver, Gold and Platinum, earned by moving.</span></li>
-              <li><b>Live, against last week</b><span>Every step updates the rank, with the trend beside it.</span></li>
-              <li><b>Puma and turtle days</b><span>The fastest movers get the puma, the quiet ones a nudge.</span></li>
-              <li><b>Filter by country or team</b><span>Each community sees the ranking that matters to it.</span></li>
+              <li><b>Individuals</b><span>Every member ranked by steps, live through the day.</span></li>
+              <li><b>Teams</b><span>Departments, clubs and crews compete as one.</span></li>
+              <li><b>Countries</b><span>Each country's members add up on one board.</span></li>
+              <li><b>Medals</b><span>Who has collected the most gold, silver and bronze.</span></li>
+              <li><b>Target</b><span>Points for hitting the daily step target.</span></li>
             </ul>
           </div>
         </article>
@@ -397,7 +398,7 @@
 
         <article class="card game game--gor" data-reveal style="--d:.08s" data-game="gor">
           <div class="game__head"><h3 class="h3">Game of Run</h3><span class="live">Live</span></div>
-          <div class="game__viz"><svg class="hexmap" id="hexmap" viewBox="0 0 300 330" role="img" aria-label="A map of hexagons being claimed by three teams"></svg></div>
+          <div class="game__viz"><svg class="hexmap" id="hexmap" viewBox="0 0 300 330" role="img" aria-label="A hexagon-shaped map of hexes being claimed by three teams"></svg></div>
           <div class="hexmap__legend"><span><i style="background:#0751fb"></i>House Blue</span><span><i style="background:#f2552c"></i>House Red</span><span><i style="background:#c9d6ff"></i>House Sky</span></div>
           <p class="card__text">Run a street, claim it for your House. Conquer the map one run at a time.</p>
         </article>
@@ -674,7 +675,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=24"></script>
-<script type="module" src="/proto/features.js?v=21"></script>
+<script type="module" src="/proto/features.js?v=22"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
