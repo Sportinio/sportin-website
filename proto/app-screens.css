@@ -32,10 +32,10 @@
 /* FilterChipRow + CountryChipView. */
 .lbf { display: flex; align-items: center; gap: 10px; margin: 31px 0 0 16px; white-space: nowrap; }
 .lbf > span { font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, 0.5); }
-.chip { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 20px; background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09); font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.5); }
-.chip--all { padding: 0 18px; }
-.chip.is-on { color: #fff; box-shadow: inset 0 0 0 1.5px rgb(26, 140, 255); }
-.chip img { width: 18px; height: 18px; border-radius: 50%; }
+.lbchip { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 20px; background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09); font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.5); }
+.lbchip--all { padding: 0 18px; }
+.lbchip.is-on { color: #fff; box-shadow: inset 0 0 0 1.5px rgb(26, 140, 255); }
+.lbchip img { width: 18px; height: 18px; border-radius: 50%; }
 /* The list sheet. */
 .lbs { position: absolute; left: 0; right: 0; top: 406px; bottom: 0; border-radius: 20px 20px 0 0; background: rgb(21, 21, 21); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); }
 .lbs__grab { width: 36px; height: 5px; margin: 8px auto 0; border-radius: 3px; background: rgba(255, 255, 255, 0.28); }
@@ -56,13 +56,13 @@
 .rk__c { height: 9px; display: grid; place-items: center; font-size: 8px; line-height: 1; color: rgba(255, 255, 255, 0.2); }
 .rk__c svg { position: static; }
 /* GlassAvatar 44 with the tier badge 20x20, offset 8 below. */
-.av { position: relative; flex: none; width: 44px; height: 44px; margin-left: 12px; }
-.av > img:first-child { width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
-.av__tier { position: absolute; left: 12px; bottom: -8px; width: 20px; height: 20px; }
-.who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; margin-left: 12px; }
-.who__n { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; white-space: nowrap; }
-.who__n img { width: 14.4px; height: 14.4px; border-radius: 50%; }
-.who__s { font-size: 12px; color: rgba(255, 255, 255, 0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lbav { position: relative; flex: none; width: 44px; height: 44px; margin-left: 12px; }
+.lbav > img:first-child { width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.lbav__tier { position: absolute; left: 12px; bottom: -8px; width: 20px; height: 20px; }
+.lbw { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; margin-left: 12px; }
+.lbw__n { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; white-space: nowrap; }
+.lbw__n img { width: 14.4px; height: 14.4px; border-radius: 50%; }
+.lbw__s { font-size: 12px; color: rgba(255, 255, 255, 0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* Value column: 15 bold rounded, "st" 9 medium, then the puma or turtle coin (20) or the trend. */
 .val { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 .val__n { display: flex; align-items: flex-start; gap: 2px; }

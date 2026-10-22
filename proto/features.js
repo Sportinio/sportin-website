@@ -1,15 +1,17 @@
-// Competitions: the grey section after the engine. Scrolling down moves the panels sideways, one
-// panel per scroll step, at the same eased pace as the 3D scenes (scroll-follow.js): League, then Conquer.
+// Competitions: the section after the integrations. It opens on a big title, then one page per
+// scroll step at the same eased pace as the 3D scenes (scroll-follow.js). Pages do not slide: the
+// text turns to dust and re-forms as the next page's text (dust.js) while the graphic dissolves
+// and the next one forms in its place. The rail at the bottom shows progress; Skip leaves the section.
 // Demos for other feature panels stay ready (guarded) in case those panels come back.
 // Panel 1, Competitions, shows two formats that play themselves while the panel is on screen:
 // a Champions League style cup walks through its stages, and a national league plays a matchday
 // and updates its table.
 import { followScroll } from '/proto/scroll-follow.js?v=1';
+import { createDust, WIN } from '/proto/dust.js?v=3';
 
 const sec = document.getElementById('features');
 if (sec) {
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const track = sec.querySelector('.feat__track');
   const panels = [...sec.querySelectorAll('.feat__panel')];
   const nav = [...sec.querySelectorAll('.feat__nav button')];
   const STEPS = panels.length - 1;
@@ -60,7 +62,7 @@ if (sec) {
     cupParts.forEach((p) => { const n = Number(p.dataset.stage); p.classList.toggle('is-on', n === s); p.classList.toggle('is-done', n < s); });
   }
 
-  // ---------- National league format: a goal goes in, a team climbs the table ----------
+  // ---------- National league format: the live match turns on movement index, a team climbs the table ----------
   const live = sec.querySelector('.fix__row[data-live]');
   const rows = [...sec.querySelectorAll('.tbl__row[data-team]')];
   const climber = sec.querySelector('.tbl__row[data-climb]');
@@ -69,13 +71,13 @@ if (sec) {
   const setRow = (row, vals) => { const cells = row.querySelectorAll('span'); const v = vals.split('|'); [0, 2, 3, 4, 5, 6].forEach((c, i) => { cells[c].textContent = v[i]; }); };
   function leagueBefore() {
     if (!live) return;
-    live.classList.add('is-live'); live.querySelector('.fix__score').textContent = '1 – 1';
+    live.classList.add('is-live'); live.querySelector('.fix__score').textContent = '5.1 – 5.2';
     rows.forEach((r) => { r.style.transform = ''; r.classList.remove('is-up'); });
     setRow(climber, climber.dataset.before); setRow(passed, passed.dataset.before);
   }
   function leagueAfter() {
     if (!live) return;
-    live.querySelector('.fix__score').textContent = '2 – 1'; live.classList.remove('is-live');
+    live.querySelector('.fix__score').textContent = '5.6 – 5.2'; live.classList.remove('is-live');
     const h = climber.offsetTop - passed.offsetTop; // one row, including the gap
     climber.style.transform = `translateY(${-h}px)`; passed.style.transform = `translateY(${h}px)`;
     climber.classList.add('is-up');
@@ -286,15 +288,26 @@ if (sec) {
     if (running && demos[running]) demos[running].start();
   }
 
-  // ---------- Sideways scroll ----------
+  // ---------- Dust pages ----------
+  const stick = sec.querySelector('.feat__stick');
+  const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *')]));
+  const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
   let current = -1;
   function paint(t) {
-    track.style.transform = `translateX(${(-t * 100).toFixed(3)}%)`;
+    const a = Math.floor(t + 1e-6); const b = Math.min(STEPS, a + 1); const u = b === a ? 0 : t - a;
+    panels.forEach((p, i) => {
+      let txt = 0; let gfx = 0;
+      if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.1, 0.4, u); }
+      if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.55, 0.9, u); }
+      p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
+      p.style.visibility = txt > 0 || gfx > 0 ? 'visible' : 'hidden';
+    });
+    if (!RM) dust.draw(a, b, u);
     const k = Math.round(t);
     if (k !== current) {
       current = k;
-      nav.forEach((b, i) => b.setAttribute('aria-current', String(i === k)));
-      sec.querySelectorAll('.tl__layer').forEach((layer) => layer.classList.toggle('is-on', layer.contains(nav[k] || null)));
+      nav.forEach((btn, i) => btn.setAttribute('aria-current', String(i === k - 1))); // page 0 is the opening title
+      sec.querySelectorAll('.tl__layer').forEach((layer) => layer.classList.toggle('is-on', layer.contains(nav[k - 1] || null)));
       panels.forEach((p, i) => p.toggleAttribute('inert', i !== k));
     }
     runDemoFor(k);
@@ -303,9 +316,17 @@ if (sec) {
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; paint(follow.t); }).observe(sec);
   // The rail jumps to a panel by scrolling to its step, so it works with the deck's snapping.
   nav.forEach((b, i) => b.addEventListener('click', () => {
-    const top = sec.offsetTop + (i / (STEPS + 0.6)) * (sec.offsetHeight - window.innerHeight);
+    const top = sec.offsetTop + ((i + 1) / (STEPS + 0.6)) * (sec.offsetHeight - window.innerHeight);
     window.scrollTo({ top, behavior: RM ? 'auto' : 'smooth' });
   }));
-  window.addEventListener('resize', () => paint(follow.t));
+  // Skip: straight to the section after this one.
+  const skip = sec.querySelector('.feat__skip');
+  if (skip) skip.addEventListener('click', () => window.scrollTo({ top: sec.offsetTop + sec.offsetHeight, behavior: 'auto' }));
+  // The dust is sampled from the laid-out text, so it is rebuilt when layout, fonts or theme change.
+  const rebuild = () => { dust.invalidate(); paint(follow.t); };
+  window.addEventListener('resize', rebuild);
+  if (document.fonts) document.fonts.ready.then(rebuild);
+  new MutationObserver(rebuild).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
   follow.sync();
+  window.featuresAt = (v) => follow.jump(v); // debugging: show any point of the section
 }
