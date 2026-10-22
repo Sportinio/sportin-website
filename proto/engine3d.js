@@ -3,7 +3,7 @@
 // 4 Reward, 5 the three layers split apart and connect, 6 they press into one chip that stands up.
 // One plate shows the layers in turn by flipping over; at the split it becomes the bottom layer and
 // the other two drop in from above. Every payoff (champion, ring, points) lands while its caption
-// is fully on screen. The plates' screens are drawn on canvases, redrawn only when their state changes.
+// is on screen. The plates' screens are drawn on canvases, redrawn only when their state changes.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -323,14 +323,16 @@ function paint(t) {
     el.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none';
   });
 
-  // Timeline (1 t is about 73vh of scroll).
-  const p1 = win(t, 0.05, 0.55); // the plate settles in
+  // Timeline. In the deck the scroll rests on whole steps (t = 1, 2 ... 6), so each step's
+  // motion uses the whole stretch before it and its payoff has landed by the time it rests.
+  const p1 = win(t, 0, 0.45); // the plate settles in
   // Flips: gentler cubic curve; with reduced motion the screen simply changes.
-  const f1 = RM ? (t > 2.65 ? 1 : 0) : winC(t, 2.45, 2.85);
-  const f2 = RM ? (t > 3.65 ? 1 : 0) : winC(t, 3.45, 3.85);
-  const split = win(t, 4.4, 4.85); const fin = win(t, 4.4, 4.6);
-  const d1 = win(t, 4.65, 4.85); const d2 = win(t, 4.75, 4.95);
-  const m = win(t, 5.3, 5.5); const c = win(t, 5.48, 5.58); const up = win(t, 5.6, 6);
+  const f1 = RM ? (t > 2.3 ? 1 : 0) : winC(t, 2.05, 2.55);
+  const f2 = RM ? (t > 3.3 ? 1 : 0) : winC(t, 3.05, 3.55);
+  const split = win(t, 4.05, 4.6); const fin = win(t, 4.05, 4.3);
+  const d1 = win(t, 4.5, 4.7); const d2 = win(t, 4.62, 4.82);
+  // The press into the chip: the gaps close, the block cross-fades into the chip, the chip stands up.
+  const m = win(t, 5.05, 5.45); const c = win(t, 5.38, 5.62); const up = win(t, 5.55, 6);
   const bob = RM ? 0 : Math.sin(Math.PI * f1) + Math.sin(Math.PI * f2); // 1 at mid-flip
 
   // The flipping plate. It is already partly in view on the intro, and dips while it turns so it
@@ -357,7 +359,7 @@ function paint(t) {
   // Rods span exactly the live gap between neighbouring plates.
   const gTop = pGlass.position.y - PT / 2; const bTop = pBoard.position.y + PT / 2;
   const bBot = pBoard.position.y - PT / 2; const rTop = pReward.position.y + PT / 2;
-  const dotU = RM ? -1 : clamp((t - 4.95) / 0.35); // a pulse runs down once the rods are in
+  const dotU = RM ? -1 : clamp((t - 4.82) / 0.18); // a pulse runs down once the rods are in
   links.forEach((L) => {
     L.r1.position.y = gTop; L.r1.scale.y = Math.max(0.0001, (gTop - bTop) * d1);
     L.r2.position.y = bBot; L.r2.scale.y = Math.max(0.0001, (bBot - rTop) * d2);
@@ -385,11 +387,11 @@ function paint(t) {
   camera.lookAt(look);
 
   // Screens: redraw only when their state changes.
-  const za = t < 0.55 ? 1 : 0.4 + 0.6 * Math.max(win(t, 0.55, 0.7) * (1 - win(t, 1.45, 1.6)), t > 4.4 ? 1 : 0);
-  const zb = t < 1.45 ? (t < 0.55 ? 1 : 0.4) : 0.4 + 0.6 * Math.max(win(t, 1.45, 1.6), t > 4.4 ? 1 : 0);
-  const gs = { za, zb, o1: win(t, 0.55, 0.68), r1: t > 0.7, k1: win(t, 0.7, 0.82), o2: win(t, 0.8, 0.88), r2: t > 0.9, k2: win(t, 0.9, 1.0), o3: win(t, 0.98, 1.1), rp: win(t, 1.6, 2.15) };
-  const bs = { lo: win(t, 2.85, 2.95), ln: win(t, 3.0, 3.12) + win(t, 3.2, 3.32), ov: win(t, 3.0, 3.3) };
-  const rs = { pr: win(t, 3.85, 4.15) };
+  const za = t < 0.4 ? 1 : 0.4 + 0.6 * Math.max(win(t, 0.4, 0.55) * (1 - win(t, 1.1, 1.3)), t > 4.05 ? 1 : 0);
+  const zb = t < 1.1 ? (t < 0.4 ? 1 : 0.4) : 0.4 + 0.6 * Math.max(win(t, 1.1, 1.3), t > 4.05 ? 1 : 0);
+  const gs = { za, zb, o1: win(t, 0.4, 0.55), r1: t > 0.55, k1: win(t, 0.55, 0.7), o2: win(t, 0.68, 0.78), r2: t > 0.78, k2: win(t, 0.78, 0.9), o3: win(t, 0.88, 1.0), rp: win(t, 1.3, 2.0) };
+  const bs = { lo: win(t, 2.55, 2.65), ln: win(t, 2.65, 2.8) + win(t, 2.82, 2.97), ov: win(t, 2.65, 2.97) };
+  const rs = { pr: win(t, 3.55, 4.0) };
   [[scr.glass, gs, drawGlass], [scr.board, bs, drawBoard], [scr.reward, rs, drawReward]].forEach(([s, st, fn]) => {
     const k = JSON.stringify(st, (_, v) => (typeof v === 'number' ? Math.round(v * 400) / 400 : v));
     if (k !== s.key) { s.key = k; fn(st); s.tex.needsUpdate = true; }
@@ -403,12 +405,25 @@ function paint(t) {
 }
 
 // ---------- Scroll ----------
-let shown = 0; let target = 0; let raf = 0; let last = 0;
+// The scene follows the scroll at a steady, eased pace: it speeds up gently, holds a calm
+// cruising speed and slows to a soft stop. One step (a flip, the split, the press into the
+// chip) takes about 2 s however fast the scroll or snap jumps; long jumps catch up faster.
+// Reduced motion follows the scroll directly.
+let shown = 0; let target = 0; let raf = 0; let last = 0; let vel = 0;
+const ACC = 1.6; // t per second², how gently it speeds up and slows down
+const CRUISE = 0.6; // t per second for a single step
 function progress() { const r = sec.getBoundingClientRect(); return Math.max(0, Math.min(6, (-r.top / (r.height - window.innerHeight)) * 6.6)); } // last part of the scroll holds the finished chip
 function loop(now) {
   const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
-  shown += (target - shown) * (1 - Math.exp(-dt / 0.09));
-  if (Math.abs(target - shown) < 0.0008) shown = target;
+  if (RM) { shown = target; vel = 0; } else {
+    const d = target - shown; const dist = Math.abs(d);
+    const vmax = CRUISE + 0.5 * Math.max(0, dist - 1);
+    const want = Math.sign(d) * Math.min(vmax, Math.sqrt(2 * ACC * dist)); // still able to stop in time
+    const dv = want - vel; vel += Math.sign(dv) * Math.min(Math.abs(dv), ACC * dt);
+    shown += vel * dt;
+    if (Math.sign(target - shown) !== Math.sign(d)) { shown = target; vel = 0; } // never overshoot
+  }
+  if (Math.abs(target - shown) < 0.001 && Math.abs(vel) < 0.03) { shown = target; vel = 0; }
   paint(shown);
   if (shown !== target) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
 }
@@ -418,4 +433,4 @@ window.addEventListener('resize', () => { resize(); paint(shown); });
 resize();
 document.fonts.ready.then(() => { drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); target = shown = progress(); paint(shown); });
 target = shown = progress(); paint(shown);
-window.engineAt = (v) => { target = shown = v; paint(v); };
+window.engineAt = (v) => { target = shown = v; vel = 0; paint(v); };
