@@ -24,6 +24,7 @@ const win = (t, a, b) => sm(clamp((t - a) / (b - a)));
 const winC = (t, a, b) => sc(clamp((t - a) / (b - a)));
 const lerp = (a, b, u) => a + (b - a) * u;
 const BLUE = '#0751fb'; const INK = '#0a1020'; const SLATE = '#5a6377'; const MUTE = '#8a93a6';
+const GREEN = '#0f9f6e'; const GREEN_SOFT = '#effaf5'; // unlocked rewards
 
 // ---------- Renderer, camera, light ----------
 let renderer;
@@ -188,10 +189,11 @@ function drawReward(s) {
   PERKS.forEach(([name, cost], k) => {
     const on = s.pr >= [0.2, 0.6, 1][k] - 0.001; const redeem = k === 2 && s.pr >= 0.999;
     const y = 80 + k * 196 - (on ? 8 : 0);
-    card(ctx, 500, y, 500, 168, 18, redeem ? BLUE : '#fff', redeem ? null : (on ? BLUE : 'rgba(10,16,32,0.09)'), on ? 3 : 2);
+    // Unlocked rewards turn green; the top reward, fully earned, becomes a green Redeem card.
+    card(ctx, 500, y, 500, 168, 18, redeem ? GREEN : (on ? GREEN_SOFT : '#fff'), redeem ? null : (on ? GREEN : 'rgba(10,16,32,0.09)'), on ? 3 : 2);
     font(ctx, 700, 30); ctx.fillStyle = redeem ? '#fff' : INK; ctx.fillText(name, 530, y + 70);
-    font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = redeem ? 'rgba(255,255,255,0.8)' : SLATE; ctx.fillText(`${cost.toLocaleString('en-US')} pts`, 530, y + 134);
-    font(ctx, 700, 26); ctx.textAlign = 'right'; ctx.fillStyle = redeem ? '#fff' : (on ? BLUE : '#a3abbb'); ctx.fillText(redeem ? 'Redeem' : on ? 'Unlocked' : 'Locked', 972, y + 134); ctx.textAlign = 'left';
+    font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = redeem ? 'rgba(255,255,255,0.85)' : SLATE; ctx.fillText(`${cost.toLocaleString('en-US')} pts`, 530, y + 134);
+    font(ctx, 700, 26); ctx.textAlign = 'right'; ctx.fillStyle = redeem ? '#fff' : (on ? GREEN : '#a3abbb'); ctx.fillText(redeem ? 'Redeem' : on ? 'Unlocked' : 'Locked', 972, y + 134); ctx.textAlign = 'left';
   });
 }
 
