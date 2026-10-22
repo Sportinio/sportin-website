@@ -303,13 +303,41 @@ chip.add(pads);
 // is still framed on the stage area below the text: the projection is widened to the full canvas.
 let W = 1; let H = 1;
 const stick = sec.querySelector('.engine__stick'); stick.prepend(canvas);
+let view = { x: 0, y: 0, w: 1, h: 1 }; // the camera's base framing, in canvas pixels
+let chipShift = 0; // extra vertical shift so the finished chip sits exactly mid-way (see measureChip)
+function frame(shift) { camera.setViewOffset(W, H, view.x, view.y + shift, view.w, view.h); camera.updateProjectionMatrix(); }
 function resize() {
   const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
   W = Math.max(1, r.width); H = Math.max(1, r.height);
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
   // Framed a little above the stage centre, so the near edge of a tilted layer never reaches the screen bottom.
-  camera.setViewOffset(W, H, f.left - r.left, f.top - r.top + H * 0.07, f.width, f.height);
-  camera.updateProjectionMatrix();
+  view = { x: f.left - r.left, y: f.top - r.top + H * 0.07, w: f.width, h: f.height };
+  frame(0);
+  measureChip();
+}
+// The finished chip is centred on the screen's middle line and sits exactly half-way between the
+// last line of the title block (the Book a demo button) and the caption below it, with equal space
+// above and below. It puts the chip and camera in their final pose, projects the chip's outline and
+// works out how far the framing has to move. Re-run on resize and once the fonts have loaded.
+const _box = new THREE.Box3(); const _v = new THREE.Vector3();
+function measureChip() {
+  const block = sec.querySelector('.eng-txt[data-c="6"]'); const capEl = sec.querySelector('.eng-caption');
+  const copy = sec.querySelector('.engine__copy'); if (!block || !capEl || !copy) return;
+  const f = stick.getBoundingClientRect(); const last = block.lastElementChild;
+  // Layout positions without the text's scroll transforms.
+  const textBottom = copy.getBoundingClientRect().top + last.offsetTop + last.offsetHeight - f.top;
+  const capTop = capEl.getBoundingClientRect().top - f.top;
+  const targetY = (textBottom + capTop) / 2;
+  const aspectK = Math.max(1, 1.45 / (W / H)); const dist = 11 * aspectK; const ey = 0.1;
+  chip.position.set(0, 0.55, 0); chip.rotation.set(Math.PI / 2, 0, 0, 'YXZ'); chip.updateMatrixWorld(true);
+  camera.position.set(0, 0.55 + dist * ey, dist * Math.sqrt(1 - ey * ey)); camera.lookAt(0, 0.55, 0); camera.updateMatrixWorld(true);
+  frame(0);
+  _box.setFromObject(chip); let top = Infinity; let bottom = -Infinity;
+  for (let i = 0; i < 8; i++) {
+    _v.set(i & 1 ? _box.max.x : _box.min.x, i & 2 ? _box.max.y : _box.min.y, i & 4 ? _box.max.z : _box.min.z).project(camera);
+    const y = ((1 - _v.y) / 2) * view.h; top = Math.min(top, y); bottom = Math.max(bottom, y);
+  }
+  chipShift = (top + bottom) / 2 - targetY;
 }
 
 // ---------- Choreography ----------
@@ -388,6 +416,7 @@ function paint(t) {
   const ey = lerp(0.62, 0.1, up); const ez = Math.sqrt(1 - ey * ey);
   camera.position.set(look.x + dist * 0.05 * (1 - up), look.y + dist * ey, look.z + dist * ez);
   camera.lookAt(look);
+  frame(chipShift * up); // the standing chip settles exactly mid-way between title and caption
 
   // Screens: redraw only when their state changes.
   const za = t < 0.4 ? 1 : 0.4 + 0.6 * Math.max(win(t, 0.4, 0.55) * (1 - win(t, 1.1, 1.3)), t > 4.05 ? 1 : 0);
@@ -447,6 +476,6 @@ const kick = () => { target = progress(); if (!raf) raf = requestAnimationFrame(
 window.addEventListener('scroll', kick, { passive: true });
 window.addEventListener('resize', () => { resize(); paint(shown); });
 resize();
-document.fonts.ready.then(() => { drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); target = shown = progress(); paint(shown); });
+document.fonts.ready.then(() => { measureChip(); drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); target = shown = progress(); paint(shown); });
 target = shown = progress(); paint(shown);
 window.engineAt = (v) => { target = shown = v; vel = 0; paint(v); };
