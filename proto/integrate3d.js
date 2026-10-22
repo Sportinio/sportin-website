@@ -252,7 +252,7 @@ const COLS = [-4.3, -1.3, 1.3, 4.3];
 const PHONE_X = COLS[0]; const PHONE_Y = 0;
 const PHONE_EDGE = PHONE_X + PH.w / 2; // the phone's right edge, where lines leave it
 const WATCH_X = COLS[1]; const COL_GAP = 0.5;
-const CHIP_S = 0.38; // both chips at this size outside the phone (leaves room for the REAL TIME badge)
+const CHIP_S = 0.44; // both chips at this size outside the phone
 const ENGINE_IN_PHONE = () => new THREE.Vector3(phone.position.x, phone.position.y + ENG.y, PZ + 0.18);
 
 // Integrations view.
@@ -433,7 +433,7 @@ function paint(t, now = performance.now()) {
     drawLine(sensorOut[i], win(emo, 0.35 + i * 0.07, 0.65 + i * 0.07));
   });
   const rl = win(emo, 0.65, 0.95); drawLine(realLine, rl); realMat.opacity = 1;
-  showSprite(realLabel, win(emo, 0.8, 1)); realLabel.position.set((EMO_X + emoW / 2 + ENGINE_X - chipW / 2) / 2, 0, 0.25); // on the line, centred in the gap
+  showSprite(realLabel, 0); // no label: the line and its pulses carry it realLabel.position.set((EMO_X + emoW / 2 + ENGINE_X - chipW / 2) / 2, 0, 0.25); // on the line, centred in the gap
   emoDotMat.opacity = emo;
   emoRunners.visible = emo > 0.6 && !RM;
   if (emoRunners.visible) {
