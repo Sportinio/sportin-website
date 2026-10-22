@@ -17,20 +17,21 @@ if (sec) {
   const STEPS = panels.length - 1;
 
   // ---------- Knockout bracket (built here to keep the markup short) ----------
-  // Round of 16 (8 teams shown), quarter-finals (4), final (2), champion: data-stage 2, 3, 4.
+  // Quarter-finals (the eight group qualifiers, group winners against runners-up of another group),
+  // semi-finals (4), final (2), winner: data-stage 2, 3, 4.
   const svg = sec.querySelector('.cup__ko');
   if (svg) {
     const NS = 'http://www.w3.org/2000/svg';
     const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); parent.appendChild(n); return n; };
     const cols = [
-      { x: 0, n: 8, stage: 2, label: 'Round of 16', names: ['Harbour Gym', 'Park Crew', 'North Runners', 'Bike Club', 'City Walkers', 'Office Team', 'Riverside', 'Team Blue'] },
-      { x: 150, n: 4, stage: 3, label: 'Quarter-finals', names: ['Harbour Gym', 'North Runners', 'Office Team', 'Riverside'] },
-      { x: 300, n: 2, stage: 4, label: 'Final', names: ['North Runners', 'Office Team'] },
+      { x: 0, n: 8, stage: 2, label: 'Quarter-finals', names: ['North Runners', 'Harbour Gym', 'Office Team', 'Bike Club', 'Riverside', 'Team Blue', 'City Walkers', 'Park Crew'] },
+      { x: 150, n: 4, stage: 3, label: 'Semi-finals', names: ['North Runners', 'Office Team', 'Riverside', 'City Walkers'] },
+      { x: 300, n: 2, stage: 4, label: 'Final', names: ['North Runners', 'City Walkers'] },
     ];
     const TOP = 24; const H = 280; const BW = 118; const BH = 26;
     const ys = (n) => Array.from({ length: n }, (_, i) => TOP + (H / n) * (i + 0.5));
     cols.forEach((col) => { const l = el('text', { x: col.x, y: 10, class: 'lbl' }, svg); l.textContent = col.label; });
-    { const l = el('text', { x: 450, y: 10, class: 'lbl' }, svg); l.textContent = 'Champion'; }
+    { const l = el('text', { x: 450, y: 10, class: 'lbl' }, svg); l.textContent = 'Winner'; }
     cols.forEach((col, ci) => {
       const g = el('g', { 'data-stage': col.stage }, svg);
       const next = cols[ci + 1];
@@ -51,14 +52,11 @@ if (sec) {
   }
 
   // ---------- Champions League format: walk through the stages ----------
-  const rail = sec.querySelector('.rail');
-  const railItems = rail ? [...rail.querySelectorAll('li')] : [];
+  const STAGES = 5; // qualifying, groups, quarter-finals, semi-finals, final
   const cupParts = [...sec.querySelectorAll('.cup [data-stage]')];
   let stage = 0;
   function showStage(s) {
     stage = s;
-    railItems.forEach((li, i) => { li.classList.toggle('is-on', i === s); li.classList.toggle('is-done', i < s); });
-    if (rail) rail.style.setProperty('--rp', String(s / (railItems.length - 1)));
     cupParts.forEach((p) => { const n = Number(p.dataset.stage); p.classList.toggle('is-on', n === s); p.classList.toggle('is-done', n < s); });
   }
 
@@ -67,13 +65,14 @@ if (sec) {
   const rows = [...sec.querySelectorAll('.tbl__row[data-team]')];
   const climber = sec.querySelector('.tbl__row[data-climb]');
   const passed = sec.querySelector('.tbl__row[data-passed]');
+  const loser = sec.querySelector('.tbl__row[data-loser]');
   // A row's numbers (pos, P, W, D, L, Pts) before and after the goal, from data-before/data-after.
   const setRow = (row, vals) => { const cells = row.querySelectorAll('span'); const v = vals.split('|'); [0, 2, 3, 4, 5, 6].forEach((c, i) => { cells[c].textContent = v[i]; }); };
   function leagueBefore() {
     if (!live) return;
     live.classList.add('is-live'); live.querySelector('.fix__score').textContent = '5.1 – 5.2';
     rows.forEach((r) => { r.style.transform = ''; r.classList.remove('is-up'); });
-    setRow(climber, climber.dataset.before); setRow(passed, passed.dataset.before);
+    setRow(climber, climber.dataset.before); setRow(passed, passed.dataset.before); if (loser) setRow(loser, loser.dataset.before);
   }
   function leagueAfter() {
     if (!live) return;
@@ -81,7 +80,7 @@ if (sec) {
     const h = climber.offsetTop - passed.offsetTop; // one row, including the gap
     climber.style.transform = `translateY(${-h}px)`; passed.style.transform = `translateY(${h}px)`;
     climber.classList.add('is-up');
-    setRow(climber, climber.dataset.after); setRow(passed, passed.dataset.after);
+    setRow(climber, climber.dataset.after); setRow(passed, passed.dataset.after); if (loser) setRow(loser, loser.dataset.after);
   }
 
   // ---------- Small helpers for the other panels ----------
@@ -100,9 +99,9 @@ if (sec) {
   { let timer = 0; let tick = 0;
     demos.knockout = {
       start() {
-        if (RM) { showStage(railItems.length - 1); return; }
+        if (RM) { showStage(STAGES - 1); return; }
         tick = 0; showStage(0);
-        timer = window.setInterval(() => { tick += 1; showStage(tick % railItems.length); }, 1500);
+        timer = window.setInterval(() => { tick += 1; showStage(tick % STAGES); }, 1500);
       },
       stop() { window.clearInterval(timer); timer = 0; },
     }; }
@@ -205,7 +204,7 @@ if (sec) {
     function own(h, team) { h.owner = team; h.poly.setAttribute('fill', team < 0 ? FREE : COLORS[team]); }
     function shares() {
       const n = hexes.length; const counts = [0, 0, 0]; hexes.forEach((h) => { if (h.owner >= 0) counts[h.owner] += 1; });
-      terr.forEach((li, k) => { const pct = Math.round((counts[k] / n) * 100); li.querySelector('.bar i').style.setProperty('--f', String(Math.min(1, pct / 30))); li.querySelector('em').textContent = `${pct}%`; });
+      terr.forEach((li, k) => { const pct = Math.round((counts[k] / n) * 100); const top = Math.max(1, ...counts); li.querySelector('.bar i').style.setProperty('--f', String(counts[k] / top)); li.querySelector('em').textContent = `${pct}%`; });
     }
     function reset() {
       hexes.forEach((h) => own(h, -1)); HOME.forEach((cells, team) => cells.forEach(([q, r]) => own(at(q, r), team)));
@@ -341,17 +340,20 @@ if (sec) {
 
   // ---------- Dust pages ----------
   const stick = sec.querySelector('.feat__stick');
-  const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *, .points')]));
+  const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *, .points, .feat__defs')]));
   const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
   let current = -1;
   function paint(t) {
     const a = Math.floor(t + 1e-6); const b = Math.min(STEPS, a + 1); const u = b === a ? 0 : t - a;
     panels.forEach((p, i) => {
       let txt = 0; let gfx = 0;
-      if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.4, u); }
-      if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.6, 0.95, u); }
+      if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.5, u); }
+      if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.4, 0.85, u); }
       p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
-      p.style.visibility = txt > 0 || gfx > 0 ? 'visible' : 'hidden';
+      // Between two phone pages the device stays still and only its screen changes.
+      const phones = panels[a] && panels[b] && b !== a && panels[a].classList.contains('feat__panel--app') && panels[b].classList.contains('feat__panel--app');
+      if (phones && (i === a || i === b)) p.style.setProperty('--frame', i === a ? '1' : '0'); else p.style.removeProperty('--frame');
+      p.style.visibility = txt > 0 || gfx > 0 || (phones && i === a) ? 'visible' : 'hidden'; // the outgoing frame stays until the new page owns it
     });
     if (!RM) dust.draw(a, b, u);
     const k = Math.round(t);

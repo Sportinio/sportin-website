@@ -26,8 +26,8 @@
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
-  <link rel="stylesheet" href="/proto/features.css?v=19" />
-  <link rel="stylesheet" href="/proto/app-screens.css?v=5" />
+  <link rel="stylesheet" href="/proto/features.css?v=20" />
+  <link rel="stylesheet" href="/proto/app-screens.css?v=6" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -149,16 +149,15 @@
           <div class="feat__intro feat__intro--lead"><p class="eng-k">The engine, layer by layer</p><h2 class="feat__title" id="featLeadTitle">Three layers. <em>Every game.</em></h2><p class="feat__lede">Competitions to enter, leaderboards to climb, rewards to unlock. One engine runs all three for any community.</p></div>
         </article>
         <article class="feat__panel" aria-labelledby="featClTitle">
-          <div class="feat__intro"><p class="eng-k">Competition layer · League format</p><h2 class="feat__title" id="featClTitle">Knockout, <em>Champions League style</em></h2><p class="feat__lede">Qualifying, groups, round of 16, quarter-finals and a final.</p></div>
+          <div class="feat__intro"><p class="eng-k">Competition layer · Knockout</p><h2 class="feat__title" id="featClTitle">Knockout, <em>Champions League style</em></h2><p class="feat__lede">Qualifying, groups, quarter-finals, semi-finals and a final.</p></div>
           <div class="big" data-demo="knockout">
-            <ol class="rail rail--big" aria-label="Stages"><li><i></i>Qualifying</li><li><i></i>Groups</li><li><i></i>Round of 16</li><li><i></i>Quarter-finals</li><li><i></i>Final</li></ol>
             <div class="cup cup--big" aria-hidden="true">
               <div class="cup__left">
-                <div class="cup__qual" data-stage="0">
-                  <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">5.4 – 4.9</span><span>Lakeside</span></div>
-                  <div class="fix__row"><span>Park Crew</span><span class="fix__score">5.1 – 4.7</span><span>Hill Club</span></div>
+                <div class="cup__qual" data-stage="0"><span class="cup__lbl">Qualifying</span>
+                  <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">5.4 – 4.9</span><span>Westgate</span></div>
+                  <div class="fix__row"><span>Park Crew</span><span class="fix__score">5.1 – 4.7</span><span>Canal Club</span></div>
                 </div>
-                <div class="cup__groups" data-stage="1">
+                <span class="cup__lbl cup__lbl--groups">Groups</span><div class="cup__groups" data-stage="1">
                   <div class="grp"><b>Group A</b><span class="q">North Runners<em>9</em></span><span class="q">Bike Club<em>6</em></span><span>Lakeside<em>3</em></span></div>
                   <div class="grp"><b>Group B</b><span class="q">Office Team<em>7</em></span><span class="q">Harbour Gym<em>5</em></span><span>Hill Club<em>4</em></span></div>
                   <div class="grp"><b>Group C</b><span class="q">Riverside<em>9</em></span><span class="q">Park Crew<em>4</em></span><span>Sunrise<em>2</em></span></div>
@@ -170,10 +169,10 @@
           </div>
         </article>
         <article class="feat__panel" aria-labelledby="featNdTitle">
-          <div class="feat__intro"><p class="eng-k">Competition layer · League format</p><h2 class="feat__title" id="featNdTitle">Table, <em>national division style</em></h2><p class="feat__lede">A season of matches won on movement index, with a table that updates as results come in.</p></div>
+          <div class="feat__intro"><p class="eng-k">Competition layer · Table</p><h2 class="feat__title" id="featNdTitle">Table, <em>national division style</em></h2><p class="feat__lede">A season of head-to-head rounds won on movement index. The table updates after every result.</p></div>
           <div class="big big--division" data-demo="division">
             <div class="fix fix--big">
-              <span class="fix__day">Matchday 7</span>
+              <span class="fix__day">Round 7</span>
               <div class="fix__row"><span>North Runners</span><span class="fix__score">6.2 – 4.8</span><span>City Walkers</span></div>
               <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">5.0 – 5.0</span><span>Bike Club</span></div>
               <div class="fix__row"><span>Riverside</span><span class="fix__score">4.6 – 5.3</span><span>Team Blue</span></div>
@@ -187,27 +186,28 @@
               <div class="tbl__row" data-team data-climb data-before="4|6|4|0|2|12" data-after="3|7|5|0|2|15"><span>4</span><span>Park Crew</span><span>6</span><span>4</span><span>0</span><span>2</span><span>12</span></div>
               <div class="tbl__row" data-team><span>5</span><span>Team Blue</span><span>7</span><span>3</span><span>2</span><span>2</span><span>11</span></div>
               <div class="tbl__row" data-team><span>6</span><span>City Walkers</span><span>7</span><span>3</span><span>1</span><span>3</span><span>10</span></div>
-              <div class="tbl__row" data-team><span>7</span><span>Office Team</span><span>6</span><span>2</span><span>2</span><span>2</span><span>8</span></div>
+              <div class="tbl__row" data-team data-loser data-before="7|6|2|2|2|8" data-after="7|7|2|2|3|8"><span>7</span><span>Office Team</span><span>6</span><span>2</span><span>2</span><span>2</span><span>8</span></div>
               <div class="tbl__row" data-team><span>8</span><span>Riverside</span><span>7</span><span>1</span><span>1</span><span>5</span><span>4</span></div>
             </div>
           </div>
         </article>
         <article class="feat__panel" aria-labelledby="featConqTitle">
-          <div class="feat__intro"><p class="eng-k">Competition layer · Conquer format</p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em></h2><p class="feat__lede">Game of Run: every run claims ground on the map.</p><dl class="feat__defs"><div><dt>Teams</dt><dd>Members run for their team. Every run paints the hexes it crosses.</dd></div><div><dt>Houses</dt><dd>Teams ride under a House. Hold most of a region and its House is yours.</dd></div></dl></div>
+          <div class="feat__intro"><p class="eng-k">Competition layer · Conquer</p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em></h2><p class="feat__lede">Game of Run: every run claims ground on the map.</p></div>
           <div class="big big--conq" data-demo="conquer">
             <svg class="hexmap-f" role="img" aria-label="A hexagon-shaped map of hexes being claimed by three teams"></svg>
             <div class="terr-wrap">
+              <dl class="feat__defs"><div><dt>Teams</dt><dd>Members run for a team. Every run paints the hexes it crosses.</dd></div><div><dt>Houses</dt><dd>Each team runs under a House. The House holding most of a region owns it.</dd></div></dl>
               <ul class="terr">
                 <li data-team="0"><span><i></i>North Runners<small>House of the Wolf</small></span><div class="bar"><i></i></div><em>0%</em></li>
                 <li data-team="1"><span><i></i>Office Team<small>House of the Falcon</small></span><div class="bar"><i></i></div><em>0%</em></li>
                 <li data-team="2"><span><i></i>Harbour Gym<small>House of the Lion</small></span><div class="bar"><i></i></div><em>0%</em></li>
               </ul>
-              <p class="fmt__foot">A hex belongs to the last team that ran through it. A House changes hands the moment the balance does.</p>
+              <p class="fmt__foot">A hex belongs to the last team that ran through it.</p>
             </div>
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRankTitle">
-          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Walking</p><h2 class="feat__title" id="featRankTitle">Every step, <em>ranked live</em></h2><p class="feat__lede">The steps board, as members see it in the SportIn app, in five views.</p></div>
+          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Walking</p><h2 class="feat__title" id="featRankTitle">Every step, <em>ranked live</em></h2><p class="feat__lede">The steps board from the SportIn app, with five ways to rank.</p></div>
           <div class="big big--app" data-demo="ranking">
             <div class="phone" aria-hidden="true">
               <div class="phone__screen"><div class="ios ios--lb" data-w="393">
@@ -223,16 +223,15 @@
               <img class="phone__frame" src="/proto/media/frames/phone-frame-open.png" alt="" />
             </div>
             <ul class="points">
-              <li><b>Individuals</b><span>Every member ranked by steps, live through the day.</span></li>
-              <li><b>Teams</b><span>Departments, clubs and crews compete as one.</span></li>
-              <li><b>Countries</b><span>Each country's members add up on one board.</span></li>
-              <li><b>Medals</b><span>Who has collected the most gold, silver and bronze.</span></li>
-              <li><b>Target</b><span>Points for hitting the daily step target.</span></li>
+              <li><b>Individuals</b><span>Every member, ranked by steps through the day.</span></li>
+              <li><b>Teams</b><span>Departments, clubs and crews add up as one.</span></li>
+              <li><b>Countries</b><span>Each country's members on one board.</span></li>
+              <li><b>Medals and target</b><span>Gold, silver and bronze, plus points for the daily target.</span></li>
             </ul>
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRunTitle">
-          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Running</p><h2 class="feat__title" id="featRunTitle">Every run, <em>ranked by pace</em></h2><p class="feat__lede">The running board, as members see it in the SportIn app.</p></div>
+          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Running</p><h2 class="feat__title" id="featRunTitle">Every run, <em>ranked by pace</em></h2><p class="feat__lede">The running board from the SportIn app, one board per distance.</p></div>
           <div class="big big--app" data-demo="running">
             <div class="phone" aria-hidden="true">
               <div class="phone__screen"><div class="ios ios--lb" data-w="393">
@@ -256,7 +255,7 @@
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRewTitle">
-          <div class="feat__intro"><p class="eng-k">Reward layer · Brand rewards</p><h2 class="feat__title" id="featRewTitle">Steps that <em>unlock rewards</em></h2><p class="feat__lede">Brand rewards, as members see them in the SportIn app.</p></div>
+          <div class="feat__intro"><p class="eng-k">Reward layer · Brand rewards</p><h2 class="feat__title" id="featRewTitle">Steps that <em>unlock rewards</em></h2><p class="feat__lede">Brands set the reward. Members unlock it by moving.</p></div>
           <div class="big big--app" data-demo="rewards">
             <div class="phone" aria-hidden="true">
               <div class="phone__screen"><div class="ios ios--lb ios--rw" data-w="393">
@@ -273,7 +272,7 @@
             <ul class="points">
               <li><b>Rewards from brands</b><span>Coffee, gear and passes from the brands around a community.</span></li>
               <li><b>Earned by moving</b><span>A step target for the day, or for several days in a week.</span></li>
-              <li><b>Progress on every card</b><span>The ring fills as members get closer, and turns blue when it is ready.</span></li>
+              <li><b>Progress on every card</b><span>The ring fills as members get closer and turns blue when ready.</span></li>
               <li><b>Claimed in store</b><span>A QR code at the counter, checked by the brand's staff.</span></li>
             </ul>
           </div>
@@ -281,7 +280,7 @@
       </div>
       <canvas class="feat__dust" aria-hidden="true"></canvas>
       <nav class="feat__nav tl" aria-label="Engine layers">
-        <div class="tl__layer is-on"><span class="tl__num">1</span><span class="tl__name">Competition</span><span class="tl__steps"><button type="button" aria-current="true">Knockout</button><button type="button">Table</button><button type="button">Conquer</button></span></div>
+        <div class="tl__layer"><span class="tl__num">1</span><span class="tl__name">Competition</span><span class="tl__steps"><button type="button">Knockout</button><button type="button">Table</button><button type="button">Conquer</button></span></div>
         <i class="tl__line" aria-hidden="true"></i>
         <div class="tl__layer"><span class="tl__num">2</span><span class="tl__name">Leaderboard</span><span class="tl__steps"><button type="button">Walking</button><button type="button">Running</button></span></div>
         <i class="tl__line" aria-hidden="true"></i>
@@ -698,7 +697,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=24"></script>
-<script type="module" src="/proto/features.js?v=23"></script>
+<script type="module" src="/proto/features.js?v=24"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
