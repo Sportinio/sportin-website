@@ -22,7 +22,7 @@
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
   <link rel="stylesheet" href="/proto/engine.css?v=8" />
-  <link rel="stylesheet" href="/proto/engine3d.css?v=10" />
+  <link rel="stylesheet" href="/proto/engine3d.css?v=11" />
 </head>
 <body>
 <header class="nav" id="nav">
@@ -45,20 +45,20 @@
 </header>
 <main id="top">
   <!-- INTEGRATIONS: the engine inside the phone, Motion by SportIn, wearables and the brands they use -->
-  <section class="engine engine--int" id="integrate" data-steps="5" aria-labelledby="intTitle">
+  <section class="engine engine--int" id="integrate" data-steps="4" aria-labelledby="intTitle">
     <div class="engine__stick">
       <div class="wrap engine__grid">
         <div class="engine__copy">
           <div class="eng-txt" data-c="0"><p class="eng-k">Integrations</p><h2 class="eng-h" id="intTitle">One engine. <em>Every source.</em></h2><p class="eng-p">Phones, wearables and fitness apps all feed the same engine.</p></div>
           <div class="eng-txt" data-c="1"><p class="eng-k">Inside the phone</p><h3 class="eng-h">Runs inside <em>your app</em></h3><p class="eng-p">The SportIn engine sits inside your branded app, on every member's phone.</p></div>
-          <div class="eng-txt" data-c="2"><p class="eng-k">Motion by SportIn</p><h3 class="eng-h"><em>Real-time</em> data with Motion</h3><p class="eng-p">Motion by SportIn turns the phone into a live sensor. No wearable needed.</p></div>
-          <div class="eng-txt" data-c="3"><p class="eng-k">Wearables</p><h3 class="eng-h">Connects to <em>every wearable</em></h3><p class="eng-p">Watches, rings and bands sync their activity to the phone.</p></div>
-          <div class="eng-txt" data-c="4"><p class="eng-k">Integrations</p><h3 class="eng-h">Works with the <em>brands they wear</em></h3><p class="eng-p">No Motion? The engine takes data from the apps and wearables members already use.</p></div>
-          <div class="eng-txt" data-c="5"><p class="eng-k">Two lanes</p><h3 class="eng-h">Two ways in, <em>one engine</em></h3><p class="eng-p">Live with Motion on the phone, or synced from the wearables members already use.</p></div>
+          <div class="eng-txt" data-c="2"><p class="eng-k">Wearables</p><h3 class="eng-h">Connects to <em>every wearable</em></h3><p class="eng-p">Watches, rings and bands sync their activity to the phone.</p></div>
+          <div class="eng-txt" data-c="3"><p class="eng-k">Integrations</p><h3 class="eng-h">Works with the <em>brands they wear</em></h3><p class="eng-p">The engine takes data from the apps and wearables members already use.</p></div>
+          <div class="eng-txt" data-c="4"><p class="eng-k">Every source</p><h3 class="eng-h">Every brand, <em>one engine</em></h3><p class="eng-p">Every wearable and app syncs into the same engine, ready to score.</p></div>
+          <div class="eng-txt" data-mode="emotion"><p class="eng-k">eMotion by SportIn</p><h3 class="eng-h"><em>Real time</em>, from the phone itself</h3><p class="eng-p">eMotion reads the phone's own sensors and feeds the SportIn engine in real time.</p></div>
         </div>
         <div class="engine__stage" aria-hidden="true">
           <canvas class="eng-canvas" id="int3d"></canvas>
-          <p class="eng-caption"><span>Live with Motion</span><span>Synced from wearables</span><span>One engine</span></p>
+          <p class="eng-caption"><span>Phone</span><span>Wearables</span><span>Brands</span></p>
         </div>
       </div>
     </div>
@@ -66,6 +66,6 @@
   <div style="height:70vh"></div>
 </main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="/proto/integrate3d.js?v=6"></script>
+<script type="module" src="/proto/integrate3d.js?v=9"></script>
 </body>
 </html>

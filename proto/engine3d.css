@@ -47,5 +47,13 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
 .engine .eng-p { max-width: 64ch; }
 @media (min-width: 900px) { .engine .eng-p { max-width: none; white-space: nowrap; } }
 
-/* The integrations scene: six steps (0..5). */
-.engine.engine--int { height: calc(100vh + 5 * 80vh); }
+/* The integrations scene: five steps (0..4). */
+.engine.engine--int { height: calc(100vh + 4 * 80vh); }
+/* Switch between the two ways data reaches the engine, placed just left of the phone (by JS). */
+.int-switch { position: absolute; left: 0; top: 0; z-index: 3; display: flex; flex-direction: column; gap: 4px; padding: 4px; border-radius: 16px; background: #fff; border: 1px solid rgba(10, 16, 32, 0.1); box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); opacity: 0; will-change: transform, opacity; }
+.int-switch button { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 0; border-radius: 12px; background: transparent; color: #5a6377; font: 600 14px/1 var(--body, "Instrument Sans"), sans-serif; cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out; }
+.int-switch button:hover { color: #0a1020; }
+.int-switch button:active { transform: scale(0.97); }
+.int-switch button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.int-switch button[aria-selected="true"] { background: #eef3ff; color: var(--blue); }
+.int-switch button i { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
