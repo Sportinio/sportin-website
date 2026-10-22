@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
+  <link rel="stylesheet" href="/proto/features.css?v=2" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -138,6 +139,63 @@
     </div>
   </section>
 
+
+  <!-- FEATURES: a grey section that scrolls sideways, one feature per scroll -->
+  <section class="feat" id="features" data-steps="3" aria-label="Features">
+    <div class="feat__stick">
+      <div class="feat__track">
+        <article class="feat__panel" aria-labelledby="featCompTitle">
+          <div class="feat__intro">
+            <p class="eng-k">Competitions</p>
+            <h2 class="feat__title" id="featCompTitle">Two formats, <em>one season</em></h2>
+            <p class="feat__lede">Run a cup like the Champions League, or a season like a national league. Both run themselves.</p>
+          </div>
+          <div class="feat__formats">
+            <div class="fmt">
+              <div class="fmt__head"><h3 class="fmt__name">Champions League format</h3><span class="fmt__meta">Cup · 32 teams</span></div>
+              <ol class="rail" aria-label="Stages"><li><i></i>Qualifying</li><li><i></i>Groups</li><li><i></i>Round of 16</li><li><i></i>Quarter-finals</li><li><i></i>Final</li></ol>
+              <div class="cup" aria-hidden="true">
+                  <div class="cup__qual" data-stage="0">
+                    <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">2 – 1</span><span>Lakeside</span></div>
+                    <div class="fix__row"><span>Park Crew</span><span class="fix__score">3 – 2</span><span>Hill Club</span></div>
+                  </div>
+                  <div class="cup__groups" data-stage="1">
+                    <div class="grp"><b>Group A</b><span class="q">North Runners<em>9</em></span><span class="q">Bike Club<em>6</em></span><span>Lakeside<em>3</em></span></div>
+                    <div class="grp"><b>Group B</b><span class="q">Office Team<em>7</em></span><span class="q">Harbour Gym<em>5</em></span><span>Hill Club<em>4</em></span></div>
+                    <div class="grp"><b>Group C</b><span class="q">Riverside<em>9</em></span><span class="q">Park Crew<em>4</em></span><span>Sunrise<em>2</em></span></div>
+                    <div class="grp"><b>Group D</b><span class="q">City Walkers<em>7</em></span><span class="q">Team Blue<em>6</em></span><span>Old Town<em>1</em></span></div>
+                  </div>
+                <svg class="cup__ko" role="img" aria-label="Knockout rounds from the round of 16 to the final"></svg>
+              </div>
+            </div>
+            <div class="fmt">
+              <div class="fmt__head"><h3 class="fmt__name">National league format</h3><span class="fmt__meta">Season · 10 teams</span></div>
+              <div class="league">
+                <div class="fix">
+                  <span class="fix__day">Matchday 7</span>
+                  <div class="fix__row"><span>North Runners</span><span class="fix__score">3 – 0</span><span>City Walkers</span></div>
+                  <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">1 – 1</span><span>Bike Club</span></div>
+                  <div class="fix__row is-live" data-live><span>Park Crew</span><span class="fix__score">1 – 1</span><span>Office Team</span></div>
+                </div>
+                <div class="tbl">
+                  <div class="tbl__row tbl__row--head"><span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span>Pts</span></div>
+                  <div class="tbl__row" data-team><span>1</span><span>North Runners</span><span>7</span><span>5</span><span>1</span><span>1</span><span>16</span></div>
+                  <div class="tbl__row" data-team><span>2</span><span>Harbour Gym</span><span>7</span><span>4</span><span>3</span><span>0</span><span>15</span></div>
+                  <div class="tbl__row" data-team data-passed data-before="3|7|4|2|1|14" data-after="4|7|4|2|1|14"><span>3</span><span>Bike Club</span><span>7</span><span>4</span><span>2</span><span>1</span><span>14</span></div>
+                  <div class="tbl__row" data-team data-climb data-before="4|6|4|0|2|12" data-after="3|7|5|0|2|15"><span>4</span><span>Park Crew</span><span>6</span><span>4</span><span>0</span><span>2</span><span>12</span></div>
+                  <div class="tbl__row" data-team><span>5</span><span>City Walkers</span><span>7</span><span>3</span><span>1</span><span>3</span><span>10</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="feat__panel" aria-label="Challenges"><div class="feat__intro"><p class="eng-k">Challenges</p><h2 class="feat__title">Done in <em>a weekend</em></h2><p class="feat__lede">Short goals anyone can join, from a step target to a weekend ride.</p></div><div class="feat__soon">Visual next</div></article>
+        <article class="feat__panel" aria-label="Leaderboards"><div class="feat__intro"><p class="eng-k">Leaderboards</p><h2 class="feat__title">Every move <em>counts live</em></h2><p class="feat__lede">Walks, runs and rides feed one ranking, updated as they happen.</p></div><div class="feat__soon">Visual next</div></article>
+        <article class="feat__panel" aria-label="Rewards"><div class="feat__intro"><p class="eng-k">Rewards</p><h2 class="feat__title">Effort earns <em>real perks</em></h2><p class="feat__lede">Points turn into perks your brand chooses, from a coffee to a spa day.</p></div><div class="feat__soon">Visual next</div></article>
+      </div>
+      <nav class="feat__nav" aria-label="Features"><button type="button" aria-current="true">Competitions</button><button type="button">Challenges</button><button type="button">Leaderboards</button><button type="button">Rewards</button></nav>
+    </div>
+  </section>
 
   <!-- WHY → HOW → WHAT on the track -->
   <section class="belief" id="belief" aria-label="Why, how and what">
@@ -542,10 +600,11 @@
 <script src="/proto/video-hero.js?v=3" defer></script>
 <script src="/proto/problem-scroll.js?v=3" defer></script>
 <script src="/proto/jelly.js?v=15" defer></script>
-<script src="/proto/deck.js?v=15" defer></script>
+<script src="/proto/deck.js?v=16" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=24"></script>
+<script type="module" src="/proto/features.js?v=2"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>

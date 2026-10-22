@@ -32,8 +32,9 @@
 
   // ---------- Pages and scenes ----------
   const scenes = ['belief', 'what'];
-  // The 3D scroll scenes (.engine) have their own pinned stage; they are never wrapped or scaled.
-  const all = [...document.querySelectorAll('main > section, main > .problem-pin > section, body > footer')].filter((s) => !s.classList.contains('engine'));
+  // Scroll scenes (the 3D engine, the sideways features) have their own pinned stage; they are
+  // never wrapped or scaled.
+  const all = [...document.querySelectorAll('main > section, main > .problem-pin > section, body > footer')].filter((s) => !s.classList.contains('engine') && !s.hasAttribute('data-steps'));
   const pages = all.filter((s) => !scenes.includes(s.id));
   all.forEach((s) => {
     const fit = document.createElement('div'); fit.className = 'slide__fit';
@@ -61,7 +62,7 @@
 
   // The 3D scroll scenes: one snap point per step (t = 0..steps over steps + 0.6 parts of the
   // scroll), so each scroll gesture moves the scene exactly one step.
-  const scenes3d = [...document.querySelectorAll('section.engine[data-steps], section#engine')].map((sec) => {
+  const scenes3d = [...document.querySelectorAll('section[data-steps], section#engine')].map((sec) => {
     const steps = Number(sec.dataset.steps || 6);
     const marks = Array.from({ length: steps + 1 }, () => { const m = document.createElement('i'); m.className = 'snap-mark'; m.setAttribute('aria-hidden', 'true'); sec.appendChild(m); return m; });
     return { sec, steps, marks };
