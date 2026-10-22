@@ -1,0 +1,47 @@
+/* Evidence page: three sourced numbers on a dark card, in the pitch deck's layout.
+   Revenue, retention, customer acquisition. Every figure carries its source. */
+.evidence.block { background: #0b0f1a; color: #eef1f7; }
+.evidence__eyebrow { color: #8fb0ff; margin-bottom: 16px; }
+.evidence__title { font-size: var(--fs-l); max-width: 20ch; color: #fff; text-wrap: balance; }
+.evidence__title em { color: #8fb0ff; }
+
+.evidence__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(40px, 6vh, 64px); }
+.ev { display: flex; flex-direction: column; padding: 0 clamp(20px, 2.6vw, 40px); }
+.ev:first-child { padding-left: 0; }
+.ev + .ev { box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.12); }
+.ev__tag { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em; color: rgba(238, 241, 247, 0.6); }
+.ev__num { margin: 14px 0 0; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: clamp(64px, 7.2vw, 112px); line-height: 0.95; letter-spacing: -0.02em; color: #fff; font-variant-numeric: tabular-nums; }
+.ev__unit { font-size: 0.55em; margin-left: 2px; color: #8fb0ff; }
+.ev__text { margin: 16px 0 0; max-width: none; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.45; font-weight: 600; color: #eef1f7; }
+.ev__note { margin: 14px 0 0; font-size: 14px; color: rgba(238, 241, 247, 0.6); }
+.ev__src { margin: auto 0 0; padding-top: 22px; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 15px; color: #fff; }
+
+/* Deloitte's comparison: spending index 100 vs 140. */
+.ev__bars { margin-top: 18px; display: grid; gap: 8px; max-width: 340px; }
+.ev__bar { display: grid; grid-template-columns: 130px 1fr 34px; align-items: center; gap: 10px; font-size: 12px; color: rgba(238, 241, 247, 0.6); }
+.ev__bar i { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.22); transform-origin: left; transform: scaleX(var(--w)); transition: transform 900ms var(--ease); }
+.ev__bar--on i { background: #3d74ff; }
+.ev__bar b { font-family: var(--mono); font-weight: 500; text-align: right; color: #eef1f7; }
+.js .evidence:not(.is-counted) .ev__bar i { transform: scaleX(0); }
+
+.evidence__sources { margin: clamp(28px, 4vh, 44px) 0 0; max-width: 110ch; font-size: 11.5px; line-height: 1.5; color: rgba(238, 241, 247, 0.45); }
+
+@media (max-width: 900px) {
+  .evidence__grid { grid-template-columns: 1fr; gap: 36px; }
+  .ev, .ev:first-child { padding: 0; box-shadow: none; }
+  .ev + .ev { padding-top: 32px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .evidence:not(.is-counted) .ev__bar i { transform: scaleX(var(--w)); }
+  .ev__bar i { transition: none; }
+}
+/* One line per statement on wide screens. */
+@media (min-width: 1100px) { .ev__text { white-space: nowrap; } }
+/* The statements are hidden (kept for screen readers); the space they took stays, so the
+   source names sit where they were. */
+.ev__text.sr-only { white-space: normal; }
+.ev__num { margin-bottom: calc(16px + 1.45 * clamp(16px, 1.25vw, 18px)); }
+
+/* Sources sit at the bottom of the card, on the content column. */
+.evidence.block { position: relative; }
+.evidence .evidence__sources, .jl-layer .evidence__sources { position: absolute; bottom: clamp(24px, 3.4vh, 36px); left: calc(max(var(--gutter), (100vw - var(--wrap)) / 2 + var(--gutter)) - var(--inset)); right: calc(max(var(--gutter), (100vw - var(--wrap)) / 2 + var(--gutter)) - var(--inset)); margin: 0; max-width: none; }

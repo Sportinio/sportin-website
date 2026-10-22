@@ -1,0 +1,30 @@
+/* Jelly mockup. The problem page stays pinned while you scroll through the transition:
+   each blue member dot splits into tiny dots, they travel one by one to an exact place in the
+   card and only melt into liquid on arrival, filling the card from top to bottom. Then the
+   evidence content pushes up through the blue like jelly. Everything follows the scroll. */
+html.has-jelly .jelly-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; display: none; }
+html.has-jelly .jelly-canvas.is-on { display: block; }
+
+/* The evidence content lives on a layer inside the problem card. */
+html.has-jelly .jl-layer { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--nav-h) + 20px) 0 32px; pointer-events: none; color: #fff; }
+html.has-jelly .jl-layer .jl { opacity: 0; will-change: transform, opacity, filter; }
+html.has-jelly #problem.is-filled { background: var(--blue); }
+html.has-jelly #problem.is-filled > .slide__fit { visibility: hidden; }
+html.has-jelly #problem.is-filled .jl-layer { pointer-events: auto; }
+
+/* White on blue: accents become soft white. */
+html.has-jelly .jl-layer .evidence__title { color: #fff; }
+html.has-jelly .jl-layer .evidence__eyebrow, html.has-jelly .jl-layer .ev__tag { color: rgba(255, 255, 255, 0.78); }
+html.has-jelly .jl-layer .evidence__title em, html.has-jelly .jl-layer .ev__unit { color: rgba(255, 255, 255, 0.72); }
+html.has-jelly .jl-layer .ev + .ev { box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28); }
+html.has-jelly .jl-layer .evidence__sources { color: rgba(255, 255, 255, 0.7); }
+
+/* Scroll room for the transition. The zone is taller than the screen, so the browser lets you
+   stop anywhere inside it; the end mark is where the finished evidence page rests. */
+.jelly-zone { position: absolute; left: 0; width: 1px; pointer-events: none; }
+html.is-full.jelly-free { scroll-snap-type: none; }
+.jelly-end { position: absolute; left: 0; width: 1px; height: 1px; pointer-events: none; scroll-snap-align: start; scroll-snap-stop: always; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.has-jelly .jelly-canvas { display: none !important; }
+}
