@@ -1,13 +1,13 @@
 // Integrations scene: the page after the engine. It starts on the finished Gamification engine
 // chip and follows the scroll through t = 0..5, resting on whole steps:
-// 0 the chip; 1 it spins and settles inside a phone; 2 the Motion chip lights up beside it, live
-// (SportIn's own real-time motion from the phone's sensors); 3 the phone moves aside and a watch
-// joins, linked to the phone; 4 the brands members wear appear around the watch (placeholders);
-// 5 data flows in on two lanes: live from Motion inside the phone, synced from every wearable
-// through the watch, both into the one engine chip.
+// 0 the chip; 1 it spins and settles inside a phone; 2 the blue Motion chip (SportIn's own
+// real-time technology) appears below the phone and streams live into it; 3 the phone moves aside
+// and a watch joins, linked to the phone; 4 the brands members wear appear around the watch, each
+// drawing a line to it; 5 pulses run along every line: from each brand into the watch, from the
+// watch into the phone, and live from Motion into the phone. Two ways in, one engine.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createChip } from '/proto/chip3d.js?v=1';
+import { createChip } from '/proto/chip3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 const sec = document.getElementById('integrate');
@@ -65,23 +65,27 @@ function canvasTex(w, h) {
 function font(ctx, weight, size, fam = 'Instrument Sans') { ctx.font = `${weight} ${size}px "${fam}", sans-serif`; }
 const group = (list) => (m) => { m.transparent = true; list.push(m); return m; };
 const fade = (list, obj, o) => { list.forEach((m) => { m.opacity = o; }); obj.visible = o > 0.004; };
+function labelSprite(text, color, w) {
+  const { ctx, tex } = canvasTex(760, 110);
+  font(ctx, 600, 40, 'IBM Plex Mono'); ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 380, 58);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false })); sp.scale.set(w, w * (110 / 760), 1); rig.add(sp); return sp;
+}
 
-// ---------- The phone (after the frame Adrian supplied: steel rim, black bezel, notch) ----------
+// ---------- The phone (after the frame Adrian supplied: dark steel rim, black bezel, notch) ----------
 const PH = { w: 2.3, h: 4.75, d: 0.24, sw: 2.02, sh: 4.47 };
 const PZ = PH.d / 2 + BEVEL; // front face
 const phone = new THREE.Group(); rig.add(phone);
 const phoneMats = []; const pm = group(phoneMats);
-phone.add(slab(PH.w, PH.h, 0.42, PH.d, pm(new THREE.MeshPhysicalMaterial({ color: 0xd5d9df, metalness: 1, roughness: 0.22, clearcoat: 0.3 }))));
-const black = () => pm(new THREE.MeshPhysicalMaterial({ color: 0x0a0c10, roughness: 0.14, metalness: 0.2, clearcoat: 1 }));
-const pBezel = face(2.2, 4.65, 0.37, black()); pBezel.position.z = PZ + 0.002; phone.add(pBezel);
+const steelMat = pm(new THREE.MeshPhysicalMaterial({ color: 0x3a3e45, metalness: 1, roughness: 0.26, clearcoat: 0.4 }));
+phone.add(slab(PH.w, PH.h, 0.42, PH.d, steelMat));
+const black = () => pm(new THREE.MeshPhysicalMaterial({ color: 0x07080b, roughness: 0.14, metalness: 0.2, clearcoat: 1 }));
+const pBezel = face(2.22, 4.67, 0.38, black()); pBezel.position.z = PZ + 0.002; phone.add(pBezel);
 const PS = canvasTex(640, Math.round(640 * (PH.sh / PH.sw)));
 const pScreen = face(PH.sw, PH.sh, 0.28, pm(new THREE.MeshBasicMaterial({ map: PS.tex, toneMapped: false }))); pScreen.position.z = PZ + 0.004; phone.add(pScreen);
 const notch = face(0.82, 0.2, 0.1, black()); notch.position.set(0, PH.sh / 2 - 0.09, PZ + 0.006); phone.add(notch);
-const steelMat = phoneMats[0];
 [[-1, 1.15, 0.36], [-1, 0.6, 0.36], [1, 0.9, 0.55]].forEach(([side, y, len]) => { const b = new THREE.Mesh(new THREE.BoxGeometry(0.05, len, 0.09), steelMat); b.position.set(side * (PH.w / 2 + BEVEL + 0.012), y, 0); phone.add(b); });
 
-// Where the two chips sit on the phone, in phone coordinates.
-const ENG = { y: 0.75, s: 0.3 }; const MOT = { y: -0.85, s: 0.2 };
+const ENG = { y: 0.75, s: 0.3 }; // the engine chip's place on the phone, in phone coordinates
 const toScreenY = (y) => ((PH.sh / 2 - y) / PH.sh) * PS.c.height;
 let liveSteps = 4218;
 function drawPhoneScreen(time, b) {
@@ -92,17 +96,16 @@ function drawPhoneScreen(time, b) {
   const tw = ctx.measureText('Your brand').width; ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(W / 2 + 14 - tw / 2 - 18, 109, 7, 0, Math.PI * 2); ctx.fill();
   font(ctx, 500, 22, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('SportIn engine', W / 2, toScreenY(ENG.y - 0.62));
   if (b > 0.01) {
+    // The live readout fed by Motion, at the bottom of the screen right above the Motion chip.
     ctx.globalAlpha = b;
-    // Motion readout under the Motion chip: live badge, step count, a moving pulse line.
-    const y0 = toScreenY(MOT.y - 0.5);
-    font(ctx, 600, 22, 'IBM Plex Mono'); const label = 'LIVE'; const lw = ctx.measureText(label).width + 44;
+    const y0 = toScreenY(-0.75);
+    font(ctx, 600, 22, 'IBM Plex Mono'); const label = 'LIVE · MOTION'; const lw = ctx.measureText(label).width + 48;
     ctx.fillStyle = 'rgba(7,81,251,0.1)'; ctx.beginPath(); ctx.roundRect(W / 2 - lw / 2, y0 - 26, lw, 40, 20); ctx.fill();
-    const blink = 0.55 + 0.45 * Math.sin(time * 5);
-    ctx.fillStyle = BLUE; ctx.globalAlpha = b * blink; ctx.beginPath(); ctx.arc(W / 2 - lw / 2 + 18, y0 - 6, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = BLUE; ctx.globalAlpha = b * (0.55 + 0.45 * Math.sin(time * 5)); ctx.beginPath(); ctx.arc(W / 2 - lw / 2 + 18, y0 - 6, 6, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = b; ctx.textAlign = 'left'; ctx.fillText(label, W / 2 - lw / 2 + 32, y0 + 2);
     font(ctx, 800, 64, 'Archivo'); ctx.fillStyle = INK; ctx.textAlign = 'center';
     ctx.fillText(Math.floor(liveSteps).toLocaleString('en-US'), W / 2, y0 + 92);
-    font(ctx, 500, 24); ctx.fillStyle = SLATE; ctx.fillText('steps, counted live by Motion', W / 2, y0 + 132);
+    font(ctx, 500, 24); ctx.fillStyle = SLATE; ctx.fillText('steps, in real time', W / 2, y0 + 132);
     ctx.strokeStyle = BLUE; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.beginPath();
     for (let x = 0; x <= 420; x += 6) {
       const k = (x / 420) * Math.PI * 6 - time * 6; const spike = Math.max(0, Math.sin(k)) ** 12;
@@ -117,27 +120,28 @@ function drawPhoneScreen(time, b) {
 
 // ---------- The chips: the Gamification engine (from the last page) and Motion by SportIn ----------
 const engine = createChip(renderer, {}); rig.add(engine.group);
-const motion = createChip(renderer, { title: 'MOTION', sub: 'REAL-TIME', code: 'SI-M1' }); rig.add(motion.group);
-// The live lane inside the phone: a solid blue line from Motion up to the engine.
-const laneMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true });
-const lane = new THREE.Mesh(new THREE.BoxGeometry(0.03, 1, 0.01), laneMat); rig.add(lane);
+// Motion is its own technology, so it sits outside the phone, below it, in SportIn blue.
+const motion = createChip(renderer, { title: 'MOTION', sub: 'REAL-TIME', code: 'SI-M1', tone: 'blue' }); rig.add(motion.group);
+const MOT = { y: -PH.h / 2 - 0.78, s: 0.26 }; // below the phone, in phone coordinates
+const motionLabel = labelSprite('MOTION BY SPORTIN · REAL TIME', BLUE, 2.4);
 
 // ---------- The watch (after the frame Adrian supplied: aluminium case, black bezel, band, crown) ----------
 const WC = { w: 1.42, h: 1.72, d: 0.36 }; const WZ = WC.d / 2 + BEVEL;
+const WATCH_X = 2.7;
 const watch = new THREE.Group(); rig.add(watch);
 const watchMats = []; const wm = group(watchMats);
 const alu = wm(new THREE.MeshPhysicalMaterial({ color: 0xe4e7eb, metalness: 0.85, roughness: 0.28, clearcoat: 0.2 }));
 watch.add(slab(WC.w, WC.h, 0.42, WC.d, alu));
 const band = wm(new THREE.MeshPhysicalMaterial({ color: 0xebedf0, metalness: 0, roughness: 0.55, clearcoat: 0.2 }));
 [1, -1].forEach((side) => { const b = slab(0.95, 1.55, 0.44, 0.12, band); b.position.set(0, side * (WC.h / 2 + 1.55 / 2 - 0.36), -0.06); watch.add(b); });
-const wBezel = face(1.32, 1.62, 0.36, wm(new THREE.MeshPhysicalMaterial({ color: 0x0a0c10, roughness: 0.14, metalness: 0.2, clearcoat: 1 }))); wBezel.position.z = WZ + 0.002; watch.add(wBezel);
+const wBezel = face(1.32, 1.62, 0.36, wm(new THREE.MeshPhysicalMaterial({ color: 0x07080b, roughness: 0.14, metalness: 0.2, clearcoat: 1 }))); wBezel.position.z = WZ + 0.002; watch.add(wBezel);
 const WS = canvasTex(512, 650);
 const wScreen = face(1.12, 1.42, 0.26, wm(new THREE.MeshBasicMaterial({ map: WS.tex, toneMapped: false }))); wScreen.position.z = WZ + 0.004; watch.add(wScreen);
 const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.16, 28).rotateZ(Math.PI / 2), alu); crown.position.set(WC.w / 2 + BEVEL + 0.06, 0.3, 0); watch.add(crown);
 const sideBtn = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.1), alu); sideBtn.position.set(WC.w / 2 + BEVEL + 0.02, -0.18, 0); watch.add(sideBtn);
 function drawWatchScreen() {
-  const { ctx, c } = WS; const W = c.width; const Hh = c.height;
-  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, Hh);
+  const { ctx, c } = WS; const W = c.width;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, c.height);
   font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'center'; ctx.fillText('Your brand', W / 2, 74);
   const cx = W / 2; const cy = 330; ctx.lineWidth = 34; ctx.lineCap = 'round';
   ctx.strokeStyle = '#e9edf4'; ctx.beginPath(); ctx.arc(cx, cy, 150, 0, Math.PI * 2); ctx.stroke();
@@ -148,46 +152,74 @@ function drawWatchScreen() {
   ctx.textAlign = 'left'; WS.tex.needsUpdate = true;
 }
 
-// ---------- Link from the watch to the phone: the synced lane, drawn as small dots ----------
-const LINK_N = 26;
-const linkMat = new THREE.MeshBasicMaterial({ color: 0xa9bde8, transparent: true });
-const linkDots = new THREE.InstancedMesh(new THREE.SphereGeometry(0.028, 12, 8), linkMat, LINK_N); rig.add(linkDots);
-const curve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3());
-
-// ---------- The brands members wear (grey placeholders for now) ----------
-const BRANDS = ['Apple Health', 'Health Connect', 'Garmin', 'Fitbit', 'Oura', 'Whoop', 'Samsung Health', 'Polar', 'Suunto', 'COROS', 'Strava', 'Withings', 'Huawei Health', 'Amazfit'];
-const logos = BRANDS.map((name) => {
-  const { c, ctx, tex } = canvasTex(400, 120);
+// ---------- The brands members wear ----------
+// Logos are monochrome brand icons (Simple Icons) where one exists, otherwise the name alone.
+// They are placeholders until official brand assets are approved.
+// Ten, not every brand: room to breathe matters more than a full list.
+const BRANDS = [['Apple Health', 'apple'], ['Garmin', 'garmin'], ['Fitbit', 'fitbit'], ['Oura'], ['Whoop'],
+  ['Samsung Health', 'samsung'], ['Polar'], ['Suunto'], ['Strava', 'strava'], ['Huawei Health', 'huawei']];
+function drawBrand(ctx, name, icon) {
+  ctx.clearRect(0, 0, 400, 120);
   ctx.beginPath(); ctx.roundRect(4, 4, 392, 112, 56); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(10,16,32,0.12)'; ctx.stroke();
-  let size = 44; font(ctx, 600, size); while (ctx.measureText(name).width > 330 && size > 26) { size -= 2; font(ctx, 600, size); }
-  ctx.fillStyle = SLATE; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name, 200, 62);
+  const iw = icon ? 46 : 0; const gap = icon ? 16 : 0;
+  let size = 42; font(ctx, 600, size); while (ctx.measureText(name).width > 320 - iw - gap && size > 24) { size -= 2; font(ctx, 600, size); }
+  const total = iw + gap + ctx.measureText(name).width; const x0 = 200 - total / 2;
+  if (icon) ctx.drawImage(icon, x0, 37, iw, iw);
+  ctx.fillStyle = SLATE; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText(name, x0 + iw + gap, 62);
+}
+const TAG = { w: 1.25, h: 0.375 }; // brand tag size, readable from the wide camera
+const logos = BRANDS.map(([name, slug]) => {
+  const { ctx, tex } = canvasTex(400, 120);
+  drawBrand(ctx, name, null);
+  if (slug) {
+    const img = new Image(); img.crossOrigin = 'anonymous';
+    img.onload = () => { drawBrand(ctx, name, img); tex.needsUpdate = true; };
+    fetch(`https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/${slug}.svg`).then((r) => (r.ok ? r.text() : Promise.reject())).then((svg) => {
+      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.replace('<svg ', '<svg fill="#5a6377" '))}`;
+    }).catch(() => {});
+  }
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false }));
-  sp.scale.set(0.98, 0.294, 1); rig.add(sp); return sp;
+  sp.scale.set(TAG.w, TAG.h, 1); rig.add(sp); return sp;
 });
 // Ring positions around the watch: an ellipse that opens towards the phone, with the brands at
 // equal distances along it (equal angles would bunch them at the top and bottom).
 const RING = (() => {
-  const RX = 2.85; const RY = 2.6; const A0 = -128; const A1 = 128; const N = 400; const pts = []; let len = 0;
+  const RX = 3.3; const RY = 2.85; const A0 = -122; const A1 = 122; const N = 400; const pts = []; let len = 0;
   for (let k = 0; k <= N; k++) {
     const a = THREE.MathUtils.degToRad(lerp(A0, A1, k / N)); const p = [Math.cos(a) * RX, Math.sin(a) * RY];
     if (k) len += Math.hypot(p[0] - pts[k - 1][0], p[1] - pts[k - 1][1]); pts.push([...p, len]);
   }
   return BRANDS.map((_, i) => { const want = (i / (BRANDS.length - 1)) * len; return pts.find((p) => p[2] >= want - 1e-6).slice(0, 2); });
 })();
-function labelSprite(text, color, w) {
-  const { c, ctx, tex } = canvasTex(720, 110);
-  font(ctx, 600, 40, 'IBM Plex Mono'); ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 360, 58);
-  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false })); sp.scale.set(w, w * (110 / 720), 1); rig.add(sp); return sp;
-}
-const syncedLabel = labelSprite('SYNCED · wearables and apps', '#6b7fae', 2.3);
 
-// ---------- Data particles ----------
-const PER = 3; // particles per brand
-const syncMat = new THREE.MeshBasicMaterial({ color: 0x5f8dff, transparent: true });
-const sync = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 12, 8), syncMat, BRANDS.length * PER); rig.add(sync);
-const LIVE_N = 6;
+// ---------- Integration lines and pulsing dots ----------
+// Thin lines that draw themselves: from every brand into the watch, from the watch into the
+// phone, and from Motion up into the phone. Dots pulse at each brand and run along the lines.
+const PHONE_END = { x: -2.5, y: 0.5 }; // where the phone settles once the watch is in
+const lineMat = new THREE.MeshBasicMaterial({ color: 0xb9cbf3, transparent: true });
+function tube(curve, radius = 0.008) {
+  const m = new THREE.Mesh(new THREE.TubeGeometry(curve, 48, radius, 6, false), lineMat); rig.add(m); m.userData.curve = curve; return m;
+}
+const watchC = new THREE.Vector3(WATCH_X, 0, 0.1);
+const brandLines = RING.map(([rx, ry]) => {
+  const tag = new THREE.Vector3(WATCH_X + rx, ry, 0.1);
+  const dir = watchC.clone().sub(tag).normalize();
+  const a = tag.clone().addScaledVector(dir, 0.5); const b = watchC.clone().addScaledVector(dir, -0.95);
+  const mid = a.clone().lerp(b, 0.5).add(new THREE.Vector3(-dir.y, dir.x, 0).multiplyScalar(0.12));
+  return tube(new THREE.QuadraticBezierCurve3(a, mid, b));
+});
+const linkCurve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(WATCH_X - WC.w / 2 - 0.2, 0.05, 0.1), new THREE.Vector3((WATCH_X + PHONE_END.x) / 2, 1.05, 0.1), new THREE.Vector3(PHONE_END.x + PH.w / 2 + 0.2, PHONE_END.y - 0.1, 0.1));
+const link = tube(linkCurve, 0.01);
+const syncedLabel = labelSprite('SYNCED · wearables and apps', '#6b7fae', 2.3);
+// The live lane from Motion into the phone moves with the phone, so it is a scaled bar.
 const liveMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true });
-const live = new THREE.InstancedMesh(new THREE.SphereGeometry(0.04, 12, 8), liveMat, LIVE_N); rig.add(live);
+const liveLane = new THREE.Mesh(new THREE.BoxGeometry(0.022, 1, 0.022), liveMat); rig.add(liveLane);
+const dotGeo = new THREE.SphereGeometry(0.045, 16, 10);
+const dotMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true });
+const nodes = new THREE.InstancedMesh(dotGeo, dotMat, BRANDS.length); rig.add(nodes);
+const RUN_LINK = 3; const RUN_LIVE = 2;
+const runners = new THREE.InstancedMesh(dotGeo, dotMat, BRANDS.length + RUN_LINK + RUN_LIVE); rig.add(runners);
+const drawLine = (m, f) => { const n = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor((n * f) / 6) * 6); m.visible = f > 0.01; };
 
 // ---------- Layout ----------
 let W = 1; let H = 1;
@@ -201,7 +233,6 @@ function resize() {
 
 // ---------- Choreography ----------
 const _m = new THREE.Matrix4(); const _q = new THREE.Quaternion(); const _s = new THREE.Vector3(); const _p = new THREE.Vector3();
-const _a = new THREE.Vector3(); const _b = new THREE.Vector3();
 let lastScreen = 0;
 function paint(t, now = performance.now()) {
   const time = now / 1000;
@@ -214,91 +245,88 @@ function paint(t, now = performance.now()) {
 
   const a = win(t, 0.05, 0.85); // the chip spins into the phone
   const ph = win(t, 0.25, 0.85); // the phone builds around it
-  const b = win(t, 1.1, 1.8); const ln = win(t, 1.5, 1.95); // Motion chip, live lane
+  const b = win(t, 1.1, 1.75); const ln = win(t, 1.45, 1.95); // Motion chip below, its live lane
   const c = win(t, 2.05, 2.8); // the phone moves aside, the watch joins
-  const wa = win(t, 2.15, 2.7); const lk = win(t, 2.55, 2.95);
-  const e = win(t, 4.05, 4.6); // data flows
+  const wa = win(t, 2.15, 2.7); const lk = win(t, 2.8, 3.0);
+  const e = win(t, 4.05, 4.6); // pulses run
+  const pulse = (i) => 1 + 0.35 * Math.sin(time * 5 + i * 1.7);
 
-  rig.rotation.y = -0.1 * a + 0.16 * c;
+  rig.rotation.y = -0.08 * a + 0.12 * c;
 
-  // Phone.
-  phone.position.set(lerp(0, -2.2, c), 0, 0);
+  // Phone: centred, lifting a little to make room for Motion below, then aside for the watch.
+  phone.position.set(lerp(0, PHONE_END.x, c), lerp(0, PHONE_END.y, b), 0);
   phone.scale.setScalar(lerp(0.92, 1, ph));
   fade(phoneMats, phone, ph);
 
   // Engine chip: from the big standing chip to its place on the phone, with one full turn.
-  const engPos = _a.set(phone.position.x, ENG.y, PZ + 0.18);
-  engine.group.position.set(lerp(0, engPos.x, a), lerp(0, engPos.y, a), lerp(0, engPos.z, a));
+  engine.group.position.set(lerp(0, phone.position.x, a), lerp(0, phone.position.y + ENG.y, a), lerp(0, PZ + 0.18, a));
   engine.group.rotation.set(Math.PI / 2, Math.PI * 2 * a, 0, 'YXZ');
-  engine.group.scale.setScalar(lerp(1, ENG.s, a) * (1 + 0.025 * e * Math.sin(time * 4)));
+  engine.group.scale.setScalar(lerp(1, ENG.s, a) * (1 + 0.03 * e * Math.sin(time * 4)));
 
-  // Motion chip and the live lane up to the engine.
-  const motPos = _b.set(phone.position.x, MOT.y, PZ + 0.15);
-  motion.group.position.copy(motPos).add(_p.set(0, lerp(-0.25, 0, b), 0));
+  // Motion chip, below the phone, with its live lane up into the phone.
+  const motY = phone.position.y + MOT.y;
+  motion.group.position.set(phone.position.x, lerp(motY - 0.3, motY, b), 0.12);
   motion.group.rotation.set(Math.PI / 2, 0, 0, 'YXZ');
   motion.group.scale.setScalar(MOT.s * lerp(0.85, 1, b));
   motion.setOpacity(b);
-  const laneFrom = MOT.y + (3.4 / 2) * MOT.s; const laneTo = ENG.y - (3.4 / 2) * ENG.s;
-  lane.scale.y = Math.max(0.0001, (laneTo - laneFrom) * ln);
-  lane.position.set(phone.position.x, laneFrom + ((laneTo - laneFrom) * ln) / 2, PZ + 0.02);
-  laneMat.opacity = ln; lane.visible = ln > 0.01;
+  motionLabel.position.set(phone.position.x, motY - (3.4 / 2) * MOT.s - 0.28, 0.2);
+  motionLabel.material.opacity = b; motionLabel.visible = b > 0.01;
+  const laneFrom = motY + (3.4 / 2) * MOT.s + 0.03; const laneTo = phone.position.y - PH.h / 2 - BEVEL;
+  liveLane.scale.y = Math.max(0.0001, (laneTo - laneFrom) * ln);
+  liveLane.position.set(phone.position.x, laneFrom + ((laneTo - laneFrom) * ln) / 2, 0.1);
+  liveMat.opacity = ln; liveLane.visible = ln > 0.01;
 
   // Watch.
-  watch.position.set(lerp(4.6, 2.2, c), 0, 0);
+  watch.position.set(lerp(5.2, WATCH_X, c), 0, 0);
   fade(watchMats, watch, wa);
 
-  // Link dots, from the watch's left edge to the phone's right edge.
-  curve.v0.set(watch.position.x - WC.w / 2 - 0.15, 0.1, 0.1);
-  curve.v2.set(phone.position.x + PH.w / 2 + 0.15, 0.3, 0.1);
-  curve.v1.set((curve.v0.x + curve.v2.x) / 2, 1.0, 0.1);
-  const shown = Math.round(LINK_N * lk);
-  for (let i = 0; i < LINK_N; i++) { curve.getPoint(i / (LINK_N - 1), _p); _m.compose(_p, _q.identity(), _s.setScalar(i < shown ? 1 : 0)); linkDots.setMatrixAt(i, _m); }
-  linkDots.instanceMatrix.needsUpdate = true; linkDots.visible = lk > 0.01;
-  syncedLabel.position.set(curve.v1.x, 1.0, 0.2); syncedLabel.material.opacity = e; syncedLabel.visible = e > 0.01;
+  // Watch to phone link.
+  drawLine(link, lk);
+  syncedLabel.position.set(linkCurve.v1.x, 0.95, 0.2); syncedLabel.material.opacity = lk; syncedLabel.visible = lk > 0.01;
 
-  // Brands, popping in one after another in a ring around the watch, evenly spaced along it.
+  // Brands pop in around the watch, then each draws its line in, and a dot pulses at its start.
   logos.forEach((sp, i) => {
     const [rx, ry] = RING[i];
     const o = win(t, 3.05 + i * 0.045, 3.3 + i * 0.045);
     sp.position.set(watch.position.x + rx, ry, 0.2);
     sp.material.opacity = o; sp.visible = o > 0.01;
-    const k = lerp(0.7, 1, o); sp.scale.set(0.98 * k, 0.294 * k, 1);
+    const k = lerp(0.7, 1, o); sp.scale.set(TAG.w * k, TAG.h * k, 1);
+    const li = win(t, 3.25 + i * 0.045, 3.65 + i * 0.045);
+    drawLine(brandLines[i], li);
+    const start = brandLines[i].userData.curve.v0;
+    _m.compose(start, _q.identity(), _s.setScalar(li > 0.95 ? (RM ? 0.8 : 0.8 * pulse(i)) : 0)); nodes.setMatrixAt(i, _m);
   });
+  nodes.instanceMatrix.needsUpdate = true; nodes.visible = t > 3.2;
+  lineMat.opacity = 1;
 
-  // Data: each brand sends dots into the watch, then along the link into the engine chip; Motion
-  // sends its own dots straight up the live lane.
-  const flowing = e > 0.01;
-  sync.visible = flowing; live.visible = flowing && b > 0.5;
-  if (flowing) {
-    syncMat.opacity = e; liveMat.opacity = e;
-    const engTarget = engine.group.position;
-    logos.forEach((sp, i) => {
-      for (let k = 0; k < PER; k++) {
-        const u = (time * 0.32 + i * 0.137 + k / PER) % 1;
-        if (u < 0.42) _p.lerpVectors(sp.position, watch.position, sm(u / 0.42));
-        else if (u < 0.86) curve.getPoint(sm((u - 0.42) / 0.44), _p);
-        else _p.lerpVectors(curve.v2, engTarget, sm((u - 0.86) / 0.14));
-        _m.compose(_p, _q.identity(), _s.setScalar(u > 0.97 ? 0 : 1)); sync.setMatrixAt(i * PER + k, _m);
-      }
+  // Pulses running along the lines: brand to watch, watch to phone, Motion to phone.
+  runners.visible = e > 0.01 && !RM; dotMat.opacity = 1;
+  if (runners.visible) {
+    let n = 0;
+    brandLines.forEach((ln2, i) => {
+      const u = (time * 0.55 + i * 0.29) % 1;
+      ln2.userData.curve.getPoint(sm(u), _p); _m.compose(_p, _q.identity(), _s.setScalar(e * pulse(i + 3) * (u > 0.96 ? 0 : 1))); runners.setMatrixAt(n++, _m);
     });
-    sync.instanceMatrix.needsUpdate = true;
-    for (let k = 0; k < LIVE_N; k++) {
-      const u = (time * 0.9 + k / LIVE_N) % 1;
-      _p.set(phone.position.x, lerp(laneFrom, laneTo, u), PZ + 0.05);
-      _m.compose(_p, _q.identity(), _s.setScalar(1)); live.setMatrixAt(k, _m);
+    for (let k = 0; k < RUN_LINK; k++) {
+      const u = (time * 0.4 + k / RUN_LINK) % 1;
+      linkCurve.getPoint(u, _p); _m.compose(_p, _q.identity(), _s.setScalar(e * pulse(k))); runners.setMatrixAt(n++, _m);
     }
-    live.instanceMatrix.needsUpdate = true;
+    for (let k = 0; k < RUN_LIVE; k++) {
+      const u = (time * 0.9 + k / RUN_LIVE) % 1;
+      _p.set(phone.position.x, lerp(laneFrom, laneTo, u), 0.12); _m.compose(_p, _q.identity(), _s.setScalar(e * pulse(k + 7))); runners.setMatrixAt(n++, _m);
+    }
+    runners.instanceMatrix.needsUpdate = true;
   }
 
   // Screens: the phone's live readout redraws about 30 times a second while it is shown.
   if (b > 0.01 && !RM) liveSteps += 0.4;
   if (now - lastScreen > 33 || b <= 0.01) { drawPhoneScreen(time, b); lastScreen = now; }
 
-  // Camera: the same eye-level framing as the standing chip, then out to take in phone, watch and
-  // brands, centred on them.
+  // Camera: the same eye-level framing as the standing chip, back a little to fit Motion below
+  // the phone, then out to take in phone, watch and brands, centred on them.
   const aspectK = Math.max(1, 1.45 / (W / H));
-  const dist = lerp(lerp(11, 12.5, a), 15, c) * aspectK;
-  const look = new THREE.Vector3(lerp(0, 0.75, c), lerp(0, 0.1, a), 0);
+  const dist = lerp(lerp(lerp(11, 12.5, a), 15, b), 19, c) * aspectK;
+  const look = new THREE.Vector3(lerp(0, 0.55, c), lerp(lerp(0, 0.1, a), 0, b), 0);
   camera.position.set(look.x, look.y + dist * 0.1, dist * Math.sqrt(1 - 0.01));
   camera.lookAt(look);
 
@@ -306,7 +334,7 @@ function paint(t, now = performance.now()) {
   renderer.render(scene, camera);
 }
 
-// ---------- Scroll and a live loop while the flow is on screen ----------
+// ---------- Scroll and a live loop while it is on screen ----------
 let visible = false;
 const follow = followScroll(sec, { steps: 5, reduced: RM, onFrame: paint, keepAlive: () => visible && !RM && follow.t >= 1.2 });
 new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) follow.kick(); }).observe(sec);

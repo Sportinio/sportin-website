@@ -6,9 +6,12 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const BLUE = '#0751fb';
-const logo = new Image(); logo.src = '/assets/site/logo/sportin-wordmark-black.svg';
-const waiting = [];
-logo.onload = () => waiting.forEach((fn) => fn());
+const logos = {}; const waiting = [];
+function wordmark(white) {
+  const k = white ? 'white' : 'black';
+  if (!logos[k]) { logos[k] = new Image(); logos[k].onload = () => waiting.splice(0).forEach((fn) => fn()); logos[k].src = `/assets/site/logo/sportin-wordmark-${k}.svg`; }
+  return logos[k];
+}
 
 // Brushed metal: fine streaks in the roughness. One texture for every chip.
 let brush = null;
@@ -24,15 +27,19 @@ function brushTexture() {
 function setFont(ctx, weight, size, fam) { ctx.font = `${weight} ${size}px "${fam}", sans-serif`; }
 
 // title: engraved line under the logo; sub: optional small line under it; code: corner mark.
-export function createChip(renderer, { PW = 5.2, PD = 3.4, title = 'GAMIFICATION ENGINE', sub = '', code = 'SI-E1' } = {}) {
+// tone 'blue' gives a blue anodised lid with white engraving (the Motion chip); default is platinum.
+export function createChip(renderer, { PW = 5.2, PD = 3.4, title = 'GAMIFICATION ENGINE', sub = '', code = 'SI-E1', tone = 'platinum' } = {}) {
+  const blue = tone === 'blue'; const logo = wordmark(blue);
   const group = new THREE.Group();
   const ST = 0.14; const LT = 0.16; const CT = ST + LT;
   const mats = [];
   const cm = (m) => { m.transparent = true; mats.push(m); return m; };
-  const substrate = new THREE.Mesh(new RoundedBoxGeometry(PW, ST, PD, 4, 0.05), cm(new THREE.MeshPhysicalMaterial({ color: 0xf1f3f6, roughness: 0.42, metalness: 0.04, clearcoat: 0.35, clearcoatRoughness: 0.35 })));
+  const substrate = new THREE.Mesh(new RoundedBoxGeometry(PW, ST, PD, 4, 0.05), cm(new THREE.MeshPhysicalMaterial({ color: blue ? 0xe6edff : 0xf1f3f6, roughness: 0.42, metalness: 0.04, clearcoat: 0.35, clearcoatRoughness: 0.35 })));
   substrate.position.y = -CT / 2 + ST / 2; group.add(substrate);
   const LW = PW * 0.62; const LD = PD * 0.64;
-  const lidMat = cm(new THREE.MeshPhysicalMaterial({ color: 0xdfe3e8, metalness: 1, roughness: 0.42, roughnessMap: brushTexture(), clearcoat: 0.15 }));
+  const lidMat = cm(new THREE.MeshPhysicalMaterial(blue
+    ? { color: 0x1d5cff, metalness: 0.55, roughness: 0.34, roughnessMap: brushTexture(), clearcoat: 0.5, clearcoatRoughness: 0.25 }
+    : { color: 0xdfe3e8, metalness: 1, roughness: 0.42, roughnessMap: brushTexture(), clearcoat: 0.15 }));
   if ('anisotropy' in lidMat) lidMat.anisotropy = 0.6;
   const lid = new THREE.Mesh(new RoundedBoxGeometry(LW, LT, LD, 5, 0.06), lidMat);
   lid.position.y = -CT / 2 + ST + LT / 2; group.add(lid);
@@ -47,9 +54,9 @@ export function createChip(renderer, { PW = 5.2, PD = 3.4, title = 'GAMIFICATION
     ectx.clearRect(0, 0, EW, EH);
     const cx = EW / 2;
     if (logo.complete && logo.naturalWidth) { const w = 520; const h = w * (logo.naturalHeight / logo.naturalWidth); ectx.globalAlpha = 0.82; ectx.drawImage(logo, cx - w / 2, EH * (sub ? 0.44 : 0.5) - h, w, h); ectx.globalAlpha = 1; }
-    setFont(ectx, 600, 44, 'IBM Plex Mono'); ectx.fillStyle = BLUE; ectx.textAlign = 'center'; ectx.fillText(title, cx, EH * (sub ? 0.6 : 0.66));
-    if (sub) { setFont(ectx, 600, 30, 'IBM Plex Mono'); ectx.fillStyle = 'rgba(30,34,42,0.55)'; ectx.fillText(sub, cx, EH * 0.72); }
-    setFont(ectx, 500, 20, 'IBM Plex Mono'); ectx.textAlign = 'left'; ectx.fillStyle = 'rgba(30,34,42,0.4)'; ectx.fillText(code, 46, EH - 46);
+    setFont(ectx, 600, 44, 'IBM Plex Mono'); ectx.fillStyle = blue ? '#ffffff' : BLUE; ectx.textAlign = 'center'; ectx.fillText(title, cx, EH * (sub ? 0.6 : 0.66));
+    if (sub) { setFont(ectx, 600, 30, 'IBM Plex Mono'); ectx.fillStyle = blue ? 'rgba(255,255,255,0.8)' : 'rgba(30,34,42,0.55)'; ectx.fillText(sub, cx, EH * 0.72); }
+    setFont(ectx, 500, 20, 'IBM Plex Mono'); ectx.textAlign = 'left'; ectx.fillStyle = blue ? 'rgba(255,255,255,0.55)' : 'rgba(30,34,42,0.4)'; ectx.fillText(code, 46, EH - 46);
     ectx.textAlign = 'right'; ectx.fillText('2026', EW - 46, EH - 46);
     engrTex.needsUpdate = true;
   }

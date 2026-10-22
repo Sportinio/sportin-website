@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createEngineSound } from '/proto/engine-sound.js?v=2';
-import { createChip } from '/proto/chip3d.js?v=1';
+import { createChip } from '/proto/chip3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 const root = document.documentElement;
