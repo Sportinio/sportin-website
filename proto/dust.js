@@ -10,8 +10,7 @@ const ease = (p) => 0.5 - 0.5 * Math.cos(Math.PI * p); // sine in-out: slow off,
 
 // Windows within one step (u = 0..1). The hand-overs are long and overlap: the old text blurs
 // and fades while its dust appears; the dust lands well before the end, then slowly thins and
-// fades while the new text comes into focus over the last third of the step (features.js blurs
-// the text by how far it is from shown).
+// fades while the new text fades in over the last third of the step.
 export const WIN = { outA: 0.02, outB: 0.2, inA: 0.6, inB: 1 };
 const DUST_IN = [0, 0.1]; const DUST_OUT = [0.7, 1]; const FLY = [0.1, 0.68];
 

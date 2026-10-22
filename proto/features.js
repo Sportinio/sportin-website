@@ -7,7 +7,7 @@
 // a Champions League style cup walks through its stages, and a national league plays a matchday
 // and updates its table.
 import { followScroll } from '/proto/scroll-follow.js?v=2';
-import { createDust, WIN } from '/proto/dust.js?v=7';
+import { createDust, WIN } from '/proto/dust.js?v=8';
 
 const sec = document.getElementById('features');
 if (sec) {
@@ -226,7 +226,7 @@ if (sec) {
   new ResizeObserver(fit).observe(sec); fit();
   const fmtPt = (n) => Math.round(n).toLocaleString('de-DE'); // the app groups thousands with a dot
 
-  // Ranking (layer 2): the app's leaderboard. Steps tick up live; Sofia overtakes Emma, her trend
+  // Walking (layer 2): the app's steps leaderboard. Steps tick up live; Sofia overtakes Emma, her trend
   // turns green, the rank badges re-number and her steps ring fills.
   { const box = panelOf('ranking'); if (box) {
     const lbRows = [...box.querySelectorAll('.lbr')];
@@ -259,6 +259,25 @@ if (sec) {
           if (phase === 3) climb();
           if (phase === 0) before();
         }, 900);
+      },
+      stop() { window.clearInterval(timer); timer = 0; },
+    };
+  } }
+  // Running board (layer 2): ranked by pace. Jake finishes a faster 5K, his pace drops to
+  // 4:38/km and he moves up to third.
+  { const box = panelOf('running'); if (box) {
+    const runRows = [...box.querySelectorAll('.lbr')];
+    const BASE = [0, 1, 2, 3, 4, 5, 6]; const AFTER = [0, 1, 3, 4, 2, 5, 6];
+    const jake = runRows[4]; const jPace = jake.querySelector('.val__run'); const jSub = jake.querySelector('.lbw__s');
+    const was = [jPace.textContent, jSub.textContent];
+    let timer = 0; let tick = 0;
+    const setSlots = (slots) => runRows.forEach((row, i) => { row.style.setProperty('--slot', String(slots[i])); row.dataset.rank = String(slots[i] + 1); row.querySelector('.rk__n').textContent = String(slots[i] + 1); });
+    const before = () => { setSlots(BASE); [jPace.textContent, jSub.textContent] = was; };
+    const after = () => { jPace.textContent = '4:38/km'; jSub.textContent = '5.0 km · 23:10'; setSlots(AFTER); };
+    demos.running = {
+      start() {
+        before(); if (RM) { after(); return; }
+        tick = 0; timer = window.setInterval(() => { tick += 1; const phase = tick % 8; if (phase === 3) after(); if (phase === 0) before(); }, 900);
       },
       stop() { window.clearInterval(timer); timer = 0; },
     };
@@ -300,7 +319,6 @@ if (sec) {
       if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.4, u); }
       if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.6, 0.95, u); }
       p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
-      p.style.setProperty('--tblur', `${RM ? 0 : ((1 - txt) * 6).toFixed(2)}px`); // text comes into focus out of the dust
       p.style.visibility = txt > 0 || gfx > 0 ? 'visible' : 'hidden';
     });
     if (!RM) dust.draw(a, b, u);
