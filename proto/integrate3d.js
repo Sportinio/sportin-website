@@ -22,7 +22,7 @@ const FROM = Number(sec.dataset.intFrom || 0); const STEPS_ALL = Number(sec.data
 const stage = sec.querySelector('.engine__stage');
 const stick = sec.querySelector('.engine__stick'); stick.prepend(canvas);
 const texts = [...sec.querySelectorAll('.int-txt[data-ci]')];
-const emoText = sec.querySelector('.int-txt[data-mode="emotion"]');
+const emoTexts = [...sec.querySelectorAll('.int-txt[data-mode="emotion"]')]; // one per eMotion step (data-ce)
 const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const clamp = (v) => Math.max(0, Math.min(1, v));
@@ -372,18 +372,28 @@ function paint(t, now = performance.now()) {
   const c = win(t, 1.05, 1.8); // the phone moves aside, the watch joins
   const wa = win(t, 1.15, 1.7); const lk = win(t, 1.8, 2.0);
   const e = win(t, 3.05, 3.6); // pulses run
-  const side = Math.max(c, emo); // the phone sits on the left in both views
+  // eMotion builds on the same scroll steps, so every scroll does something in both views:
+  // 2 the phone's sensors appear, wired from the phone; 3 the eMotion chip reads them;
+  // 4 the engine leaves the phone and the real-time line runs from eMotion into it.
+  const s1 = win(t, 1.05, 1.8) * emo; const s2 = win(t, 2.05, 2.8) * emo; const s3 = win(t, 3.05, 3.8) * emo;
+  const side = c; // the phone moves to the left column on the first scroll, in both views
 
-  // Copy: the scroll steps for Integrations, one block for eMotion.
+  // Copy: step 1 is shared; from step 2 each view has its own text.
+  const stepO = (k) => 1 - sm(clamp((Math.abs(t - k) - 0.28) / 0.22));
   texts.forEach((el) => {
     const k = Number(el.dataset.ci);
-    const d = Math.abs(t - k); let o = 1 - sm(clamp((d - 0.28) / 0.22));
-    if (k >= 1) o *= ints;
+    let o = stepO(k);
+    if (k >= 2) o *= ints;
     el.style.opacity = String(o);
     el.style.transform = RM ? 'none' : `translateY(${((t - k) * -18).toFixed(1)}px)`;
     el.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none';
   });
-  if (emoText) { const o = emo * win(t, 0.72, 1.0); emoText.style.opacity = String(o); emoText.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none'; }
+  emoTexts.forEach((el) => {
+    const k = Number(el.dataset.ce); const o = stepO(k) * emo;
+    el.style.opacity = String(o);
+    el.style.transform = RM ? 'none' : `translateY(${((t - k) * -18).toFixed(1)}px)`;
+    el.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none';
+  });
 
   rig.rotation.y = 0; // face-on, so no side wall of the phone or watch reads as a second frame
 
@@ -395,11 +405,11 @@ function paint(t, now = performance.now()) {
   // Engine chip: into the phone with one full turn; in eMotion view it slides out to the right
   // column so the path reads phone, sensors, eMotion, engine.
   const inPhone = _p.set(phone.position.x, phone.position.y + ENG.y, PZ + 0.18);
-  const ex = lerp(inPhone.x, ENGINE_X, emo); const ey = lerp(inPhone.y, 0, emo); const ez = lerp(inPhone.z, 0.15, emo);
+  const ex = lerp(inPhone.x, ENGINE_X, s3); const ey = lerp(inPhone.y, 0, s3); const ez = lerp(inPhone.z, 0.15, s3);
   engine.group.position.set(lerp(0, ex, a), lerp(0, ey, a), lerp(0, ez, a));
   engine.group.rotation.set(Math.PI / 2, Math.PI * 2 * a, 0, 'YXZ');
-  const beat = emo > 0.5 ? 0.03 * Math.max(0, Math.sin(time * 9)) : 0.03 * e * Math.sin(time * 4);
-  engine.group.scale.setScalar(lerp(1, lerp(ENG.s, CHIP_S, emo), a) * (1 + beat));
+  const beat = s3 > 0.5 ? 0.03 * Math.max(0, Math.sin(time * 9)) : 0.03 * e * ints * Math.sin(time * 4);
+  engine.group.scale.setScalar(lerp(1, lerp(ENG.s, CHIP_S, s3), a) * (1 + beat));
 
   // ----- Integrations view -----
   watch.position.set(lerp(3.2, WATCH_X, c), 0, 0);
@@ -424,28 +434,28 @@ function paint(t, now = performance.now()) {
   }
 
   // ----- eMotion view -----
-  // The phone's sensors appear one after another, each wired from the phone to the eMotion chip;
-  // then the real-time line runs from eMotion to the engine.
-  emotion.group.position.set(EMO_X, lerp(-0.3, 0, emo), 0.12);
+  // Step 2: the sensors appear one after another, wired from the phone. Step 3: the eMotion chip
+  // appears and reads them. Step 4: the real-time line runs from eMotion into the engine.
+  emotion.group.position.set(EMO_X, lerp(-0.3, 0, s2), 0.12);
   emotion.group.rotation.set(Math.PI / 2, 0, 0, 'YXZ');
-  emotion.group.scale.setScalar(CHIP_S * lerp(0.85, 1, emo));
-  emotion.setOpacity(win(emo, 0.25, 0.7));
+  emotion.group.scale.setScalar(CHIP_S * lerp(0.85, 1, s2));
+  emotion.setOpacity(win(s2, 0.1, 0.6));
   emoLineMat.opacity = 1;
   sensorTags.forEach((sp, i) => {
-    const o = win(emo, 0.1 + i * 0.07, 0.4 + i * 0.07);
+    const o = win(s1, i * 0.1, 0.5 + i * 0.1);
     sp.position.set(SENSOR_X - lerp(0.4, 0, o), sensorY(i), 0.2); showSprite(sp, o);
-    drawLine(sensorIn[i], win(emo, 0.2 + i * 0.07, 0.5 + i * 0.07));
-    drawLine(sensorOut[i], win(emo, 0.35 + i * 0.07, 0.65 + i * 0.07));
+    drawLine(sensorIn[i], win(s1, 0.15 + i * 0.1, 0.55 + i * 0.1));
+    drawLine(sensorOut[i], win(s2, 0.3 + i * 0.08, 0.7 + i * 0.08));
   });
-  const rl = win(emo, 0.65, 0.95); drawLine(realLine, rl); realMat.opacity = 1;
-  showSprite(realLabel, 0); // no label: the line and its pulses carry it realLabel.position.set((EMO_X + emoW / 2 + ENGINE_X - chipW / 2) / 2, 0, 0.25); // on the line, centred in the gap
+  const rl = win(s3, 0.5, 0.95); drawLine(realLine, rl); realMat.opacity = 1;
+  showSprite(realLabel, 0); // no label: the line and its pulses carry it
   emoDotMat.opacity = emo;
-  emoRunners.visible = emo > 0.6 && !RM;
+  emoRunners.visible = s2 > 0.6 && !RM;
   if (emoRunners.visible) {
     let n = 0;
     sensorOut.forEach((ln, i) => { const u = (time * 0.8 + i * 0.23) % 1; ln.userData.curve.getPoint(u, _p); _m.compose(_p, _q.identity(), _s.setScalar(0.85 * pulse(time, i))); emoRunners.setMatrixAt(n++, _m); });
-    // Real time: fast, steady pulses from eMotion into the engine.
-    for (let k = 0; k < RUN_REAL; k++) { const u = (time * 1.4 + k / RUN_REAL) % 1; realCurve.getPoint(u, _p); _m.compose(_p, _q.identity(), _s.setScalar(1.25 * pulse(time, k + 5))); emoRunners.setMatrixAt(n++, _m); }
+    // Real time: fast, steady pulses from eMotion into the engine, once the line is in.
+    for (let k = 0; k < RUN_REAL; k++) { const u = (time * 1.4 + k / RUN_REAL) % 1; realCurve.getPoint(u, _p); _m.compose(_p, _q.identity(), _s.setScalar(rl > 0.95 ? 1.25 * pulse(time, k + 5) : 0)); emoRunners.setMatrixAt(n++, _m); }
     emoRunners.instanceMatrix.needsUpdate = true;
   }
 
@@ -461,7 +471,8 @@ function paint(t, now = performance.now()) {
   // camera pans to centre the phone and watch under the title, then settles on the grid as the
   // brands arrive. look.y drops the scene into the middle of the space between tabs and caption.
   const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK;
-  const pan = lerp(-3.0, 0, win(t, 2.0, 2.6)) * ints;
+  // eMotion fills its columns one step later, so its pan settles over steps 2 to 4.
+  const pan = lerp(lerp(-3.0, 0, win(t, 2.0, 2.6)), lerp(-3.0, 0, win(t, 2.0, 3.6)), emo);
   const look = new THREE.Vector3(lerp(0, pan, side), lerp(lerp(0, 0.45, a), 0.6, side), 0);
   camera.position.set(look.x, look.y + dist * 0.1, dist * Math.sqrt(1 - 0.01));
   camera.lookAt(look);
@@ -471,7 +482,7 @@ function paint(t, now = performance.now()) {
   placeSwitch(swO);
   // Column captions: each shows once its column is on screen; they dip as the view swaps.
   const tagsIn = win(t, 2.3, 2.7);
-  const showInt = [side, wa, 0, tagsIn]; const showEmo = [1, 1, 1, 1].map((v) => v * win(emo, 0.5, 1));
+  const showInt = [side, wa, 0, tagsIn]; const showEmo = [side, win(s1, 0.4, 1), win(s2, 0.4, 1), win(s3, 0.5, 1)];
   const emoMode = mode >= 0.5; const swap = Math.abs(mode - 0.5) * 2;
   placeCaptions((emoMode ? showEmo : showInt).map((v) => v * win(t, 0.9, 1.2)), emoMode, swap);
 

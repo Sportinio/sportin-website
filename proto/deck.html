@@ -124,7 +124,9 @@
           <div class="eng-txt int-txt" data-ci="2"><p class="eng-k">Wearables</p><h3 class="eng-h">Connects to <em>every wearable</em></h3><p class="eng-p">Watches, rings and bands sync their activity to the phone.</p></div>
           <div class="eng-txt int-txt" data-ci="3"><p class="eng-k">Integrations</p><h3 class="eng-h">Works with the <em>brands they wear</em></h3><p class="eng-p">The engine takes data from the apps and wearables members already use.</p></div>
           <div class="eng-txt int-txt" data-ci="4"><p class="eng-k">Every source</p><h3 class="eng-h">Every brand, <em>one engine</em></h3><p class="eng-p">Every wearable and app syncs into the same engine, ready to score.</p></div>
-          <div class="eng-txt int-txt" data-mode="emotion"><p class="eng-k">eMotion by SportIn</p><h3 class="eng-h"><em>Real time</em>, from the phone itself</h3><p class="eng-p">eMotion reads the phone's own sensors and feeds the SportIn engine in real time.</p></div>
+          <div class="eng-txt int-txt" data-mode="emotion" data-ce="2"><p class="eng-k">eMotion by SportIn</p><h3 class="eng-h">The phone <em>is the sensor</em></h3><p class="eng-p">GPS, motion and steps come straight from the phone's own hardware.</p></div>
+          <div class="eng-txt int-txt" data-mode="emotion" data-ce="3"><p class="eng-k">eMotion by SportIn</p><h3 class="eng-h"><em>eMotion</em> reads it all</h3><p class="eng-p">SportIn's own technology turns raw sensor data into movement, live.</p></div>
+          <div class="eng-txt int-txt" data-mode="emotion" data-ce="4"><p class="eng-k">eMotion by SportIn</p><h3 class="eng-h"><em>Real time</em>, into the engine</h3><p class="eng-p">eMotion feeds the SportIn engine the moment members move.</p></div>
         </div>
         <div class="engine__stage" aria-hidden="true">
           <canvas id="eng3d"></canvas>
@@ -543,7 +545,7 @@
 <script src="/proto/deck.js?v=15" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
-<script type="module" src="/proto/integrate3d.js?v=22"></script>
+<script type="module" src="/proto/integrate3d.js?v=23"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
