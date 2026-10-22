@@ -7,7 +7,7 @@
 // a Champions League style cup walks through its stages, and a national league plays a matchday
 // and updates its table.
 import { followScroll } from '/proto/scroll-follow.js?v=2';
-import { createDust, WIN } from '/proto/dust.js?v=4';
+import { createDust, WIN } from '/proto/dust.js?v=7';
 
 const sec = document.getElementById('features');
 if (sec) {
@@ -300,6 +300,7 @@ if (sec) {
       if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.4, u); }
       if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.6, 0.95, u); }
       p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
+      p.style.setProperty('--tblur', `${RM ? 0 : ((1 - txt) * 6).toFixed(2)}px`); // text comes into focus out of the dust
       p.style.visibility = txt > 0 || gfx > 0 ? 'visible' : 'hidden';
     });
     if (!RM) dust.draw(a, b, u);

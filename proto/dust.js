@@ -8,9 +8,12 @@ const N = 7000; // points per cloud
 const smooth = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
 const ease = (p) => 0.5 - 0.5 * Math.cos(Math.PI * p); // sine in-out: slow off, slow glide, slow landing
 
-// Text windows within one step (u = 0..1): the old text hands over to dust, the dust travels,
-// then hands over to the new text.
-export const WIN = { outA: 0.04, outB: 0.12, inA: 0.88, inB: 0.96 };
+// Windows within one step (u = 0..1). The hand-overs are long and overlap: the old text blurs
+// and fades while its dust appears; the dust lands well before the end, then slowly thins and
+// fades while the new text comes into focus over the last third of the step (features.js blurs
+// the text by how far it is from shown).
+export const WIN = { outA: 0.02, outB: 0.2, inA: 0.6, inB: 1 };
+const DUST_IN = [0, 0.1]; const DUST_OUT = [0.7, 1]; const FLY = [0.1, 0.68];
 
 export function createDust(stage, canvas, pages) {
   const ctx = canvas.getContext('2d');
@@ -69,11 +72,12 @@ export function createDust(stage, canvas, pages) {
 
   // a, b: page indices; u: 0..1 between them. Returns the dust's opacity (0 when off).
   function draw(a, b, u) {
-    const alpha = a === b ? 0 : smooth(WIN.outA, WIN.outB, u) * (1 - smooth(WIN.inA, WIN.inB, u));
+    const alpha = a === b ? 0 : smooth(DUST_IN[0], DUST_IN[1], u) * (1 - smooth(DUST_OUT[0], DUST_OUT[1], u));
     if (!alpha) { if (drawn) { ctx.clearRect(0, 0, canvas.width, canvas.height); drawn = false; } return 0; }
     if (!clouds.length) build();
     const A = clouds[a]; const B = clouds[b]; if (!A || !B) return 0;
-    const s = Math.min(1, Math.max(0, (u - WIN.outB) / (WIN.inA - WIN.outB)));
+    const s = Math.min(1, Math.max(0, (u - FLY[0]) / (FLY[1] - FLY[0])));
+    const thin = smooth(DUST_OUT[0], DUST_OUT[1], u); // grains shrink as they fade into the text
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H); ctx.globalAlpha = alpha;
     const px = new Float32Array(N); const py = new Float32Array(N); const pc = new Uint8Array(N); const sz = new Float32Array(N);
     for (let i = 0; i < N; i++) {
@@ -85,7 +89,7 @@ export function createDust(stage, canvas, pages) {
       px[i] = A.x[i] + (B.x[i] - A.x[i]) * e + Math.cos(q.ang) * q.amp * lift + wob;
       py[i] = A.y[i] + (B.y[i] - A.y[i]) * e + Math.sin(q.ang) * q.amp * lift + wob * 0.6;
       pc[i] = p < 0.5 ? A.c[i] : B.c[i];
-      sz[i] = q.size * (1 - 0.4 * lift);
+      sz[i] = q.size * (1 - 0.4 * lift) * (1 - 0.5 * thin);
     }
     for (let c = 0; c < palette.length; c++) {
       ctx.fillStyle = palette[c].css;
