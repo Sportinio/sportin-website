@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { createEngineSound } from '/proto/engine-sound.js?v=1';
 
 const root = document.documentElement;
 const sec = document.getElementById('engine');
@@ -404,6 +405,18 @@ function paint(t) {
   renderer.render(scene, camera);
 }
 
+// ---------- Sound ----------
+// Transformer-style cues on the flips, the split and the press into the chip. Off by default;
+// the button sits in the bottom right corner of the engine card.
+const sound = createEngineSound();
+if (sound) {
+  const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'eng-sound'; btn.setAttribute('aria-pressed', 'false');
+  const label = (v) => { btn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/>${v ? '<path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>' : '<path class="w" d="M16.5 9.5l5 5M21.5 9.5l-5 5"/>'}</svg><span>${v ? 'Sound on' : 'Sound off'}</span>`; btn.setAttribute('aria-pressed', String(v)); };
+  label(false);
+  btn.addEventListener('click', async () => { label(await sound.toggle()); });
+  sec.querySelector('.engine__stick').appendChild(btn);
+}
+
 // ---------- Scroll ----------
 // The scene follows the scroll at a steady, eased pace: it speeds up gently, holds a calm
 // cruising speed and slows to a soft stop. One step (a flip, the split, the press into the
@@ -425,6 +438,7 @@ function loop(now) {
   }
   if (Math.abs(target - shown) < 0.001 && Math.abs(vel) < 0.03) { shown = target; vel = 0; }
   paint(shown);
+  if (sound) sound.update(shown);
   if (shown !== target) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
 }
 const kick = () => { target = progress(); if (!raf) raf = requestAnimationFrame(loop); };
