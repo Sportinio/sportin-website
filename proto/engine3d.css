@@ -56,7 +56,11 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
 .int-switch button:hover { color: #0a1020; }
 .int-switch button:active { transform: scale(0.97); }
 .int-switch button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-.int-switch button[aria-selected="true"] { background: #eef3ff; color: var(--blue); }
+.int-switch button[aria-pressed="true"] { background: #eef3ff; color: var(--blue); }
 .int-switch button i { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); animation: int-live 1.6s ease-in-out infinite; }
 @keyframes int-live { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.6); opacity: 0.45; } }
 @media (prefers-reduced-motion: reduce) { .int-switch button i { animation: none; } }
+
+/* Column captions under the integrations scene, placed by JS under each column. */
+.int-caps { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.int-caps span { position: absolute; left: 0; top: 0; white-space: nowrap; font: 500 12px/1 var(--mono); color: #5a6377; opacity: 0; will-change: transform, opacity; }

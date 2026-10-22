@@ -92,11 +92,13 @@ const SCALE = 3; // the phone texture is drawn at 3x the image for sharp screen 
 const PF = canvasTex(FRAME.w * SCALE, FRAME.h * SCALE); // frame and screen together
 const layer = document.createElement('canvas'); layer.width = PF.c.width; layer.height = PF.c.height; const lctx = layer.getContext('2d');
 const frameImg = new Image(); frameImg.src = '/proto/media/frames/phone-frame.png';
-const maskImg = new Image(); maskImg.src = '/proto/media/frames/phone-screen-mask.png';
+const maskImg = new Image(); maskImg.src = '/proto/media/frames/phone-screen-mask.png?v=2'; // alpha = screen area
 function composePhone() {
   const { ctx, c } = PF; ctx.clearRect(0, 0, c.width, c.height);
   if (frameImg.complete && frameImg.naturalWidth) ctx.drawImage(frameImg, 0, 0, c.width, c.height);
   if (maskImg.complete && maskImg.naturalWidth) {
+    // The screen area is see-through, like the frame: cut it out, then draw the app text straight in.
+    ctx.globalCompositeOperation = 'destination-out'; ctx.drawImage(maskImg, 0, 0, c.width, c.height); ctx.globalCompositeOperation = 'source-over';
     lctx.globalCompositeOperation = 'source-over'; lctx.clearRect(0, 0, layer.width, layer.height);
     lctx.drawImage(PS.c, FRAME.sx * SCALE, FRAME.sy * SCALE, FRAME.sw * SCALE, FRAME.sh * SCALE);
     lctx.globalCompositeOperation = 'destination-in'; lctx.drawImage(maskImg, 0, 0, layer.width, layer.height);
@@ -114,24 +116,24 @@ let liveSteps = 4218;
 // readout from the phone's own sensors.
 function drawPhoneScreen(time, inPhone, emo) {
   const { ctx, c } = PS; const W = c.width; const Hh = c.height;
-  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, Hh);
-  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'center'; ctx.fillText('Your brand', W / 2 + 14, 118);
-  const tw = ctx.measureText('Your brand').width; ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(W / 2 + 14 - tw / 2 - 18, 109, 7, 0, Math.PI * 2); ctx.fill();
-  if (inPhone > 0.01) { ctx.globalAlpha = inPhone; font(ctx, 500, 22, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('SportIn engine', W / 2, toScreenY(ENG.y - 0.62)); ctx.globalAlpha = 1; }
+  ctx.clearRect(0, 0, W, Hh); // no white layer: the text sits directly in the see-through screen
+  font(ctx, 600, 50, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'center'; ctx.fillText('Your brand', W / 2 + 18, 150);
+  const tw = ctx.measureText('Your brand').width; ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(W / 2 + 18 - tw / 2 - 26, 133, 11, 0, Math.PI * 2); ctx.fill();
+  if (inPhone > 0.01) { ctx.globalAlpha = inPhone; font(ctx, 600, 46, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('SportIn engine', W / 2, toScreenY(ENG.y - 0.7)); ctx.globalAlpha = 1; }
   if (emo > 0.01) {
     ctx.globalAlpha = emo;
     const y0 = toScreenY(-0.45);
-    font(ctx, 600, 22, 'IBM Plex Mono'); const label = 'LIVE · eMotion'; const lw = ctx.measureText(label).width + 48;
-    ctx.fillStyle = 'rgba(7,81,251,0.1)'; ctx.beginPath(); ctx.roundRect(W / 2 - lw / 2, y0 - 26, lw, 40, 20); ctx.fill();
-    ctx.fillStyle = BLUE; ctx.globalAlpha = emo * (0.55 + 0.45 * Math.sin(time * 5)); ctx.beginPath(); ctx.arc(W / 2 - lw / 2 + 18, y0 - 6, 6, 0, Math.PI * 2); ctx.fill();
-    ctx.globalAlpha = emo; ctx.textAlign = 'left'; ctx.fillText(label, W / 2 - lw / 2 + 32, y0 + 2);
-    font(ctx, 800, 64, 'Archivo'); ctx.fillStyle = INK; ctx.textAlign = 'center';
-    ctx.fillText(Math.floor(liveSteps).toLocaleString('en-US'), W / 2, y0 + 92);
-    font(ctx, 500, 24); ctx.fillStyle = SLATE; ctx.fillText('steps, in real time', W / 2, y0 + 132);
-    ctx.strokeStyle = BLUE; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.beginPath();
+    font(ctx, 600, 46, 'IBM Plex Mono'); const label = 'LIVE · eMotion'; const lw = ctx.measureText(label).width + 84;
+    ctx.fillStyle = 'rgba(7,81,251,0.1)'; ctx.beginPath(); ctx.roundRect(W / 2 - lw / 2, y0 - 50, lw, 76, 38); ctx.fill();
+    ctx.fillStyle = BLUE; ctx.globalAlpha = emo * (0.55 + 0.45 * Math.sin(time * 5)); ctx.beginPath(); ctx.arc(W / 2 - lw / 2 + 34, y0 - 12, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = emo; ctx.textAlign = 'left'; ctx.fillText(label, W / 2 - lw / 2 + 58, y0 + 4);
+    font(ctx, 800, 120, 'Archivo'); ctx.fillStyle = INK; ctx.textAlign = 'center';
+    ctx.fillText(Math.floor(liveSteps).toLocaleString('en-US'), W / 2, y0 + 150);
+    font(ctx, 500, 48); ctx.fillStyle = SLATE; ctx.fillText('steps, live', W / 2, y0 + 222);
+    ctx.strokeStyle = BLUE; ctx.lineWidth = 6; ctx.lineJoin = 'round'; ctx.beginPath();
     for (let x = 0; x <= 420; x += 6) {
       const k = (x / 420) * Math.PI * 6 - time * 6; const spike = Math.max(0, Math.sin(k)) ** 12;
-      const yy = y0 + 196 - spike * 46 + Math.sin(k * 0.5) * 4; if (x === 0) ctx.moveTo(W / 2 - 210 + x, yy); else ctx.lineTo(W / 2 - 210 + x, yy);
+      const yy = y0 + 320 - spike * 60 + Math.sin(k * 0.5) * 5; if (x === 0) ctx.moveTo(W / 2 - 210 + x, yy); else ctx.lineTo(W / 2 - 210 + x, yy);
     }
     ctx.stroke(); ctx.globalAlpha = 1;
   }
@@ -194,68 +196,83 @@ const sideBtn = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.1), alu); side
 function drawWatchScreen() {
   const { ctx, c } = WS; const W = c.width;
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, c.height);
-  font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'center'; ctx.fillText('Your brand', W / 2, 74);
-  const cx = W / 2; const cy = 330; ctx.lineWidth = 34; ctx.lineCap = 'round';
+  ctx.textAlign = 'center'; // small text dropped: nothing below 12px on screen
+  const cx = W / 2; const cy = 300; ctx.lineWidth = 34; ctx.lineCap = 'round';
   ctx.strokeStyle = '#e9edf4'; ctx.beginPath(); ctx.arc(cx, cy, 150, 0, Math.PI * 2); ctx.stroke();
   ctx.strokeStyle = BLUE; ctx.beginPath(); ctx.arc(cx, cy, 150, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * 0.74); ctx.stroke();
   font(ctx, 800, 76, 'Archivo'); ctx.fillStyle = INK; ctx.fillText('7,412', cx, cy + 22);
-  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('steps', cx, cy + 62);
-  font(ctx, 600, 28, 'IBM Plex Mono'); ctx.fillStyle = INK; ctx.fillText('128 bpm', cx, 590);
+  font(ctx, 600, 64); ctx.fillStyle = SLATE; ctx.fillText('steps', cx, cy + 230);
   ctx.textAlign = 'left'; WS.tex.needsUpdate = true;
 }
 
 // ---------- Tags (brands and sensors) ----------
-const TAG = { w: 1.25, h: 0.375 };
-function drawTag(ctx, name, icon, dot) {
-  ctx.clearRect(0, 0, 400, 120);
-  ctx.beginPath(); ctx.roundRect(4, 4, 392, 112, 56); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = dot ? 'rgba(7,81,251,0.28)' : 'rgba(10,16,32,0.12)'; ctx.stroke();
-  const iw = icon ? 46 : dot ? 18 : 0; const gap = iw ? 16 : 0;
-  let size = 42; font(ctx, 600, size); while (ctx.measureText(name).width > 320 - iw - gap && size > 24) { size -= 2; font(ctx, 600, size); }
-  const total = iw + gap + ctx.measureText(name).width; const x0 = 200 - total / 2;
-  if (icon) ctx.drawImage(icon, x0, 37, iw, iw);
-  if (dot) { ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(x0 + 9, 61, 9, 0, Math.PI * 2); ctx.fill(); }
-  ctx.fillStyle = dot ? INK : SLATE; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText(name, x0 + iw + gap, 62);
+// One fixed type size for every tag (13px on screen); the pill width is fixed per set, sized to
+// its longest name, and never the font.
+const TAG_H = 0.375; const TAG_B = 1.95; const TAG_S = 1.5; // brand and sensor pill widths
+function drawTag(ctx, w, name, icon, dot) {
+  const h = 120; ctx.clearRect(0, 0, w, h);
+  ctx.beginPath(); ctx.roundRect(3, 3, w - 6, h - 6, (h - 6) / 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = dot ? 'rgba(7,81,251,0.3)' : 'rgba(10,16,32,0.14)'; ctx.stroke();
+  font(ctx, 600, 54); const iw = icon ? 56 : dot ? 20 : 0; const gap = iw ? 18 : 0;
+  const total = iw + gap + ctx.measureText(name).width; const x0 = w / 2 - total / 2;
+  if (icon) ctx.drawImage(icon, x0, (h - iw) / 2, iw, iw);
+  if (dot) { ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(x0 + 10, h / 2, 10, 0, Math.PI * 2); ctx.fill(); }
+  ctx.fillStyle = dot ? INK : SLATE; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText(name, x0 + iw + gap, h / 2 + 2);
 }
-function tagSprite(name, slug, dot = false) {
-  const { ctx, tex } = canvasTex(400, 120);
-  drawTag(ctx, name, null, dot);
+function tagSprite(name, slug, width, dot = false) {
+  const cw = Math.round(120 * (width / TAG_H));
+  const { ctx, tex } = canvasTex(cw, 120);
+  drawTag(ctx, cw, name, null, dot);
   if (slug) {
     // Monochrome brand icons from Simple Icons; placeholders until official assets are approved.
-    const img = new Image(); img.onload = () => { drawTag(ctx, name, img, dot); tex.needsUpdate = true; };
+    const img = new Image(); img.onload = () => { drawTag(ctx, cw, name, img, dot); tex.needsUpdate = true; };
     fetch(`https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/${slug}.svg`).then((r) => (r.ok ? r.text() : Promise.reject())).then((svg) => {
       img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.replace('<svg ', '<svg fill="#5a6377" '))}`;
     }).catch(() => {});
   }
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false }));
-  sp.scale.set(TAG.w, TAG.h, 1); rig.add(sp); return sp;
+  sp.scale.set(width, TAG_H, 1); sp.userData.w = width; rig.add(sp); return sp;
 }
 
 // ---------- Lines and pulses ----------
 function lineMaterial(color) { return new THREE.MeshBasicMaterial({ color, transparent: true }); }
-function tube(curve, mat, radius = 0.008) { const m = new THREE.Mesh(new THREE.TubeGeometry(curve, 48, radius, 6, false), mat); m.userData.curve = curve; rig.add(m); return m; }
+function tube(curve, mat, radius = LINE_BRANCH) { const m = new THREE.Mesh(new THREE.TubeGeometry(curve, 48, radius, 6, false), mat); m.userData.curve = curve; rig.add(m); return m; }
 const drawLine = (m, f) => { const n = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor((n * f) / 6) * 6); m.visible = f > 0.01; };
 // A cubic curve that leaves and arrives horizontally, so bundles of lines look tidy.
 function hCurve(a, b) { const span = b.x - a.x; return new THREE.CubicBezierCurve3(a, new THREE.Vector3(a.x + span * 0.45, a.y, a.z), new THREE.Vector3(b.x - span * 0.45, b.y, b.z), b); }
+// Two line weights everywhere: branches and the main lines (SYNCED, REAL TIME).
+const LINE_BRANCH = 0.01; const LINE_MAIN = 0.016;
 const dotGeo = new THREE.SphereGeometry(0.045, 16, 10);
 const pulse = (time, i) => 1 + 0.35 * Math.sin(time * 5 + i * 1.7);
 
-// ---------- Layout: three columns ----------
-// Integrations: phone | watch | brands. eMotion: phone | sensors | eMotion chip | engine chip.
-const PHONE_X = -3.05; const PHONE_Y = 0.5;
+// ---------- Layout: one grid for both views ----------
+// Four columns, symmetric under the title, with the same 1.1-unit gap between every pair of
+// column edges, and every column centred on y = 0:
+//   column     1 (-4.3)   2 (-1.3)          3 (1.3)        4 (4.3)
+//   Integr.    phone      watch             line fan       brands
+//   eMotion    phone      phone sensors     eMotion chip   engine chip
+const COLS = [-4.3, -1.3, 1.3, 4.3];
+const PHONE_X = COLS[0]; const PHONE_Y = 0;
 const PHONE_EDGE = PHONE_X + PH.w / 2; // the phone's right edge, where lines leave it
-const WATCH_X = 0.35; const COL_X = 3.6; const COL_GAP = 0.6;
+const WATCH_X = COLS[1]; const COL_GAP = 0.5;
+const CHIP_S = 0.44; // both chips at this size outside the phone
+const ENGINE_IN_PHONE = () => new THREE.Vector3(phone.position.x, phone.position.y + ENG.y, PZ + 0.18);
 
 // Integrations view.
 const BRANDS = [['Apple Health', 'apple'], ['Garmin', 'garmin'], ['Fitbit', 'fitbit'], ['Oura'], ['Whoop'],
   ['Samsung Health', 'samsung'], ['Polar'], ['Suunto'], ['Strava', 'strava'], ['Huawei Health', 'huawei']];
+const BRAND_LEFT = 3.35; const BRAND_X = BRAND_LEFT + TAG_B / 2;
 const brandY = (i) => ((BRANDS.length - 1) / 2 - i) * COL_GAP;
-const brandTags = BRANDS.map(([name, slug]) => tagSprite(name, slug));
-const intLineMat = lineMaterial(0xb9cbf3);
-const brandLines = BRANDS.map((_, i) => tube(hCurve(new THREE.Vector3(COL_X - TAG.w / 2 - 0.08, brandY(i), 0.1), new THREE.Vector3(WATCH_X + WC.w / 2 + BEVEL + 0.22, brandY(i) * 0.18, 0.1)), intLineMat));
-const linkCurve = hCurve(new THREE.Vector3(WATCH_X - WC.w / 2 - BEVEL - 0.15, 0.05, 0.1), new THREE.Vector3(PHONE_EDGE + 0.15, PHONE_Y - 0.15, 0.1));
-const link = tube(linkCurve, intLineMat, 0.01);
+const brandTags = BRANDS.map(([name, slug]) => tagSprite(name, slug, TAG_B));
+const intLineMat = lineMaterial(0xa9bff2);
+const CROWN_RIGHT = WATCH_X + WC.w / 2 + BEVEL + 0.14;
+// Brand lines start just left of each tag and gather 0.3 units past the watch's crown.
+const brandLines = BRANDS.map((_, i) => tube(hCurve(new THREE.Vector3(BRAND_LEFT - 0.1, brandY(i), 0.1), new THREE.Vector3(CROWN_RIGHT + 0.3, brandY(i) * 0.12, 0.1)), intLineMat));
+// The main line: from the watch into the phone, ending at the engine itself.
+const linkMat = lineMaterial(0x0751fb);
+const linkCurve = hCurve(new THREE.Vector3(WATCH_X - WC.w / 2 - BEVEL - 0.1, 0, 0.1), new THREE.Vector3(PHONE_EDGE + 0.1, PHONE_Y + ENG.y, 0.1));
+const link = tube(linkCurve, linkMat, LINE_MAIN);
 const linkMid = linkCurve.getPoint(0.5);
-const syncedLabel = labelSprite('SYNCED', '#6b7fae', 1.1);
+const syncedLabel = labelSprite('SYNCED', BLUE, 3.0);
 const intDotMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true });
 const brandNodes = new THREE.InstancedMesh(dotGeo, intDotMat, BRANDS.length); rig.add(brandNodes);
 const RUN_LINK = 3;
@@ -263,32 +280,51 @@ const intRunners = new THREE.InstancedMesh(dotGeo, intDotMat, BRANDS.length + RU
 
 // eMotion view.
 const SENSORS = ['GPS', 'Accelerometer', 'Gyroscope', 'Barometer', 'Step counter'];
-const SENSOR_X = -0.75; const EMO_X = 1.7; const ENGINE_X = 5.75; const CHIP_S = 0.46;
+const SENSOR_X = COLS[1]; const EMO_X = COLS[2]; const ENGINE_X = COLS[3];
 const sensorY = (i) => ((SENSORS.length - 1) / 2 - i) * COL_GAP;
-const sensorTags = SENSORS.map((name) => tagSprite(name, null, true));
-const emoLineMat = lineMaterial(0x9db8ff);
-const sensorIn = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(PHONE_EDGE + 0.06, PHONE_Y + sensorY(i) * 0.45, 0.1), new THREE.Vector3(SENSOR_X - TAG.w / 2 - 0.06, sensorY(i), 0.1)), emoLineMat));
+const sensorTags = SENSORS.map((name) => tagSprite(name, null, TAG_S, true));
+const emoLineMat = lineMaterial(0xa9bff2);
+const sensorIn = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(PHONE_EDGE + 0.1, PHONE_Y + sensorY(i) * 0.45, 0.1), new THREE.Vector3(SENSOR_X - TAG_S / 2 - 0.1, sensorY(i), 0.1)), emoLineMat));
 const chipW = 5.2 * CHIP_S; const emoW = 3.4 * CHIP_S; // engine chip width, eMotion chip width
-const sensorOut = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(SENSOR_X + TAG.w / 2 + 0.06, sensorY(i), 0.1), new THREE.Vector3(EMO_X - emoW / 2 - 0.08, sensorY(i) * 0.25, 0.1)), emoLineMat));
+const sensorOut = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(SENSOR_X + TAG_S / 2 + 0.1, sensorY(i), 0.1), new THREE.Vector3(EMO_X - emoW / 2 - 0.1, sensorY(i) * 0.25, 0.1)), emoLineMat));
 const realMat = lineMaterial(0x0751fb);
-const realCurve = hCurve(new THREE.Vector3(EMO_X + emoW / 2 + 0.08, 0, 0.1), new THREE.Vector3(ENGINE_X - chipW / 2 - 0.08, 0, 0.1));
-const realLine = tube(realCurve, realMat, 0.016);
-const realLabel = labelSprite('● REAL TIME', BLUE, 2.1);
-const emoLabel = labelSprite('eMotion by SportIn', BLUE, 1.9);
-const engLabel = labelSprite('SportIn engine', '#6b7488', 1.7);
+const realCurve = hCurve(new THREE.Vector3(EMO_X + emoW / 2 + 0.1, 0, 0.1), new THREE.Vector3(ENGINE_X - chipW / 2 - 0.1, 0, 0.1));
+const realLine = tube(realCurve, realMat, LINE_MAIN);
+const realLabel = labelSprite('● REAL TIME', BLUE, 3.0);
 const emoDotMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true });
 const RUN_REAL = 4;
 const emoRunners = new THREE.InstancedMesh(dotGeo, emoDotMat, SENSORS.length + RUN_REAL); rig.add(emoRunners);
 
+// ---------- Column captions (HTML, so they stay sharp at a real 12px) ----------
+// One caption under each column, in both views, 32px below the scene.
+const capRow = document.createElement('div'); capRow.className = 'int-caps'; capRow.setAttribute('aria-hidden', 'true');
+capRow.innerHTML = '<span></span><span></span><span></span><span></span>'; stick.appendChild(capRow);
+const caps = [...capRow.children];
+const CAP_TEXT = [['Phone', 'Wearable', '', 'Apps and wearables'], ['Phone', 'Phone sensors', 'eMotion', 'SportIn engine']];
+const CAP_Y = -2.6; // just under the tallest column
+const oldCaption = sec.querySelector('.eng-caption'); if (oldCaption) oldCaption.style.display = 'none';
+const _cp = new THREE.Vector3();
+function placeCaptions(show, emoMode, fadeSwap) {
+  const set = CAP_TEXT[emoMode ? 1 : 0];
+  caps.forEach((el, i) => {
+    if (el.textContent !== set[i]) el.textContent = set[i];
+    _cp.set(COLS[i] + (i === 3 && !emoMode ? 0.03 : 0), CAP_Y, 0); rig.localToWorld(_cp).project(camera);
+    const x = ((_cp.x + 1) / 2) * view.w; const y = ((1 - _cp.y) / 2) * view.h + 32;
+    el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translateX(-50%)`;
+    el.style.opacity = String(show[i] * fadeSwap);
+  });
+}
+
 // ---------- The switch: Integrations | eMotion, as tabs below the title ----------
-const sw = document.createElement('div'); sw.className = 'int-switch'; sw.setAttribute('role', 'tablist'); sw.setAttribute('aria-label', 'How data reaches the engine');
-sw.innerHTML = '<button type="button" role="tab" aria-selected="true" data-mode="0">Integrations</button><button type="button" role="tab" aria-selected="false" data-mode="1"><i aria-hidden="true"></i>eMotion</button>';
+// A pair of toggle buttons (aria-pressed): one picture changes, there are no separate panels.
+const sw = document.createElement('div'); sw.className = 'int-switch'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'How data reaches the engine');
+sw.innerHTML = '<button type="button" aria-pressed="true" data-mode="0">Integrations</button><button type="button" aria-pressed="false" data-mode="1"><i aria-hidden="true"></i>eMotion</button>';
 stick.appendChild(sw);
 let modeTarget = 0; let mode = 0; let modeAt = 0; // 0 Integrations, 1 eMotion; eased over 0.9 s
 sw.addEventListener('click', (ev) => {
   const btn = ev.target.closest('button'); if (!btn) return;
   modeTarget = Number(btn.dataset.mode);
-  sw.querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
+  sw.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
   follow.kick();
 });
 const copyBox = sec.querySelector('.engine__copy');
@@ -357,10 +393,11 @@ function paint(t, now = performance.now()) {
   watch.position.set(lerp(3.2, WATCH_X, c), 0, 0);
   fade(watchMats, watch, wa * ints);
   drawLine(link, lk); intLineMat.opacity = ints;
-  showSprite(syncedLabel, lk * ints); syncedLabel.position.set(linkMid.x, linkMid.y + 0.42, 0.2);
+  showSprite(syncedLabel, lk * ints); syncedLabel.position.set(linkMid.x, PHONE_Y + ENG.y + 0.32, 0.2);
+  linkMat.opacity = ints;
   brandTags.forEach((sp, i) => {
     const o = win(t, 2.05 + i * 0.045, 2.3 + i * 0.045);
-    sp.position.set(COL_X + lerp(0.6, 0, o), brandY(i), 0.2); showSprite(sp, o * ints);
+    sp.position.set(BRAND_X + lerp(0.6, 0, o), brandY(i), 0.2); showSprite(sp, o * ints);
     const li = win(t, 2.25 + i * 0.045, 2.65 + i * 0.045); drawLine(brandLines[i], li);
     _m.compose(brandLines[i].userData.curve.v0, _q.identity(), _s.setScalar(li > 0.95 ? 0.8 * (RM ? 1 : pulse(time, i)) : 0)); brandNodes.setMatrixAt(i, _m);
   });
@@ -381,8 +418,6 @@ function paint(t, now = performance.now()) {
   emotion.group.rotation.set(Math.PI / 2, 0, 0, 'YXZ');
   emotion.group.scale.setScalar(CHIP_S * lerp(0.85, 1, emo));
   emotion.setOpacity(win(emo, 0.25, 0.7));
-  showSprite(emoLabel, win(emo, 0.4, 0.8)); emoLabel.position.set(EMO_X, -(3.4 / 2) * CHIP_S - 0.32, 0.2);
-  showSprite(engLabel, win(emo, 0.6, 1)); engLabel.position.set(ENGINE_X, -(3.4 / 2) * CHIP_S - 0.32, 0.2);
   emoLineMat.opacity = 1;
   sensorTags.forEach((sp, i) => {
     const o = win(emo, 0.1 + i * 0.07, 0.4 + i * 0.07);
@@ -391,7 +426,7 @@ function paint(t, now = performance.now()) {
     drawLine(sensorOut[i], win(emo, 0.35 + i * 0.07, 0.65 + i * 0.07));
   });
   const rl = win(emo, 0.65, 0.95); drawLine(realLine, rl); realMat.opacity = 1;
-  showSprite(realLabel, rl * (RM ? 1 : 0.7 + 0.3 * Math.sin(time * 5))); realLabel.position.set((EMO_X + ENGINE_X) / 2, 0.4, 0.2);
+  showSprite(realLabel, rl * (RM ? 1 : 0.7 + 0.3 * Math.sin(time * 5))); realLabel.position.set((EMO_X + ENGINE_X) / 2, (3.4 / 2) * CHIP_S + 0.22, 0.2); // above the chips, clear of both
   emoDotMat.opacity = emo;
   emoRunners.visible = emo > 0.6 && !RM;
   if (emoRunners.visible) {
@@ -410,14 +445,22 @@ function paint(t, now = performance.now()) {
 
   // Camera: the same eye-level framing as the standing chip, then out to take in all columns.
   const aspectK = Math.max(1, 1.45 / (W / H));
-  const dist = lerp(lerp(11, 14.5, a), lerp(18, 19.5, emo), side) * aspectK;
-  const look = new THREE.Vector3(lerp(0, lerp(0.3, 1.2, emo), side), lerp(0, 0.45, a) * (1 - side), 0); // lower, clear of the tabs under the title
+  // One camera for both views, so the phone never jumps when the view changes. At step 2 the
+  // camera pans to centre the phone and watch under the title, then settles on the grid as the
+  // brands arrive. look.y drops the scene into the middle of the space between tabs and caption.
+  const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK;
+  const pan = lerp(-3.0, 0, win(t, 2.0, 2.6)) * ints;
+  const look = new THREE.Vector3(lerp(0, pan, side), lerp(lerp(0, 0.45, a), 0.6, side), 0);
   camera.position.set(look.x, look.y + dist * 0.1, dist * Math.sqrt(1 - 0.01));
   camera.lookAt(look);
   rig.updateMatrixWorld(true);
   placeSwitch(swO);
+  // Column captions: each shows once its column is on screen; they dip as the view swaps.
+  const tagsIn = win(t, 2.3, 2.7);
+  const showInt = [side, wa, 0, tagsIn]; const showEmo = [1, 1, 1, 1].map((v) => v * win(emo, 0.5, 1));
+  const emoMode = mode >= 0.5; const swap = Math.abs(mode - 0.5) * 2;
+  placeCaptions((emoMode ? showEmo : showInt).map((v) => v * win(t, 0.9, 1.2)), emoMode, swap);
 
-  sec.style.setProperty('--cap', String(win(t, 3.6, 4) * ints));
   renderer.render(scene, camera);
 }
 
