@@ -13,11 +13,12 @@
 
 /* The strip runs edge to edge of the page block and loops: the items are listed twice. */
 .ugc__strip { margin: clamp(32px, 5vh, 56px) calc(50% - 50vw + var(--inset)) 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
-.ugc__track { display: flex; gap: 20px; width: max-content; animation: ugc-drift 48s linear infinite; }
+.ugc__track { display: flex; gap: 20px; width: max-content; animation: ugc-drift 110s linear infinite; }
 .ugc__strip:hover .ugc__track, .ugc.is-off .ugc__track { animation-play-state: paused; }
 @keyframes ugc-drift { to { transform: translateX(calc(-50% - 10px)); } }
 .ugc__card { flex: none; margin: 0; display: grid; gap: 12px; width: calc(var(--ugc-h) * 9 / 16); --ugc-h: clamp(300px, 54vh, 540px); }
-.ugc__media { display: block; width: 100%; height: var(--ugc-h); object-fit: cover; border-radius: 16px; background: #0b1020; }
+.ugc__media { display: block; width: 100%; height: var(--ugc-h); object-fit: cover; border: 0; border-radius: 16px; background: #0b1020; }
+iframe.ugc__media { pointer-events: none; } /* the templates are shown, not used */
 .ugc__card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600; color: var(--ink); }
 .ugc__card figcaption span { padding: 3px 9px; border-radius: 999px; background: var(--infield); font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--slate); }
 .ugc__card figcaption span.is-video { background: var(--blue-soft); color: var(--blue); }

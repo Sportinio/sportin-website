@@ -1,0 +1,120 @@
+<!doctype html>
+<!--
+  Run Cam "Map Watermark" template, ported from the SportIn iOS app (rork-sportin-io, origin/testing-ios):
+    Views/RunCam/RunCamWatermarkHUDView.swift          route watermark, three dissolve masks, scrim
+    Views/RunCam/RunCamWatermarkHUDView+Content.swift  title, accent rule, stats grid, wordmark (run kind)
+    Views/Share/ShareCardTemplate10(+Content).swift    mapZoneFraction 0.56, motivational line pool
+    Views/RunCam/RunCamRouteLine.swift                 north-up auto-fit projection (padding 0.12)
+    Views/RunCam/RunCamHUDMetrics.swift                1080x1920 canvas
+    Utilities/ShareCardDisplayFont.swift               Big Shoulders Display ExtraBold
+    Models/RunCamHUDModel.swift, Utilities/RunFormatters.swift   text formats
+  Deliberate difference: the blue accent rule's blue shadow (a glow) is left out (site rule: no glows).
+  All run data is fictional.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Cam Map Watermark</title>
+<style>
+  @font-face { font-family: "BigShouldersDisplay"; src: url("assets/runcam-bigshoulders-extrabold.ttf") format("truetype"); font-weight: 100 900; font-display: block; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+  #view { position: fixed; inset: 0; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; }
+  #stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .abs { position: absolute; left: 0; top: 0; width: 1080px; }
+  /* routeWatermark: 1080 x (1920 * 0.56), opacity .5, three masks */
+  .zone { height: 1075.2px; }
+  .m1 { -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%); }
+  .m2 { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%); }
+  .m3 { -webkit-mask-image: radial-gradient(circle 600px at 540px 473.1px, #000 0px, #000 300px, transparent 564px); mask-image: radial-gradient(circle 600px at 540px 473.1px, #000 0px, #000 300px, transparent 564px); opacity: .5; }
+  .scrim { height: 1920px; background: linear-gradient(to bottom, transparent 0%, transparent 33.333%, rgba(0,0,0,.5) 66.667%, rgba(0,0,0,.8) 100%); }
+  .content { height: 1920px; display: flex; flex-direction: column; align-items: flex-start; }
+  .title { margin: 1075.2px 78px 0; width: 924px; font: 900 90px/normal "BigShouldersDisplay", system-ui, sans-serif; text-transform: uppercase; color: #fff; text-shadow: 0 0 48px rgba(0,0,0,.6); }
+  .title span { color: #c7c7c7; } /* Color(white: 0.78) */
+  .rule { margin: 26.88px 0 0 78px; width: 78px; height: 7.5px; border-radius: 3.75px; background: #0751FB; }
+  .grid { margin: 96px 78px 0; width: 924px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; row-gap: 54px; }
+  .stat { display: flex; flex-direction: column; gap: 9px; text-shadow: 0 0 18px rgba(0,0,0,.4); }
+  .stat b { font: 700 33px/normal -apple-system, "SF Pro Text", system-ui, sans-serif; letter-spacing: 4.5px; color: rgba(255,255,255,.68); }
+  .stat i { font: normal 900 66px/normal "BigShouldersDisplay", system-ui, sans-serif; color: #fff; font-variant-numeric: tabular-nums; }
+  .wordmark { margin: auto auto 67.2px; height: 38.4px; filter: drop-shadow(0 0 15px rgba(0,0,0,.45)); }
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <video autoplay muted loop playsinline preload="auto" poster="/assets/site/media/clip-run2.jpg" src="/assets/site/media/clip-run2.mp4"></video>
+  <div class="abs zone m1"><div class="abs zone m2"><div class="abs zone m3">
+    <svg width="1080" height="1075.2" viewBox="0 0 1080 1075.2"><path id="route" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div></div></div>
+  <div class="abs scrim"></div>
+  <div class="abs content">
+    <div class="title">Proof I went <span>outside.</span></div>
+    <div class="rule"></div>
+    <div class="grid">
+      <div class="stat"><b>PACE</b><i id="pace">-</i></div>
+      <div class="stat"><b>DISTANCE</b><i id="dist">0.00 km</i></div>
+      <div class="stat"><b>TIME</b><i id="time">0:00</i></div>
+      <div class="stat"><b>STEPS</b><i id="steps">0</i></div>
+    </div>
+    <img class="wordmark" src="assets/runcam-wordmark.png" alt="SportIn">
+  </div>
+</div>
+</div>
+<script>
+(() => {
+  const W = 1080, ZONE = 1920 * 0.56;
+  const $ = id => document.getElementById(id);
+  // ---- Fictional run (time-lapse of a 5 km loop) --------------------------------
+  const RUN = 13, HOLD = 1.5, LOOP = RUN + HOLD, TOTAL_S = 1530, TOTAL_M = 5000;
+  const V0 = TOTAL_M / TOTAL_S, A = 0.25, WV = 2 * Math.PI * 3 / TOTAL_S;
+  const ROUTE = [[0,0],[120,40],[260,60],[400,30],[520,-20],[640,-10],[760,50],[850,150],[900,280],[880,420],[820,540],[720,620],[600,660],[470,650],[350,690],[230,700],[120,650],[40,560],[-20,450],[-60,330],[-40,210],[10,120],[70,70]];
+  const cum = [0]; for (let i = 1; i < ROUTE.length; i++) cum.push(cum[i - 1] + Math.hypot(ROUTE[i][0] - ROUTE[i - 1][0], ROUTE[i][1] - ROUTE[i - 1][1]));
+  const LEN = cum[cum.length - 1];
+  function routeTo(f) {
+    const m = f * LEN, out = [ROUTE[0]];
+    for (let i = 1; i < ROUTE.length; i++) {
+      if (cum[i] < m) { out.push(ROUTE[i]); continue; }
+      const k = (m - cum[i - 1]) / (cum[i] - cum[i - 1] || 1), a = ROUTE[i - 1], b = ROUTE[i];
+      out.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]); break;
+    }
+    return out;
+  }
+  // RunCamRouteLineGeometry.project: one uniform scale from the larger span, centred.
+  function project(pts, box, padF) {
+    const xs = pts.map(q => q[0]), ys = pts.map(q => -q[1]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    const span = Math.max(maxX - minX, maxY - minY), sc = span > 0 ? box * (1 - 2 * padF) / span : 0;
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    return pts.map(q => [(q[0] - cx) * sc, (-q[1] - cy) * sc]);
+  }
+  const pad2 = n => String(n).padStart(2, '0');
+  const elapsedText = s => { const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${pad2(m)}:${pad2(x)}` : `${m}:${pad2(x)}`; };
+  const stepsText = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const paceText = s => s == null ? '-' : `${Math.floor(s / 60)}:${pad2(s % 60)}`;
+
+  function render(t) {
+    const pr = Math.min(t / RUN, 1), E = Math.round(pr * TOTAL_S);
+    const d = V0 * pr * TOTAL_S + (A / WV) * (1 - Math.cos(WV * pr * TOTAL_S));
+    const pace = d > 20 ? Math.round(E / (d / 1000)) : null;
+    $('pace').textContent = `${paceText(pace)} /km`;
+    $('dist').textContent = `${(d / 1000).toFixed(2)} km`;
+    $('time').textContent = elapsedText(E);
+    $('steps').textContent = stepsText(Math.round(E * 2.85));
+    const route = routeTo(d / TOTAL_M);
+    if (route.length < 2) { $('route').setAttribute('d', ''); return; }
+    const box = Math.min(W, ZONE);
+    const pts = project(route, box, 0.12);
+    // x centred on the canvas width, y centred in boxSide (as the Swift comment insists).
+    $('route').setAttribute('d', pts.map((q, i) => (i ? 'L' : 'M') + (q[0] + W / 2).toFixed(1) + ' ' + (q[1] + box / 2).toFixed(1)).join(''));
+  }
+
+  const stage = $('stage');
+  const fit = () => { stage.style.transform = `scale(${innerWidth / W})`; };
+  addEventListener('resize', fit); fit();
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { const v = stage.querySelector('video'); v.removeAttribute('autoplay'); v.pause(); render(RUN); return; }
+  const t0 = performance.now();
+  (function tick(now) { render(((now - t0) / 1000) % LOOP); requestAnimationFrame(tick); })(t0);
+})();
+</script>
+</body>
+</html>

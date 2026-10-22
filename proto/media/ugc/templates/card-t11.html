@@ -1,0 +1,115 @@
+<!doctype html>
+<!--
+  card-t11 — Steps share card, static HTML port.
+  Ports (rork-sportin-io, origin/testing-ios):
+    ios/SportInIo/Views/Share/ShareCardTemplate11.swift          (layers: photo, scrim; clear zone = T10 mapZoneFraction 0.56)
+    ios/SportInIo/Views/Share/ShareCardTemplate11+Content.swift  (title, rule, 2x2 stats, wordmark)
+    ios/SportInIo/Views/Share/ShareCardTemplate10+Content.swift  (motivationalLines pool)
+    ios/SportInIo/Views/Share/ShareCardSlot.swift                (flexibleTemplateSize 360x640)
+    ios/SportInIo/Utilities/ShareCardDisplayFont.swift           (BigShouldersDisplay-ExtraBold)
+    ios/SportInIo/Models/ShareCardModel.swift                    (formattedSteps de_DE, formattedDistance 1 dp)
+    ios/SportInIo/Utilities/ShareCardHarnessFixtures.swift       (cardModel: 18.420 steps, 14 036 m, rank 1)
+  Canvas: 360 x 640 pt, scaled to the iframe width.
+  TIME is the app's own estimate: steps / 100 per minute (184 min -> "3h 4m").
+  The app rotates the title line at random; this mock fixes one line from the same pool.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steps card</title>
+<style>
+  @font-face {
+    font-family: "BigShouldersDisplay-ExtraBold";
+    src: url("assets/card-BigShouldersDisplay-ExtraBold.ttf") format("truetype");
+    font-display: block;
+  }
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #080d1e; }
+  :root {
+    --blue: rgb(7, 81, 251);
+    --title-accent: rgb(199, 199, 199);   /* Color(white: 0.78) */
+    --dark-bg: rgb(8, 13, 30);
+    --display: "BigShouldersDisplay-ExtraBold", -apple-system, "SF Pro Display", system-ui, sans-serif;
+    --text: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  #card {
+    position: absolute; left: 0; top: 0;
+    width: 360px; height: 640px; overflow: hidden;
+    transform-origin: 0 0; background: var(--dark-bg);
+  }
+  .layer { position: absolute; left: 0; top: 0; width: 360px; height: 640px; }
+  .photo { object-fit: cover; display: block; }
+
+
+  .scrim {
+    background: linear-gradient(to bottom,
+      rgba(8, 13, 30, 0) 0%, rgba(8, 13, 30, 0) 33.333%,
+      rgba(8, 13, 30, 0.5) 66.667%, rgba(8, 13, 30, 0.8) 100%);
+  }
+
+  /* content VStack(alignment: .leading, spacing: 0) */
+  .content { display: flex; flex-direction: column; align-items: flex-start; }
+  .sp-clear { flex: none; height: 358.4px; }
+  .title {
+    flex: none; box-sizing: border-box; width: 360px; padding: 0 26px;
+    font-family: var(--display); font-size: 30px; line-height: normal;
+    text-transform: uppercase; color: #fff; margin: 0; font-weight: 800;
+    text-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
+  }
+  .title .accent { color: var(--title-accent); }
+  .rule {
+    flex: none; margin-left: 26px; margin-top: 8.96px;    /* 640 * 0.014 */
+    width: 26px; height: 2.5px; border-radius: 1.25px; background: var(--blue);
+  }
+  .sp-stats { flex: none; height: 32px; }                  /* 640 * 0.05 */
+  .stats {
+    flex: none; box-sizing: border-box; width: 360px; padding: 0 26px;
+    display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; row-gap: 18px;
+  }
+  .stat { display: flex; flex-direction: column; gap: 3px; text-shadow: 0 0 6px rgba(0, 0, 0, 0.4); }
+  .stat .label {
+    font-family: var(--text); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    line-height: normal; color: rgba(255, 255, 255, 0.68);
+  }
+  .stat .value {
+    font-family: var(--display); font-size: 22px; font-weight: 800; line-height: normal; color: #fff;
+  }
+  .sp-flex { flex: 1 1 auto; }
+  .wordmark-row { flex: none; width: 360px; display: flex; justify-content: center; }
+  .wordmark { height: 12.8px; width: auto; display: block; filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.45)); }
+  .sp-bottom { flex: none; height: 22.4px; }               /* 640 * 0.035 */
+</style>
+</head>
+<body>
+<div id="card">
+  <img class="layer photo" src="assets/card-photo-t11.jpg" alt="">
+
+
+  <div class="layer scrim"></div>
+
+  <div class="layer content">
+    <div class="sp-clear"></div>
+    <p class="title">Walked off the <span class="accent">drama.</span></p>
+    <div class="rule"></div>
+    <div class="sp-stats"></div>
+    <div class="stats">
+      <div class="stat"><span class="label">STEPS</span><span class="value">18.420 st</span></div>
+      <div class="stat"><span class="label">DISTANCE</span><span class="value">14.0 km</span></div>
+      <div class="stat"><span class="label">TIME</span><span class="value">3h 4m</span></div>
+      <div class="stat"><span class="label">RANK</span><span class="value">#1</span></div>
+    </div>
+    <div class="sp-flex"></div>
+    <div class="wordmark-row"><img class="wordmark" src="assets/card-sportin-wordmark.png" alt="SportIn"></div>
+    <div class="sp-bottom"></div>
+  </div>
+</div>
+<script>
+  (function () {
+    var card = document.getElementById("card");
+    function fit() { card.style.transform = "scale(" + (window.innerWidth / 360) + ")"; }
+    fit();
+    window.addEventListener("resize", fit);
+  })();
+</script>
+</body>
+</html>
