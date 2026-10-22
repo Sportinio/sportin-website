@@ -240,7 +240,7 @@ const links = CORNERS.map(([x, z]) => {
 });
 
 // ---------- The chip ----------
-// Built like a real package: a thin white ceramic substrate, a raised bright brushed-metal lid with
+// Built like a real package: a thin white ceramic substrate, a raised brushed platinum lid with
 // the engraving, a quiet row of small components around the lid, and contact pads along the edges.
 // It has the same footprint as the layers, which press into it.
 const chip = new THREE.Group(); scene.add(chip);
@@ -249,13 +249,13 @@ const chipMats = [];
 const cm = (m) => { m.transparent = true; chipMats.push(m); return m; };
 const substrate = new THREE.Mesh(new RoundedBoxGeometry(PW, ST, PD, 4, 0.05), cm(new THREE.MeshPhysicalMaterial({ color: 0xf1f3f6, roughness: 0.42, metalness: 0.04, clearcoat: 0.35, clearcoatRoughness: 0.35 })));
 substrate.position.y = -CT / 2 + ST / 2; chip.add(substrate);
-// Brushed metal: fine streaks in the roughness, kept subtle.
+// Brushed metal: fine streaks in the roughness (the original look, kept by request).
 const bc = document.createElement('canvas'); bc.width = bc.height = 512; const bx = bc.getContext('2d');
 bx.fillStyle = 'rgb(120,120,120)'; bx.fillRect(0, 0, 512, 512);
-for (let i = 0; i < 1800; i++) { const v = 105 + Math.random() * 40; bx.fillStyle = `rgba(${v},${v},${v},0.3)`; bx.fillRect(Math.random() * 512, Math.random() * 512, 40 + Math.random() * 220, 1); }
+for (let i = 0; i < 2600; i++) { const v = 90 + Math.random() * 80; bx.fillStyle = `rgba(${v},${v},${v},0.35)`; bx.fillRect(Math.random() * 512, Math.random() * 512, 40 + Math.random() * 220, 1); }
 const brush = new THREE.CanvasTexture(bc); brush.wrapS = brush.wrapT = THREE.RepeatWrapping; brush.repeat.set(2, 2);
 const LW = PW * 0.62; const LD = PD * 0.64;
-const lidMat = cm(new THREE.MeshPhysicalMaterial({ color: 0xf4f6f9, metalness: 0.35, roughness: 0.32, roughnessMap: brush, clearcoat: 0.15, envMapIntensity: 1.4 }));
+const lidMat = cm(new THREE.MeshPhysicalMaterial({ color: 0xdfe3e8, metalness: 1, roughness: 0.42, roughnessMap: brush, clearcoat: 0.15 }));
 if ('anisotropy' in lidMat) lidMat.anisotropy = 0.6;
 const lid = new THREE.Mesh(new RoundedBoxGeometry(LW, LT, LD, 5, 0.06), lidMat);
 lid.position.y = -CT / 2 + ST + LT / 2; chip.add(lid);
