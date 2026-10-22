@@ -117,9 +117,7 @@ let liveSteps = 4218;
 function drawPhoneScreen(time, inPhone, emo) {
   const { ctx, c } = PS; const W = c.width; const Hh = c.height;
   ctx.clearRect(0, 0, W, Hh); // no white layer: the text sits directly in the see-through screen
-  font(ctx, 600, 50, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'center'; ctx.fillText('Your brand', W / 2 + 18, 150);
-  const tw = ctx.measureText('Your brand').width; ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(W / 2 + 18 - tw / 2 - 26, 133, 11, 0, Math.PI * 2); ctx.fill();
-  if (inPhone > 0.01) { ctx.globalAlpha = inPhone; font(ctx, 600, 46, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('SportIn engine', W / 2, toScreenY(ENG.y - 0.7)); ctx.globalAlpha = 1; }
+  ctx.textAlign = 'center'; // no header or engine label on the screen: the chips speak for themselves
   if (emo > 0.01) {
     ctx.globalAlpha = emo;
     const y0 = toScreenY(-0.45);
@@ -393,7 +391,7 @@ function paint(t, now = performance.now()) {
   watch.position.set(lerp(3.2, WATCH_X, c), 0, 0);
   fade(watchMats, watch, wa * ints);
   drawLine(link, lk); intLineMat.opacity = ints;
-  showSprite(syncedLabel, lk * ints); syncedLabel.position.set(linkMid.x, PHONE_Y + ENG.y + 0.32, 0.2);
+  showSprite(syncedLabel, 0); // no SYNCED text; the blue line says it
   linkMat.opacity = ints;
   brandTags.forEach((sp, i) => {
     const o = win(t, 2.05 + i * 0.045, 2.3 + i * 0.045);
