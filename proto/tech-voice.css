@@ -1,0 +1,11 @@
+/* Technology we own: the two voice cards show the Signal sphere from SignalStack in a dark panel
+   (the sphere's light blue dots are made for a dark ground). The play button keeps the site's
+   .play look; it has its own class so the audio can drive the sphere. */
+.tv__orb { position: relative; flex: 1; min-height: 230px; border-radius: 16px; background: #10131c; overflow: hidden; }
+.tv__sphere { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+.tv-play { display: inline-flex; align-items: center; gap: 12px; align-self: flex-start; padding: 6px 18px 6px 6px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font: 700 15px/1 var(--body); cursor: pointer; transition: border-color 0.25s, transform 160ms ease-out; }
+.tv-play:hover { border-color: var(--blue); }
+.tv-play:active { transform: scale(0.97); }
+.tv-play:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.tv-play .i-pause, .tv-play.is-playing .i-play { display: none; }
+.tv-play.is-playing .i-pause { display: block; }
