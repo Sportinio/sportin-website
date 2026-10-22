@@ -14,12 +14,15 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { createChip } from '/proto/chip3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=1';
 
-const sec = document.getElementById('integrate');
+// It runs on its own page (integrate3d.html) or, in the deck, inside the engine's section right
+// after the engine's last step (data-int-from), so the chip carries straight on.
+const canvas = document.getElementById('int3d');
+const sec = canvas.closest('section');
+const FROM = Number(sec.dataset.intFrom || 0); const STEPS_ALL = Number(sec.dataset.steps || 4);
 const stage = sec.querySelector('.engine__stage');
-const stick = sec.querySelector('.engine__stick');
-const canvas = sec.querySelector('canvas'); stick.prepend(canvas);
-const texts = [...sec.querySelectorAll('.eng-txt[data-c]')];
-const emoText = sec.querySelector('.eng-txt[data-mode="emotion"]');
+const stick = sec.querySelector('.engine__stick'); stick.prepend(canvas);
+const texts = [...sec.querySelectorAll('.int-txt[data-ci]')];
+const emoText = sec.querySelector('.int-txt[data-mode="emotion"]');
 const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const clamp = (v) => Math.max(0, Math.min(1, v));
@@ -37,7 +40,7 @@ const scene = new THREE.Scene();
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(renderer), 0.04).texture;
 const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
 const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(2.5, 14, 5); scene.add(key);
-const fill = new THREE.DirectionalLight(0xffffff, 0.6); fill.position.set(-6, 4, 10); scene.add(fill);
+const fill = new THREE.DirectionalLight(0xffffff, 0.45); fill.position.set(-6, 4, 8); scene.add(fill); // same lights as the engine, for a seamless handover
 const rig = new THREE.Group(); scene.add(rig); // everything turns together for a little depth
 
 // ---------- Shapes ----------
@@ -309,7 +312,7 @@ capRow.innerHTML = '<span></span><span></span><span></span><span></span>'; stick
 const caps = [...capRow.children];
 const CAP_TEXT = [['Phone', 'Wearable', '', 'Apps and wearables'], ['Phone', 'Phone sensors', 'eMotion', 'SportIn engine']];
 const CAP_Y = -2.6; // just under the tallest column
-const oldCaption = sec.querySelector('.eng-caption'); if (oldCaption) oldCaption.style.display = 'none';
+const oldCaption = FROM === 0 ? sec.querySelector('.eng-caption') : null; if (oldCaption) oldCaption.style.display = 'none'; // standalone page only; in the deck it is the engine's caption
 const _cp = new THREE.Vector3();
 function placeCaptions(show, emoMode, fadeSwap) {
   const set = CAP_TEXT[emoMode ? 1 : 0];
@@ -343,12 +346,13 @@ function placeSwitch(o) {
 }
 
 // ---------- Layout ----------
-let W = 1; let H = 1; let view = { w: 1, h: 1 };
+let W = 1; let H = 1; let view = { w: 1, h: 1 }; let viewBase = { x: 0, y: 0, w: 1, h: 1 };
 function resize() {
   const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
   W = Math.max(1, r.width); H = Math.max(1, r.height); view = { w: f.width, h: f.height };
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
-  camera.setViewOffset(W, H, f.left - r.left, f.top - r.top + H * 0.07, f.width, f.height);
+  viewBase = { x: f.left - r.left, y: f.top - r.top + H * 0.07, w: f.width, h: f.height };
+  camera.setViewOffset(W, H, viewBase.x, viewBase.y, viewBase.w, viewBase.h);
   camera.updateProjectionMatrix();
 }
 
@@ -371,7 +375,8 @@ function paint(t, now = performance.now()) {
   const side = Math.max(c, emo); // the phone sits on the left in both views
 
   // Copy: the scroll steps for Integrations, one block for eMotion.
-  texts.forEach((el, k) => {
+  texts.forEach((el) => {
+    const k = Number(el.dataset.ci);
     const d = Math.abs(t - k); let o = 1 - sm(clamp((d - 0.28) / 0.22));
     if (k >= 1) o *= ints;
     el.style.opacity = String(o);
@@ -460,6 +465,8 @@ function paint(t, now = performance.now()) {
   const look = new THREE.Vector3(lerp(0, pan, side), lerp(lerp(0, 0.45, a), 0.6, side), 0);
   camera.position.set(look.x, look.y + dist * 0.1, dist * Math.sqrt(1 - 0.01));
   camera.lookAt(look);
+  // Start from the engine's exact framing of the finished chip, then let it go.
+  camera.setViewOffset(W, H, viewBase.x, viewBase.y + (window.sportinChipShift || 0) * (1 - a), viewBase.w, viewBase.h); camera.updateProjectionMatrix();
   rig.updateMatrixWorld(true);
   placeSwitch(swO);
   // Column captions: each shows once its column is on screen; they dip as the view swaps.
@@ -473,13 +480,21 @@ function paint(t, now = performance.now()) {
 
 // ---------- Scroll and a live loop while it is on screen ----------
 let visible = false;
-const follow = followScroll(sec, { steps: 4, reduced: RM, onFrame: paint, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t >= 2 || mode > 0))) });
+// Before its first step (deck: while the engine scene runs) it hides and draws nothing. It shows
+// a moment before the handover, drawing the same finished chip, so there is never a gap.
+function paintAt(T, now) {
+  const t = T - FROM; const on = t >= -0.02;
+  canvas.style.visibility = on ? 'visible' : 'hidden';
+  if (!on) { placeSwitch(0); caps.forEach((el) => { el.style.opacity = '0'; }); return; }
+  paint(Math.max(0, t), now);
+}
+const follow = followScroll(sec, { steps: STEPS_ALL, reduced: RM, onFrame: paintAt, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t - FROM >= 2 || (mode > 0 && follow.t > FROM)))) });
 new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) follow.kick(); }).observe(sec);
-window.addEventListener('resize', () => { resize(); paint(follow.t); });
+window.addEventListener('resize', () => { resize(); paintAt(follow.t); });
 resize();
 drawWatchScreen();
 document.fonts.ready.then(() => { engine.drawEngraving(); emotion.drawEngraving(); drawWatchScreen(); follow.sync(); });
-frameImg.onload = maskImg.onload = () => { lastScreenKey = ''; paint(follow.t); };
+frameImg.onload = maskImg.onload = () => { lastScreenKey = ''; paintAt(follow.t); };
 follow.sync();
-window.integrateAt = (v) => follow.jump(v);
+window.integrateAt = (v) => follow.jump(v + FROM);
 window.integrateMode = (m) => sw.querySelector(`button[data-mode="${m}"]`).click();

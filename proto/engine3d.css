@@ -64,3 +64,6 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
 /* Column captions under the integrations scene, placed by JS under each column. */
 .int-caps { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .int-caps span { position: absolute; left: 0; top: 0; white-space: nowrap; font: 500 12px/1 var(--mono); color: #5a6377; opacity: 0; will-change: transform, opacity; }
+
+/* The engine with the integrations after it, as one continuous scene (deck): eleven steps. */
+.engine[data-steps="10"] { height: calc(100vh + 10 * 80vh); }

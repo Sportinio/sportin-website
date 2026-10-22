@@ -15,7 +15,9 @@ const root = document.documentElement;
 const sec = document.getElementById('engine');
 const stage = sec.querySelector('.engine__stage');
 const canvas = document.getElementById('eng3d');
-const texts = [...sec.querySelectorAll('.eng-txt')];
+const texts = [...sec.querySelectorAll('.eng-txt[data-c]')]; // the engine's own steps (integration steps use data-ci)
+// In the deck the integrations continue in this same section after step 6 (data-steps="10").
+const STEPS = Number(sec.dataset.steps || 6);
 const cta = sec.querySelector('.eng-cta');
 const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -287,6 +289,7 @@ function measureChip() {
     const y = ((1 - _v.y) / 2) * view.h; top = Math.min(top, y); bottom = Math.max(bottom, y);
   }
   chipShift = (top + bottom) / 2 - targetY;
+  window.sportinChipShift = chipShift; // the integrations scene starts from the same framing
 }
 
 // ---------- Choreography ----------
@@ -294,12 +297,15 @@ const GAP = 2.4;
 function setOpacity(g, o) { g.userData.body.material.opacity = o; g.userData.face.material.opacity = o; g.visible = o > 0.004; }
 const chipOpacity = (o) => chipKit.setOpacity(o);
 
-function paint(t) {
+function paint(T) {
+  // T runs over the whole section; the engine's own scene ends at 6 and hands over to the
+  // integrations scene, which starts from this exact finished chip.
+  const t = Math.min(T, 6);
   // Copy: one block at a time. Reduced motion: a plain cross-fade, no blur or slide.
   texts.forEach((el, k) => {
-    const d = Math.abs(t - k); const o = 1 - sm(clamp((d - 0.28) / 0.22));
+    const d = Math.abs(T - k); const o = 1 - sm(clamp((d - 0.28) / 0.22));
     el.style.opacity = String(o);
-    el.style.transform = RM ? 'none' : `translateY(${((t - k) * -18).toFixed(1)}px)`;
+    el.style.transform = RM ? 'none' : `translateY(${((T - k) * -18).toFixed(1)}px)`;
     el.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none';
   });
 
@@ -380,8 +386,10 @@ function paint(t) {
 
   // Caption and the demo button arrive with the finished chip.
   const cap = win(t, 5.8, 6);
-  sec.style.setProperty('--cap', String(cap));
-  if (cta) cta.classList.toggle('is-on', cap > 0.5);
+  sec.style.setProperty('--cap', String(cap * (1 - win(T, 6.1, 6.4)))); // gone once the integrations begin
+  if (cta) cta.classList.toggle('is-on', cap > 0.5 && T < 6.5);
+  canvas.style.visibility = T > 6.02 ? 'hidden' : 'visible';
+  if (T > 6.02) return; // the integrations scene has taken over
   renderer.render(scene, camera);
 }
 
@@ -400,7 +408,7 @@ if (sound) {
 // ---------- Scroll ----------
 // The scene follows the scroll at a steady, eased pace (scroll-follow.js); the last part of the
 // scroll holds the finished chip.
-const follow = followScroll(sec, { steps: 6, reduced: RM, onFrame: (t) => { paint(t); if (sound) sound.update(t); } });
+const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: (t) => { paint(t); if (sound) sound.update(t); } });
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
 document.fonts.ready.then(() => { measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });
