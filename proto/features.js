@@ -218,6 +218,51 @@ if (sec) {
       stop() { window.clearInterval(timer); timer = 0; },
     }; }
 
+  // Ranking (layer 2): the app's leaderboard. Steps tick up live; Sofia overtakes Emma, her trend
+  // turns green, and the ranks re-number.
+  { const box = panelOf('ranking'); if (box) {
+    const lbRows = [...box.querySelectorAll('.lb')];
+    const BASE = [0, 1, 2, 3, 4, 5, 6]; const SWAP = [0, 1, 3, 2, 4, 5, 6]; // slot per row before and after
+    let timer = 0; let tick = 0;
+    const setSlots = (slots) => lbRows.forEach((row, i) => { row.style.setProperty('--slot', String(slots[i])); row.querySelector('.lb__rank').textContent = String(slots[i] + 1); row.classList.toggle('is-first', slots[i] === 0); });
+    const val = (row, n) => { const b = row.querySelector('.lb__val b'); b.textContent = fmtNum(n); };
+    function before() {
+      setSlots(BASE); lbRows.forEach((r) => { r.classList.remove('is-up'); val(r, Number(r.querySelector('.lb__val b').dataset.v)); });
+      const t = lbRows[3].querySelector('.lb__val em'); t.className = 'down'; t.textContent = '↘11%';
+    }
+    function climb() {
+      const sofia = lbRows[3]; sofia.classList.add('is-up'); val(sofia, 8120); setSlots(SWAP);
+      const t = sofia.querySelector('.lb__val em'); t.className = 'up'; t.textContent = '↗39%';
+    }
+    demos.ranking = {
+      start() {
+        before(); if (RM) { climb(); return; }
+        tick = 0; timer = window.setInterval(() => {
+          tick += 1; const phase = tick % 8;
+          // Live counting on every tick: small bumps on the top rows.
+          lbRows.forEach((r, i) => { const b = r.querySelector('.lb__val b'); const n = Number(b.textContent.replace(/,/g, '')); if (i !== 3 || phase < 3) val(r, n + [24, 9, 7, 31, 4, 6, 3][i]); });
+          if (phase === 3) climb();
+          if (phase === 0) before();
+        }, 900);
+      },
+      stop() { window.clearInterval(timer); timer = 0; },
+    };
+  } }
+  // Weekly progress (layer 2): the bars grow day by day, the tiles count up.
+  { const box = panelOf('weekly'); if (box) {
+    const days = [...box.querySelectorAll('.wk__day:not(.is-next)')];
+    let timers = []; let cancels = [];
+    function reset() { days.forEach((d) => { d.style.setProperty('--h', '0'); d.classList.remove('is-shown'); d.querySelector('.wk__v').textContent = d.dataset.v; }); box.querySelectorAll('[data-v]').forEach((el) => { if (el.tagName === 'B') el.textContent = '0'; }); }
+    demos.weekly = {
+      start() {
+        reset();
+        days.forEach((d, i) => timers.push(window.setTimeout(() => { d.style.setProperty('--h', d.dataset.h); d.classList.add('is-shown'); }, RM ? 0 : 200 + i * 450)));
+        timers.push(window.setTimeout(() => { cancels = [...box.querySelectorAll('b[data-v]')].map((el) => countUp(el, Number(el.dataset.v), 1400)); }, RM ? 0 : 1400));
+      },
+      stop() { timers.forEach((t) => window.clearTimeout(t)); timers = []; cancels.forEach((c) => c()); cancels = []; },
+    };
+  } }
+
   let visible = false; let running = '';
   function runDemoFor(k) {
     const holder = panels[k] && panels[k].querySelector('[data-demo]');
@@ -236,6 +281,7 @@ if (sec) {
     if (k !== current) {
       current = k;
       nav.forEach((b, i) => b.setAttribute('aria-current', String(i === k)));
+      sec.querySelectorAll('.tl__layer').forEach((layer) => layer.classList.toggle('is-on', layer.contains(nav[k] || null)));
       panels.forEach((p, i) => p.toggleAttribute('inert', i !== k));
     }
     runDemoFor(k);

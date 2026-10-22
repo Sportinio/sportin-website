@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
-  <link rel="stylesheet" href="/proto/features.css?v=8" />
+  <link rel="stylesheet" href="/proto/features.css?v=11" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -141,7 +141,7 @@
 
 
   <!-- COMPETITIONS: one big format per scroll, moving sideways -->
-  <section class="feat" id="features" data-steps="2" aria-label="The engine, layer by layer">
+  <section class="feat" id="features" data-steps="4" aria-label="The engine, layer by layer">
     <div class="feat__stick">
       <div class="feat__track">
         <article class="feat__panel" aria-labelledby="featClTitle">
@@ -202,11 +202,80 @@
             </div>
           </div>
         </article>
+        <article class="feat__panel feat__panel--app" aria-labelledby="featRankTitle">
+          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Ranking</p><h2 class="feat__title" id="featRankTitle">Every move, <em>ranked live</em></h2><p class="feat__lede">The leaderboard, as members see it in the SportIn app.</p></div>
+          <div class="big big--app" data-demo="ranking">
+            <div class="phone" aria-hidden="true">
+              <div class="phone__screen app">
+                <div class="app__tabs"><span class="is-on">General</span><span>Game of Run</span></div>
+                <div class="app__tiers">
+                  <div class="tier tier--bronze"><b>Bronze</b><i></i><span>12 users</span></div>
+                  <div class="tier tier--silver"><b>Silver</b><i></i><span>7 users</span></div>
+                  <div class="tier tier--gold"><b>Gold</b><i></i><span>3 users</span></div>
+                  <div class="tier tier--plat"><b>Platinum</b><i></i><span>1 user</span></div>
+                </div>
+                <div class="app__filter"><span>Filter by</span><b class="is-on">All</b><b>🇷🇴 Romania</b><b>🇨🇦 Canada</b></div>
+                <div class="app__list">
+                  <div class="app__bar"><i></i><i></i><span class="app__live">▶</span><span class="app__count">6</span></div>
+                  <div class="app__rows">
+                    <div class="lb" data-i="0"><span class="lb__rank">1</span><span class="lb__av">AM</span><span class="lb__who"><b>🇷🇴 Ana M.</b><em>Harbour Gym</em></span><span class="lb__val"><b data-v="25588">25,588</b><sup>st</sup><em class="lb__icon">🐆</em></span></div>
+                    <div class="lb" data-i="1"><span class="lb__rank">2</span><span class="lb__av">RP</span><span class="lb__who"><b>🇷🇴 Radu P.</b><em>Office Team</em></span><span class="lb__val"><b data-v="8588">8,588</b><sup>st</sup><em class="up">↗24%</em></span></div>
+                    <div class="lb" data-i="2"><span class="lb__rank">3</span><span class="lb__av">EL</span><span class="lb__who"><b>🇫🇷 Emma L.</b><em>France</em></span><span class="lb__val"><b data-v="7810">7,810</b><sup>st</sup><em class="down">↘6%</em></span></div>
+                    <div class="lb" data-i="3"><span class="lb__rank">4</span><span class="lb__av">SA</span><span class="lb__who"><b>🇨🇦 Sofia A.</b><em>Runner</em></span><span class="lb__val"><b data-v="5832">5,832</b><sup>st</sup><em class="down">↘11%</em></span></div>
+                    <div class="lb" data-i="4"><span class="lb__rank">5</span><span class="lb__av">JM</span><span class="lb__who"><b>🇺🇸 Jake M.</b><em>United States</em></span><span class="lb__val"><b data-v="4120">4,120</b><sup>st</sup><em class="lb__icon">🐢</em></span></div>
+                    <div class="lb" data-i="5"><span class="lb__rank">6</span><span class="lb__av">MD</span><span class="lb__who"><b>🇷🇴 Mihai D.</b><em>Bike Club</em></span><span class="lb__val"><b data-v="3640">3,640</b><sup>st</sup><em class="up">↗8%</em></span></div>
+                    <div class="lb" data-i="6"><span class="lb__rank">7</span><span class="lb__av">ES</span><span class="lb__who"><b>🇪🇸 Elena S.</b><em>Park Crew</em></span><span class="lb__val"><b data-v="2904">2,904</b><sup>st</sup><em class="down">↘3%</em></span></div>
+                  </div>
+                </div>
+              </div>
+              <img class="phone__frame" src="/proto/media/frames/phone-frame-open.png" alt="" />
+            </div>
+            <ul class="points">
+              <li><b>Tiers members climb</b><span>Bronze, Silver, Gold and Platinum, earned by moving.</span></li>
+              <li><b>Live, against last week</b><span>Every step updates the rank, with the trend beside it.</span></li>
+              <li><b>Puma and turtle days</b><span>The fastest movers get the puma, the quiet ones a nudge.</span></li>
+              <li><b>Filter by country or team</b><span>Each community sees the ranking that matters to it.</span></li>
+            </ul>
+          </div>
+        </article>
+        <article class="feat__panel feat__panel--app" aria-labelledby="featWeekTitle">
+          <div class="feat__intro"><p class="eng-k">Leaderboard layer · Weekly progress</p><h2 class="feat__title" id="featWeekTitle">Progress members <em>can see</em></h2><p class="feat__lede">Each member's week, day by day, against the week before.</p></div>
+          <div class="big big--app" data-demo="weekly">
+            <div class="phone" aria-hidden="true">
+              <div class="phone__screen app app--week">
+                <p class="wk__kick">WEEKLY PROGRESS</p>
+                <div class="wk__head"><b>Week 19</b><span>May 4 – 10</span></div>
+                <div class="wk__bars">
+                  <div class="wk__day" data-h="0.78" data-v="8.2k"><span class="wk__v"></span><i></i><em>Mon</em></div>
+                  <div class="wk__day" data-h="1" data-v="10.1k"><span class="wk__v"></span><i></i><em>Tue</em></div>
+                  <div class="wk__day" data-h="0.42" data-v="2.9k"><span class="wk__v"></span><i></i><em>Wed</em></div>
+                  <div class="wk__day is-next"><span class="wk__v"></span><i></i><em>Thu</em></div>
+                  <div class="wk__day is-next"><span class="wk__v"></span><i></i><em>Fri</em></div>
+                  <div class="wk__day is-next"><span class="wk__v"></span><i></i><em>Sat</em></div>
+                  <div class="wk__day is-next"><span class="wk__v"></span><i></i><em>Sun</em></div>
+                </div>
+                <div class="wk__tiles">
+                  <div class="wk__tile is-blue"><b data-v="7078">0</b><span>AVG STEPS</span></div>
+                  <div class="wk__tile"><b>5.2 km</b><span>AVG DISTANCE</span></div>
+                  <div class="wk__tile"><b>5.3</b><span>MOVEMENT INDEX</span></div>
+                  <div class="wk__tile"><b>1</b><span>PUMA DAYS</span></div>
+                </div>
+                <div class="wk__cmp"><div><b>18,459</b><span>LAST WEEK</span></div><em>↗ 15.0%</em><div><b class="is-blue" data-v="21235">0</b><span>THIS WEEK</span></div></div>
+              </div>
+              <img class="phone__frame" src="/proto/media/frames/phone-frame-open.png" alt="" />
+            </div>
+            <ul class="points">
+              <li><b>Every day at a glance</b><span>Steps per day, filling in as the week goes.</span></li>
+              <li><b>Movement index</b><span>One number for how active the week has been.</span></li>
+              <li><b>This week against last</b><span>Members see their progress, and keep it going.</span></li>
+            </ul>
+          </div>
+        </article>
       </div>
       <nav class="feat__nav tl" aria-label="Engine layers">
         <div class="tl__layer is-on"><span class="tl__num">1</span><span class="tl__name">Competition</span><span class="tl__steps"><button type="button" aria-current="true">Knockout</button><button type="button">Table</button><button type="button">Conquer</button></span></div>
         <i class="tl__line" aria-hidden="true"></i>
-        <div class="tl__layer"><span class="tl__num">2</span><span class="tl__name">Leaderboard</span></div>
+        <div class="tl__layer"><span class="tl__num">2</span><span class="tl__name">Leaderboard</span><span class="tl__steps"><button type="button">Ranking</button><button type="button">Weekly</button></span></div>
         <i class="tl__line" aria-hidden="true"></i>
         <div class="tl__layer"><span class="tl__num">3</span><span class="tl__name">Reward</span></div>
       </nav>
@@ -620,7 +689,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=24"></script>
-<script type="module" src="/proto/features.js?v=7"></script>
+<script type="module" src="/proto/features.js?v=9"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
