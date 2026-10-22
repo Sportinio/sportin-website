@@ -1,7 +1,7 @@
 /* Engine 3D mockup: the stage is a real 3D scene (three.js) instead of CSS plates. */
 .engine__stage { perspective: none; }
 /* The canvas fills the whole pinned screen behind the text, so the scene is never clipped. */
-#eng3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
+#eng3d, .eng-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
 .engine__grid { position: relative; z-index: 1; }
 .eng-caption { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); margin: 0; display: flex; gap: 28px; font-family: var(--mono); font-size: 12px; color: #5a6377; opacity: var(--cap, 0); pointer-events: none; white-space: nowrap; }
 .eng-caption span { display: inline-flex; align-items: center; gap: 8px; }
@@ -27,7 +27,7 @@
 .eng-fallback__lid img { width: 46%; height: auto; opacity: 0.85; }
 .eng-fallback__lid span { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--blue); }
 html.eng3d-failed .eng-fallback { display: flex; }
-html.eng3d-failed #eng3d { display: none; }
+html.eng3d-failed #eng3d, html.eng3d-failed .eng-canvas { display: none; }
 html.eng3d-failed .eng-txt { opacity: 0; }
 html.eng3d-failed .eng-txt[data-c="6"] { opacity: 1; }
 html.eng3d-failed .engine { --cap: 1; }
@@ -46,3 +46,6 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
 .engine .eng-h em, .engine .engine__title em { font-style: normal; color: var(--blue); }
 .engine .eng-p { max-width: 64ch; }
 @media (min-width: 900px) { .engine .eng-p { max-width: none; white-space: nowrap; } }
+
+/* The integrations scene: six steps (0..5). */
+.engine.engine--int { height: calc(100vh + 5 * 80vh); }

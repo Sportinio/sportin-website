@@ -1,4 +1,4 @@
-/* The 3D engine scene as a page of the deck, straight after the blue evidence page.
+/* The 3D scroll scenes (engine, then integrations) as pages of the deck, after the blue evidence page.
    Only the engine's own rules are copied here (engine.css also styles .ring and .season,
    which would clash with the games section). The pinned stage becomes one rounded white
    card like every other page, and each of the seven steps is a snap point (set in deck.js).
@@ -18,8 +18,8 @@
 .engine .eng-h, .engine .engine__title { color: #0a1020; }
 .engine .eng-p, .engine .eng-k { color: #5a6377; }
 
-html.is-full #engine { background: transparent; }
-html.is-full #engine .engine__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
-html.is-full #engine .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
+html.is-full .engine { background: transparent; }
+html.is-full .engine .engine__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
+html.is-full .engine .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
 /* Present mode does not include the scroll scene yet. */
-html.is-deck #engine { display: none; }
+html.is-deck .engine { display: none; }

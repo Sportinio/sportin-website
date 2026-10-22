@@ -24,8 +24,8 @@
   <link rel="stylesheet" href="/proto/deck.css?v=9" />
   <link rel="stylesheet" href="/proto/evidence.css?v=4" />
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
-  <link rel="stylesheet" href="/proto/engine-deck.css?v=2" />
-  <link rel="stylesheet" href="/proto/engine3d.css?v=9" />
+  <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
+  <link rel="stylesheet" href="/proto/engine3d.css?v=10" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -125,6 +125,26 @@
           <canvas id="eng3d"></canvas>
           <div class="eng-fallback"><div class="eng-fallback__lid"><img src="/assets/site/logo/sportin-wordmark-black.svg" alt="" width="200" height="24" /><span>GAMIFICATION ENGINE</span></div></div>
           <p class="eng-caption"><span>Competition</span><span>Leaderboard</span><span>Reward</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGRATIONS: the engine inside the phone, Motion by SportIn, wearables and the brands they use -->
+  <section class="engine engine--int" id="integrate" data-steps="5" aria-labelledby="intTitle">
+    <div class="engine__stick">
+      <div class="wrap engine__grid">
+        <div class="engine__copy">
+          <div class="eng-txt" data-c="0"><p class="eng-k">Integrations</p><h2 class="eng-h" id="intTitle">One engine. <em>Every source.</em></h2><p class="eng-p">Phones, wearables and fitness apps all feed the same engine.</p></div>
+          <div class="eng-txt" data-c="1"><p class="eng-k">Inside the phone</p><h3 class="eng-h">Runs inside <em>your app</em></h3><p class="eng-p">The SportIn engine sits inside your branded app, on every member's phone.</p></div>
+          <div class="eng-txt" data-c="2"><p class="eng-k">Motion by SportIn</p><h3 class="eng-h"><em>Real-time</em> motion, built in</h3><p class="eng-p">Our own motion technology reads the phone's sensors live. No wearable needed.</p></div>
+          <div class="eng-txt" data-c="3"><p class="eng-k">Wearables</p><h3 class="eng-h">Connects to <em>every wearable</em></h3><p class="eng-p">Watches, rings and bands sync their activity to the phone.</p></div>
+          <div class="eng-txt" data-c="4"><p class="eng-k">Integrations</p><h3 class="eng-h">Works with the <em>brands they wear</em></h3><p class="eng-p">Garmin, Fitbit, Oura, Whoop, Polar, Strava and many more.</p></div>
+          <div class="eng-txt" data-c="5"><p class="eng-k">Two lanes</p><h3 class="eng-h">Every source, <em>one engine</em></h3><p class="eng-p">Live motion from the phone and synced data from wearables, scored in one place.</p></div>
+        </div>
+        <div class="engine__stage" aria-hidden="true">
+          <canvas class="eng-canvas" id="int3d"></canvas>
+          <p class="eng-caption"><span>Live</span><span>Synced</span><span>One engine</span></p>
         </div>
       </div>
     </div>
@@ -533,9 +553,10 @@
 <script src="/proto/video-hero.js?v=3" defer></script>
 <script src="/proto/problem-scroll.js?v=3" defer></script>
 <script src="/proto/jelly.js?v=15" defer></script>
-<script src="/proto/deck.js?v=14" defer></script>
+<script src="/proto/deck.js?v=15" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="/proto/engine3d.js?v=35"></script>
+<script type="module" src="/proto/engine3d.js?v=36"></script>
+<script type="module" src="/proto/integrate3d.js?v=2"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>

@@ -8,6 +8,8 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createEngineSound } from '/proto/engine-sound.js?v=2';
+import { createChip } from '/proto/chip3d.js?v=1';
+import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 const root = document.documentElement;
 const sec = document.getElementById('engine');
@@ -240,63 +242,10 @@ const links = CORNERS.map(([x, z]) => {
 });
 
 // ---------- The chip ----------
-// Built like a real package: a thin white ceramic substrate, a raised brushed platinum lid with
-// the engraving, a quiet row of small components around the lid, and contact pads along the edges.
-// It has the same footprint as the layers, which press into it.
-const chip = new THREE.Group(); scene.add(chip);
-const ST = 0.14; const LT = 0.16; const CT = ST + LT;
-const chipMats = [];
-const cm = (m) => { m.transparent = true; chipMats.push(m); return m; };
-const substrate = new THREE.Mesh(new RoundedBoxGeometry(PW, ST, PD, 4, 0.05), cm(new THREE.MeshPhysicalMaterial({ color: 0xf1f3f6, roughness: 0.42, metalness: 0.04, clearcoat: 0.35, clearcoatRoughness: 0.35 })));
-substrate.position.y = -CT / 2 + ST / 2; chip.add(substrate);
-// Brushed metal: fine streaks in the roughness (the original look, kept by request).
-const bc = document.createElement('canvas'); bc.width = bc.height = 512; const bx = bc.getContext('2d');
-bx.fillStyle = 'rgb(120,120,120)'; bx.fillRect(0, 0, 512, 512);
-for (let i = 0; i < 2600; i++) { const v = 90 + Math.random() * 80; bx.fillStyle = `rgba(${v},${v},${v},0.35)`; bx.fillRect(Math.random() * 512, Math.random() * 512, 40 + Math.random() * 220, 1); }
-const brush = new THREE.CanvasTexture(bc); brush.wrapS = brush.wrapT = THREE.RepeatWrapping; brush.repeat.set(2, 2);
-const LW = PW * 0.62; const LD = PD * 0.64;
-const lidMat = cm(new THREE.MeshPhysicalMaterial({ color: 0xdfe3e8, metalness: 1, roughness: 0.42, roughnessMap: brush, clearcoat: 0.15 }));
-if ('anisotropy' in lidMat) lidMat.anisotropy = 0.6;
-const lid = new THREE.Mesh(new RoundedBoxGeometry(LW, LT, LD, 5, 0.06), lidMat);
-lid.position.y = -CT / 2 + ST + LT / 2; chip.add(lid);
-// Laser engraving on the lid.
-const EW = 1024; const EH = Math.round(1024 * (LD / LW));
-const engr = document.createElement('canvas'); engr.width = EW; engr.height = EH; const ectx = engr.getContext('2d');
-const engrTex = new THREE.CanvasTexture(engr); engrTex.colorSpace = THREE.SRGBColorSpace; engrTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-const engrFace = new THREE.Mesh(new THREE.PlaneGeometry(LW - 0.16, LD - 0.16).rotateX(-Math.PI / 2), cm(new THREE.MeshStandardMaterial({ map: engrTex, metalness: 0.5, roughness: 0.45, depthWrite: false })));
-engrFace.position.y = CT / 2 + 0.002; chip.add(engrFace);
-const logo = new Image(); logo.src = '/assets/site/logo/sportin-wordmark-black.svg';
-function drawEngraving() {
-  ectx.clearRect(0, 0, EW, EH);
-  const cx = EW / 2;
-  if (logo.complete && logo.naturalWidth) { const w = 520; const h = w * (logo.naturalHeight / logo.naturalWidth); ectx.globalAlpha = 0.82; ectx.drawImage(logo, cx - w / 2, EH * 0.5 - h, w, h); ectx.globalAlpha = 1; }
-  font(ectx, 600, 44, 'IBM Plex Mono'); ectx.fillStyle = BLUE; ectx.textAlign = 'center'; ectx.fillText('GAMIFICATION ENGINE', cx, EH * 0.66);
-  font(ectx, 500, 20, 'IBM Plex Mono'); ectx.textAlign = 'left'; ectx.fillStyle = 'rgba(30,34,42,0.4)'; ectx.fillText('SI-E1', 46, EH - 46);
-  ectx.textAlign = 'right'; ectx.fillText('2026', EW - 46, EH - 46);
-  engrTex.needsUpdate = true;
-}
-logo.onload = drawEngraving;
-// Small components in light grey, every other slot, each with metal end caps.
-const topY = -CT / 2 + ST;
-const comps = []; const gapZ = (PD - LD) / 4; const gapX = (PW - LW) / 4;
-for (let x = -LW / 2 + 0.2; x <= LW / 2 - 0.2; x += 0.68) { comps.push([x, LD / 2 + gapZ, 0]); comps.push([x, -LD / 2 - gapZ, 0]); }
-for (let z = -LD / 2 + 0.25; z <= LD / 2 - 0.25; z += 0.68) { comps.push([LW / 2 + gapX, z, 1]); comps.push([-LW / 2 - gapX, z, 1]); }
-const body = new THREE.InstancedMesh(new THREE.BoxGeometry(0.15, 0.07, 0.08), cm(new THREE.MeshPhysicalMaterial({ color: 0x9aa3b2, roughness: 0.45, metalness: 0.15 })), comps.length);
-const caps = new THREE.InstancedMesh(new THREE.BoxGeometry(0.035, 0.074, 0.084), cm(new THREE.MeshPhysicalMaterial({ color: 0xcfd5dd, metalness: 1, roughness: 0.25 })), comps.length * 2);
-{ const m = new THREE.Matrix4(); const q = new THREE.Quaternion(); const one = new THREE.Vector3(1, 1, 1); const Y = new THREE.Vector3(0, 1, 0); let ci = 0;
-  comps.forEach(([x, z, rot], i) => {
-    q.setFromAxisAngle(Y, rot ? Math.PI / 2 : 0);
-    m.compose(new THREE.Vector3(x, topY + 0.035, z), q, one); body.setMatrixAt(i, m);
-    [-1, 1].forEach((sgn) => { const off = new THREE.Vector3(sgn * 0.075, 0, 0).applyQuaternion(q); m.compose(new THREE.Vector3(x + off.x, topY + 0.037, z + off.z), q, one); caps.setMatrixAt(ci++, m); });
-  }); }
-chip.add(body, caps);
-// Contact pads along the edges of the substrate.
-const NX = 24; const NZ = 15;
-const pads = new THREE.InstancedMesh(new THREE.BoxGeometry(0.07, 0.008, 0.14), cm(new THREE.MeshPhysicalMaterial({ color: 0xd2d7de, metalness: 1, roughness: 0.3 })), 2 * NX + 2 * NZ);
-{ const m = new THREE.Matrix4(); const q = new THREE.Quaternion(); const one = new THREE.Vector3(1, 1, 1); const Y = new THREE.Vector3(0, 1, 0); let i = 0;
-  for (let k = 0; k < NX; k++) { const x = -PW / 2 + 0.35 + k * ((PW - 0.7) / (NX - 1)); [PD / 2 - 0.12, -PD / 2 + 0.12].forEach((z) => { q.setFromAxisAngle(Y, 0); m.compose(new THREE.Vector3(x, topY + 0.004, z), q, one); pads.setMatrixAt(i++, m); }); }
-  for (let k = 0; k < NZ; k++) { const z = -PD / 2 + 0.35 + k * ((PD - 0.7) / (NZ - 1)); [PW / 2 - 0.12, -PW / 2 + 0.12].forEach((x) => { q.setFromAxisAngle(Y, Math.PI / 2); m.compose(new THREE.Vector3(x, topY + 0.004, z), q, one); pads.setMatrixAt(i++, m); }); } }
-chip.add(pads);
+// Built in chip3d.js (shared with the integrations scene). It has the same footprint as the
+// layers, which press into it.
+const chipKit = createChip(renderer, { PW, PD });
+const chip = chipKit.group; scene.add(chip);
 
 // ---------- Layout ----------
 // The canvas covers the whole pinned screen, so nothing can ever be cut off at its edge. The camera
@@ -343,7 +292,7 @@ function measureChip() {
 // ---------- Choreography ----------
 const GAP = 2.4;
 function setOpacity(g, o) { g.userData.body.material.opacity = o; g.userData.face.material.opacity = o; g.visible = o > 0.004; }
-function chipOpacity(o) { chipMats.forEach((m) => { m.opacity = o; }); chip.visible = o > 0.004; }
+const chipOpacity = (o) => chipKit.setOpacity(o);
 
 function paint(t) {
   // Copy: one block at a time. Reduced motion: a plain cross-fade, no blur or slide.
@@ -449,33 +398,11 @@ if (sound) {
 }
 
 // ---------- Scroll ----------
-// The scene follows the scroll at a steady, eased pace: it speeds up gently, holds a calm
-// cruising speed and slows to a soft stop. One step (a flip, the split, the press into the
-// chip) takes about 2 s however fast the scroll or snap jumps; long jumps catch up faster.
-// Reduced motion follows the scroll directly.
-let shown = 0; let target = 0; let raf = 0; let last = 0; let vel = 0;
-const ACC = 1.6; // t per second², how gently it speeds up and slows down
-const CRUISE = 0.6; // t per second for a single step
-function progress() { const r = sec.getBoundingClientRect(); return Math.max(0, Math.min(6, (-r.top / (r.height - window.innerHeight)) * 6.6)); } // last part of the scroll holds the finished chip
-function loop(now) {
-  const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
-  if (RM) { shown = target; vel = 0; } else {
-    const d = target - shown; const dist = Math.abs(d);
-    const vmax = CRUISE + 0.5 * Math.max(0, dist - 1);
-    const want = Math.sign(d) * Math.min(vmax, Math.sqrt(2 * ACC * dist)); // still able to stop in time
-    const dv = want - vel; vel += Math.sign(dv) * Math.min(Math.abs(dv), ACC * dt);
-    shown += vel * dt;
-    if (Math.sign(target - shown) !== Math.sign(d)) { shown = target; vel = 0; } // never overshoot
-  }
-  if (Math.abs(target - shown) < 0.001 && Math.abs(vel) < 0.03) { shown = target; vel = 0; }
-  paint(shown);
-  if (sound) sound.update(shown);
-  if (shown !== target) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
-}
-const kick = () => { target = progress(); if (!raf) raf = requestAnimationFrame(loop); };
-window.addEventListener('scroll', kick, { passive: true });
-window.addEventListener('resize', () => { resize(); paint(shown); });
+// The scene follows the scroll at a steady, eased pace (scroll-follow.js); the last part of the
+// scroll holds the finished chip.
+const follow = followScroll(sec, { steps: 6, reduced: RM, onFrame: (t) => { paint(t); if (sound) sound.update(t); } });
+window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
-document.fonts.ready.then(() => { measureChip(); drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); target = shown = progress(); paint(shown); });
-target = shown = progress(); paint(shown);
-window.engineAt = (v) => { target = shown = v; vel = 0; paint(v); };
+document.fonts.ready.then(() => { measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });
+follow.sync();
+window.engineAt = (v) => follow.jump(v);
