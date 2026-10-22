@@ -10,6 +10,7 @@
 //   real time. The engine chip slides out of the phone so the path reads left to right.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createChip } from '/proto/chip3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=1';
 
@@ -84,7 +85,8 @@ const PH = { w: 2.3, h: 4.75, d: 0.22, r: 0.42, sw: 1.96, sh: 4.41 };
 const PZ = PH.d / 2 + BEVEL; // front face
 const phone = new THREE.Group(); rig.add(phone);
 const phoneMats = []; const pm = group(phoneMats);
-const steelMat = pm(new THREE.MeshPhysicalMaterial({ color: 0xc8ccd2, metalness: 1, roughness: 0.18, clearcoat: 0.6 }));
+// A light, satin metal so the rim reads as one bright edge around the black glass, as in the frame.
+const steelMat = pm(new THREE.MeshPhysicalMaterial({ color: 0xe1e4e8, metalness: 0.7, roughness: 0.3, clearcoat: 0.6 }));
 phone.add(slab(PH.w, PH.h, PH.r, PH.d, steelMat));
 const black = () => pm(new THREE.MeshPhysicalMaterial({ color: 0x07080b, roughness: 0.14, metalness: 0.2, clearcoat: 1 }));
 const pGlass = face(PH.w, PH.h, PH.r, black()); pGlass.position.z = PZ + 0.002; phone.add(pGlass);
@@ -130,7 +132,41 @@ function drawPhoneScreen(time, inPhone, emo) {
 
 // ---------- The chips ----------
 const engine = createChip(renderer, {}); rig.add(engine.group);
-const emotion = createChip(renderer, { title: 'eMotion', sub: 'REAL-TIME', code: 'SI-M1', tone: 'blue' }); rig.add(emotion.group);
+// eMotion has its own shape, so it never reads as a second engine: a square sensor package with a
+// round blue lid, a fine metal ring and engraved rings, like a motion sensor.
+function createSensorChip() {
+  const group = new THREE.Group(); const mats = [];
+  const cm = (m) => { m.transparent = true; mats.push(m); return m; };
+  const S = 3.4; const ST = 0.14; const LT = 0.2; const lift = -(ST + LT) / 2; // centred on its own middle
+  const sub = new THREE.Mesh(new RoundedBoxGeometry(S, ST, S, 4, 0.14), cm(new THREE.MeshPhysicalMaterial({ color: 0xe6edff, roughness: 0.42, metalness: 0.04, clearcoat: 0.35, clearcoatRoughness: 0.35 })));
+  sub.position.y = lift + ST / 2; group.add(sub);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.32, 0.035, 12, 120).rotateX(Math.PI / 2), cm(new THREE.MeshPhysicalMaterial({ color: 0xcfd5dd, metalness: 1, roughness: 0.25 })));
+  ring.position.y = lift + ST + 0.02; group.add(ring);
+  const lid = new THREE.Mesh(new THREE.CylinderGeometry(1.18, 1.18, LT, 96), cm(new THREE.MeshPhysicalMaterial({ color: 0x1d5cff, metalness: 0.55, roughness: 0.3, clearcoat: 0.6, clearcoatRoughness: 0.2 })));
+  lid.position.y = lift + ST + LT / 2; group.add(lid);
+  const E = canvasTex(768, 768); const logo = new Image(); logo.src = '/assets/site/logo/sportin-wordmark-white.svg';
+  const face = new THREE.Mesh(new THREE.CircleGeometry(1.12, 96).rotateX(-Math.PI / 2), cm(new THREE.MeshStandardMaterial({ map: E.tex, metalness: 0.3, roughness: 0.4, depthWrite: false })));
+  face.position.y = lift + ST + LT + 0.002; group.add(face);
+  function drawEngraving() {
+    const { ctx } = E; ctx.clearRect(0, 0, 768, 768); const cx = 384;
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 3; [330, 290].forEach((r) => { ctx.beginPath(); ctx.arc(cx, cx, r, 0, Math.PI * 2); ctx.stroke(); });
+    if (logo.complete && logo.naturalWidth) { const w = 250; const h = w * (logo.naturalHeight / logo.naturalWidth); ctx.globalAlpha = 0.85; ctx.drawImage(logo, cx - w / 2, 250 - h / 2, w, h); ctx.globalAlpha = 1; }
+    font(ctx, 700, 96); ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('eMotion', cx, 384);
+    font(ctx, 600, 34, 'IBM Plex Mono'); ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fillText('REAL-TIME', cx, 476);
+    E.tex.needsUpdate = true;
+  }
+  logo.onload = drawEngraving; drawEngraving();
+  // Contact pads along all four edges.
+  const N = 11; const pads = new THREE.InstancedMesh(new THREE.BoxGeometry(0.08, 0.01, 0.16), cm(new THREE.MeshPhysicalMaterial({ color: 0xd2d7de, metalness: 1, roughness: 0.3 })), N * 4);
+  { const m = new THREE.Matrix4(); const q = new THREE.Quaternion(); const one = new THREE.Vector3(1, 1, 1); const Y = new THREE.Vector3(0, 1, 0); let i = 0;
+    for (let k = 0; k < N; k++) {
+      const v = -S / 2 + 0.45 + k * ((S - 0.9) / (N - 1));
+      [[v, S / 2 - 0.13, 0], [v, -S / 2 + 0.13, 0], [S / 2 - 0.13, v, 1], [-S / 2 + 0.13, v, 1]].forEach(([x, z, rot]) => { q.setFromAxisAngle(Y, rot ? Math.PI / 2 : 0); m.compose(new THREE.Vector3(x, lift + ST + 0.005, z), q, one); pads.setMatrixAt(i++, m); });
+    } }
+  group.add(pads);
+  return { group, drawEngraving, setOpacity(o) { mats.forEach((m) => { m.opacity = o; }); group.visible = o > 0.004; } };
+}
+const emotion = createSensorChip(); rig.add(emotion.group);
 
 // ---------- The watch (after the frame Adrian supplied: one aluminium rim, black glass, band, crown) ----------
 const WC = { w: 1.42, h: 1.72, d: 0.36, r: 0.42 }; const WZ = WC.d / 2 + BEVEL;
@@ -222,10 +258,10 @@ const sensorY = (i) => ((SENSORS.length - 1) / 2 - i) * COL_GAP;
 const sensorTags = SENSORS.map((name) => tagSprite(name, null, true));
 const emoLineMat = lineMaterial(0x9db8ff);
 const sensorIn = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(PHONE_EDGE + 0.06, PHONE_Y + sensorY(i) * 0.45, 0.1), new THREE.Vector3(SENSOR_X - TAG.w / 2 - 0.06, sensorY(i), 0.1)), emoLineMat));
-const chipW = 5.2 * CHIP_S;
-const sensorOut = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(SENSOR_X + TAG.w / 2 + 0.06, sensorY(i), 0.1), new THREE.Vector3(EMO_X - chipW / 2 - 0.08, sensorY(i) * 0.25, 0.1)), emoLineMat));
+const chipW = 5.2 * CHIP_S; const emoW = 3.4 * CHIP_S; // engine chip width, eMotion chip width
+const sensorOut = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(SENSOR_X + TAG.w / 2 + 0.06, sensorY(i), 0.1), new THREE.Vector3(EMO_X - emoW / 2 - 0.08, sensorY(i) * 0.25, 0.1)), emoLineMat));
 const realMat = lineMaterial(0x0751fb);
-const realCurve = hCurve(new THREE.Vector3(EMO_X + chipW / 2 + 0.08, 0, 0.1), new THREE.Vector3(ENGINE_X - chipW / 2 - 0.08, 0, 0.1));
+const realCurve = hCurve(new THREE.Vector3(EMO_X + emoW / 2 + 0.08, 0, 0.1), new THREE.Vector3(ENGINE_X - chipW / 2 - 0.08, 0, 0.1));
 const realLine = tube(realCurve, realMat, 0.016);
 const realLabel = labelSprite('● REAL TIME', BLUE, 2.1);
 const emoLabel = labelSprite('eMotion by SportIn', BLUE, 1.9);
@@ -234,7 +270,7 @@ const emoDotMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true }
 const RUN_REAL = 4;
 const emoRunners = new THREE.InstancedMesh(dotGeo, emoDotMat, SENSORS.length + RUN_REAL); rig.add(emoRunners);
 
-// ---------- The switch: Integrations | eMotion, to the left of the phone ----------
+// ---------- The switch: Integrations | eMotion, as tabs below the title ----------
 const sw = document.createElement('div'); sw.className = 'int-switch'; sw.setAttribute('role', 'tablist'); sw.setAttribute('aria-label', 'How data reaches the engine');
 sw.innerHTML = '<button type="button" role="tab" aria-selected="true" data-mode="0">Integrations</button><button type="button" role="tab" aria-selected="false" data-mode="1"><i aria-hidden="true"></i>eMotion</button>';
 stick.appendChild(sw);
@@ -245,13 +281,12 @@ sw.addEventListener('click', (ev) => {
   sw.querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
   follow.kick();
 });
-const _proj = new THREE.Vector3();
+const copyBox = sec.querySelector('.engine__copy');
 function placeSwitch(o) {
   sw.style.opacity = String(o); sw.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
-  // Sit just left of the phone's left edge, vertically centred on the phone.
-  _proj.set(phone.position.x - PH.w / 2 - BEVEL, phone.position.y, 0); rig.localToWorld(_proj).project(camera);
-  const f = view; const x = ((_proj.x + 1) / 2) * f.w; const y = ((1 - _proj.y) / 2) * f.h;
-  sw.style.transform = `translate(${Math.round(x - sw.offsetWidth - 28)}px, ${Math.round(y - sw.offsetHeight / 2)}px)`;
+  // Tabs sit centred just below the title block.
+  const cr = copyBox.getBoundingClientRect(); const f = stick.getBoundingClientRect();
+  sw.style.transform = `translate(${Math.round(cr.left - f.left + cr.width / 2 - sw.offsetWidth / 2)}px, ${Math.round(cr.bottom - f.top + 6)}px)`;
 }
 
 // ---------- Layout ----------
@@ -292,7 +327,7 @@ function paint(t, now = performance.now()) {
   });
   if (emoText) { const o = emo * win(t, 0.72, 1.0); emoText.style.opacity = String(o); emoText.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none'; }
 
-  rig.rotation.y = -0.08 * a + 0.1 * side;
+  rig.rotation.y = 0; // face-on, so no side wall of the phone or watch reads as a second frame
 
   // Phone.
   phone.position.set(lerp(0, PHONE_X, side), lerp(0, PHONE_Y, side), 0);
