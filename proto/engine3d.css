@@ -41,3 +41,8 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
 .eng-sound svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .eng-sound svg path:first-child { fill: currentColor; stroke: none; }
 .eng-sound[aria-pressed="true"] { color: var(--blue); border-color: rgba(7, 81, 251, 0.35); }
+
+/* Every step title carries one highlight in brand blue; descriptions stay on one line. */
+.engine .eng-h em, .engine .engine__title em { font-style: normal; color: var(--blue); }
+.engine .eng-p { max-width: 64ch; }
+@media (min-width: 900px) { .engine .eng-p { max-width: none; white-space: nowrap; } }
