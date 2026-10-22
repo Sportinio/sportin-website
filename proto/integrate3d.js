@@ -252,7 +252,7 @@ const COLS = [-4.3, -1.3, 1.3, 4.3];
 const PHONE_X = COLS[0]; const PHONE_Y = 0;
 const PHONE_EDGE = PHONE_X + PH.w / 2; // the phone's right edge, where lines leave it
 const WATCH_X = COLS[1]; const COL_GAP = 0.5;
-const CHIP_S = 0.44; // both chips at this size outside the phone
+const CHIP_S = 0.38; // both chips at this size outside the phone (leaves room for the REAL TIME badge)
 const ENGINE_IN_PHONE = () => new THREE.Vector3(phone.position.x, phone.position.y + ENG.y, PZ + 0.18);
 
 // Integrations view.
@@ -288,7 +288,16 @@ const sensorOut = SENSORS.map((_, i) => tube(hCurve(new THREE.Vector3(SENSOR_X +
 const realMat = lineMaterial(0x0751fb);
 const realCurve = hCurve(new THREE.Vector3(EMO_X + emoW / 2 + 0.1, 0, 0.1), new THREE.Vector3(ENGINE_X - chipW / 2 - 0.1, 0, 0.1));
 const realLine = tube(realCurve, realMat, LINE_MAIN);
-const realLabel = labelSprite('● REAL TIME', BLUE, 3.0);
+// REAL TIME sits on the line itself, as a small badge between the two chips; the pulses run
+// along the line behind it.
+const realLabel = (() => {
+  const { ctx, tex } = canvasTex(480, 120);
+  ctx.beginPath(); ctx.roundRect(3, 3, 474, 114, 57); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = BLUE; ctx.stroke();
+  font(ctx, 600, 56, 'IBM Plex Mono'); const label = 'REAL TIME'; const tw = ctx.measureText(label).width; const x0 = 240 - (tw + 38) / 2;
+  ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(x0 + 12, 60, 12, 0, Math.PI * 2); ctx.fill();
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText(label, x0 + 38, 63);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false })); sp.scale.set(1.2, 0.3, 1); rig.add(sp); return sp;
+})();
 const emoDotMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true });
 const RUN_REAL = 4;
 const emoRunners = new THREE.InstancedMesh(dotGeo, emoDotMat, SENSORS.length + RUN_REAL); rig.add(emoRunners);
@@ -424,7 +433,7 @@ function paint(t, now = performance.now()) {
     drawLine(sensorOut[i], win(emo, 0.35 + i * 0.07, 0.65 + i * 0.07));
   });
   const rl = win(emo, 0.65, 0.95); drawLine(realLine, rl); realMat.opacity = 1;
-  showSprite(realLabel, rl * (RM ? 1 : 0.7 + 0.3 * Math.sin(time * 5))); realLabel.position.set((EMO_X + ENGINE_X) / 2, (3.4 / 2) * CHIP_S + 0.22, 0.2); // above the chips, clear of both
+  showSprite(realLabel, win(emo, 0.8, 1)); realLabel.position.set((EMO_X + emoW / 2 + ENGINE_X - chipW / 2) / 2, 0, 0.25); // on the line, centred in the gap
   emoDotMat.opacity = emo;
   emoRunners.visible = emo > 0.6 && !RM;
   if (emoRunners.visible) {
