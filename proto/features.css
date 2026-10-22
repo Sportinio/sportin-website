@@ -2,8 +2,8 @@
    points set in deck.js). Pages sit on top of each other and never slide: the text turns to dust
    and re-forms as the next page (dust.js), in slow motion; graphics fade out and in.
    0 opening title, 1 Champions League style, 2 national division style, 3 Conquer (Game of Run),
-   4 ranking, 5 weekly progress. */
-.feat { position: relative; height: calc(100vh + 5 * 80vh); }
+   4 walking board, 5 running board, 6 brand rewards. */
+.feat { position: relative; height: calc(100vh + 6 * 80vh); }
 .feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--paper); }
 html.is-full .feat__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
 html.is-full .feat .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }

@@ -284,6 +284,36 @@ if (sec) {
       stop() { window.clearInterval(timer); timer = 0; },
     };
   } }
+  // Brand rewards (layer 3): the shoe reward fills its last two days and turns ready (blue ring),
+  // then the coffee is claimed and shows the green tick.
+  { const box = panelOf('rewards'); if (box) {
+    const rws = [...box.querySelectorAll('.rwr')]; const shoes = rws[1]; const coffee = rws[0];
+    const pipsEls = [...shoes.querySelectorAll('.rwr__pips i')];
+    const coffeeTile = coffee.querySelector('.rwr__logo'); const coffeeLine = coffee.querySelector('.rwr__line'); const coffeeInd = coffee.querySelector('.rwr__ind');
+    const keep = { tile: coffeeTile.outerHTML, line: coffeeLine.textContent, ind: coffeeInd.innerHTML };
+    const done = box.querySelector('.rwr__done').outerHTML;
+    let timer = 0; let tick = 0;
+    const setPips = (n) => { pipsEls.forEach((p, k) => p.classList.toggle('is-on', k < n)); shoes.style.setProperty('--rp', String(n / 5)); shoes.dataset.ring = n >= 5 ? 'ready' : 'day'; };
+    function before() {
+      setPips(3);
+      coffee.dataset.ring = 'ready'; coffee.style.setProperty('--rp', '1'); coffeeLine.textContent = keep.line; coffeeInd.innerHTML = keep.ind;
+      const t = coffee.querySelector('.rwr__done, .rwr__logo'); if (t) t.outerHTML = keep.tile;
+    }
+    function claim() {
+      coffee.dataset.ring = 'none'; coffee.style.setProperty('--rp', '0'); coffeeLine.textContent = 'Claimed. Show the QR code at the counter.'; coffeeInd.innerHTML = '';
+      const t = coffee.querySelector('.rwr__done, .rwr__logo'); if (t) t.outerHTML = done;
+    }
+    demos.rewards = {
+      start() {
+        before(); if (RM) { setPips(5); claim(); return; }
+        tick = 0; timer = window.setInterval(() => {
+          tick += 1; const phase = tick % 10;
+          if (phase === 2) setPips(4); if (phase === 4) setPips(5); if (phase === 6) claim(); if (phase === 0) before();
+        }, 900);
+      },
+      stop() { window.clearInterval(timer); timer = 0; },
+    };
+  } }
   // Weekly progress (layer 2): this week's blue bars fill up over last week's, the totals count up.
   { const box = panelOf('weekly'); if (box) {
     const cols = [...box.querySelectorAll('.wk2__col:not(.is-future)')];
