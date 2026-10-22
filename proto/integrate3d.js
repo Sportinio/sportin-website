@@ -71,19 +71,22 @@ function labelSprite(text, color, w) {
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false })); sp.scale.set(w, w * (110 / 760), 1); rig.add(sp); return sp;
 }
 
-// ---------- The phone (after the frame Adrian supplied: dark steel rim, black bezel, notch) ----------
-const PH = { w: 2.3, h: 4.75, d: 0.24, sw: 2.02, sh: 4.47 };
+// ---------- The phone (after the frame Adrian supplied: thin chrome rim, wide black bezel, notch with
+// speaker and camera, three buttons left and one right) ----------
+const PH = { w: 2.3, h: 4.75, d: 0.22, sw: 1.96, sh: 4.41 };
 const PZ = PH.d / 2 + BEVEL; // front face
 const phone = new THREE.Group(); rig.add(phone);
 const phoneMats = []; const pm = group(phoneMats);
-const steelMat = pm(new THREE.MeshPhysicalMaterial({ color: 0x3a3e45, metalness: 1, roughness: 0.26, clearcoat: 0.4 }));
+const steelMat = pm(new THREE.MeshPhysicalMaterial({ color: 0xc8ccd2, metalness: 1, roughness: 0.18, clearcoat: 0.6 }));
 phone.add(slab(PH.w, PH.h, 0.42, PH.d, steelMat));
 const black = () => pm(new THREE.MeshPhysicalMaterial({ color: 0x07080b, roughness: 0.14, metalness: 0.2, clearcoat: 1 }));
-const pBezel = face(2.22, 4.67, 0.38, black()); pBezel.position.z = PZ + 0.002; phone.add(pBezel);
+const pBezel = face(2.25, 4.7, 0.4, black()); pBezel.position.z = PZ + 0.002; phone.add(pBezel);
 const PS = canvasTex(640, Math.round(640 * (PH.sh / PH.sw)));
-const pScreen = face(PH.sw, PH.sh, 0.28, pm(new THREE.MeshBasicMaterial({ map: PS.tex, toneMapped: false }))); pScreen.position.z = PZ + 0.004; phone.add(pScreen);
-const notch = face(0.82, 0.2, 0.1, black()); notch.position.set(0, PH.sh / 2 - 0.09, PZ + 0.006); phone.add(notch);
-[[-1, 1.15, 0.36], [-1, 0.6, 0.36], [1, 0.9, 0.55]].forEach(([side, y, len]) => { const b = new THREE.Mesh(new THREE.BoxGeometry(0.05, len, 0.09), steelMat); b.position.set(side * (PH.w / 2 + BEVEL + 0.012), y, 0); phone.add(b); });
+const pScreen = face(PH.sw, PH.sh, 0.3, pm(new THREE.MeshBasicMaterial({ map: PS.tex, toneMapped: false }))); pScreen.position.z = PZ + 0.004; phone.add(pScreen);
+const notch = face(0.78, 0.2, 0.1, black()); notch.position.set(0, PH.sh / 2 - 0.09, PZ + 0.006); phone.add(notch);
+const speaker = face(0.22, 0.03, 0.015, pm(new THREE.MeshBasicMaterial({ color: 0x2a2d33 }))); speaker.position.set(-0.02, PH.sh / 2 - 0.08, PZ + 0.008); phone.add(speaker);
+const cam = new THREE.Mesh(new THREE.CircleGeometry(0.028, 20), pm(new THREE.MeshBasicMaterial({ color: 0x1b2a4a }))); cam.position.set(0.17, PH.sh / 2 - 0.08, PZ + 0.008); phone.add(cam);
+[[-1, 1.55, 0.16], [-1, 1.1, 0.34], [-1, 0.62, 0.34], [1, 1.0, 0.55]].forEach(([side, y, len]) => { const b = new THREE.Mesh(new THREE.BoxGeometry(0.05, len, 0.09), steelMat); b.position.set(side * (PH.w / 2 + BEVEL + 0.012), y, 0); phone.add(b); });
 
 const ENG = { y: 0.75, s: 0.3 }; // the engine chip's place on the phone, in phone coordinates
 const toScreenY = (y) => ((PH.sh / 2 - y) / PH.sh) * PS.c.height;
@@ -127,7 +130,7 @@ const motionLabel = labelSprite('MOTION BY SPORTIN · REAL TIME', BLUE, 2.4);
 
 // ---------- The watch (after the frame Adrian supplied: aluminium case, black bezel, band, crown) ----------
 const WC = { w: 1.42, h: 1.72, d: 0.36 }; const WZ = WC.d / 2 + BEVEL;
-const WATCH_X = 2.7;
+const WATCH_X = 0.35;
 const watch = new THREE.Group(); rig.add(watch);
 const watchMats = []; const wm = group(watchMats);
 const alu = wm(new THREE.MeshPhysicalMaterial({ color: 0xe4e7eb, metalness: 0.85, roughness: 0.28, clearcoat: 0.2 }));
@@ -181,36 +184,34 @@ const logos = BRANDS.map(([name, slug]) => {
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false }));
   sp.scale.set(TAG.w, TAG.h, 1); rig.add(sp); return sp;
 });
-// Ring positions around the watch: an ellipse that opens towards the phone, with the brands at
-// equal distances along it (equal angles would bunch them at the top and bottom).
-const RING = (() => {
-  const RX = 3.3; const RY = 2.85; const A0 = -122; const A1 = 122; const N = 400; const pts = []; let len = 0;
-  for (let k = 0; k <= N; k++) {
-    const a = THREE.MathUtils.degToRad(lerp(A0, A1, k / N)); const p = [Math.cos(a) * RX, Math.sin(a) * RY];
-    if (k) len += Math.hypot(p[0] - pts[k - 1][0], p[1] - pts[k - 1][1]); pts.push([...p, len]);
-  }
-  return BRANDS.map((_, i) => { const want = (i / (BRANDS.length - 1)) * len; return pts.find((p) => p[2] >= want - 1e-6).slice(0, 2); });
-})();
+// Three columns: the phone, the watch, and every brand stacked in one column on the right.
+// Offsets are from the watch, like the watch's own parts.
+const COL_X = 3.6; const COL_GAP = 0.6;
+const RING = BRANDS.map((_, i) => [COL_X - WATCH_X, ((BRANDS.length - 1) / 2 - i) * COL_GAP]);
 
 // ---------- Integration lines and pulsing dots ----------
 // Thin lines that draw themselves: from every brand into the watch, from the watch into the
 // phone, and from Motion up into the phone. Dots pulse at each brand and run along the lines.
-const PHONE_END = { x: -2.5, y: 0.5 }; // where the phone settles once the watch is in
+const PHONE_END = { x: -3.05, y: 0.5 }; // where the phone settles once the watch is in
 const lineMat = new THREE.MeshBasicMaterial({ color: 0xb9cbf3, transparent: true });
 function tube(curve, radius = 0.008) {
   const m = new THREE.Mesh(new THREE.TubeGeometry(curve, 48, radius, 6, false), lineMat); rig.add(m); m.userData.curve = curve; return m;
 }
 const watchC = new THREE.Vector3(WATCH_X, 0, 0.1);
+// Each brand line leaves its tag to the left and eases into the right edge of the watch case,
+// so the ten lines gather into a tidy bundle.
 const brandLines = RING.map(([rx, ry]) => {
-  const tag = new THREE.Vector3(WATCH_X + rx, ry, 0.1);
-  const dir = watchC.clone().sub(tag).normalize();
-  const a = tag.clone().addScaledVector(dir, 0.5); const b = watchC.clone().addScaledVector(dir, -0.95);
-  const mid = a.clone().lerp(b, 0.5).add(new THREE.Vector3(-dir.y, dir.x, 0).multiplyScalar(0.12));
-  return tube(new THREE.QuadraticBezierCurve3(a, mid, b));
+  const a = new THREE.Vector3(WATCH_X + rx - TAG.w / 2 - 0.08, ry, 0.1);
+  const b = new THREE.Vector3(WATCH_X + WC.w / 2 + BEVEL + 0.22, ry * 0.18, 0.1);
+  const span = a.x - b.x;
+  return tube(new THREE.CubicBezierCurve3(a, new THREE.Vector3(a.x - span * 0.45, ry, 0.1), new THREE.Vector3(b.x + span * 0.45, b.y, 0.1), b));
 });
-const linkCurve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(WATCH_X - WC.w / 2 - 0.2, 0.05, 0.1), new THREE.Vector3((WATCH_X + PHONE_END.x) / 2, 1.05, 0.1), new THREE.Vector3(PHONE_END.x + PH.w / 2 + 0.2, PHONE_END.y - 0.1, 0.1));
+// Watch to phone: one line across the middle column gap.
+const linkA = new THREE.Vector3(WATCH_X - WC.w / 2 - BEVEL - 0.15, 0.05, 0.1); const linkB = new THREE.Vector3(PHONE_END.x + PH.w / 2 + BEVEL + 0.15, PHONE_END.y - 0.15, 0.1);
+const linkCurve = new THREE.CubicBezierCurve3(linkA, new THREE.Vector3(lerp(linkA.x, linkB.x, 0.45), linkA.y, 0.1), new THREE.Vector3(lerp(linkA.x, linkB.x, 0.55), linkB.y, 0.1), linkB);
+const linkMid = linkCurve.getPoint(0.5);
 const link = tube(linkCurve, 0.01);
-const syncedLabel = labelSprite('SYNCED · wearables and apps', '#6b7fae', 2.3);
+const syncedLabel = labelSprite('SYNCED', '#6b7fae', 1.1);
 // The live lane from Motion into the phone moves with the phone, so it is a scaled bar.
 const liveMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true });
 const liveLane = new THREE.Mesh(new THREE.BoxGeometry(0.022, 1, 0.022), liveMat); rig.add(liveLane);
@@ -277,18 +278,18 @@ function paint(t, now = performance.now()) {
   liveMat.opacity = ln; liveLane.visible = ln > 0.01;
 
   // Watch.
-  watch.position.set(lerp(5.2, WATCH_X, c), 0, 0);
+  watch.position.set(lerp(3.2, WATCH_X, c), 0, 0);
   fade(watchMats, watch, wa);
 
   // Watch to phone link.
   drawLine(link, lk);
-  syncedLabel.position.set(linkCurve.v1.x, 0.95, 0.2); syncedLabel.material.opacity = lk; syncedLabel.visible = lk > 0.01;
+  syncedLabel.position.set(linkMid.x, linkMid.y + 0.42, 0.2); syncedLabel.material.opacity = lk; syncedLabel.visible = lk > 0.01;
 
   // Brands pop in around the watch, then each draws its line in, and a dot pulses at its start.
   logos.forEach((sp, i) => {
     const [rx, ry] = RING[i];
     const o = win(t, 3.05 + i * 0.045, 3.3 + i * 0.045);
-    sp.position.set(watch.position.x + rx, ry, 0.2);
+    sp.position.set(watch.position.x + rx + lerp(0.6, 0, o), ry, 0.2);
     sp.material.opacity = o; sp.visible = o > 0.01;
     const k = lerp(0.7, 1, o); sp.scale.set(TAG.w * k, TAG.h * k, 1);
     const li = win(t, 3.25 + i * 0.045, 3.65 + i * 0.045);
@@ -325,8 +326,8 @@ function paint(t, now = performance.now()) {
   // Camera: the same eye-level framing as the standing chip, back a little to fit Motion below
   // the phone, then out to take in phone, watch and brands, centred on them.
   const aspectK = Math.max(1, 1.45 / (W / H));
-  const dist = lerp(lerp(lerp(11, 12.5, a), 15, b), 19, c) * aspectK;
-  const look = new THREE.Vector3(lerp(0, 0.55, c), lerp(lerp(0, 0.1, a), 0, b), 0);
+  const dist = lerp(lerp(lerp(11, 12.5, a), 15, b), 18, c) * aspectK;
+  const look = new THREE.Vector3(lerp(0, 0.3, c), lerp(lerp(0, 0.1, a), 0, b), 0); // centred on the three columns
   camera.position.set(look.x, look.y + dist * 0.1, dist * Math.sqrt(1 - 0.01));
   camera.lookAt(look);
 
