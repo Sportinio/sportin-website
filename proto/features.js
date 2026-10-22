@@ -1,13 +1,13 @@
 // Competitions: the section after the integrations. It opens on a big title, then one page per
 // scroll step at the same eased pace as the 3D scenes (scroll-follow.js). Pages do not slide: the
-// text turns to dust and re-forms as the next page's text (dust.js) while the graphic dissolves
-// and the next one forms in its place. The rail at the bottom shows progress; Skip leaves the section.
+// text (titles, descriptions, bullet points) turns to dust and re-forms as the next page's text
+// (dust.js), in slow motion, while the graphic fades out and the next one fades in. The rail at the bottom shows progress; Skip leaves the section.
 // Demos for other feature panels stay ready (guarded) in case those panels come back.
 // Panel 1, Competitions, shows two formats that play themselves while the panel is on screen:
 // a Champions League style cup walks through its stages, and a national league plays a matchday
 // and updates its table.
-import { followScroll } from '/proto/scroll-follow.js?v=1';
-import { createDust, WIN } from '/proto/dust.js?v=3';
+import { followScroll } from '/proto/scroll-follow.js?v=2';
+import { createDust, WIN } from '/proto/dust.js?v=4';
 
 const sec = document.getElementById('features');
 if (sec) {
@@ -290,15 +290,15 @@ if (sec) {
 
   // ---------- Dust pages ----------
   const stick = sec.querySelector('.feat__stick');
-  const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *')]));
+  const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *, .points')]));
   const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
   let current = -1;
   function paint(t) {
     const a = Math.floor(t + 1e-6); const b = Math.min(STEPS, a + 1); const u = b === a ? 0 : t - a;
     panels.forEach((p, i) => {
       let txt = 0; let gfx = 0;
-      if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.1, 0.4, u); }
-      if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.55, 0.9, u); }
+      if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.4, u); }
+      if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.6, 0.95, u); }
       p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
       p.style.visibility = txt > 0 || gfx > 0 ? 'visible' : 'hidden';
     });
@@ -312,7 +312,8 @@ if (sec) {
     }
     runDemoFor(k);
   }
-  const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint });
+  // Slow motion: one scroll step takes about 3.5 to 4 s, so the dust drifts rather than jumps.
+  const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; paint(follow.t); }).observe(sec);
   // The rail jumps to a panel by scrolling to its step, so it works with the deck's snapping.
   nav.forEach((b, i) => b.addEventListener('click', () => {

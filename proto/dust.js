@@ -4,9 +4,9 @@
 // two pages, point i flies from cloud A to cloud B (both sorted left to right, so the dust
 // sweeps instead of crossing), lifting off in a soft arc on the way. Scroll drives it, so it runs
 // backwards too. Used by the Competitions section (features.js).
-const N = 6000; // points per cloud
+const N = 7000; // points per cloud
 const smooth = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
-const ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - (-2 * p + 2) ** 3 / 2);
+const ease = (p) => 0.5 - 0.5 * Math.cos(Math.PI * p); // sine in-out: slow off, slow glide, slow landing
 
 // Text windows within one step (u = 0..1): the old text hands over to dust, the dust travels,
 // then hands over to the new text.
@@ -18,7 +18,7 @@ export function createDust(stage, canvas, pages) {
   const palette = []; const palIndex = new Map();
   let clouds = []; let W = 0; let H = 0; let dpr = 1; let drawn = false;
   // Per-point randomness, fixed so scrolling back and forth retraces the same paths.
-  const rnd = Array.from({ length: N }, () => ({ jit: Math.random() * 0.12, amp: 14 + Math.random() * 46, ang: -Math.PI / 2 + (Math.random() - 0.5) * 2.4, size: 1.2 + Math.random() * 0.9 }));
+  const rnd = Array.from({ length: N }, () => ({ jit: Math.random() * 0.12, amp: 14 + Math.random() * 46, ang: -Math.PI / 2 + (Math.random() - 0.5) * 2.4, size: 1.2 + Math.random() * 0.9, ph: Math.random() * Math.PI * 2, wob: 3 + Math.random() * 6 }));
 
   const colorId = (css) => { if (!palIndex.has(css)) { palIndex.set(css, palette.length); palette.push({ css, rgb: (css.match(/[\d.]+/g) || [0, 0, 0]).slice(0, 3).map(Number) }); } return palIndex.get(css); };
 
@@ -78,11 +78,12 @@ export function createDust(stage, canvas, pages) {
     const px = new Float32Array(N); const py = new Float32Array(N); const pc = new Uint8Array(N); const sz = new Float32Array(N);
     for (let i = 0; i < N; i++) {
       const q = rnd[i];
-      const delay = (A.x[i] / W) * 0.3 + q.jit; // a left-to-right sweep
-      const p = Math.min(1, Math.max(0, (s - delay) / (1 - 0.42)));
+      const delay = (A.x[i] / W) * 0.28 + q.jit; // a slow left-to-right sweep; each grain flies for ~60% of the step
+      const p = Math.min(1, Math.max(0, (s - delay) / (1 - 0.4)));
       const e = ease(p); const lift = Math.sin(Math.PI * p);
-      px[i] = A.x[i] + (B.x[i] - A.x[i]) * e + Math.cos(q.ang) * q.amp * lift;
-      py[i] = A.y[i] + (B.y[i] - A.y[i]) * e + Math.sin(q.ang) * q.amp * lift;
+      const wob = Math.sin(Math.PI * 2 * p + q.ph) * q.wob * lift; // a gentle float while it is in the air
+      px[i] = A.x[i] + (B.x[i] - A.x[i]) * e + Math.cos(q.ang) * q.amp * lift + wob;
+      py[i] = A.y[i] + (B.y[i] - A.y[i]) * e + Math.sin(q.ang) * q.amp * lift + wob * 0.6;
       pc[i] = p < 0.5 ? A.c[i] : B.c[i];
       sz[i] = q.size * (1 - 0.4 * lift);
     }
