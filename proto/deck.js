@@ -32,7 +32,8 @@
 
   // ---------- Pages and scenes ----------
   const scenes = ['belief', 'what'];
-  const all = [...document.querySelectorAll('main > section, main > .problem-pin > section, body > footer')];
+  // The engine is a scroll scene with its own pinned stage; it is never wrapped or scaled.
+  const all = [...document.querySelectorAll('main > section, main > .problem-pin > section, body > footer')].filter((s) => s.id !== 'engine');
   const pages = all.filter((s) => !scenes.includes(s.id));
   all.forEach((s) => {
     const fit = document.createElement('div'); fit.className = 'slide__fit';
@@ -58,10 +59,16 @@
   const what = document.getElementById('what');
   if (what) { const end = document.createElement('i'); end.className = 'snap-mark snap-mark--end'; end.setAttribute('aria-hidden', 'true'); what.appendChild(end); }
 
+  // The engine: one snap point per step (t = 0..6 over 6.6 parts of its scroll), so each scroll
+  // gesture moves the 3D scene exactly one step.
+  const engine = document.getElementById('engine');
+  const engMarks = engine ? [0, 1, 2, 3, 4, 5, 6].map(() => { const m = document.createElement('i'); m.className = 'snap-mark'; m.setAttribute('aria-hidden', 'true'); engine.appendChild(m); return m; }) : [];
+
   function layout() {
     if (root.classList.contains('is-deck')) return;
     pages.forEach(fitOne);
     if (window.problemMeasure) window.problemMeasure();
+    if (engine) { const span = engine.offsetHeight - window.innerHeight; engMarks.forEach((m, k) => { m.style.top = `${Math.round((k / 6.6) * span)}px`; }); }
     const seg = Math.max(360, window.innerHeight * 0.7);
     marks.forEach((m, k) => { m.style.top = `${k * seg + (k ? 2 : 0)}px`; });
   }

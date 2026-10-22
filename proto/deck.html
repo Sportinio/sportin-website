@@ -24,6 +24,8 @@
   <link rel="stylesheet" href="/proto/deck.css?v=9" />
   <link rel="stylesheet" href="/proto/evidence.css?v=4" />
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
+  <link rel="stylesheet" href="/proto/engine-deck.css?v=2" />
+  <link rel="stylesheet" href="/proto/engine3d.css?v=7" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -103,6 +105,28 @@
         </article>
       </div>
       <p class="evidence__sources">Sources: Deloitte, <i>Engaging sports fans year-round</i> (15,000+ fans, 8 leagues), association, not causation. Bain &amp; Company, F. Reichheld, cited in <i>Harvard Business Review</i> (2014). Nielsen, <i>Trust in Advertising</i> (2021, 40,000 people in 56 countries).</p>
+    </div>
+  </section>
+
+  <!-- THE SOLUTION: the engine in three layers (3D scroll scene) -->
+  <section class="engine" id="engine" aria-labelledby="engineTitle">
+    <div class="engine__stick">
+      <div class="wrap engine__grid">
+        <div class="engine__copy">
+          <div class="eng-txt" data-c="0"><p class="eyebrow eng-eyebrow">The solution</p><h2 class="display engine__title" id="engineTitle">One engine. <em>Three layers.</em></h2><p class="eng-p">SportIn is a gamification engine. Scroll to see how it works.</p></div>
+          <div class="eng-txt" data-c="1"><p class="eng-k">Layer 1 · Competition</p><h3 class="eng-h">Competitions</h3><p class="eng-p">Long-term seasons and leagues that keep members coming back for months.</p></div>
+          <div class="eng-txt" data-c="2"><p class="eng-k">Layer 1 · Competition</p><h3 class="eng-h">Challenges</h3><p class="eng-p">Short bursts with quick goals. A weekend or a week is enough to take part.</p></div>
+          <div class="eng-txt" data-c="3"><p class="eng-k">Layer 2</p><h3 class="eng-h">Leaderboard</h3><p class="eng-p">Walking, running and cycling, counted live. Every step, run and ride moves the ranking.</p></div>
+          <div class="eng-txt" data-c="4"><p class="eng-k">Layer 3</p><h3 class="eng-h">Reward</h3><p class="eng-p">Effort unlocks perks. The more members move, the more they earn.</p></div>
+          <div class="eng-txt" data-c="5"><p class="eng-k">Three layers</p><h3 class="eng-h">Connected</h3><p class="eng-p">Competition feeds the leaderboard. The leaderboard unlocks rewards.</p></div>
+          <div class="eng-txt" data-c="6"><p class="eng-k">The SportIn engine</p><h3 class="eng-h">Gamification engine</h3><p class="eng-p">Members keep moving. Your brand gets the credit.</p><a class="btn btn--primary eng-cta" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo</a></div>
+        </div>
+        <div class="engine__stage" aria-hidden="true">
+          <canvas id="eng3d"></canvas>
+          <div class="eng-fallback"><div class="eng-fallback__lid"><img src="/assets/site/logo/sportin-wordmark-black.svg" alt="" width="200" height="24" /><span>GAMIFICATION ENGINE</span></div></div>
+          <p class="eng-caption"><span>Competition</span><span>Leaderboard</span><span>Reward</span></p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -509,6 +533,9 @@
 <script src="/proto/video-hero.js?v=3" defer></script>
 <script src="/proto/problem-scroll.js?v=3" defer></script>
 <script src="/proto/jelly.js?v=15" defer></script>
-<script src="/proto/deck.js?v=13" defer></script>
+<script src="/proto/deck.js?v=14" defer></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="/proto/engine3d.js?v=28"></script>
+<script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
