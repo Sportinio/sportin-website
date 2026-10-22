@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createEngineSound } from '/proto/engine-sound.js?v=1';
+import { createEngineSound } from '/proto/engine-sound.js?v=2';
 
 const root = document.documentElement;
 const sec = document.getElementById('engine');
