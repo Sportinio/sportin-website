@@ -1,160 +1,118 @@
-/* Competitions: a grey rounded section after the engine. Scrolling down moves its panels
-   sideways, one per scroll step (snap points set in deck.js): League (Champions League style and
-   national division style), then Conquer (Game of Run). */
-.feat { position: relative; height: calc(100vh + 1 * 80vh); } /* two panels: League, Conquer */
-.feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--infield); }
+/* Competitions, after the engine: no grey block, one big format per scroll, moving sideways
+   (snap points set in deck.js). 1 Champions League style, 2 national division style,
+   3 Conquer (Game of Run). Each format gets the full width so its structure reads at a glance. */
+.feat { position: relative; height: calc(100vh + 2 * 80vh); } /* three panels */
+.feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--paper); }
 html.is-full .feat__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
 html.is-full .feat .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
 html.is-deck .feat { display: none; } /* Present mode does not include the scroll scenes yet */
 
 .feat__track { display: flex; height: 100%; will-change: transform; }
-.feat__panel { flex: 0 0 100%; box-sizing: border-box; height: 100%; padding: calc(var(--nav-h) + 36px) max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)) 96px; display: grid; grid-template-rows: auto 1fr; justify-items: center; align-content: start; gap: 28px; }
+.feat__panel { flex: 0 0 100%; box-sizing: border-box; height: 100%; padding: calc(var(--nav-h) + 32px) max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)) 92px; display: grid; grid-template-rows: auto 1fr; justify-items: center; align-content: start; gap: 32px; }
 .feat__intro { text-align: center; max-width: 760px; }
 .feat__intro .eng-k { margin: 0 0 14px; font-family: var(--mono); font-size: 12px; color: var(--slate); }
 .feat__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
 .feat__title em { font-style: normal; color: var(--blue); }
 .feat__lede { margin: 14px auto 0; max-width: 60ch; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; color: var(--slate); }
 
-/* Format cards. */
-.feat__formats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; width: 100%; max-width: 1120px; }
-.fmt { display: flex; flex-direction: column; gap: 18px; padding: 24px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); min-height: 0; }
-.fmt__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.fmt__name { margin: 0; font-size: 18px; font-weight: 700; color: var(--ink); }
-.fmt__meta { font-family: var(--mono); font-size: 12px; color: var(--slate); white-space: nowrap; }
+.big { width: 100%; max-width: 1120px; display: grid; gap: 28px; align-content: start; }
 
-/* Champions League format: a stage rail, then groups feeding a knockout bracket. */
+/* Shared small parts. */
+.fix__row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; background: var(--infield); font-size: 15px; color: var(--ink); }
+.fix__row span:last-child { text-align: right; }
+.fix__score { min-width: 64px; padding: 4px 12px; border-radius: 999px; background: var(--surface); font-family: var(--mono); font-size: 14px; text-align: center; color: var(--ink); }
+.fix__row.is-live .fix__score { background: var(--blue); color: #fff; }
+.fix__day { font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.bar { height: 10px; border-radius: 5px; background: var(--infield); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 100%; border-radius: 5px; background: var(--blue); transform-origin: left; transform: scaleX(var(--f, 0)); transition: transform 1200ms cubic-bezier(0.23, 1, 0.32, 1); }
+.fmt__foot { margin: 0; font-size: 14px; color: var(--slate); }
+
+/* 1 Champions League style: stage rail across the top, then qualifying and groups on the left
+   feeding the knockout bracket on the right. */
 .rail { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
-.rail::before { content: ''; position: absolute; left: 10%; right: 10%; top: 6px; height: 2px; background: var(--line); }
-.rail::after { content: ''; position: absolute; left: 10%; top: 6px; height: 2px; width: calc(80% * var(--rp, 0)); background: var(--blue); transition: width 600ms cubic-bezier(0.23, 1, 0.32, 1); }
-.rail li { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; color: var(--slate); text-align: center; transition: color 300ms ease-out; }
-.rail li i { width: 14px; height: 14px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 2px var(--line); transition: box-shadow 300ms ease-out, background-color 300ms ease-out; }
+.rail::before, .rail::after { content: ''; position: absolute; left: 10%; top: 8px; height: 2px; }
+.rail::before { right: 10%; background: var(--line); }
+.rail::after { width: calc(80% * var(--rp, 0)); background: var(--blue); transition: width 600ms cubic-bezier(0.23, 1, 0.32, 1); }
+.rail li { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; color: var(--slate); transition: color 300ms ease-out; }
+.rail li i { width: 18px; height: 18px; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 2px var(--line); transition: box-shadow 300ms ease-out, background-color 300ms ease-out; }
 .rail li.is-done i { background: var(--blue); box-shadow: none; }
 .rail li.is-on { color: var(--blue); }
-.rail li.is-on i { background: var(--surface); box-shadow: inset 0 0 0 4px var(--blue); }
+.rail li.is-on i { box-shadow: inset 0 0 0 5px var(--blue); }
 
-.cup { display: grid; gap: 10px; }
-.cup__groups { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.grp { padding: 10px 12px; border-radius: 10px; background: var(--infield); transition: box-shadow 300ms ease-out; }
-.grp b { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--slate); }
-.grp span { display: flex; justify-content: space-between; gap: 6px; font-size: 12px; line-height: 1.6; color: var(--slate); white-space: nowrap; overflow: hidden; }
-.grp span em { font-style: normal; font-family: var(--mono); font-size: 11px; }
+.cup { display: grid; grid-template-columns: 400px 1fr; gap: 40px; align-items: center; }
+.cup__left { display: grid; gap: 12px; }
+.cup__qual { display: grid; gap: 8px; }
+.cup__qual .fix__row { font-size: 13px; padding: 8px 12px; gap: 8px; }
+.cup__qual .fix__score { min-width: 52px; font-size: 13px; }
+.cup__groups { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grp { padding: 12px 14px; border-radius: 12px; background: var(--infield); transition: box-shadow 300ms ease-out; }
+.grp b { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--slate); }
+.grp span { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 1.7; color: var(--slate); }
+.grp span em { font-style: normal; font-family: var(--mono); font-size: 13px; }
 .grp span.q { color: var(--ink); font-weight: 600; }
-.cup [data-stage] { opacity: 0.35; transition: opacity 300ms ease-out; }
+.cup [data-stage] { opacity: 0.3; transition: opacity 300ms ease-out; }
 .cup [data-stage].is-on, .cup [data-stage].is-done { opacity: 1; }
-.cup .grp.is-on { box-shadow: inset 0 0 0 2px var(--blue); }
+.cup__groups.is-on .grp { box-shadow: inset 0 0 0 2px var(--blue); }
 .cup__ko { width: 100%; height: auto; overflow: visible; }
 .cup__ko path { fill: none; stroke: var(--line); stroke-width: 2; transition: stroke 300ms ease-out; }
 .cup__ko [data-stage].is-on path, .cup__ko [data-stage].is-done path { stroke: var(--blue); }
-.cup__ko rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; transition: stroke 300ms ease-out, fill 300ms ease-out; }
+.cup__ko rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; transition: stroke 300ms ease-out; }
 .cup__ko [data-stage].is-on rect { stroke: var(--blue); }
-.cup__ko text { font: 600 9.5px var(--body); fill: var(--slate); }
+.cup__ko text { font: 600 13px var(--body); fill: var(--ink); }
 .cup__ko .win rect { fill: var(--blue); stroke: var(--blue); }
 .cup__ko .win text { fill: #fff; }
-.cup__qual { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.cup__qual .fix__row { font-size: 12px; padding: 6px 10px; }
+.cup__ko .lbl { font: 500 11px var(--mono); fill: var(--slate); }
 
-/* National league format: matchday results and the table. */
-.league { display: grid; gap: 16px; flex: 1; }
-.fix { display: grid; gap: 6px; }
-.fix__day { font-family: var(--mono); font-size: 11px; color: var(--slate); }
-.fix__row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; background: var(--infield); font-size: 13px; color: var(--ink); }
-.fix__row span:last-child { text-align: right; }
-.fix__score { min-width: 56px; padding: 3px 10px; border-radius: 999px; background: var(--surface); font-family: var(--mono); font-size: 12px; text-align: center; color: var(--ink); }
-.fix__row.is-live .fix__score { background: var(--blue); color: #fff; }
-.tbl { position: relative; display: grid; font-size: 13px; }
-.tbl__row { display: grid; grid-template-columns: 26px 1fr repeat(4, 30px) 40px; align-items: center; height: 34px; padding: 0 12px; border-radius: 8px; color: var(--ink); transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1), background-color 300ms ease-out; }
-.tbl__row span { font-family: var(--mono); font-size: 12px; color: var(--slate); text-align: center; }
-.tbl__row span:nth-child(2) { font-family: var(--body); font-size: 13px; color: var(--ink); text-align: left; }
-.tbl__row span:last-child { color: var(--ink); font-weight: 600; }
-.tbl__row--head span { font-size: 11px; color: var(--slate); }
-.tbl__row--head span:nth-child(2) { font-family: var(--mono); font-size: 11px; color: var(--slate); }
+/* 2 National division style: the matchday on the left, the table on the right. */
+.big--division { grid-template-columns: 1fr 1.25fr; gap: 40px; align-items: start; }
+.fix--big { display: grid; gap: 10px; }
+.tbl { position: relative; display: grid; }
+.tbl__row { display: grid; grid-template-columns: 32px 1fr repeat(4, 40px) 52px; align-items: center; height: 42px; padding: 0 14px; border-radius: 10px; font-size: 15px; color: var(--ink); transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1), background-color 300ms ease-out; }
+.tbl__row span { font-family: var(--mono); font-size: 14px; color: var(--slate); text-align: center; }
+.tbl__row span:nth-child(2) { font-family: var(--body); font-size: 15px; color: var(--ink); text-align: left; }
+.tbl__row span:last-child { color: var(--ink); font-weight: 700; }
+.tbl__row--head { height: 32px; }
+.tbl__row--head span, .tbl__row--head span:nth-child(2) { font-family: var(--mono); font-size: 12px; color: var(--slate); font-weight: 500; }
+.tbl__row[data-team] { background: var(--infield); margin-bottom: 6px; }
 .tbl__row.is-up { background: var(--blue-soft); }
 
-/* Card rows for the other features. */
-.feat__cards { display: grid; gap: 20px; width: 100%; max-width: 1120px; align-items: stretch; }
-.feat__cards--3 { grid-template-columns: repeat(3, 1fr); }
-.feat__cards--lb { grid-template-columns: 1.4fr 1fr; }
-.feat__cards--rw { grid-template-columns: 1fr 1.2fr; }
-.fmt__foot { margin: auto 0 0; font-size: 13px; color: var(--slate); }
-.bar { height: 8px; border-radius: 4px; background: var(--infield); overflow: hidden; }
-.bar i { display: block; height: 100%; width: 100%; border-radius: 4px; background: var(--blue); transform-origin: left; transform: scaleX(var(--f, 0)); transition: transform 1200ms cubic-bezier(0.23, 1, 0.32, 1); }
+/* 3 Conquer (Game of Run): the map, big, with the territory shares beside it. */
+.big--conq { grid-template-columns: 1.7fr 1fr; gap: 40px; align-items: center; }
+.hexmap-f { width: 100%; height: auto; max-height: 460px; }
+.hexmap-f polygon { stroke: var(--paper); stroke-width: 2; transition: fill 400ms ease-out; }
+.hexmap-f .runner { fill: var(--surface); stroke: var(--blue); stroke-width: 3; }
+.terr-wrap { display: grid; gap: 24px; }
+.terr { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+.terr li { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; font-size: 16px; color: var(--ink); }
+.terr li > span { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.terr li > span i { width: 12px; height: 12px; border-radius: 3px; }
+.terr li .bar { grid-column: 1 / -1; grid-row: 2; }
+.terr li em { font-style: normal; font-family: var(--mono); font-size: 14px; color: var(--slate); }
+.terr li[data-team="0"] > span i, .terr li[data-team="0"] .bar i { background: #0751fb; }
+.terr li[data-team="1"] > span i, .terr li[data-team="1"] .bar i { background: #6f97ff; }
+.terr li[data-team="2"] > span i, .terr li[data-team="2"] .bar i { background: #9aa3b5; }
 
-/* Step challenge ring. */
-.ring { position: relative; display: grid; place-items: center; }
-.ring svg { width: min(190px, 80%); height: auto; transform: rotate(-90deg); }
-.ring__track, .ring__bar { fill: none; stroke-width: 10; }
-.ring__track { stroke: var(--infield); }
-.ring__bar { stroke: var(--blue); stroke-linecap: round; stroke-dasharray: 314.16; stroke-dashoffset: calc(314.16 * (1 - var(--f, 0))); transition: stroke-dashoffset 1400ms cubic-bezier(0.23, 1, 0.32, 1); }
-.ring__num { position: absolute; display: grid; justify-items: center; gap: 2px; }
-.ring__num b, .dist b, .pts b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
-.ring__num b { font-size: 30px; }
-.ring__num span, .dist span { font-size: 12px; color: var(--slate); }
-.dist { display: flex; align-items: baseline; gap: 8px; }
-.dist b { font-size: 44px; line-height: 1; }
-.mini, .teams, .feed, .perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.mini li { display: flex; justify-content: space-between; padding: 8px 12px; border-radius: 10px; background: var(--infield); font-size: 13px; color: var(--ink); }
-.mini em, .teams em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--slate); }
-.teams li { display: grid; grid-template-columns: 96px 1fr 56px; align-items: center; gap: 10px; font-size: 13px; color: var(--ink); }
-.teams em { text-align: right; }
-
-/* Leaderboard. */
-.lanes { display: flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--infield); }
-.lanes span { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--slate); transition: background-color 300ms ease-out, color 300ms ease-out; }
-.lanes span.is-on { background: var(--blue); color: #fff; }
-.rank { position: relative; height: calc(5 * 52px); }
-.rank__row { position: absolute; left: 0; right: 0; top: 0; height: 44px; display: grid; grid-template-columns: 28px 1fr auto; align-items: center; padding: 0 14px; border-radius: 10px; background: var(--infield); font-size: 14px; color: var(--ink); transform: translateY(calc(var(--slot, 0) * 52px)); transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1), background-color 300ms ease-out, box-shadow 300ms ease-out; }
-.rank__row span:first-child { font-family: var(--mono); font-size: 12px; color: var(--slate); }
-.rank__row em { font-style: normal; font-family: var(--mono); font-size: 13px; color: var(--ink); }
-.rank__row.is-first { background: var(--surface); box-shadow: inset 0 0 0 2px var(--blue); }
-.rank__row.is-up { background: var(--blue-soft); }
-.live-dot { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--blue); animation: int-live 1.6s ease-in-out infinite; }
-.feed li { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--infield); font-size: 13px; color: var(--ink); animation: feed-in 500ms cubic-bezier(0.23, 1, 0.32, 1) both; }
-.feed li em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--slate); white-space: nowrap; }
-@keyframes feed-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
-
-/* Rewards. */
-.pts { display: flex; align-items: baseline; gap: 10px; }
-.pts b { font-size: 64px; line-height: 1; }
-.pts span { font-family: var(--mono); font-size: 16px; color: var(--blue); }
-.track { display: grid; gap: 10px; margin-top: auto; }
-.track__marks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--slate); }
-.perks li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 12px; background: var(--infield); transition: background-color 300ms ease-out, box-shadow 300ms ease-out; }
-.perks li b { display: block; font-size: 15px; color: var(--ink); }
-.perks li span { font-family: var(--mono); font-size: 12px; color: var(--slate); }
-.perks li em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--slate); }
-.perks li.is-on { background: #effaf5; box-shadow: inset 0 0 0 2px #0f9f6e; }
-.perks li.is-on em { color: #0f9f6e; }
-.perks li.is-redeem { background: #0f9f6e; box-shadow: none; }
-.perks li.is-redeem b, .perks li.is-redeem span, .perks li.is-redeem em { color: #fff; }
-
-/* Feature rail along the bottom: where you are, and a way to jump. */
+/* Timeline along the bottom: the engine's layers in order. Layer 1 (Competition) has its formats
+   as steps you can jump to; layers 2 and 3 come next. */
+.tl { align-items: center; gap: 10px; padding: 4px 14px 4px 4px; }
+.tl__layer { display: flex; align-items: center; gap: 8px; color: var(--slate); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.tl__layer.is-on { color: var(--ink); }
+.tl__num { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--infield); font: 600 12px/1 var(--mono); color: var(--slate); }
+.tl__layer.is-on .tl__num { background: var(--blue); color: #fff; }
+.tl__layer.is-on .tl__num { margin-left: 6px; }
+.tl__steps { display: flex; gap: 2px; margin-left: 4px; padding: 2px; border-radius: 999px; background: var(--infield); }
+.tl__line { width: 28px; height: 2px; border-radius: 1px; background: var(--line); }
+/* Rail along the bottom: where you are, and a way to jump. */
 .feat__nav { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
-.feat__nav button { height: 34px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--slate); font: 600 13px/1 var(--body); cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out; }
+.feat__nav button { height: 30px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--slate); font: 600 13px/1 var(--body); cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out; }
 .feat__nav button:hover { color: var(--ink); }
 .feat__nav button:active { transform: scale(0.97); }
 .feat__nav button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .feat__nav button[aria-current="true"] { background: var(--blue-soft); color: var(--blue); }
 
 @media (max-width: 1100px) {
-  .feat__formats, .feat__cards--3, .feat__cards--lb, .feat__cards--rw { grid-template-columns: 1fr; }
+  .cup, .big--division, .big--conq { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rail::after, .rail li, .rail li i, .cup [data-stage], .tbl__row, .bar i, .ring__bar, .rank__row { transition: none; }
-  .feed li, .live-dot { animation: none; }
+  .rail::after, .rail li, .rail li i, .cup [data-stage], .tbl__row, .bar i { transition: none; }
 }
-
-/* Conquer: Game of Run territory map. */
-.feat__cards--conq { grid-template-columns: 1.6fr 1fr; }
-.fmt--map { gap: 12px; }
-.hexmap-f { width: 100%; height: auto; max-height: 380px; }
-.hexmap-f polygon { stroke: var(--surface); stroke-width: 2; transition: fill 400ms ease-out; }
-.hexmap-f .runner { fill: var(--surface); stroke: var(--blue); stroke-width: 3; }
-.terr { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-.terr li { display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 14px; color: var(--ink); }
-.terr li > span { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.terr li > span i { width: 10px; height: 10px; border-radius: 3px; }
-.terr li em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--slate); justify-self: end; margin-top: -24px; }
-.terr li[data-team="0"] > span i, .terr li[data-team="0"] .bar i { background: #0751fb; }
-.terr li[data-team="1"] > span i, .terr li[data-team="1"] .bar i { background: #6f97ff; }
-.terr li[data-team="2"] > span i, .terr li[data-team="2"] .bar i { background: #9aa3b5; }
-@media (max-width: 1100px) { .feat__cards--conq { grid-template-columns: 1fr; } }

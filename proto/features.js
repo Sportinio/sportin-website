@@ -21,28 +21,31 @@ if (sec) {
     const NS = 'http://www.w3.org/2000/svg';
     const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); parent.appendChild(n); return n; };
     const cols = [
-      { x: 0, n: 8, stage: 2, names: ['Harbour Gym', 'Park Crew', 'North Runners', 'Bike Club', 'City Walkers', 'Office Team', 'Riverside', 'Team Blue'] },
-      { x: 100, n: 4, stage: 3, names: ['Harbour Gym', 'North Runners', 'Office Team', 'Riverside'] },
-      { x: 200, n: 2, stage: 4, names: ['North Runners', 'Office Team'] },
+      { x: 0, n: 8, stage: 2, label: 'Round of 16', names: ['Harbour Gym', 'Park Crew', 'North Runners', 'Bike Club', 'City Walkers', 'Office Team', 'Riverside', 'Team Blue'] },
+      { x: 150, n: 4, stage: 3, label: 'Quarter-finals', names: ['Harbour Gym', 'North Runners', 'Office Team', 'Riverside'] },
+      { x: 300, n: 2, stage: 4, label: 'Final', names: ['North Runners', 'Office Team'] },
     ];
-    const H = 156; const BW = 78; const BH = 15;
-    const ys = (n) => Array.from({ length: n }, (_, i) => (H / n) * (i + 0.5));
+    const TOP = 24; const H = 280; const BW = 118; const BH = 26;
+    const ys = (n) => Array.from({ length: n }, (_, i) => TOP + (H / n) * (i + 0.5));
+    cols.forEach((col) => { const l = el('text', { x: col.x, y: 10, class: 'lbl' }, svg); l.textContent = col.label; });
+    { const l = el('text', { x: 450, y: 10, class: 'lbl' }, svg); l.textContent = 'Champion'; }
     cols.forEach((col, ci) => {
       const g = el('g', { 'data-stage': col.stage }, svg);
       const next = cols[ci + 1];
       ys(col.n).forEach((y, i) => {
-        if (next) { const ny = ys(next.n)[Math.floor(i / 2)]; el('path', { d: `M${col.x + BW} ${y} H${col.x + BW + 6} V${ny} H${next.x}` }, g); }
-        el('rect', { x: col.x, y: y - BH / 2, width: BW, height: BH, rx: 5 }, g);
-        const tx = el('text', { x: col.x + 7, y: y + 3.3 }, g); tx.textContent = col.names[i];
+        if (next) { const ny = ys(next.n)[Math.floor(i / 2)]; el('path', { d: `M${col.x + BW} ${y} H${col.x + BW + 14} V${ny} H${next.x}` }, g); }
+        el('rect', { x: col.x, y: y - BH / 2, width: BW, height: BH, rx: 7 }, g);
+        const tx = el('text', { x: col.x + 10, y: y + 4.5 }, g); tx.textContent = col.names[i];
       });
     });
     // Champion.
     const champ = el('g', { 'data-stage': 4, class: 'win' }, svg);
     const fy = ys(2);
-    cols[2].names.forEach((_, i) => el('path', { d: `M${200 + BW} ${fy[i]} H${200 + BW + 6} V${H / 2} H${300}` }, champ));
-    el('rect', { x: 300, y: H / 2 - 11, width: 86, height: 22, rx: 7 }, champ);
-    const ct = el('text', { x: 309, y: H / 2 + 3.5 }, champ); ct.textContent = 'North Runners';
-    svg.setAttribute('viewBox', `0 0 388 ${H}`);
+    const my = TOP + H / 2;
+    cols[2].names.forEach((_, i) => el('path', { d: `M${300 + BW} ${fy[i]} H${300 + BW + 14} V${my} H${450}` }, champ));
+    el('rect', { x: 450, y: my - 17, width: 126, height: 34, rx: 9 }, champ);
+    const ct = el('text', { x: 462, y: my + 5 }, champ); ct.textContent = 'North Runners';
+    svg.setAttribute('viewBox', `0 0 578 ${TOP + H}`);
   }
 
   // ---------- Champions League format: walk through the stages ----------
@@ -73,7 +76,7 @@ if (sec) {
   function leagueAfter() {
     if (!live) return;
     live.querySelector('.fix__score').textContent = '2 – 1'; live.classList.remove('is-live');
-    const h = climber.offsetHeight;
+    const h = climber.offsetTop - passed.offsetTop; // one row, including the gap
     climber.style.transform = `translateY(${-h}px)`; passed.style.transform = `translateY(${h}px)`;
     climber.classList.add('is-up');
     setRow(climber, climber.dataset.after); setRow(passed, passed.dataset.after);
@@ -93,14 +96,22 @@ if (sec) {
   const demos = {}; // keyed by each panel's data-demo name
   // Competitions: the cup walks through its stages; the league plays a matchday.
   { let timer = 0; let tick = 0;
-    demos.competitions = ({
+    demos.knockout = {
       start() {
-        if (RM) { showStage(railItems.length - 1); leagueAfter(); return; }
-        tick = 0; showStage(0); leagueBefore();
-        timer = window.setInterval(() => { tick += 1; showStage(tick % railItems.length); if (tick % 5 === 2) leagueAfter(); if (tick % 5 === 0) leagueBefore(); }, 1400);
+        if (RM) { showStage(railItems.length - 1); return; }
+        tick = 0; showStage(0);
+        timer = window.setInterval(() => { tick += 1; showStage(tick % railItems.length); }, 1500);
       },
       stop() { window.clearInterval(timer); timer = 0; },
-    }); }
+    }; }
+  { let timer = 0; let tick = 0;
+    demos.division = {
+      start() {
+        leagueBefore(); if (RM) { leagueAfter(); return; }
+        tick = 0; timer = window.setInterval(() => { tick += 1; if (tick % 4 === 1) leagueAfter(); if (tick % 4 === 0) leagueBefore(); }, 1400);
+      },
+      stop() { window.clearInterval(timer); timer = 0; },
+    }; }
   // Challenges: the ring and the bars fill, the numbers count up.
   if (panelOf('challenges')) { const box = panelOf('challenges'); let cancels = [];
     demos.challenges = ({

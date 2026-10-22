@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
-  <link rel="stylesheet" href="/proto/features.css?v=5" />
+  <link rel="stylesheet" href="/proto/features.css?v=8" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
@@ -140,64 +140,59 @@
   </section>
 
 
-  <!-- FEATURES: a grey section that scrolls sideways, one feature per scroll -->
-  <section class="feat" id="features" data-steps="1" aria-label="Competitions">
+  <!-- COMPETITIONS: one big format per scroll, moving sideways -->
+  <section class="feat" id="features" data-steps="2" aria-label="The engine, layer by layer">
     <div class="feat__stick">
       <div class="feat__track">
-        <article class="feat__panel" aria-labelledby="featCompTitle">
-          <div class="feat__intro">
-            <p class="eng-k">Competitions · League</p>
-            <h2 class="feat__title" id="featCompTitle">One league, <em>two styles</em></h2>
-            <p class="feat__lede">Run it like the Champions League, with groups and knockouts, or like a national division, with matches and a table.</p>
-          </div>
-          <div class="feat__formats" data-demo="competitions">
-            <div class="fmt">
-              <div class="fmt__head"><h3 class="fmt__name">Champions League style</h3><span class="fmt__meta">Qualifying to final</span></div>
-              <ol class="rail" aria-label="Stages"><li><i></i>Qualifying</li><li><i></i>Groups</li><li><i></i>Round of 16</li><li><i></i>Quarter-finals</li><li><i></i>Final</li></ol>
-              <div class="cup" aria-hidden="true">
-                  <div class="cup__qual" data-stage="0">
-                    <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">2 – 1</span><span>Lakeside</span></div>
-                    <div class="fix__row"><span>Park Crew</span><span class="fix__score">3 – 2</span><span>Hill Club</span></div>
-                  </div>
-                  <div class="cup__groups" data-stage="1">
-                    <div class="grp"><b>Group A</b><span class="q">North Runners<em>9</em></span><span class="q">Bike Club<em>6</em></span><span>Lakeside<em>3</em></span></div>
-                    <div class="grp"><b>Group B</b><span class="q">Office Team<em>7</em></span><span class="q">Harbour Gym<em>5</em></span><span>Hill Club<em>4</em></span></div>
-                    <div class="grp"><b>Group C</b><span class="q">Riverside<em>9</em></span><span class="q">Park Crew<em>4</em></span><span>Sunrise<em>2</em></span></div>
-                    <div class="grp"><b>Group D</b><span class="q">City Walkers<em>7</em></span><span class="q">Team Blue<em>6</em></span><span>Old Town<em>1</em></span></div>
-                  </div>
-                <svg class="cup__ko" role="img" aria-label="Knockout rounds from the round of 16 to the final"></svg>
+        <article class="feat__panel" aria-labelledby="featClTitle">
+          <div class="feat__intro"><p class="eng-k">Competition layer · League format</p><h2 class="feat__title" id="featClTitle">Knockout, <em>Champions League style</em></h2><p class="feat__lede">Qualifying, groups, round of 16, quarter-finals and a final.</p></div>
+          <div class="big" data-demo="knockout">
+            <ol class="rail rail--big" aria-label="Stages"><li><i></i>Qualifying</li><li><i></i>Groups</li><li><i></i>Round of 16</li><li><i></i>Quarter-finals</li><li><i></i>Final</li></ol>
+            <div class="cup cup--big" aria-hidden="true">
+              <div class="cup__left">
+                <div class="cup__qual" data-stage="0">
+                  <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">2 – 1</span><span>Lakeside</span></div>
+                  <div class="fix__row"><span>Park Crew</span><span class="fix__score">3 – 2</span><span>Hill Club</span></div>
+                </div>
+                <div class="cup__groups" data-stage="1">
+                  <div class="grp"><b>Group A</b><span class="q">North Runners<em>9</em></span><span class="q">Bike Club<em>6</em></span><span>Lakeside<em>3</em></span></div>
+                  <div class="grp"><b>Group B</b><span class="q">Office Team<em>7</em></span><span class="q">Harbour Gym<em>5</em></span><span>Hill Club<em>4</em></span></div>
+                  <div class="grp"><b>Group C</b><span class="q">Riverside<em>9</em></span><span class="q">Park Crew<em>4</em></span><span>Sunrise<em>2</em></span></div>
+                  <div class="grp"><b>Group D</b><span class="q">City Walkers<em>7</em></span><span class="q">Team Blue<em>6</em></span><span>Old Town<em>1</em></span></div>
+                </div>
               </div>
+              <svg class="cup__ko" role="img" aria-label="Knockout rounds from the round of 16 to the final"></svg>
             </div>
-            <div class="fmt">
-              <div class="fmt__head"><h3 class="fmt__name">National division style</h3><span class="fmt__meta">Matches and a table</span></div>
-              <div class="league">
-                <div class="fix">
-                  <span class="fix__day">Matchday 7</span>
-                  <div class="fix__row"><span>North Runners</span><span class="fix__score">3 – 0</span><span>City Walkers</span></div>
-                  <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">1 – 1</span><span>Bike Club</span></div>
-                  <div class="fix__row is-live" data-live><span>Park Crew</span><span class="fix__score">1 – 1</span><span>Office Team</span></div>
-                </div>
-                <div class="tbl">
-                  <div class="tbl__row tbl__row--head"><span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span>Pts</span></div>
-                  <div class="tbl__row" data-team><span>1</span><span>North Runners</span><span>7</span><span>5</span><span>1</span><span>1</span><span>16</span></div>
-                  <div class="tbl__row" data-team><span>2</span><span>Harbour Gym</span><span>7</span><span>4</span><span>3</span><span>0</span><span>15</span></div>
-                  <div class="tbl__row" data-team data-passed data-before="3|7|4|2|1|14" data-after="4|7|4|2|1|14"><span>3</span><span>Bike Club</span><span>7</span><span>4</span><span>2</span><span>1</span><span>14</span></div>
-                  <div class="tbl__row" data-team data-climb data-before="4|6|4|0|2|12" data-after="3|7|5|0|2|15"><span>4</span><span>Park Crew</span><span>6</span><span>4</span><span>0</span><span>2</span><span>12</span></div>
-                  <div class="tbl__row" data-team><span>5</span><span>City Walkers</span><span>7</span><span>3</span><span>1</span><span>3</span><span>10</span></div>
-                </div>
-              </div>
+          </div>
+        </article>
+        <article class="feat__panel" aria-labelledby="featNdTitle">
+          <div class="feat__intro"><p class="eng-k">Competition layer · League format</p><h2 class="feat__title" id="featNdTitle">Table, <em>national division style</em></h2><p class="feat__lede">A full season of matches, with a table that updates as results come in.</p></div>
+          <div class="big big--division" data-demo="division">
+            <div class="fix fix--big">
+              <span class="fix__day">Matchday 7</span>
+              <div class="fix__row"><span>North Runners</span><span class="fix__score">3 – 0</span><span>City Walkers</span></div>
+              <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">1 – 1</span><span>Bike Club</span></div>
+              <div class="fix__row"><span>Riverside</span><span class="fix__score">0 – 2</span><span>Team Blue</span></div>
+              <div class="fix__row is-live" data-live><span>Park Crew</span><span class="fix__score">1 – 1</span><span>Office Team</span></div>
+            </div>
+            <div class="tbl tbl--big">
+              <div class="tbl__row tbl__row--head"><span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span>Pts</span></div>
+              <div class="tbl__row" data-team><span>1</span><span>North Runners</span><span>7</span><span>5</span><span>1</span><span>1</span><span>16</span></div>
+              <div class="tbl__row" data-team><span>2</span><span>Harbour Gym</span><span>7</span><span>4</span><span>3</span><span>0</span><span>15</span></div>
+              <div class="tbl__row" data-team data-passed data-before="3|7|4|2|1|14" data-after="4|7|4|2|1|14"><span>3</span><span>Bike Club</span><span>7</span><span>4</span><span>2</span><span>1</span><span>14</span></div>
+              <div class="tbl__row" data-team data-climb data-before="4|6|4|0|2|12" data-after="3|7|5|0|2|15"><span>4</span><span>Park Crew</span><span>6</span><span>4</span><span>0</span><span>2</span><span>12</span></div>
+              <div class="tbl__row" data-team><span>5</span><span>Team Blue</span><span>7</span><span>3</span><span>2</span><span>2</span><span>11</span></div>
+              <div class="tbl__row" data-team><span>6</span><span>City Walkers</span><span>7</span><span>3</span><span>1</span><span>3</span><span>10</span></div>
+              <div class="tbl__row" data-team><span>7</span><span>Office Team</span><span>6</span><span>2</span><span>2</span><span>2</span><span>8</span></div>
+              <div class="tbl__row" data-team><span>8</span><span>Riverside</span><span>7</span><span>1</span><span>1</span><span>5</span><span>4</span></div>
             </div>
           </div>
         </article>
         <article class="feat__panel" aria-labelledby="featConqTitle">
-          <div class="feat__intro"><p class="eng-k">Competitions · Conquer</p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em></h2><p class="feat__lede">Every run claims ground on the map. Teams hold their territory, or lose it to faster rivals.</p></div>
-          <div class="feat__cards feat__cards--conq" data-demo="conquer">
-            <div class="fmt fmt--map">
-              <div class="fmt__head"><h3 class="fmt__name">Game of Run</h3><span class="fmt__meta"><i class="live-dot"></i>live map</span></div>
-              <svg class="hexmap-f" role="img" aria-label="A map of hexagons being claimed by three teams"></svg>
-            </div>
-            <div class="fmt">
-              <div class="fmt__head"><h3 class="fmt__name">Territory</h3><span class="fmt__meta">This week</span></div>
+          <div class="feat__intro"><p class="eng-k">Competition layer · Conquer format</p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em></h2><p class="feat__lede">Game of Run: every run claims ground on the map. Teams hold their territory, or lose it to faster rivals.</p></div>
+          <div class="big big--conq" data-demo="conquer">
+            <svg class="hexmap-f" role="img" aria-label="A map of hexagons being claimed by three teams"></svg>
+            <div class="terr-wrap">
               <ul class="terr">
                 <li data-team="0"><span><i></i>North Runners</span><div class="bar"><i></i></div><em>0%</em></li>
                 <li data-team="1"><span><i></i>Office Team</span><div class="bar"><i></i></div><em>0%</em></li>
@@ -208,7 +203,13 @@
           </div>
         </article>
       </div>
-      <nav class="feat__nav" aria-label="Competition formats"><button type="button" aria-current="true">League</button><button type="button">Conquer</button></nav>
+      <nav class="feat__nav tl" aria-label="Engine layers">
+        <div class="tl__layer is-on"><span class="tl__num">1</span><span class="tl__name">Competition</span><span class="tl__steps"><button type="button" aria-current="true">Knockout</button><button type="button">Table</button><button type="button">Conquer</button></span></div>
+        <i class="tl__line" aria-hidden="true"></i>
+        <div class="tl__layer"><span class="tl__num">2</span><span class="tl__name">Leaderboard</span></div>
+        <i class="tl__line" aria-hidden="true"></i>
+        <div class="tl__layer"><span class="tl__num">3</span><span class="tl__name">Reward</span></div>
+      </nav>
     </div>
   </section>
 
@@ -619,7 +620,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=24"></script>
-<script type="module" src="/proto/features.js?v=5"></script>
+<script type="module" src="/proto/features.js?v=7"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
