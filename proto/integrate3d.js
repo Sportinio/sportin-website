@@ -77,25 +77,35 @@ function labelSprite(text, color, w) {
 }
 const showSprite = (sp, o) => { sp.material.opacity = o; sp.visible = o > 0.01; };
 
-// ---------- The phone (after the frame Adrian supplied) ----------
-// One thin chrome rim, then black glass edge to edge with the white screen inside it, a notch
-// with speaker and camera, three buttons left and one right. The black glass covers the whole
-// front of the body, so only the rounded metal edge shows: one frame, not two.
-const PH = { w: 2.3, h: 4.75, d: 0.22, r: 0.42, sw: 1.96, sh: 4.41 };
-const PZ = PH.d / 2 + BEVEL; // front face
+// ---------- The phone: Adrian's own frame image ----------
+// media/frames/phone-frame.png is his frame with the white page cut away; phone-screen-mask.png
+// is its white screen area (the notch is not part of it). The screen content is drawn into the
+// screen area only, so the frame, its rim, buttons and notch stay exactly as he supplied them.
+const FRAME = { w: 328, h: 659, sx: 22, sy: 19, sw: 284, sh: 619 }; // image pixels
+const K = 2.3 / FRAME.w; // world units per image pixel
+const PH = { w: FRAME.w * K, h: FRAME.h * K, sw: FRAME.sw * K, sh: FRAME.sh * K };
+const PZ = 0.02; // the frame is flat; chips float just in front of it
 const phone = new THREE.Group(); rig.add(phone);
 const phoneMats = []; const pm = group(phoneMats);
-// A light, satin metal so the rim reads as one bright edge around the black glass, as in the frame.
-const steelMat = pm(new THREE.MeshPhysicalMaterial({ color: 0xe1e4e8, metalness: 0.7, roughness: 0.3, clearcoat: 0.6 }));
-phone.add(slab(PH.w, PH.h, PH.r, PH.d, steelMat));
-const black = () => pm(new THREE.MeshPhysicalMaterial({ color: 0x07080b, roughness: 0.14, metalness: 0.2, clearcoat: 1 }));
-const pGlass = face(PH.w, PH.h, PH.r, black()); pGlass.position.z = PZ + 0.002; phone.add(pGlass);
-const PS = canvasTex(640, Math.round(640 * (PH.sh / PH.sw)));
-const pScreen = face(PH.sw, PH.sh, 0.3, pm(new THREE.MeshBasicMaterial({ map: PS.tex, toneMapped: false }))); pScreen.position.z = PZ + 0.004; phone.add(pScreen);
-const notch = face(0.78, 0.2, 0.1, black()); notch.position.set(0, PH.sh / 2 - 0.09, PZ + 0.006); phone.add(notch);
-const speaker = face(0.22, 0.03, 0.015, pm(new THREE.MeshBasicMaterial({ color: 0x2a2d33 }))); speaker.position.set(-0.02, PH.sh / 2 - 0.08, PZ + 0.008); phone.add(speaker);
-const cam = new THREE.Mesh(new THREE.CircleGeometry(0.028, 20), pm(new THREE.MeshBasicMaterial({ color: 0x1b2a4a }))); cam.position.set(0.17, PH.sh / 2 - 0.08, PZ + 0.008); phone.add(cam);
-[[-1, 1.55, 0.16], [-1, 1.1, 0.34], [-1, 0.62, 0.34], [1, 1.0, 0.55]].forEach(([side, y, len]) => { const b = new THREE.Mesh(new THREE.BoxGeometry(0.05, len, 0.09), steelMat); b.position.set(side * (PH.w / 2 + BEVEL + 0.012), y, 0); phone.add(b); });
+const PS = canvasTex(640, Math.round(640 * (FRAME.sh / FRAME.sw))); // the screen content
+const SCALE = 3; // the phone texture is drawn at 3x the image for sharp screen text
+const PF = canvasTex(FRAME.w * SCALE, FRAME.h * SCALE); // frame and screen together
+const layer = document.createElement('canvas'); layer.width = PF.c.width; layer.height = PF.c.height; const lctx = layer.getContext('2d');
+const frameImg = new Image(); frameImg.src = '/proto/media/frames/phone-frame.png';
+const maskImg = new Image(); maskImg.src = '/proto/media/frames/phone-screen-mask.png';
+function composePhone() {
+  const { ctx, c } = PF; ctx.clearRect(0, 0, c.width, c.height);
+  if (frameImg.complete && frameImg.naturalWidth) ctx.drawImage(frameImg, 0, 0, c.width, c.height);
+  if (maskImg.complete && maskImg.naturalWidth) {
+    lctx.globalCompositeOperation = 'source-over'; lctx.clearRect(0, 0, layer.width, layer.height);
+    lctx.drawImage(PS.c, FRAME.sx * SCALE, FRAME.sy * SCALE, FRAME.sw * SCALE, FRAME.sh * SCALE);
+    lctx.globalCompositeOperation = 'destination-in'; lctx.drawImage(maskImg, 0, 0, layer.width, layer.height);
+    ctx.drawImage(layer, 0, 0);
+  }
+  PF.tex.needsUpdate = true;
+}
+const pFace = new THREE.Mesh(new THREE.PlaneGeometry(PH.w, PH.h), pm(new THREE.MeshBasicMaterial({ map: PF.tex, toneMapped: false, depthWrite: false })));
+phone.add(pFace);
 
 const ENG = { y: 0.75, s: 0.3 }; // the engine chip's place on the phone, in phone coordinates
 const toScreenY = (y) => ((PH.sh / 2 - y) / PH.sh) * PS.c.height;
@@ -127,7 +137,7 @@ function drawPhoneScreen(time, inPhone, emo) {
   }
   ctx.fillStyle = 'rgba(10,16,32,0.18)'; ctx.beginPath(); ctx.roundRect(W / 2 - 90, Hh - 34, 180, 10, 5); ctx.fill();
   ctx.textAlign = 'left';
-  PS.tex.needsUpdate = true;
+  composePhone();
 }
 
 // ---------- The chips ----------
@@ -232,7 +242,7 @@ const pulse = (time, i) => 1 + 0.35 * Math.sin(time * 5 + i * 1.7);
 // ---------- Layout: three columns ----------
 // Integrations: phone | watch | brands. eMotion: phone | sensors | eMotion chip | engine chip.
 const PHONE_X = -3.05; const PHONE_Y = 0.5;
-const PHONE_EDGE = PHONE_X + PH.w / 2 + BEVEL; // the phone's right edge, where lines leave it
+const PHONE_EDGE = PHONE_X + PH.w / 2; // the phone's right edge, where lines leave it
 const WATCH_X = 0.35; const COL_X = 3.6; const COL_GAP = 0.6;
 
 // Integrations view.
@@ -301,7 +311,7 @@ function resize() {
 
 // ---------- Choreography ----------
 const _m = new THREE.Matrix4(); const _q = new THREE.Quaternion(); const _s = new THREE.Vector3(); const _p = new THREE.Vector3();
-let lastScreen = 0; let lastNow = 0;
+let lastScreen = 0; let lastScreenKey = ''; let lastNow = 0;
 function paint(t, now = performance.now()) {
   const time = now / 1000;
   const dt = lastNow ? Math.min(0.05, (now - lastNow) / 1000) : 0; lastNow = now;
@@ -394,12 +404,14 @@ function paint(t, now = performance.now()) {
 
   // Phone screen: redraws about 30 times a second while the live readout shows.
   if (emo > 0.01 && !RM) liveSteps += 0.4;
-  if (now - lastScreen > 33 || emo <= 0.01) { drawPhoneScreen(time, 1 - emo, emo); lastScreen = now; }
+  // Otherwise only when what it shows changes (composing the frame is not free).
+  const screenKey = (1 - emo).toFixed(2);
+  if (emo > 0.01 ? now - lastScreen > 33 : screenKey !== lastScreenKey) { drawPhoneScreen(time, 1 - emo, emo); lastScreen = now; lastScreenKey = screenKey; }
 
   // Camera: the same eye-level framing as the standing chip, then out to take in all columns.
   const aspectK = Math.max(1, 1.45 / (W / H));
-  const dist = lerp(lerp(11, 12.5, a), lerp(18, 19.5, emo), side) * aspectK;
-  const look = new THREE.Vector3(lerp(0, lerp(0.3, 1.2, emo), side), lerp(0, 0.1, a) * (1 - side), 0);
+  const dist = lerp(lerp(11, 14.5, a), lerp(18, 19.5, emo), side) * aspectK;
+  const look = new THREE.Vector3(lerp(0, lerp(0.3, 1.2, emo), side), lerp(0, 0.45, a) * (1 - side), 0); // lower, clear of the tabs under the title
   camera.position.set(look.x, look.y + dist * 0.1, dist * Math.sqrt(1 - 0.01));
   camera.lookAt(look);
   rig.updateMatrixWorld(true);
@@ -417,6 +429,7 @@ window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
 drawWatchScreen();
 document.fonts.ready.then(() => { engine.drawEngraving(); emotion.drawEngraving(); drawWatchScreen(); follow.sync(); });
+frameImg.onload = maskImg.onload = () => { lastScreenKey = ''; paint(follow.t); };
 follow.sync();
 window.integrateAt = (v) => follow.jump(v);
 window.integrateMode = (m) => sw.querySelector(`button[data-mode="${m}"]`).click();
