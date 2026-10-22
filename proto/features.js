@@ -218,29 +218,42 @@ if (sec) {
       stop() { window.clearInterval(timer); timer = 0; },
     }; }
 
+  // App screens are laid out in iOS points (app-screens.css) and scaled to fit the phone screen.
+  const canvases = [...sec.querySelectorAll('.ios')];
+  const fit = () => canvases.forEach((c) => { const box = c.parentElement; const k = box.clientWidth / Number(c.dataset.w); if (!k) return; c.style.setProperty('--k', String(k)); c.style.height = `${box.clientHeight / k}px`; });
+  new ResizeObserver(fit).observe(sec); fit();
+  const fmtPt = (n) => Math.round(n).toLocaleString('de-DE'); // the app groups thousands with a dot
+
   // Ranking (layer 2): the app's leaderboard. Steps tick up live; Sofia overtakes Emma, her trend
-  // turns green, and the ranks re-number.
+  // turns green, the rank badges re-number and her steps ring fills.
   { const box = panelOf('ranking'); if (box) {
-    const lbRows = [...box.querySelectorAll('.lb')];
+    const lbRows = [...box.querySelectorAll('.lbr')];
     const BASE = [0, 1, 2, 3, 4, 5, 6]; const SWAP = [0, 1, 3, 2, 4, 5, 6]; // slot per row before and after
+    const UP = lbRows[3].querySelector('.rk__c').innerHTML;
+    const ringColor = (v) => (v < 5000 ? 'rgb(255,59,48)' : v < 10000 ? 'rgb(255,149,0)' : 'rgb(52,199,89)');
     let timer = 0; let tick = 0;
-    const setSlots = (slots) => lbRows.forEach((row, i) => { row.style.setProperty('--slot', String(slots[i])); row.querySelector('.lb__rank').textContent = String(slots[i] + 1); row.classList.toggle('is-first', slots[i] === 0); });
-    const val = (row, n) => { const b = row.querySelector('.lb__val b'); b.textContent = fmtNum(n); };
+    const setSlots = (slots) => lbRows.forEach((row, i) => { row.style.setProperty('--slot', String(slots[i])); row.dataset.rank = String(slots[i] + 1); row.querySelector('.rk__n').textContent = String(slots[i] + 1); });
+    const val = (row, n) => {
+      row.dataset.now = String(n); row.querySelector('.val__n b').textContent = fmtPt(n);
+      const rk = row.querySelector('.rk'); rk.style.setProperty('--sp', Math.min(1, n / 10000).toFixed(3)); rk.style.setProperty('--sc', ringColor(n));
+    };
+    const trend = (cls, text) => { const t = lbRows[3].querySelector('.val em'); t.className = `r ${cls}`; t.textContent = text; };
     function before() {
-      setSlots(BASE); lbRows.forEach((r) => { r.classList.remove('is-up'); val(r, Number(r.querySelector('.lb__val b').dataset.v)); });
-      const t = lbRows[3].querySelector('.lb__val em'); t.className = 'down'; t.textContent = '↘11%';
+      setSlots(BASE); lbRows.forEach((r) => val(r, Number(r.dataset.v)));
+      trend('down', '↘11%'); lbRows[2].querySelector('.rk__c').textContent = '—';
     }
     function climb() {
-      const sofia = lbRows[3]; sofia.classList.add('is-up'); val(sofia, 8120); setSlots(SWAP);
-      const t = sofia.querySelector('.lb__val em'); t.className = 'up'; t.textContent = '↗39%';
+      val(lbRows[3], 8120); setSlots(SWAP); trend('up', '↗39%');
+      lbRows[2].querySelector('.rk__c').innerHTML = '<svg width="9" height="6" viewBox="0 0 9 6"><path d="M1 1l3.5 3.5L8 1" fill="none" stroke="rgb(231,76,60)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      lbRows[3].querySelector('.rk__c').innerHTML = UP;
     }
     demos.ranking = {
       start() {
         before(); if (RM) { climb(); return; }
         tick = 0; timer = window.setInterval(() => {
           tick += 1; const phase = tick % 8;
-          // Live counting on every tick: small bumps on the top rows.
-          lbRows.forEach((r, i) => { const b = r.querySelector('.lb__val b'); const n = Number(b.textContent.replace(/,/g, '')); if (i !== 3 || phase < 3) val(r, n + [24, 9, 7, 31, 4, 6, 3][i]); });
+          // Live counting on every tick: small bumps on every row.
+          lbRows.forEach((r, i) => { if (i !== 3 || phase < 3) val(r, Number(r.dataset.now) + [24, 9, 7, 31, 4, 6, 3][i]); });
           if (phase === 3) climb();
           if (phase === 0) before();
         }, 900);
@@ -248,16 +261,16 @@ if (sec) {
       stop() { window.clearInterval(timer); timer = 0; },
     };
   } }
-  // Weekly progress (layer 2): the bars grow day by day, the tiles count up.
+  // Weekly progress (layer 2): this week's blue bars fill up over last week's, the totals count up.
   { const box = panelOf('weekly'); if (box) {
-    const days = [...box.querySelectorAll('.wk__day:not(.is-next)')];
+    const cols = [...box.querySelectorAll('.wk2__col:not(.is-future)')];
     let timers = []; let cancels = [];
-    function reset() { days.forEach((d) => { d.style.setProperty('--h', '0'); d.classList.remove('is-shown'); d.querySelector('.wk__v').textContent = d.dataset.v; }); box.querySelectorAll('[data-v]').forEach((el) => { if (el.tagName === 'B') el.textContent = '0'; }); }
+    function reset() { cols.forEach((c) => { c.querySelector('.wk2__now').style.height = '0px'; c.classList.remove('is-shown'); }); box.querySelectorAll('b[data-v]').forEach((el) => { el.textContent = '0'; }); }
     demos.weekly = {
       start() {
         reset();
-        days.forEach((d, i) => timers.push(window.setTimeout(() => { d.style.setProperty('--h', d.dataset.h); d.classList.add('is-shown'); }, RM ? 0 : 200 + i * 450)));
-        timers.push(window.setTimeout(() => { cancels = [...box.querySelectorAll('b[data-v]')].map((el) => countUp(el, Number(el.dataset.v), 1400)); }, RM ? 0 : 1400));
+        cols.forEach((c, i) => timers.push(window.setTimeout(() => { const b = c.querySelector('.wk2__now'); b.style.height = `${b.dataset.h}px`; c.classList.add('is-shown'); }, RM ? 0 : 200 + i * 450)));
+        timers.push(window.setTimeout(() => { cancels = [...box.querySelectorAll('b[data-v]')].map((el) => countUp(el, Number(el.dataset.v), 1400, (n) => { el.textContent = fmtPt(n); })); }, RM ? 0 : 1400));
       },
       stop() { timers.forEach((t) => window.clearTimeout(t)); timers = []; cancels.forEach((c) => c()); cancels = []; },
     };
