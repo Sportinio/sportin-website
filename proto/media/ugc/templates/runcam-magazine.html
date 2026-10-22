@@ -51,7 +51,7 @@
   <video autoplay muted loop playsinline preload="auto" poster="/assets/site/media/clip-rungroup.jpg" src="/assets/site/media/clip-rungroup.mp4"></video>
   <div class="abs scrim"></div>
   <div class="abs content sys">
-    <img class="wordmark" src="assets/runcam-wordmark.png" alt="SportIn">
+    <img class="wordmark" src="assets/demo-northside-wordmark.png" alt="Northside Run Club, a made-up demo brand">
     <div class="masthead"><span class="t">THE MOVEMENT MAGAZINE</span><span class="d" id="date"></span></div>
     <div class="stats">
       <div class="row"><div class="top">
@@ -103,8 +103,12 @@
   const fit = () => { stage.style.transform = `scale(${innerWidth / W})`; };
   addEventListener('resize', fit); fit();
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { const v = stage.querySelector('video'); v.removeAttribute('autoplay'); v.pause(); render(RUN); return; }
-  const t0 = performance.now();
-  (function tick(now) { render(((now - t0) / 1000) % LOOP); requestAnimationFrame(tick); })(t0);
+  // ?capture: the page is painted frame by frame by the render script instead of the clock.
+  window.__render = (t) => render(t % LOOP); window.__loop = LOOP;
+  if (!location.search.includes('capture')) {
+    const t0 = performance.now();
+    (function tick(now) { render(((now - t0) / 1000) % LOOP); requestAnimationFrame(tick); })(t0);
+  } else { render(0); }
 })();
 </script>
 </body>
