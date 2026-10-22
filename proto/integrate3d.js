@@ -305,27 +305,18 @@ const emoDotMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true }
 const RUN_REAL = 4;
 const emoRunners = new THREE.InstancedMesh(dotGeo, emoDotMat, SENSORS.length + RUN_REAL); rig.add(emoRunners);
 
-// ---------- Column captions (HTML, so they stay sharp at a real 12px) ----------
-// One caption under each column, in both views, 32px below the scene.
-const capRow = document.createElement('div'); capRow.className = 'int-caps'; capRow.setAttribute('aria-hidden', 'true');
-capRow.innerHTML = '<span></span><span></span><span></span><span></span>'; stick.appendChild(capRow);
-const caps = [...capRow.children];
-const CAP_TEXT = [['Phone', 'Wearable', '', 'Apps and wearables'], ['Phone', 'Phone sensors', 'eMotion', 'SportIn engine']];
-const CAP_Y = -2.6; // just under the tallest column
+// ---------- Title under the eMotion chip (HTML, so it stays sharp) ----------
+const chipTitle = document.createElement('div'); chipTitle.className = 'int-chip-title'; chipTitle.setAttribute('aria-hidden', 'true');
+chipTitle.textContent = 'Real-time technology'; stick.appendChild(chipTitle);
 const oldCaption = FROM === 0 ? sec.querySelector('.eng-caption') : null; if (oldCaption) oldCaption.style.display = 'none'; // standalone page only; in the deck it is the engine's caption
 const _cp = new THREE.Vector3();
-function placeCaptions(show, emoMode, fadeSwap) {
-  const set = CAP_TEXT[emoMode ? 1 : 0];
-  caps.forEach((el, i) => {
-    if (el.textContent !== set[i]) el.textContent = set[i];
-    _cp.set(COLS[i] + (i === 3 && !emoMode ? 0.03 : 0), CAP_Y, 0); rig.localToWorld(_cp).project(camera);
-    const x = ((_cp.x + 1) / 2) * view.w; const y = ((1 - _cp.y) / 2) * view.h + 32;
-    el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translateX(-50%)`;
-    el.style.opacity = String(show[i] * fadeSwap);
-  });
+function placeChipTitle(o) {
+  _cp.set(EMO_X, -(3.4 / 2) * CHIP_S - 0.08, 0.12); rig.localToWorld(_cp).project(camera);
+  const x = ((_cp.x + 1) / 2) * view.w; const y = ((1 - _cp.y) / 2) * view.h + 14;
+  chipTitle.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px) translateX(-50%)`;
+  chipTitle.style.opacity = String(o);
 }
 
-// ---------- The switch: Integrations | eMotion, as tabs below the title ----------
 // A pair of toggle buttons (aria-pressed): one picture changes, there are no separate panels.
 const sw = document.createElement('div'); sw.className = 'int-switch'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', 'How data reaches the engine');
 sw.innerHTML = '<button type="button" aria-pressed="true" data-mode="0">Integrations</button><button type="button" aria-pressed="false" data-mode="1"><i aria-hidden="true"></i>eMotion</button>';
@@ -480,11 +471,7 @@ function paint(t, now = performance.now()) {
   camera.setViewOffset(W, H, viewBase.x, viewBase.y + (window.sportinChipShift || 0) * (1 - a), viewBase.w, viewBase.h); camera.updateProjectionMatrix();
   rig.updateMatrixWorld(true);
   placeSwitch(swO);
-  // Column captions: each shows once its column is on screen; they dip as the view swaps.
-  const tagsIn = win(t, 2.3, 2.7);
-  const showInt = [side, wa, 0, tagsIn]; const showEmo = [side, win(s1, 0.4, 1), win(s2, 0.4, 1), win(s3, 0.5, 1)];
-  const emoMode = mode >= 0.5; const swap = Math.abs(mode - 0.5) * 2;
-  placeCaptions((emoMode ? showEmo : showInt).map((v) => v * win(t, 0.9, 1.2)), emoMode, swap);
+  placeChipTitle(win(s2, 0.5, 1));
 
   renderer.render(scene, camera);
 }
@@ -496,7 +483,7 @@ let visible = false;
 function paintAt(T, now) {
   const t = T - FROM; const on = t >= -0.02;
   canvas.style.visibility = on ? 'visible' : 'hidden';
-  if (!on) { placeSwitch(0); caps.forEach((el) => { el.style.opacity = '0'; }); return; }
+  if (!on) { placeSwitch(0); chipTitle.style.opacity = '0'; return; }
   paint(Math.max(0, t), now);
 }
 const follow = followScroll(sec, { steps: STEPS_ALL, reduced: RM, onFrame: paintAt, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t - FROM >= 2 || (mode > 0 && follow.t > FROM)))) });
