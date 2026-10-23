@@ -342,23 +342,48 @@ if (sec) {
   const stick = sec.querySelector('.feat__stick');
   const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *, .points, .feat__defs')]));
   const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
+  // The app pages' 3D phone (features-3d.js): it stands in for the flat phone while it turns.
+  const appPanels = panels.filter((p) => p.classList.contains('feat__panel--app'));
+  const isApp = (k) => appPanels.includes(panels[k]);
+  const appIdx = (k) => appPanels.indexOf(panels[k]);
+  let phone3d = null;
+  const placePhone3d = () => {
+    const ph = appPanels[0] && appPanels[0].querySelector('.phone');
+    if (!phone3d || !ph) return;
+    const r = ph.getBoundingClientRect(); const sr = stick.getBoundingClientRect();
+    phone3d.place({ left: r.left - sr.left, top: r.top - sr.top, width: r.width, height: r.height });
+  };
   let current = -1;
   function paint(t) {
     const a = Math.floor(t + 1e-6); const b = Math.min(STEPS, a + 1); const u = b === a ? 0 : t - a;
+    const phones = b !== a && isApp(a) && isApp(b);
+    const turn = RM ? (u < 0.5 ? 0 : 1) : sm(0.1, 0.9, u); // between two app pages: half a turn, as on 10 Delivery
+    const enter = b !== a && !isApp(a) && isApp(b) && !RM ? sm(0.4, 0.9, u) : -1; // onto the first app page: a quarter turn in from edge-on
+    let turning3d = false;
+    if (phone3d) {
+      if (phones && turn > 0 && turn < 1) { phone3d.set(turn * Math.PI, -0.06 * Math.sin(turn * Math.PI), appIdx(a), appIdx(b)); turning3d = true; }
+      else if (enter > 0 && enter < 1) { phone3d.set((enter - 1) * Math.PI / 2, -0.06 * Math.sin(enter * Math.PI), appIdx(b), appIdx(b)); turning3d = true; }
+      phone3d.show(turning3d);
+    }
     panels.forEach((p, i) => {
       let txt = 0; let gfx = 0;
       if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.5, u); }
       if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.4, 0.85, u); }
       // Between two phone pages the phone makes half a turn on its vertical axis, as on 10 Delivery
       // (same timing): the outgoing screen turns away to edge-on, then the next one comes round.
-      const phones = panels[a] && panels[b] && b !== a && panels[a].classList.contains('feat__panel--app') && panels[b].classList.contains('feat__panel--app');
+      // With WebGL the 3D phone does the turn and the flat phone shows only at rest; without it the
+      // flat phone turns with a CSS rotation.
       const phone = p.querySelector('.phone');
       if (phones && (i === a || i === b)) {
-        const turn = RM ? (u < 0.5 ? 0 : 1) : sm(0.1, 0.9, u);
-        const out = i === a; const on = out ? turn < 0.5 : turn >= 0.5;
+        const out = i === a;
+        const on = phone3d ? (out ? turn <= 0 : turn >= 1) : (out ? turn < 0.5 : turn >= 0.5);
         gfx = on ? 1 : 0;
         p.style.setProperty('--frame', on ? '1' : '0');
-        if (phone) phone.style.transform = RM ? '' : `perspective(1800px) rotateX(${(-3.4 * Math.sin(turn * Math.PI)).toFixed(2)}deg) rotateY(${((out ? turn : turn - 1) * 180).toFixed(2)}deg)`;
+        if (phone) phone.style.transform = RM || phone3d ? '' : `perspective(1800px) rotateX(${(-3.4 * Math.sin(turn * Math.PI)).toFixed(2)}deg) rotateY(${((out ? turn : turn - 1) * 180).toFixed(2)}deg)`;
+      } else if (phone3d && enter >= 0 && i === b) {
+        gfx = enter >= 1 ? 1 : 0;
+        p.style.setProperty('--frame', String(gfx));
+        if (phone) phone.style.transform = '';
       } else {
         p.style.removeProperty('--frame');
         if (phone) phone.style.transform = '';
@@ -388,10 +413,16 @@ if (sec) {
   const skip = sec.querySelector('.feat__skip');
   if (skip) skip.addEventListener('click', () => window.scrollTo({ top: sec.offsetTop + sec.offsetHeight, behavior: 'auto' }));
   // The dust is sampled from the laid-out text, so it is rebuilt when layout, fonts or theme change.
-  const rebuild = () => { dust.invalidate(); paint(follow.t); };
+  const rebuild = () => { dust.invalidate(); placePhone3d(); paint(follow.t); };
   window.addEventListener('resize', rebuild);
   if (document.fonts) document.fonts.ready.then(rebuild);
   new MutationObserver(rebuild).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
   follow.sync();
   window.featuresAt = (v) => follow.jump(v); // debugging: show any point of the section
+  if (appPanels.length && !RM) {
+    import('/proto/features-3d.js?v=1')
+      .then(({ makeFeatPhone3D }) => makeFeatPhone3D(stick, appPanels.map((p) => p.querySelector('.phone').dataset.screen)))
+      .then((p) => { if (!p) return; phone3d = p; placePhone3d(); paint(follow.t); })
+      .catch((e) => console.warn('Formats 3D phone unavailable, keeping the flat one', e));
+  }
 }

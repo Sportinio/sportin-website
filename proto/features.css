@@ -162,3 +162,7 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .points b { font-size: 16px; font-weight: 650; color: var(--ink); }
 .points span { font-size: 15px; line-height: 1.5; color: var(--slate); }
 
+
+/* The 3D phone for the turn between app pages (features-3d.js); placed over the flat phone. */
+.feat__three { position: absolute; z-index: 3; pointer-events: none; visibility: hidden; }
+.feat__three canvas { display: block; }
