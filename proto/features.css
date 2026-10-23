@@ -17,6 +17,8 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 /* Page number and chapter (option 2): blue number, the chapter in bold after a short rule, then the page. */
 .feat__intro .feat__idx { display: flex; justify-content: center; align-items: baseline; gap: 12px; margin-bottom: 18px; font-family: var(--body); font-size: 14px; letter-spacing: 0; color: var(--slate); }
 .feat__panel--app .feat__intro .feat__idx { justify-content: flex-start; }
+/* The same heading on the member content and technology pages (left aligned, after Competitions). */
+.ugc__kicker.feat__idx, #technology .eyebrow.feat__idx { display: flex; justify-content: flex-start; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--body); font-size: 14px; font-weight: 400; letter-spacing: 0; color: var(--slate); }
 .feat__idx b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 22px; line-height: 1; color: var(--blue); }
 .feat__idx span { font-weight: 600; color: var(--ink); }
 .feat__idx b + span { padding-left: 12px; border-left: 1px solid var(--line); }
