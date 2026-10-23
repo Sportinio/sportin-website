@@ -2,6 +2,7 @@
    one audience (four of them); the fifth brings the engagement number, counting from around 20% to 75%.
    All motion comes from CSS variables that audience.js sets from the scroll position. */
 .aud { position: relative; height: calc(100vh + 5 * 80vh); }
+.aud[data-steps='1'] { height: calc(100vh + 1 * 80vh); }
 .aud__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--infield); box-sizing: border-box; padding: calc(var(--nav-h) + 28px) 0 40px; }
 html.is-full .aud__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
 html.is-full .aud .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
