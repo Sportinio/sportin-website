@@ -98,8 +98,3 @@ html.is-full #problem .problem__lede { margin-top: 20px; max-width: 40em; }
 html.is-full #problem .problem__steps { margin-top: clamp(48px, 6vh, 72px); }
 @keyframes deck-rise-sm { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 html.is-full #problem.page > .slide__fit > * { animation-name: deck-rise-sm; animation-range: entry 10% entry 60%; }
-
-/* Closing reassurance line under the pilot button, and the second footer heading in one column. */
-.closing__micro { margin: 16px 0 0; font-size: var(--fs-small); color: var(--slate); }
-.closing__micro a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
-.foot__h--next { margin-top: 28px; }
