@@ -103,7 +103,3 @@ html.is-full #problem.page > .slide__fit > * { animation-name: deck-rise-sm; ani
 .closing__micro { margin: 16px 0 0; font-size: var(--fs-small); color: var(--slate); }
 .closing__micro a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .foot__h--next { margin-top: 28px; }
-
-/* Hero: the outcome line under the lede and the reassurance line under the buttons (on the video). */
-.hero__outcome { margin: 14px 0 0; max-width: 32em; font-size: var(--fs-small); font-weight: 600; }
-.hero__note { margin: 16px 0 0; font-size: var(--fs-small); opacity: 0.8; }
