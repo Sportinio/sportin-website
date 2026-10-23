@@ -1,5 +1,5 @@
 // 10 Delivery: a pinned scroll scene, t runs 0..2 at the Competitions pace (scroll-follow.js).
-// At t = 0, 1, 2 one option is lit and the phone shows it: the SportIn app, white label, then a
+// At t = 0, 1, 2 the phone shows one option and only that option's text is beside it: the SportIn app, white label, then a
 // client's own app. Between steps the phone turns on its vertical axis; the screen changes while
 // it is edge-on, and the turn carries on in the same direction back to face the viewer.
 import { followScroll } from '/proto/scroll-follow.js?v=2';
@@ -17,17 +17,21 @@ if (sec) {
   const near = (i, t) => { const d = Math.abs(t - i); return RM ? (d < 0.5 ? 1 : 0) : 1 - sm(0.15, 0.85, d); };
 
   function paint(t) {
-    rows.forEach((r, i) => r.style.setProperty('--on', near(i, t).toFixed(3)));
     const i = Math.min(last, Math.floor(t)); const p = t >= last ? 0 : sm(0.1, 0.9, t - i);
-    if (RM) { [layers, caps].forEach((set) => set.forEach((el, k) => el.style.setProperty('--o', near(k, t).toFixed(3)))); return; }
+    if (RM) {
+      rows.forEach((r, k) => r.style.setProperty('--on', near(k, t).toFixed(3)));
+      [layers, caps].forEach((set) => set.forEach((el, k) => el.style.setProperty('--o', near(k, t).toFixed(3))));
+      return;
+    }
     // 0 to 90 degrees on the old screen, then -90 to 0 on the new one: one continuous turn.
     const ry = p < 0.5 ? p * 180 : p * 180 - 180;
     phone.style.setProperty('--ry', `${ry.toFixed(2)}deg`);
     phone.style.setProperty('--sc', (1 - 0.08 * Math.sin(p * Math.PI)).toFixed(4));
     const shown = p < 0.5 ? i : i + 1;
     layers.forEach((l, k) => l.style.setProperty('--o', k === shown ? '1' : '0'));
-    // The caption fades out as the turn starts and the next one fades in as it ends.
+    // The option text and caption fade out as the turn starts and the next ones fade in as it ends.
     const capO = Math.abs(Math.cos(p * Math.PI)).toFixed(3);
+    rows.forEach((r, k) => r.style.setProperty('--on', k === shown ? capO : '0'));
     caps.forEach((c, k) => c.style.setProperty('--o', k === shown ? capO : '0'));
   }
 
