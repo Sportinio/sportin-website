@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="/assets/site/site.css?v=teams1" />
   <link rel="stylesheet" href="/proto/particles.css?v=9" />
   <link rel="stylesheet" href="/proto/video-hero.css?v=4" />
-  <link rel="stylesheet" href="/proto/deck.css?v=11" />
+  <link rel="stylesheet" href="/proto/deck.css?v=12" />
   <link rel="stylesheet" href="/proto/evidence.css?v=4" />
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
@@ -712,18 +712,14 @@
 
   <!-- VISION + CLOSING -->
   <section class="sec closing rises" id="demo" aria-labelledby="closingTitle">
-    <svg class="closing__lanes" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <path d="M600,40 H820 A260 260 0 0 1 820,560 H380 A260 260 0 0 1 380,40 Z" />
-      <path d="M600,90 H820 A210 210 0 0 1 820,510 H380 A210 210 0 0 1 380,90 Z" />
-      <path d="M600,140 H820 A160 160 0 0 1 820,460 H380 A160 160 0 0 1 380,140 Z" />
-    </svg>
+    <!-- Three lanes drawn around the content by closing-track.js, so every oval stays whole at any size. -->
+    <svg class="closing__lanes" aria-hidden="true"><rect /><rect /><rect /></svg>
     <div class="wrap closing__inner">
-      <img class="theme-light-only closing__logo" src="/assets/site/logo/sportin-wordmark-black.svg" alt="SportIn" width="208" height="25" data-reveal /><img class="theme-dark-only closing__logo" src="/assets/site/logo/sportin-wordmark-white.svg" alt="" width="208" height="25" data-reveal />
       <p class="closing__vision" data-reveal>Every move brings us closer.</p>
       <p class="feat__idx" data-reveal style="--d:.03s"><b>16</b><span>Get started</span><em>Pilot</em></p>
       <h2 class="display display--xl" id="closingTitle" data-reveal style="--d:.06s">Start with <em>a pilot</em>.</h2>
       <p class="closing__text" data-reveal style="--d:.12s">Tell us about your community. We'll design a first game with you and launch it together.</p>
-      <div data-reveal style="--d:.18s"><a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo <span class="btn__arrow" aria-hidden="true">→</span></a></div>
+      <div data-reveal style="--d:.18s"><a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Plan your pilot <span class="btn__arrow" aria-hidden="true">→</span></a></div>
     </div>
   </section>
 </main>
@@ -757,6 +753,7 @@
 <script src="/proto/problem-scroll.js?v=3" defer></script>
 <script src="/proto/jelly.js?v=15" defer></script>
 <script src="/proto/deck.js?v=16" defer></script>
+<script src="/proto/closing-track.js?v=7" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=26"></script>
