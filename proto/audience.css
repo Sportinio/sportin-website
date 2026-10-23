@@ -1,0 +1,49 @@
+/* 09 Who it's for: a pinned scroll scene on a very light grey rounded block. Each scroll step lights
+   one audience; the fourth brings the engagement number, counting from around 20% to 75%.
+   All motion comes from CSS variables that audience.js sets from the scroll position. */
+.aud { position: relative; height: calc(100vh + 4 * 80vh); }
+.aud__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--infield); box-sizing: border-box; padding: calc(var(--nav-h) + 28px) 0 40px; }
+html.is-full .aud__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
+html.is-full .aud .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
+html.is-deck .aud { display: none; } /* Present mode does not include the scroll scenes yet */
+.aud__grid { height: 100%; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); column-gap: clamp(48px, 5.5vw, 88px); align-items: stretch; align-content: center; }
+
+/* Left: heading, title, the three beats, a closing line. */
+.aud__copy { display: flex; flex-direction: column; min-height: 0; }
+.aud__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(40px, 3.8vw, 58px); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); text-wrap: balance; }
+.aud__title em { font-style: normal; color: var(--blue); white-space: nowrap; }
+.aud__list { list-style: none; margin: clamp(32px, 2.8vw, 40px) 0 0; padding: 0; }
+.aud__row { position: relative; padding: clamp(16px, 1.4vw, 20px) 0 clamp(18px, 1.5vw, 22px); border-top: 1px solid var(--line); }
+.aud__row::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--blue); transform-origin: left; transform: scaleX(var(--ln, 0)); opacity: calc(1 - var(--dim, 0)); }
+.aud__name { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: clamp(22px, 2vw, 28px); line-height: 1.1; letter-spacing: -0.01em; color: var(--ink); opacity: calc(0.14 + 0.86 * var(--on, 0)); }
+.aud__line { margin: 6px 0 0; max-width: 44ch; font-size: clamp(16px, 1.2vw, 17px); line-height: 1.45; color: var(--slate); opacity: calc(var(--ln, 0) * (1 - 0.4 * var(--dim, 0))); transform: translateY(calc((1 - var(--ln, 0)) * 10px)); filter: blur(calc((1 - var(--ln, 0)) * 3px)); }
+.aud__close { margin: auto 0 0; padding-top: 28px; font-size: 16px; color: var(--slate); opacity: var(--sup, 0); transform: translateY(calc((1 - var(--sup, 0)) * 8px)); }
+
+/* Right: the number panel. It is full from the start (typical 20%), and the SportIn bar grows on step 4. */
+.aud__panel { display: flex; flex-direction: column; justify-content: space-between; min-height: 440px; box-sizing: border-box; padding: clamp(32px, 2.8vw, 44px); border-radius: var(--r-card); background: var(--surface); }
+.aud__label { margin: 0; font-family: var(--mono); font-size: 13px; color: var(--slate); }
+.aud__num { display: flex; align-items: flex-start; margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(112px, min(11vw, 19vh), 168px); line-height: 0.9; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--blue) calc(var(--k, 0) * 100%), var(--slate)); }
+.aud__n { display: inline-block; min-width: 2ch; text-align: right; }
+.aud__pct { margin-top: 0.1em; font-size: 0.46em; }
+.aud__bars { display: grid; gap: 18px; margin-top: 28px; }
+.aud__bar { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; font-size: 14px; }
+.aud__bar > span:first-child { color: var(--slate); }
+.aud__bar b { font-family: var(--mono); font-weight: 500; font-size: 14px; color: var(--slate); font-variant-numeric: tabular-nums; }
+.aud__track { grid-column: 1 / -1; display: block; height: 12px; border-radius: 6px; background: var(--infield); overflow: hidden; }
+.aud__track i { display: block; height: 100%; border-radius: 6px; transform-origin: left; transform: scaleX(var(--f, 0)); }
+.aud__bar--typ .aud__track i { --f: 0.2; background: color-mix(in srgb, var(--slate) 45%, transparent); }
+.aud__bar--si > span:first-child { color: color-mix(in srgb, var(--ink) calc(var(--k, 0) * 100%), var(--slate)); }
+.aud__bar--si b, .aud__bar--si .aud__track i { opacity: var(--fo, 0); }
+.aud__bar--si b { color: var(--blue); }
+.aud__bar--si .aud__track i { background: var(--blue); }
+.aud__support { margin: 24px 0 0; max-width: 34ch; font-size: 16px; line-height: 1.45; color: var(--slate); opacity: var(--sup, 0); transform: translateY(calc((1 - var(--sup, 0)) * 8px)); }
+.aud__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .aud__panel { background: var(--paper); } }
+:root[data-theme='dark'] .aud__panel { background: var(--paper); }
+@media (max-width: 900px) {
+  .aud { height: auto; }
+  .aud__stick { position: static; height: auto; }
+  .aud__grid { grid-template-columns: 1fr; row-gap: 32px; }
+}
+@media (prefers-reduced-motion: reduce) { .aud__line, .aud__support, .aud__close { transform: none; filter: none; } }
