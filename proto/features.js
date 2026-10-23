@@ -15,6 +15,7 @@ if (sec) {
   const panels = [...sec.querySelectorAll('.feat__panel')];
   const nav = [...sec.querySelectorAll('.feat__nav button')];
   const STEPS = panels.length - 1;
+  const LEAD = panels[0] && panels[0].classList.contains('feat__panel--lead') ? 1 : 0; // an opening title page has no rail button
 
   // ---------- Knockout bracket (built here to keep the markup short) ----------
   // Quarter-finals (the eight group qualifiers, group winners against runners-up of another group),
@@ -359,8 +360,8 @@ if (sec) {
     const k = Math.round(t);
     if (k !== current) {
       current = k;
-      nav.forEach((btn, i) => btn.setAttribute('aria-current', String(i === k - 1))); // page 0 is the opening title
-      sec.querySelectorAll('.tl__layer').forEach((layer) => layer.classList.toggle('is-on', layer.contains(nav[k - 1] || null)));
+      nav.forEach((btn, i) => btn.setAttribute('aria-current', String(i === k - LEAD)));
+      sec.querySelectorAll('.tl__layer').forEach((layer) => layer.classList.toggle('is-on', layer.contains(nav[k - LEAD] || null)));
       panels.forEach((p, i) => p.toggleAttribute('inert', i !== k));
     }
     runDemoFor(k);
@@ -370,7 +371,7 @@ if (sec) {
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; paint(follow.t); }).observe(sec);
   // The rail jumps to a panel by scrolling to its step, so it works with the deck's snapping.
   nav.forEach((b, i) => b.addEventListener('click', () => {
-    const top = sec.offsetTop + ((i + 1) / (STEPS + 0.6)) * (sec.offsetHeight - window.innerHeight);
+    const top = sec.offsetTop + ((i + LEAD) / (STEPS + 0.6)) * (sec.offsetHeight - window.innerHeight);
     window.scrollTo({ top, behavior: RM ? 'auto' : 'smooth' });
   }));
   // Skip: straight to the section after this one.
