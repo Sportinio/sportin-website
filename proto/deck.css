@@ -110,3 +110,7 @@ html.is-full #problem.page > .slide__fit > * { animation-name: deck-rise-sm; ani
 #why .feat__idx span, .feat__idx.evidence__eyebrow span { color: #fff; }
 #why .feat__idx em, .feat__idx.evidence__eyebrow em { color: rgba(255, 255, 255, 0.72); }
 #why .feat__idx b + span, .feat__idx.evidence__eyebrow b + span { border-left-color: rgba(255, 255, 255, 0.3); }
+
+/* Footer legal links (the live sportin.io set) read like the rest of the footer. */
+.foot__base a { color: inherit; text-decoration: none; }
+.foot__base a:hover { color: var(--ink); }
