@@ -1,23 +1,22 @@
 /* 09 Who it's for: a pinned scroll scene on a very light grey rounded block. Each scroll step lights
-   one audience; the fourth brings the engagement number, counting from around 20% to 75%.
+   one audience (four of them); the fifth brings the engagement number, counting from around 20% to 75%.
    All motion comes from CSS variables that audience.js sets from the scroll position. */
-.aud { position: relative; height: calc(100vh + 4 * 80vh); }
+.aud { position: relative; height: calc(100vh + 5 * 80vh); }
 .aud__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--infield); box-sizing: border-box; padding: calc(var(--nav-h) + 28px) 0 40px; }
 html.is-full .aud__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
 html.is-full .aud .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
 html.is-deck .aud { display: none; } /* Present mode does not include the scroll scenes yet */
 .aud__grid { height: 100%; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); column-gap: clamp(48px, 5.5vw, 88px); align-items: stretch; align-content: center; }
 
-/* Left: heading, title, the three beats, a closing line. */
+/* Left: heading, title and the four audiences. */
 .aud__copy { display: flex; flex-direction: column; min-height: 0; }
 .aud__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(40px, 3.8vw, 58px); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); text-wrap: balance; }
 .aud__title em { font-style: normal; color: var(--blue); white-space: nowrap; }
-.aud__list { list-style: none; margin: clamp(32px, 2.8vw, 40px) 0 0; padding: 0; }
-.aud__row { position: relative; padding: clamp(16px, 1.4vw, 20px) 0 clamp(18px, 1.5vw, 22px); border-top: 1px solid var(--line); }
+.aud__list { list-style: none; margin: clamp(26px, 2.4vw, 34px) 0 0; padding: 0; }
+.aud__row { position: relative; padding: clamp(12px, 1.1vw, 16px) 0 clamp(14px, 1.2vw, 18px); border-top: 1px solid var(--line); }
 .aud__row::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--blue); transform-origin: left; transform: scaleX(var(--ln, 0)); opacity: calc(1 - var(--dim, 0)); }
 .aud__name { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: clamp(22px, 2vw, 28px); line-height: 1.1; letter-spacing: -0.01em; color: var(--ink); opacity: calc(0.14 + 0.86 * var(--on, 0)); }
 .aud__line { margin: 6px 0 0; max-width: 44ch; font-size: clamp(16px, 1.2vw, 17px); line-height: 1.45; color: var(--slate); opacity: calc(var(--ln, 0) * (1 - 0.4 * var(--dim, 0))); transform: translateY(calc((1 - var(--ln, 0)) * 10px)); filter: blur(calc((1 - var(--ln, 0)) * 3px)); }
-.aud__close { margin: auto 0 0; padding-top: 28px; font-size: 16px; color: var(--slate); opacity: var(--sup, 0); transform: translateY(calc((1 - var(--sup, 0)) * 8px)); }
 
 /* Right: the number panel. It is full from the start (typical 20%), and the SportIn bar grows on step 4. */
 .aud__panel { display: flex; flex-direction: column; justify-content: space-between; min-height: 440px; box-sizing: border-box; padding: clamp(32px, 2.8vw, 44px); border-radius: var(--r-card); background: var(--surface); }
@@ -46,4 +45,4 @@ html.is-deck .aud { display: none; } /* Present mode does not include the scroll
   .aud__stick { position: static; height: auto; }
   .aud__grid { grid-template-columns: 1fr; row-gap: 32px; }
 }
-@media (prefers-reduced-motion: reduce) { .aud__line, .aud__support, .aud__close { transform: none; filter: none; } }
+@media (prefers-reduced-motion: reduce) { .aud__line, .aud__support { transform: none; filter: none; } }
