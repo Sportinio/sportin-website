@@ -34,25 +34,8 @@ if (sec) {
   }
 
   let follow = null;
-  let at = 0; // narrow screens: the option on the phone now
-  if (window.matchMedia('(max-width: 900px)').matches) {
-    // No pinned scene: all three options are listed, and tapping one turns the phone to it.
-    let raf = 0;
-    const pick = (k) => {
-      rows.forEach((r, j) => { r.classList.toggle('is-on', j === k); r.setAttribute('aria-pressed', String(j === k)); });
-      cancelAnimationFrame(raf);
-      const from = at; const t0 = performance.now(); const ms = RM ? 1 : 900 * Math.max(1, Math.abs(k - from));
-      const step = (now) => { const u = Math.min(1, (now - t0) / ms); at = from + (k - from) * u; paint(at); if (u < 1) raf = requestAnimationFrame(step); };
-      raf = requestAnimationFrame(step);
-    };
-    rows.forEach((r, k) => {
-      r.setAttribute('role', 'button'); r.tabIndex = 0;
-      r.addEventListener('click', () => pick(k));
-      r.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(k); } });
-    });
-    rows.forEach((r, j) => { r.classList.toggle('is-on', j === 0); r.setAttribute('aria-pressed', String(j === 0)); });
-    paint(0);
-  } else {
+  if (window.matchMedia('(max-width: 900px)').matches) paint(0);
+  else {
     follow = followScroll(sec, { steps: last, hold: 0.6, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
     follow.sync();
     window.deliveryAt = (v) => follow.jump(v); // debugging: show any point of the scene
@@ -61,6 +44,6 @@ if (sec) {
   // Swap in the 3D phone once Three.js and the three screens have loaded.
   import('/proto/delivery-3d.js?v=4')
     .then(({ makePhone3D }) => makePhone3D(sec.querySelector('.dl__three'), layers.map((l) => l.getAttribute('src'))))
-    .then((p) => { if (!p) return; phone3d = p; sec.classList.add('is-3d'); p.resize(); paint(follow ? follow.t : at); })
+    .then((p) => { if (!p) return; phone3d = p; sec.classList.add('is-3d'); p.resize(); paint(follow ? follow.t : 0); })
     .catch((e) => console.warn('Delivery 3D phone unavailable, keeping the flat one', e));
 }

@@ -338,58 +338,49 @@ if (sec) {
     if (running && demos[running]) demos[running].start();
   }
 
-  // Narrow screens get no pinned scene (like audience.js and delivery.js): the pages stack in
-  // features.css, and each demo plays while its page is on screen.
-  if (window.matchMedia('(max-width: 900px)').matches) {
-    panels.forEach((p) => {
-      const holder = p.querySelector('[data-demo]'); const demo = holder && demos[holder.dataset.demo];
-      if (demo) new IntersectionObserver(([en]) => (en.isIntersecting ? demo.start() : demo.stop()), { threshold: 0.2 }).observe(p);
+  // ---------- Dust pages ----------
+  const stick = sec.querySelector('.feat__stick');
+  const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *, .points, .feat__defs')]));
+  const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
+  let current = -1;
+  function paint(t) {
+    const a = Math.floor(t + 1e-6); const b = Math.min(STEPS, a + 1); const u = b === a ? 0 : t - a;
+    panels.forEach((p, i) => {
+      let txt = 0; let gfx = 0;
+      if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.5, u); }
+      if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.4, 0.85, u); }
+      p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
+      // Between two phone pages the device stays still and only its screen changes.
+      const phones = panels[a] && panels[b] && b !== a && panels[a].classList.contains('feat__panel--app') && panels[b].classList.contains('feat__panel--app');
+      if (phones && (i === a || i === b)) p.style.setProperty('--frame', i === a ? '1' : '0'); else p.style.removeProperty('--frame');
+      p.style.visibility = txt > 0 || gfx > 0 || (phones && i === a) ? 'visible' : 'hidden'; // the outgoing frame stays until the new page owns it
     });
-  } else {
-    // ---------- Dust pages ----------
-    const stick = sec.querySelector('.feat__stick');
-    const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *, .points, .feat__defs')]));
-    const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
-    let current = -1;
-    function paint(t) {
-      const a = Math.floor(t + 1e-6); const b = Math.min(STEPS, a + 1); const u = b === a ? 0 : t - a;
-      panels.forEach((p, i) => {
-        let txt = 0; let gfx = 0;
-        if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.5, u); }
-        if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.4, 0.85, u); }
-        p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
-        // Between two phone pages the device stays still and only its screen changes.
-        const phones = panels[a] && panels[b] && b !== a && panels[a].classList.contains('feat__panel--app') && panels[b].classList.contains('feat__panel--app');
-        if (phones && (i === a || i === b)) p.style.setProperty('--frame', i === a ? '1' : '0'); else p.style.removeProperty('--frame');
-        p.style.visibility = txt > 0 || gfx > 0 || (phones && i === a) ? 'visible' : 'hidden'; // the outgoing frame stays until the new page owns it
-      });
-      if (!RM) dust.draw(a, b, u);
-      const k = Math.round(t);
-      if (k !== current) {
-        current = k;
-        nav.forEach((btn, i) => btn.setAttribute('aria-current', String(i === k - 1))); // page 0 is the opening title
-        sec.querySelectorAll('.tl__layer').forEach((layer) => layer.classList.toggle('is-on', layer.contains(nav[k - 1] || null)));
-        panels.forEach((p, i) => p.toggleAttribute('inert', i !== k));
-      }
-      runDemoFor(k);
+    if (!RM) dust.draw(a, b, u);
+    const k = Math.round(t);
+    if (k !== current) {
+      current = k;
+      nav.forEach((btn, i) => btn.setAttribute('aria-current', String(i === k - 1))); // page 0 is the opening title
+      sec.querySelectorAll('.tl__layer').forEach((layer) => layer.classList.toggle('is-on', layer.contains(nav[k - 1] || null)));
+      panels.forEach((p, i) => p.toggleAttribute('inert', i !== k));
     }
-    // Slow motion: one scroll step takes about 3.5 to 4 s, so the dust drifts rather than jumps.
-    const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
-    new IntersectionObserver(([en]) => { visible = en.isIntersecting; paint(follow.t); }).observe(sec);
-    // The rail jumps to a panel by scrolling to its step, so it works with the deck's snapping.
-    nav.forEach((b, i) => b.addEventListener('click', () => {
-      const top = sec.offsetTop + ((i + 1) / (STEPS + 0.6)) * (sec.offsetHeight - window.innerHeight);
-      window.scrollTo({ top, behavior: RM ? 'auto' : 'smooth' });
-    }));
-    // Skip: straight to the section after this one.
-    const skip = sec.querySelector('.feat__skip');
-    if (skip) skip.addEventListener('click', () => window.scrollTo({ top: sec.offsetTop + sec.offsetHeight, behavior: 'auto' }));
-    // The dust is sampled from the laid-out text, so it is rebuilt when layout, fonts or theme change.
-    const rebuild = () => { dust.invalidate(); paint(follow.t); };
-    window.addEventListener('resize', rebuild);
-    if (document.fonts) document.fonts.ready.then(rebuild);
-    new MutationObserver(rebuild).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
-    follow.sync();
-    window.featuresAt = (v) => follow.jump(v); // debugging: show any point of the section
+    runDemoFor(k);
   }
+  // Slow motion: one scroll step takes about 3.5 to 4 s, so the dust drifts rather than jumps.
+  const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; paint(follow.t); }).observe(sec);
+  // The rail jumps to a panel by scrolling to its step, so it works with the deck's snapping.
+  nav.forEach((b, i) => b.addEventListener('click', () => {
+    const top = sec.offsetTop + ((i + 1) / (STEPS + 0.6)) * (sec.offsetHeight - window.innerHeight);
+    window.scrollTo({ top, behavior: RM ? 'auto' : 'smooth' });
+  }));
+  // Skip: straight to the section after this one.
+  const skip = sec.querySelector('.feat__skip');
+  if (skip) skip.addEventListener('click', () => window.scrollTo({ top: sec.offsetTop + sec.offsetHeight, behavior: 'auto' }));
+  // The dust is sampled from the laid-out text, so it is rebuilt when layout, fonts or theme change.
+  const rebuild = () => { dust.invalidate(); paint(follow.t); };
+  window.addEventListener('resize', rebuild);
+  if (document.fonts) document.fonts.ready.then(rebuild);
+  new MutationObserver(rebuild).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+  follow.sync();
+  window.featuresAt = (v) => follow.jump(v); // debugging: show any point of the section
 }

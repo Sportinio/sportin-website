@@ -159,16 +159,3 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .points b { font-size: 16px; font-weight: 650; color: var(--ink); }
 .points span { font-size: 15px; line-height: 1.5; color: var(--slate); }
 
-
-/* Narrow screens: no pinned scene (features.js does not start it). The pages stack like ordinary
-   sections, so the rail, Skip and the dust are not needed; each phone sits under its title. */
-@media (max-width: 900px) {
-  .feat { height: auto; }
-  .feat__stick { position: static; height: auto; overflow: visible; }
-  .feat__track { height: auto; display: grid; gap: 88px; padding: calc(var(--nav-h) + 24px) 0 72px; }
-  .feat__panel { position: static; padding: 0 var(--gutter); row-gap: 28px; }
-  .feat__dust, .feat__nav, .feat__skip { display: none; }
-  .feat__panel--app { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; justify-items: stretch; }
-  .feat__panel--app .feat__intro, .feat__panel--app .points { grid-column: auto; grid-row: auto; }
-  .feat__panel--app .phone { grid-column: auto; grid-row: auto; height: auto; width: min(300px, 78vw); justify-self: center; }
-}
