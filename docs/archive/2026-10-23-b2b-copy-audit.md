@@ -1,7 +1,7 @@
 ---
 scope: repo
 applies_to: [sportin-website-home]
-status: proposal, nothing applied
+status: approved by the founder 2026-10-23, applied to the pages the deck still has (see section 6)
 date: 2026-10-23
 ---
 
@@ -234,3 +234,30 @@ commentary and Sportinho audio.
 
 Small fixes needing no input: "1 users" → "1 user"; em dash in og:title; hero secondary button to
 #engine; remove every "unlock"; "Layer 2 · Ranking" → "Leaderboard".
+
+## 6. What was applied (2026-10-23)
+
+The founder approved this audit. Most sections it covers (hero, problem, evidence, spine, engine,
+games, ecosystem, revenue, impact, stories, how it works, belief) were removed from the deck the same
+day, so only these were applied to `proto/deck.html` and `proto/deck-jelly.html`:
+
+- Meta: new description and og:description, og:title without the em dash.
+- Intro page: lede without "unlock". The title "Three layers. Every game." stays.
+- Formats 01 to 06: the proposed titles, ledes and kickers, the rail as Compete / Climb / Get
+  rewarded, "1 users" fixed, Houses can carry a partner's name, Walking no longer claims five ways.
+- Running: distances say 3K, 5K, 10K and 15K, which is what the screen shows, until the longest
+  distance is confirmed. "Pace by default / Or rank by time or distance."
+- Rewards: partner wording, every "unlock" removed, "A visit you can count" without the report claim.
+- Member content: the proposed kicker, title and lede.
+- Technology: the proposed eyebrow, title and lede. The station captions are fixed to one line, so
+  the commentary caption is shortened to "Each match, written from real data." and Sportinho keeps
+  its caption.
+- Who it's for: the proposed lines for companies, brands, clubs and NGOs. The clubs line replaces
+  "Fans feel part of the team, between every match". Gyms were not added, because the scene has one
+  scroll step per audience.
+- Closing: "Plan your pilot" and "No commitment. Or write to hello@sportin.io". The call length is
+  left out until confirmed.
+- Footer: Explore links point at the pages that exist; a "For organisations" list was added.
+
+Not applied: every [confirm] item, the nav change (it pointed at removed pages), the "See it in your
+brand" CTA inside the formats scene, the number format question, and the motion notes.

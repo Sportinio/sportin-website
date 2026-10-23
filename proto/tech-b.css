@@ -15,6 +15,7 @@ body { margin: 0; background: var(--paper); font-family: var(--body); -webkit-fo
 .tb__idx em { font-style: normal; }
 .tb__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 .tb__title em { font-style: normal; color: #6f97ff; }
+.tb__lede { margin: 0; max-width: 40em; font-size: 17px; line-height: 1.5; color: var(--mute); }
 
 /* Stations: three panels; the live one is bright, the others rest. Under each visual a fixed
    one-line title and one-line description, and a play button on the two voice stations. */
