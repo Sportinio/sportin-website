@@ -349,11 +349,22 @@ if (sec) {
       let txt = 0; let gfx = 0;
       if (i === a) { txt = 1 - (RM ? sm(0.4, 0.5, u) : sm(WIN.outA, WIN.outB, u)); gfx = 1 - sm(0.05, 0.5, u); }
       if (i === b && b !== a) { txt = RM ? sm(0.5, 0.6, u) : sm(WIN.inA, WIN.inB, u); gfx = sm(0.4, 0.85, u); }
-      p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
-      // Between two phone pages the device stays still and only its screen changes.
+      // Between two phone pages the phone makes half a turn on its vertical axis, as on 10 Delivery
+      // (same timing): the outgoing screen turns away to edge-on, then the next one comes round.
       const phones = panels[a] && panels[b] && b !== a && panels[a].classList.contains('feat__panel--app') && panels[b].classList.contains('feat__panel--app');
-      if (phones && (i === a || i === b)) p.style.setProperty('--frame', i === a ? '1' : '0'); else p.style.removeProperty('--frame');
-      p.style.visibility = txt > 0 || gfx > 0 || (phones && i === a) ? 'visible' : 'hidden'; // the outgoing frame stays until the new page owns it
+      const phone = p.querySelector('.phone');
+      if (phones && (i === a || i === b)) {
+        const turn = RM ? (u < 0.5 ? 0 : 1) : sm(0.1, 0.9, u);
+        const out = i === a; const on = out ? turn < 0.5 : turn >= 0.5;
+        gfx = on ? 1 : 0;
+        p.style.setProperty('--frame', on ? '1' : '0');
+        if (phone) phone.style.transform = RM ? '' : `perspective(1800px) rotateX(${(-3.4 * Math.sin(turn * Math.PI)).toFixed(2)}deg) rotateY(${((out ? turn : turn - 1) * 180).toFixed(2)}deg)`;
+      } else {
+        p.style.removeProperty('--frame');
+        if (phone) phone.style.transform = '';
+      }
+      p.style.setProperty('--txt', txt.toFixed(3)); p.style.setProperty('--gfx', gfx.toFixed(3));
+      p.style.visibility = txt > 0 || gfx > 0 ? 'visible' : 'hidden';
     });
     if (!RM) dust.draw(a, b, u);
     const k = Math.round(t);
