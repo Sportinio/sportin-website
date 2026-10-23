@@ -1,7 +1,7 @@
 // 10 Delivery: the phone as a real 3D object (Three.js, from the deck's import map). It is built in
 // code, not loaded from a model file: a champagne titanium body with rounded edges and real thickness,
-// black front glass, the screen, the Dynamic Island, side buttons, and a frosted glass back with the
-// camera. Sizes are in millimetres, close to an iPhone 15 Pro. delivery.js turns it and picks the screen.
+// side buttons, and a screen with the Dynamic Island on both faces, so a half turn brings the next
+// screen round. Sizes are in millimetres, close to an iPhone 15 Pro. delivery.js turns it and picks the screen.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
@@ -59,33 +59,21 @@ export async function makePhone3D(host, urls) {
   const titanium = new THREE.MeshPhysicalMaterial({ color: 0xbfae94, metalness: 1, roughness: 0.3, clearcoat: 0.3, clearcoatRoughness: 0.25 });
   phone.add(new THREE.Mesh(slab(W, H, D, R, BEVEL), titanium));
 
-  // Front: black glass edge to edge, the screen inside it, the Dynamic Island on top.
-  const front = new THREE.Mesh(plate(W - 1.5, H - 1.5, R - 0.75), new THREE.MeshPhysicalMaterial({ color: 0x050506, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }));
-  front.position.z = D / 2 + 0.02; phone.add(front);
-  const screenMat = new THREE.MeshBasicMaterial({ map: screens[0], toneMapped: false });
-  const screen = new THREE.Mesh(plate(SW, SH, SR, 32), screenMat);
-  screen.position.z = D / 2 + 0.04; phone.add(screen);
-  // A faint sheen on the glass over the screen, so it reads as glass when the light moves across it.
-  const sheen = new THREE.Mesh(plate(SW, SH, SR, 32), new THREE.MeshPhysicalMaterial({ color: 0x000000, transparent: true, opacity: 0.04, roughness: 0.05, clearcoat: 1, metalness: 0, depthWrite: false }));
-  sheen.position.z = D / 2 + 0.06; phone.add(sheen);
-  const island = new THREE.Mesh(plate(20.8, 6.1, 3.05), new THREE.MeshBasicMaterial({ color: 0x000000 }));
-  island.position.set(0, SH / 2 - 1.85 - 3.05, D / 2 + 0.08); phone.add(island);
-
-  // Back: frosted glass in the same champagne, with the camera plateau and three lenses.
-  const backMat = new THREE.MeshPhysicalMaterial({ color: 0xcdbfaa, metalness: 0.15, roughness: 0.55, clearcoat: 0.4, clearcoatRoughness: 0.6 });
-  const back = new THREE.Mesh(plate(W - 1.5, H - 1.5, R - 0.75), backMat);
-  back.rotation.y = Math.PI; back.position.z = -D / 2 - 0.02; phone.add(back);
-  const cam = new THREE.Group(); cam.rotation.y = Math.PI; cam.position.set(W / 2 - 4.2 - 16.5, H / 2 - 4.2 - 17.5, -D / 2 - 0.02);
-  const plateau = new THREE.Mesh(slab(33, 35, 1.6, 7.4, 0.55, 6), new THREE.MeshPhysicalMaterial({ color: 0xc9baa3, metalness: 0.2, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.1 }));
-  plateau.position.z = 0.25; cam.add(plateau);
-  const ring = new THREE.MeshPhysicalMaterial({ color: 0xb6a588, metalness: 1, roughness: 0.25 });
-  const lensGlass = new THREE.MeshPhysicalMaterial({ color: 0x0a0c12, metalness: 0, roughness: 0.05, clearcoat: 1 });
-  [[-8.4, 8.6], [-8.4, -8.6], [8.6, 0]].forEach(([x, y]) => {
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(6.4, 6.6, 2.4, 48), ring); body.rotation.x = Math.PI / 2; body.position.set(x, y, 1.6); cam.add(body);
-    const glass = new THREE.Mesh(new THREE.CircleGeometry(5.1, 48), lensGlass); glass.position.set(x, y, 2.82); cam.add(glass);
+  // Two faces, front and back, each with black glass, a screen and the Dynamic Island. The phone
+  // turns half a turn per step, so each new screen arrives on the face that comes round.
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x050506, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 });
+  const sheenMat = new THREE.MeshPhysicalMaterial({ color: 0x000000, transparent: true, opacity: 0.04, roughness: 0.05, clearcoat: 1, metalness: 0, depthWrite: false });
+  const islandMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+  const faceMats = [0, 1].map((side) => {
+    const face = new THREE.Group(); face.rotation.y = side * Math.PI;
+    const mat = new THREE.MeshBasicMaterial({ map: screens[side], toneMapped: false });
+    const glass = new THREE.Mesh(plate(W - 1.5, H - 1.5, R - 0.75), glassMat); glass.position.z = D / 2 + 0.02;
+    const screen = new THREE.Mesh(plate(SW, SH, SR, 32), mat); screen.position.z = D / 2 + 0.04;
+    const sheen = new THREE.Mesh(plate(SW, SH, SR, 32), sheenMat); sheen.position.z = D / 2 + 0.06;
+    const island = new THREE.Mesh(plate(20.8, 6.1, 3.05), islandMat); island.position.set(0, SH / 2 - 1.85 - 3.05, D / 2 + 0.08);
+    face.add(glass, screen, sheen, island); phone.add(face);
+    return mat;
   });
-  const flash = new THREE.Mesh(new THREE.CircleGeometry(2, 24), new THREE.MeshPhysicalMaterial({ color: 0xf2eee6, roughness: 0.4 })); flash.position.set(9.4, 11.2, 1.07); cam.add(flash);
-  phone.add(cam);
 
   // Side buttons: the action button and volume on the left, the side button on the right.
   const button = (y, len, side) => {
@@ -118,10 +106,10 @@ export async function makePhone3D(host, urls) {
 
   return {
     canvas,
-    // yaw/pitch in radians; which screen to show (0, 1 or 2).
-    set(yaw, pitch, which) {
+    // yaw/pitch in radians; which screen each face shows (0, 1 or 2).
+    set(yaw, pitch, front, back) {
       phone.rotation.set(pitch, yaw, 0);
-      if (screenMat.map !== screens[which]) screenMat.map = screens[which];
+      [front, back].forEach((k, side) => { if (faceMats[side].map !== screens[k]) faceMats[side].map = screens[k]; });
       draw();
     },
     resize,
