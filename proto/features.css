@@ -14,6 +14,14 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .feat__panel { position: absolute; inset: 0; box-sizing: border-box; padding: calc(var(--nav-h) + 40px) max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)) 112px; display: grid; grid-template-rows: auto minmax(0, 1fr); justify-items: center; gap: 32px; }
 .feat__intro { text-align: center; max-width: 760px; opacity: var(--txt, 1); }
 .feat__intro .eng-k { margin: 0 0 14px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em; color: var(--slate); }
+/* Page number and chapter (option 2): blue number, the chapter in bold after a short rule, then the page. */
+.feat__intro .feat__idx { display: flex; justify-content: center; align-items: baseline; gap: 12px; margin-bottom: 18px; font-family: var(--body); font-size: 14px; letter-spacing: 0; color: var(--slate); }
+.feat__panel--app .feat__intro .feat__idx { justify-content: flex-start; }
+.feat__idx b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 22px; line-height: 1; color: var(--blue); }
+.feat__idx span { font-weight: 600; color: var(--ink); }
+.feat__idx b + span { padding-left: 12px; border-left: 1px solid var(--line); }
+.feat__idx em { font-style: normal; }
+.feat__panel--app .feat__lede { max-width: 42ch; }
 .feat__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
 .feat__title em { font-style: normal; color: var(--blue); white-space: nowrap; } /* the highlighted phrase never breaks */
 .feat__defs { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 0; opacity: var(--txt, 1); }
