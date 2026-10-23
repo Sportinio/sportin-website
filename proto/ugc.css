@@ -3,17 +3,11 @@
    the app's own share templates (images, and videos pre-rendered from the app's Run Cam looks).
    Type sizes follow the Competitions pages (features.css) so the two read as one system. */
 .ugc { background: var(--paper); }
-.ugc__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px 48px; }
+.ugc__head { display: grid; }
 .ugc__kicker { margin: 0 0 14px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em; color: var(--slate); }
 .ugc__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
 .ugc__title em { font-style: normal; color: var(--blue); white-space: nowrap; }
 .ugc__lede { margin: 14px 0 0; max-width: 60ch; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; color: var(--slate); text-wrap: pretty; }
-/* Same pattern as the phone pages' points: a bold line and one detail. */
-.ugc__points { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.ugc__points li { position: relative; display: grid; gap: 2px; padding-left: 22px; }
-.ugc__points li::before { content: ''; position: absolute; left: 0; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
-.ugc__points b { font-size: 16px; font-weight: 650; color: var(--ink); }
-.ugc__points span { font-size: 15px; line-height: 1.45; color: var(--slate); white-space: nowrap; }
 
 /* The strip runs edge to edge of the page block and loops: the items are listed twice. Cards are
    sized from the height left after the heading, so the page fits without being scaled down. */
@@ -33,9 +27,11 @@
 .ugc__pause .ugc__ico-play, .ugc__stage.is-paused .ugc__pause .ugc__ico-pause { display: none; }
 .ugc__stage.is-paused .ugc__pause .ugc__ico-play { display: block; }
 
-@media (max-width: 860px) { .ugc__head { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) {
   .ugc__track { animation: none; }
   .ugc__strip { overflow-x: auto; }
   .ugc__card[aria-hidden="true"], .ugc__pause { display: none; }
 }
+
+/* Demo-brand note, a quiet caption under the strip. */
+.ugc__note { margin: 14px 0 0; font-size: 13px; color: var(--slate); }
