@@ -10,6 +10,7 @@
   const inner = sec.querySelector('.closing__inner');
   const nav = document.getElementById('nav');
   const EDGE = 20; // clear space to the page edge and the menu bar
+  const SCALE = 1.2;
 
   // Position of an element in the svg's coordinates, from layout offsets: the page's entrance
   // animations move the text with transforms, and the lanes must follow where it rests.
@@ -40,11 +41,14 @@
     const navB = nav ? nav.getBoundingClientRect().bottom - restTop : 0;
     const area = { l: EDGE, r: W - EDGE, t: Math.max(EDGE, navB + EDGE), b: H - EDGE };
     const narrow = W < 600;
-    const want = narrow ? 22 : 52, least = narrow ? 14 : 26;
+    const want = (narrow ? 22 : 52) * SCALE, least = narrow ? 14 : 26;
     // Padding around the content shrinks first, so the lanes keep a clear gap between them.
     const spare = Math.min(L - area.l, area.r - R, T - area.t, area.b - B);
     const pad = Math.max(narrow ? 10 : 14, Math.min(narrow ? 24 : 44, spare - 2 * least));
     let box = { l: L - pad * (narrow ? 0.75 : 1.5), r: R + pad * (narrow ? 0.75 : 1.5), t: T - pad, b: B + pad };
+    // The track is drawn 20% larger than the tight fit round the content.
+    const cx = (box.l + box.r) / 2, cy = (box.t + box.b) / 2, hw = (box.r - box.l) / 2 * SCALE, hh = (box.b - box.t) / 2 * SCALE;
+    box = { l: cx - hw, r: cx + hw, t: cy - hh, b: cy + hh };
     box = { l: Math.max(area.l, box.l), r: Math.min(area.r, box.r), t: Math.max(area.t, box.t), b: Math.min(area.b, box.b) };
     const room = Math.min(box.l - area.l, area.r - box.r, box.t - area.t, area.b - box.b);
     const gap = Math.max(0, Math.min(want, room / 2));
