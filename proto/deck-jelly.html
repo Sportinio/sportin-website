@@ -56,6 +56,23 @@
 </header>
 
 <main id="top">
+  <!-- WHY: the opening belief -->
+  <section class="hero block hero--video" id="why" aria-labelledby="heroTitle">
+    <div class="hv" aria-hidden="true"><div class="hv__scene is-active" data-word="member"><video class="hv__clip" data-word="member" src="/proto/media/hv-member.mp4" poster="/proto/media/hv-member.jpg" muted playsinline loop preload="auto"></video><div class="hv__tint"></div></div><div class="hv__scene" data-word="fan"><video class="hv__clip" data-word="fan" src="/proto/media/hv-fan.mp4?v=3" poster="/proto/media/hv-fan.jpg?v=3" muted playsinline loop preload="metadata"></video><div class="hv__tint"></div></div><div class="hv__scene" data-word="client"><video class="hv__clip" data-word="client" src="/proto/media/hv-client.mp4" poster="/proto/media/hv-client.jpg" muted playsinline loop preload="metadata"></video><div class="hv__tint"></div></div><div class="hv__scene" data-word="employee"><video class="hv__clip" data-word="employee" src="/proto/media/hv-employee.mp4" poster="/proto/media/hv-employee.jpg" muted playsinline loop preload="metadata"></video><div class="hv__tint"></div></div><div class="hv__dots"></div><div class="hv__shade"></div></div>
+    <button class="hv__pause" id="hvPause" type="button" aria-label="Pause background video"><span class="hv__pause-i" aria-hidden="true"></span></button>
+    <div class="wrap">
+      <p class="eyebrow" data-reveal><span class="eyebrow__dot"></span>What we do</p>
+      <h1 class="display display--xl hero__title" id="heroTitle" data-reveal style="--d:.08s">Give every <span class="rot" aria-hidden="true"><span class="rot__word">member</span></span><span class="sr-only">member, fan, client or employee</span><br class="hero__br" /> a part to <em>play.</em></h1>
+      <p class="lede hero__lede" data-reveal style="--d:.16s">We turn communities into active ecosystems that generate new revenue and measurable impact by gamifying real-world movement.</p>
+      <div class="hero__actions" data-reveal style="--d:.24s">
+        <a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo <span class="btn__arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost" href="#features">See how we do it ↓</a>
+      </div>
+      <p class="sr-only">More engagement, belonging, retention and revenue.</p>
+
+    </div>
+  </section>
+
   <!-- COMPETITIONS: one big format per scroll, moving sideways -->
   <section class="feat" id="features" data-steps="5" aria-label="Games">
     <div class="feat__stick">
@@ -345,6 +362,7 @@
 </footer>
 
 <script src="/proto/deck-base.js?v=1" defer></script>
+<script src="/proto/video-hero.js?v=3" defer></script>
 <script src="/proto/deck.js?v=16" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/features.js?v=25"></script>
