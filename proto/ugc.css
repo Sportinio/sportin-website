@@ -32,6 +32,3 @@
   .ugc__strip { overflow-x: auto; }
   .ugc__card[aria-hidden="true"], .ugc__pause { display: none; }
 }
-
-/* Demo-brand note, a quiet caption under the strip. */
-.ugc__note { margin: 14px 0 0; font-size: 13px; color: var(--slate); }
