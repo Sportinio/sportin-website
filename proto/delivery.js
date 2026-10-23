@@ -42,7 +42,7 @@ if (sec) {
   }
 
   // Swap in the 3D phone once Three.js and the three screens have loaded.
-  import('/proto/delivery-3d.js?v=3')
+  import('/proto/delivery-3d.js?v=4')
     .then(({ makePhone3D }) => makePhone3D(sec.querySelector('.dl__three'), layers.map((l) => l.getAttribute('src'))))
     .then((p) => { if (!p) return; phone3d = p; sec.classList.add('is-3d'); p.resize(); paint(follow ? follow.t : 0); })
     .catch((e) => console.warn('Delivery 3D phone unavailable, keeping the flat one', e));

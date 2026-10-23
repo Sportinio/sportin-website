@@ -80,22 +80,23 @@ function labelSprite(text, color, w) {
 }
 const showSprite = (sp, o) => { sp.material.opacity = o; sp.visible = o > 0.01; };
 
-// ---------- The phone: Adrian's own frame image ----------
-// media/frames/phone-frame.png is his frame with the white page cut away; phone-screen-mask.png
-// is its white screen area (the notch is not part of it). The screen content is drawn into the
-// screen area only, so the frame, its rim, buttons and notch stay exactly as he supplied them.
-const FRAME = { w: 328, h: 659, sx: 22, sy: 19, sw: 284, sh: 619 }; // image pixels
+// ---------- The phone: the site's 3D phone, rendered face-on ----------
+// media/frames/phone-frame-3d.png is the 3D phone (phone3d.js) rendered face-on with an open screen
+// (tools/render-phone-frame.html); phone-screen-mask-3d.png is its screen area (the Dynamic Island
+// is not part of it). The screen content is drawn into the screen area only, so the frame, its rim,
+// buttons and island stay exactly as rendered. The scene keeps the phone face-on.
+const FRAME = { w: 871, h: 1771, sx: 44.4, sy: 37.2, sw: 782.4, sh: 1696.8 }; // image pixels, 12 per mm
 const K = 2.3 / FRAME.w; // world units per image pixel
 const PH = { w: FRAME.w * K, h: FRAME.h * K, sw: FRAME.sw * K, sh: FRAME.sh * K };
 const PZ = 0.02; // the frame is flat; chips float just in front of it
 const phone = new THREE.Group(); rig.add(phone);
 const phoneMats = []; const pm = group(phoneMats);
 const PS = canvasTex(640, Math.round(640 * (FRAME.sh / FRAME.sw))); // the screen content
-const SCALE = 3; // the phone texture is drawn at 3x the image for sharp screen text
+const SCALE = 1.25; // the phone texture is drawn a little above the image size for sharp screen text
 const PF = canvasTex(FRAME.w * SCALE, FRAME.h * SCALE); // frame and screen together
 const layer = document.createElement('canvas'); layer.width = PF.c.width; layer.height = PF.c.height; const lctx = layer.getContext('2d');
-const frameImg = new Image(); frameImg.src = '/proto/media/frames/phone-frame.png';
-const maskImg = new Image(); maskImg.src = '/proto/media/frames/phone-screen-mask.png?v=2'; // alpha = screen area
+const frameImg = new Image(); frameImg.src = '/proto/media/frames/phone-frame-3d.png';
+const maskImg = new Image(); maskImg.src = '/proto/media/frames/phone-screen-mask-3d.png'; // alpha = screen area
 function composePhone() {
   const { ctx, c } = PF; ctx.clearRect(0, 0, c.width, c.height);
   if (frameImg.complete && frameImg.naturalWidth) ctx.drawImage(frameImg, 0, 0, c.width, c.height);

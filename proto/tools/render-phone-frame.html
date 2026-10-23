@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <title>Phone frame render</title>
+  <!-- Renders the 3D phone (phone3d.js) face-on to an image for the phones that show live HTML screens.
+       Drawn at 12 px per mm (871 × 1771). ?mask=1 renders the screen area only (white, island cut out).
+       The PNG is written into the page as a data URL; capture it with headless Chrome --dump-dom. -->
+  <style>html, body { margin: 0; background: transparent; overflow: hidden; } canvas { display: block; }</style>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { PHONE, buildPhone, plate } from '/proto/phone3d.js?v=2';
+
+const X = PHONE.W / 2 + 1, Y = PHONE.H / 2 + 0.5; // half extents, with room for the side buttons
+const mask = new URLSearchParams(location.search).has('mask');
+const PX = 12, w = Math.round(2 * X * PX), h = Math.round(2 * Y * PX); // 12 px per mm
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(w, h); renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-X, X, Y, -Y, 1, 100); camera.position.z = 50;
+if (mask) {
+  const s = new THREE.Mesh(plate(PHONE.SW, PHONE.SH, PHONE.SR, 48), new THREE.MeshBasicMaterial({ color: 0xffffff })); scene.add(s);
+  const isl = new THREE.Mesh(plate(20.8, 6.1, 3.05), new THREE.MeshBasicMaterial({ color: 0, transparent: true, opacity: 0, blending: THREE.NoBlending }));
+  isl.position.set(0, PHONE.SH / 2 - 1.85 - 3.05, 0.1); scene.add(isl);
+} else {
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+  const key = new THREE.DirectionalLight(0xffffff, 1.2); key.position.set(-60, 120, 160); scene.add(key);
+  scene.add(buildPhone([null]));
+}
+renderer.render(scene, camera);
+const out = document.createElement('pre'); out.id = 'png'; out.textContent = renderer.domElement.toDataURL('image/png'); document.body.appendChild(out);
+// chrome --headless=new --virtual-time-budget=8000 --dump-dom <url> | sed -n 's/.*data:image\/png;base64,\([^<]*\).*/\1/p' | base64 -d > phone-frame-3d.png
+</script>
+</body>
+</html>
