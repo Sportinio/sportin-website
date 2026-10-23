@@ -15,7 +15,8 @@
       revealIO.unobserve(e.target);
     }
   }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
-  $$('[data-reveal]').forEach((el) => revealIO.observe(el));
+  // Page one is on screen at load: reveal it whole, or a line near its bottom edge waits for a scroll.
+  $$('[data-reveal]').forEach((el) => (el.closest('#why') ? requestAnimationFrame(() => el.classList.add('is-in')) : revealIO.observe(el)));
 
   const nav = $('#nav'); const toggle = $('#navToggle');
   if (nav && toggle) {

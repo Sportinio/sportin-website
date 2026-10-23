@@ -241,6 +241,9 @@ The founder approved this audit. Most sections it covers (hero, problem, evidenc
 games, ecosystem, revenue, impact, stories, how it works, belief) were removed from the deck the same
 day, so only these were applied to `proto/deck.html` and `proto/deck-jelly.html`:
 
+- Hero (restored as page one later the same day): the proposed eyebrow, lede, outcome line,
+  "See how it works" to #features, and the reassurance line without the call length. The rotator is
+  member, customer, employee: the fan clip is gone and there is no volunteer clip yet.
 - Meta: new description and og:description, og:title without the em dash.
 - Intro page: lede without "unlock". The title "Three layers. Every game." stays.
 - Formats 01 to 06: the proposed titles, ledes and kickers, the rail as Compete / Climb / Get
