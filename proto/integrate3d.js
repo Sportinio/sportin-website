@@ -12,6 +12,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createChip } from '/proto/chip3d.js?v=2';
+import { PHONE, buildPhone, plate } from '/proto/phone3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 // It runs on its own page (integrate3d.html) or, in the deck, inside the engine's section right
@@ -80,38 +81,30 @@ function labelSprite(text, color, w) {
 }
 const showSprite = (sp, o) => { sp.material.opacity = o; sp.visible = o > 0.01; };
 
-// ---------- The phone: the site's 3D phone, rendered face-on ----------
-// media/frames/phone-frame-3d.png is the 3D phone (phone3d.js) rendered face-on with an open screen
-// (tools/render-phone-frame.html); phone-screen-mask-3d.png is its screen area (the Dynamic Island
-// is not part of it). The screen content is drawn into the screen area only, so the frame, its rim,
-// buttons and island stay exactly as rendered. The scene keeps the phone face-on.
-const FRAME = { w: 871, h: 1771, sx: 44.4, sy: 37.2, sw: 782.4, sh: 1696.8 }; // image pixels, 12 per mm
-const K = 2.3 / FRAME.w; // world units per image pixel
+// ---------- The phone: the site's 3D phone (phone3d.js), the same one as 09 to 11 and 15 ----------
+// Its screen is left open, so the scene shows through it as before, and the app content is drawn
+// on a plate in that opening. It turns in from edge-on as it builds around the chip (a quarter
+// turn, as the app phone does on 09), then stays face-on.
+const FRAME = { w: 871, h: 1771, sx: 44.4, sy: 37.2, sw: 782.4, sh: 1696.8 }; // phone-frame-3d.png pixels, 12 per mm
+const K = 2.3 / FRAME.w; // world units per frame pixel: the phone keeps its old size in the scene
 const PH = { w: FRAME.w * K, h: FRAME.h * K, sw: FRAME.sw * K, sh: FRAME.sh * K };
-const PZ = 0.02; // the frame is flat; chips float just in front of it
+const MM = K * 12; // world units per millimetre
+const PZ = 0.02; // chips float just in front of the screen
 const phone = new THREE.Group(); rig.add(phone);
 const phoneMats = []; const pm = group(phoneMats);
 const PS = canvasTex(640, Math.round(640 * (FRAME.sh / FRAME.sw))); // the screen content
-const SCALE = 1.25; // the phone texture is drawn a little above the image size for sharp screen text
-const PF = canvasTex(FRAME.w * SCALE, FRAME.h * SCALE); // frame and screen together
-const layer = document.createElement('canvas'); layer.width = PF.c.width; layer.height = PF.c.height; const lctx = layer.getContext('2d');
-const frameImg = new Image(); frameImg.src = '/proto/media/frames/phone-frame-3d.png';
-const maskImg = new Image(); maskImg.src = '/proto/media/frames/phone-screen-mask-3d.png'; // alpha = screen area
-function composePhone() {
-  const { ctx, c } = PF; ctx.clearRect(0, 0, c.width, c.height);
-  if (frameImg.complete && frameImg.naturalWidth) ctx.drawImage(frameImg, 0, 0, c.width, c.height);
-  if (maskImg.complete && maskImg.naturalWidth) {
-    // The screen area is see-through, like the frame: cut it out, then draw the app text straight in.
-    ctx.globalCompositeOperation = 'destination-out'; ctx.drawImage(maskImg, 0, 0, c.width, c.height); ctx.globalCompositeOperation = 'source-over';
-    lctx.globalCompositeOperation = 'source-over'; lctx.clearRect(0, 0, layer.width, layer.height);
-    lctx.drawImage(PS.c, FRAME.sx * SCALE, FRAME.sy * SCALE, FRAME.sw * SCALE, FRAME.sh * SCALE);
-    lctx.globalCompositeOperation = 'destination-in'; lctx.drawImage(maskImg, 0, 0, layer.width, layer.height);
-    ctx.drawImage(layer, 0, 0);
-  }
-  PF.tex.needsUpdate = true;
+const body = buildPhone([null]); body.scale.setScalar(MM); body.position.z = -(PHONE.D / 2) * MM; // front glass at z = 0
+const bodyMats = new Set();
+body.traverse((o) => { if (o.material && o.material.colorWrite !== false) bodyMats.add(o.material); });
+phone.add(body);
+const pScreen = new THREE.Mesh(plate(PHONE.SW * MM, PHONE.SH * MM, PHONE.SR * MM, 32), pm(new THREE.MeshBasicMaterial({ map: PS.tex, toneMapped: false, depthWrite: false })));
+pScreen.position.z = 0.05 * MM; phone.add(pScreen);
+function composePhone() { PS.tex.needsUpdate = true; }
+// The body is drawn opaque at rest and only blends while it fades in.
+function fadePhone(o) {
+  fade(phoneMats, phone, o);
+  bodyMats.forEach((m) => { m.opacity = o; const tr = o < 0.999; if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } });
 }
-const pFace = new THREE.Mesh(new THREE.PlaneGeometry(PH.w, PH.h), pm(new THREE.MeshBasicMaterial({ map: PF.tex, toneMapped: false, depthWrite: false })));
-phone.add(pFace);
 
 const ENG = { y: 0.75, s: 0.3 }; // the engine chip's place on the phone, in phone coordinates
 const toScreenY = (y) => ((PH.sh / 2 - y) / PH.sh) * PS.c.height;
@@ -392,7 +385,8 @@ function paint(t, now = performance.now()) {
   // Phone.
   phone.position.set(lerp(0, PHONE_X, side), lerp(0, PHONE_Y, side), 0);
   phone.scale.setScalar(lerp(0.92, 1, ph));
-  fade(phoneMats, phone, ph);
+  fadePhone(ph);
+  phone.rotation.set(RM ? 0 : -0.06 * Math.sin(ph * Math.PI), RM ? 0 : (ph - 1) * Math.PI / 2, 0);
 
   // Engine chip: into the phone with one full turn; in eMotion view it slides out to the right
   // column so the path reads phone, sensors, eMotion, engine.
@@ -493,7 +487,6 @@ window.addEventListener('resize', () => { resize(); paintAt(follow.t); });
 resize();
 drawWatchScreen();
 document.fonts.ready.then(() => { engine.drawEngraving(); emotion.drawEngraving(); drawWatchScreen(); follow.sync(); });
-frameImg.onload = maskImg.onload = () => { lastScreenKey = ''; paintAt(follow.t); };
 follow.sync();
 window.integrateAt = (v) => follow.jump(v + FROM);
 window.integrateMode = (m) => sw.querySelector(`button[data-mode="${m}"]`).click();
