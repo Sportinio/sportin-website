@@ -22,32 +22,17 @@ html.is-deck .dl { display: none; } /* Present mode does not include the scroll 
 .dl__effort span { margin-left: 6px; }
 
 /* Right: the phone, with the three screens stacked; delivery.js cross-fades them. */
-.dl__stage { perspective: 1600px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; height: 100%; min-height: 0; }
-.dl__phone { position: relative; flex: none; grid-area: auto; margin: 0; transform: rotateY(var(--ry, 0deg)) scale(var(--sc, 1)); will-change: transform; height: min(640px, calc(100vh - var(--nav-h) - 170px)); aspect-ratio: 800 / 1523; }
+.dl__stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; height: 100%; min-height: 0; }
+.dl__phone { position: relative; flex: none; grid-area: auto; margin: 0; height: min(640px, calc(100vh - var(--nav-h) - 170px)); aspect-ratio: 800 / 1523; }
+/* The 3D phone (delivery-3d.js). The flat phone below stays as the fallback when WebGL is missing. */
+.dl__three { display: none; width: 100%; height: min(700px, calc(100vh - var(--nav-h) - 150px)); }
+.dl.is-3d .dl__three { display: block; }
+.dl.is-3d .dl__phone { display: none; }
 .dl__phone .phone__frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
 .dl__phone .phone__screen { position: absolute; left: 7%; top: 2.63%; width: 85.875%; height: 94.42%; border-radius: 14.5% / 6.9%; overflow: hidden; z-index: 1; background: #0b0d14; }
 .dl__layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; opacity: var(--o, 0); }
 .dl__cap { position: relative; height: 20px; margin: 0; width: 100%; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); }
 .dl__cap span { position: absolute; inset: 0; opacity: var(--o, 0); }
-
-/* The client's own app: a made-up brand's login screen, a different design from SportIn's
-   (laid out in iOS points like the other app screens; delivery.js scales it to the phone). */
-@font-face { font-family: 'DlBrand'; src: url('/proto/media/ugc/templates/assets/runcam-bigshoulders-extrabold.ttf') format('truetype'); font-display: swap; }
-.dlapi { position: relative; width: 393px; height: 852px; display: flex; flex-direction: column; background: #ff5a1f; color: #14110f; font-family: -apple-system, "SF Pro Text", system-ui, sans-serif; overflow: hidden; }
-.dlapi__hero { position: relative; flex: 1; color: #fff; }
-.dlapi__status { position: relative; z-index: 1; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 6px 30px 0 44px; font-size: 17px; font-weight: 600; }
-.dlapi__track { position: absolute; left: 0; top: 40px; width: 100%; height: auto; }
-.dlapi__track rect { fill: none; stroke: rgba(255, 255, 255, 0.22); stroke-width: 2; }
-.dlapi__brand { position: relative; margin: 92px 0 0 32px; font-family: 'DlBrand', var(--display); font-size: 76px; line-height: 0.9; letter-spacing: 0.01em; }
-.dlapi__slogan { position: relative; margin: 10px 0 0 34px; font-size: 18px; font-weight: 600; opacity: 0.9; }
-.dlapi__sheet { padding: 30px 26px 44px; border-radius: 30px 30px 0 0; background: #fff; }
-.dlapi__h { margin: 0 0 18px; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
-.dlapi__field { margin: 0 0 12px; padding: 10px 16px 12px; border: 1.5px solid #e4e1de; border-radius: 14px; font-size: 17px; color: #14110f; }
-.dlapi__field span { display: block; margin-bottom: 2px; font-size: 12px; font-weight: 600; color: #8b847e; }
-.dlapi__btn { display: flex; align-items: center; justify-content: center; gap: 8px; height: 54px; margin: 18px 0 0; border-radius: 999px; background: #14110f; color: #fff; font-size: 17px; font-weight: 700; }
-.dlapi__btn--alt { margin-top: 10px; background: none; border: 1.5px solid #e4e1de; color: #14110f; }
-.dlapi__new { margin: 20px 0 0; text-align: center; font-size: 15px; color: #8b847e; }
-.dlapi__new b { color: #ff5a1f; }
 
 @media (max-width: 900px) {
   .dl { height: auto; }

@@ -1,50 +1,45 @@
 // 10 Delivery: a pinned scroll scene, t runs 0..2 at the Competitions pace (scroll-follow.js).
-// At t = 0, 1, 2 the phone shows one option and only that option's text is beside it: the SportIn app, white label, then a
-// client's own app. Between steps the phone turns on its vertical axis; the screen changes while
-// it is edge-on, and the turn carries on in the same direction back to face the viewer.
+// At t = 0, 1, 2 the phone shows one option and only that option's text is beside it: the SportIn
+// app, white label, then a client's own app. Between steps the 3D phone (delivery-3d.js) makes one
+// full turn on its vertical axis: at half way (180 degrees) its back faces the viewer, and the screen
+// changes then, so the next screen arrives as the turn completes. Without WebGL
+// the flat phone stays still and its screens cross-fade.
 import { followScroll } from '/proto/scroll-follow.js?v=2';
 
 const sec = document.getElementById('delivery');
 if (sec) {
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const rows = [...sec.querySelectorAll('.dl__row')];
-  const phone = sec.querySelector('.dl__phone');
   const layers = [...sec.querySelectorAll('.dl__layer')];
   const caps = [...sec.querySelectorAll('.dl__cap span')];
   const last = rows.length - 1;
+  const REST_YAW = 0, REST_PITCH = 0; // at rest the screen faces the viewer straight on
   const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
-  // How much of step i is lit at time t: full at i, gone one step away (narrow for reduced motion).
-  const near = (i, t) => { const d = Math.abs(t - i); return RM ? (d < 0.5 ? 1 : 0) : 1 - sm(0.15, 0.85, d); };
+  let phone3d = null;
 
   function paint(t) {
-    const i = Math.min(last, Math.floor(t)); const p = t >= last ? 0 : sm(0.1, 0.9, t - i);
-    if (RM) {
-      rows.forEach((r, k) => r.style.setProperty('--on', near(k, t).toFixed(3)));
-      [layers, caps].forEach((set) => set.forEach((el, k) => el.style.setProperty('--o', near(k, t).toFixed(3))));
-      return;
-    }
-    // 0 to 90 degrees on the old screen, then -90 to 0 on the new one: one continuous turn.
-    const ry = p < 0.5 ? p * 180 : p * 180 - 180;
-    phone.style.setProperty('--ry', `${ry.toFixed(2)}deg`);
-    phone.style.setProperty('--sc', (1 - 0.08 * Math.sin(p * Math.PI)).toFixed(4));
+    const i = Math.min(last, Math.floor(t));
+    const p = t >= last ? 0 : RM ? (t - i < 0.5 ? 0 : 1) : sm(0.1, 0.9, t - i);
     const shown = p < 0.5 ? i : i + 1;
-    layers.forEach((l, k) => l.style.setProperty('--o', k === shown ? '1' : '0'));
     // The option text and caption fade out as the turn starts and the next ones fade in as it ends.
-    const capO = Math.abs(Math.cos(p * Math.PI)).toFixed(3);
-    rows.forEach((r, k) => r.style.setProperty('--on', k === shown ? capO : '0'));
-    caps.forEach((c, k) => c.style.setProperty('--o', k === shown ? capO : '0'));
+    const o = RM ? '1' : Math.abs(Math.cos(p * Math.PI)).toFixed(3);
+    rows.forEach((r, k) => r.style.setProperty('--on', k === shown ? o : '0'));
+    caps.forEach((c, k) => c.style.setProperty('--o', k === shown ? o : '0'));
+    if (phone3d) phone3d.set(REST_YAW + (RM ? 0 : p * Math.PI * 2), REST_PITCH - 0.06 * Math.sin(p * Math.PI), shown);
+    else layers.forEach((l, k) => l.style.setProperty('--o', k === shown ? o : '0'));
   }
 
-  // The client's app is laid out in iOS points; scale it to the phone screen.
-  const app = sec.querySelector('.dlapi');
-  const fit = () => { const box = app.parentElement; const k = box.clientWidth / 393; if (k) { app.style.transformOrigin = '0 0'; app.style.transform = `scale(${k})`; app.style.height = `${box.clientHeight / k}px`; } };
-  fit(); window.addEventListener('resize', fit);
-
+  let follow = null;
   if (window.matchMedia('(max-width: 900px)').matches) paint(0);
   else {
-    const follow = followScroll(sec, { steps: last, hold: 0.6, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
+    follow = followScroll(sec, { steps: last, hold: 0.6, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
     follow.sync();
-    if (document.fonts) document.fonts.ready.then(() => { fit(); follow.sync(); });
     window.deliveryAt = (v) => follow.jump(v); // debugging: show any point of the scene
   }
+
+  // Swap in the 3D phone once Three.js and the three screens have loaded.
+  import('/proto/delivery-3d.js?v=2')
+    .then(({ makePhone3D }) => makePhone3D(sec.querySelector('.dl__three'), layers.map((l) => l.getAttribute('src'))))
+    .then((p) => { if (!p) return; phone3d = p; sec.classList.add('is-3d'); p.resize(); paint(follow ? follow.t : 0); })
+    .catch((e) => console.warn('Delivery 3D phone unavailable, keeping the flat one', e));
 }
