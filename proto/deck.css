@@ -148,3 +148,6 @@ html.is-full body > footer.page > .slide__fit { transform: none !important; } /*
 @media (max-width: 900px) {
   #who .aud__stick, #delivery .dl__stick { margin: var(--inset); border-radius: var(--r-block); }
 }
+
+/* The engine's opening line shows before its 3D scene has loaded (engine3d.js then drives the text). */
+html:not(.eng3d-ready) .eng-txt[data-c="0"] { opacity: 1; }

@@ -67,7 +67,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const ogImage = `${ORIGIN}/api/og?code=${encodeURIComponent(code)}`;
-  const ogUrl = `https://sportin.io/ref/${encodeURIComponent(code)}`;
+  const ogUrl = `${ORIGIN}/ref/${encodeURIComponent(code)}`;
 
   let title = "You're invited to SportIn";
   if (code) {

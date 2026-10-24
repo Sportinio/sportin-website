@@ -72,7 +72,7 @@
   <link rel="stylesheet" href="/assets/site/site.css?v=teams1" />
   <link rel="stylesheet" href="/proto/particles.css?v=9" />
   <link rel="stylesheet" href="/proto/video-hero.css?v=4" />
-  <link rel="stylesheet" href="/proto/deck.css?v=15" />
+  <link rel="stylesheet" href="/proto/deck.css?v=16" />
   <link rel="stylesheet" href="/proto/evidence.css?v=4" />
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
@@ -497,17 +497,21 @@
 <script type="module" src="/proto/audience.js?v=4"></script>
 <script type="module" src="/proto/delivery.js?v=11"></script>
 <script type="module">
-// The engine's 3D scenes take seconds of main-thread work to start on a phone, so they load when
-// the visitor nears the engine page. If they cannot start within 5 s, the page shows a still chip.
+// The engine's 3D scenes take seconds of main-thread work to start on a phone, so they do not run
+// at page load. They start when the visitor nears the engine page or clicks a menu link to it;
+// its opening line shows meanwhile (deck.css). The still chip shows only if loading fails.
 const sec = document.getElementById('engine');
+const root = document.documentElement;
 let started = false;
 const start = () => {
   if (started) return; started = true;
-  import('/proto/engine3d.js?v=38').then(() => import('/proto/integrate3d.js?v=26')).catch(() => {});
-  setTimeout(() => { const r = document.documentElement; if (!r.classList.contains('eng3d-ready')) r.classList.add('eng3d-failed'); }, 5000);
+  import('/proto/engine3d.js?v=39')
+    .catch(() => { if (!root.classList.contains('eng3d-ready')) root.classList.add('eng3d-failed'); })
+    .finally(() => import('/proto/integrate3d.js?v=26').catch(() => {}));
 };
 if (!sec || !('IntersectionObserver' in window)) start();
 else new IntersectionObserver(([e], io) => { if (e.isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '1500px 0px' }).observe(sec);
+document.querySelectorAll('.nav__link[data-go="engine"]').forEach((a) => a.addEventListener('pointerdown', start));
 </script>
 </body>
 </html>
