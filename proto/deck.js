@@ -61,11 +61,13 @@
   if (what) { const end = document.createElement('i'); end.className = 'snap-mark snap-mark--end'; end.setAttribute('aria-hidden', 'true'); what.appendChild(end); }
 
   // The 3D scroll scenes: one snap point per step (t = 0..steps over steps + 0.6 parts of the
-  // scroll), so each scroll gesture moves the scene exactly one step.
+  // scroll), so each scroll gesture moves the scene exactly one step. A scene in chapters (the
+  // engine) has one snap point per chapter instead, evenly spread, and plays each by itself.
   const scenes3d = [...document.querySelectorAll('section[data-steps], section#engine')].map((sec) => {
     const steps = Number(sec.dataset.steps || 6);
-    const marks = Array.from({ length: steps + 1 }, () => { const m = document.createElement('i'); m.className = 'snap-mark'; m.setAttribute('aria-hidden', 'true'); sec.appendChild(m); return m; });
-    return { sec, steps, marks };
+    const chapters = sec.dataset.chapters ? sec.dataset.chapters.split(',').length : 0;
+    const marks = Array.from({ length: chapters || steps + 1 }, () => { const m = document.createElement('i'); m.className = 'snap-mark'; m.setAttribute('aria-hidden', 'true'); sec.appendChild(m); return m; });
+    return { sec, steps, chapters, marks };
   });
 
   function layout() {
@@ -74,7 +76,7 @@
     if (window.problemMeasure) window.problemMeasure();
     // The last step's mark sits at the very end of the scene, so leaving it takes one screen of
     // scroll, the same as between any two pages (otherwise a phone swipe springs back there).
-    scenes3d.forEach(({ sec, steps, marks }) => { const span = sec.offsetHeight - window.innerHeight; marks.forEach((m, k) => { m.style.top = `${k === steps ? span : Math.round((k / (steps + 0.6)) * span)}px`; }); });
+    scenes3d.forEach(({ sec, steps, chapters, marks }) => { const span = sec.offsetHeight - window.innerHeight; marks.forEach((m, k) => { m.style.top = `${chapters ? Math.round((k / Math.max(1, chapters - 1)) * span) : k === steps ? span : Math.round((k / (steps + 0.6)) * span)}px`; }); });
     const seg = Math.max(360, window.innerHeight * 0.7);
     marks.forEach((m, k) => { m.style.top = `${k * seg + (k ? 2 : 0)}px`; });
   }

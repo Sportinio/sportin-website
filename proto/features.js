@@ -6,7 +6,7 @@
 // Panel 1, Competitions, shows two formats that play themselves while the panel is on screen:
 // a Champions League style cup walks through its stages, and a national league plays a matchday
 // and updates its table.
-import { followScroll } from '/proto/scroll-follow.js?v=3';
+import { followScroll } from '/proto/scroll-follow.js?v=5';
 import { createDust, WIN } from '/proto/dust.js?v=8';
 
 const sec = document.getElementById('features');

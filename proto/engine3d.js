@@ -9,7 +9,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createEngineSound } from '/proto/engine-sound.js?v=3';
 import { createChip } from '/proto/chip3d.js?v=2';
-import { followScroll } from '/proto/scroll-follow.js?v=3';
+import { followScroll } from '/proto/scroll-follow.js?v=5';
 
 const root = document.documentElement;
 const sec = document.getElementById('engine');
@@ -407,9 +407,10 @@ if (sound) {
 }
 
 // ---------- Scroll ----------
-// The scene follows the scroll at a steady, eased pace (scroll-follow.js); the last part of the
-// scroll holds the finished chip.
-const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: (t) => { paint(t); if (sound) { const r = sec.getBoundingClientRect(); sound.update(t, r.bottom <= 0 || r.top >= window.innerHeight); } } });
+// The scene plays by chapters (scroll-follow.js): one scroll plays the engine building up to the
+// finished chip, the next plays the integrations (data-chapters on the section).
+const CHAPTERS = sec.dataset.chapters ? sec.dataset.chapters.split(',').map(Number) : null;
+const follow = followScroll(sec, { steps: STEPS, reduced: RM, chapters: CHAPTERS, onFrame: (t) => { paint(t); if (sound) { const r = sec.getBoundingClientRect(); sound.update(t, r.bottom <= 0 || r.top >= window.innerHeight); } } });
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
 document.fonts.ready.then(() => { measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });

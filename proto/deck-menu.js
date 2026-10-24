@@ -7,6 +7,10 @@
   if (!links.length) return;
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const topOf = (el) => el.getBoundingClientRect().top + window.scrollY;
+  // A scene in chapters (the engine) snaps once per chapter: a step lives in the first chapter
+  // that ends at or after it.
+  const chaptersOf = (sec) => (sec.dataset.chapters ? sec.dataset.chapters.split(',').map(Number) : null);
+  const chapterOf = (ch, step) => Math.max(0, ch.findIndex((end) => step <= end));
   function target(a) {
     const sec = document.getElementById(a.dataset.go);
     if (!sec) return null;
@@ -15,6 +19,8 @@
     if (!step) return topOf(sec.closest('.problem-pin') || sec);
     const steps = Number(sec.dataset.steps || 0);
     const span = sec.offsetHeight - window.innerHeight;
+    const ch = chaptersOf(sec);
+    if (ch) return topOf(sec) + (chapterOf(ch, step) / Math.max(1, ch.length - 1)) * span;
     return topOf(sec) + (step / (steps + 0.6)) * span;
   }
   links.forEach((a) => a.addEventListener('click', (e) => {
@@ -29,9 +35,13 @@
     const land = () => {
       if (done) return; done = true;
       if (a.dataset.go === 'engine') {
-        const from = Number((document.getElementById('engine') || {}).dataset?.intFrom || 0);
-        if (window.engineAt) window.engineAt(step);
-        if (window.integrateAt && from) window.integrateAt(step - from);
+        const eng = document.getElementById('engine') || { dataset: {} };
+        const from = Number(eng.dataset.intFrom || 0);
+        // In chapters, start at the chapter's beginning; the scene then plays the chapter.
+        const ch = eng.dataset.chapters ? chaptersOf(eng) : null;
+        const at = ch && step ? (ch[chapterOf(ch, step) - 1] || 0) : step;
+        if (window.engineAt) window.engineAt(at);
+        if (window.integrateAt && from) window.integrateAt(at - from);
       }
       if (a.dataset.go === 'features' && window.featuresAt) window.featuresAt(step);
     };

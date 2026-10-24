@@ -13,7 +13,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createChip } from '/proto/chip3d.js?v=2';
 import { PHONE, buildPhone, plate } from '/proto/phone3d.js?v=2';
-import { followScroll } from '/proto/scroll-follow.js?v=3';
+import { followScroll } from '/proto/scroll-follow.js?v=5';
 
 // It runs on its own page (integrate3d.html) or, in the deck, inside the engine's section right
 // after the engine's last step (data-int-from), so the chip carries straight on.
@@ -481,7 +481,8 @@ function paintAt(T, now) {
   if (!on) { placeSwitch(0); chipTitle.style.opacity = '0'; return; }
   paint(Math.max(0, t), now);
 }
-const follow = followScroll(sec, { steps: STEPS_ALL, reduced: RM, onFrame: paintAt, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t - FROM >= 2 || (mode > 0 && follow.t > FROM)))) });
+const CHAPTERS = sec.dataset.chapters ? sec.dataset.chapters.split(',').map(Number) : null; // played as one scroll each, like engine3d.js
+const follow = followScroll(sec, { steps: STEPS_ALL, reduced: RM, chapters: CHAPTERS, onFrame: paintAt, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t - FROM >= 2 || (mode > 0 && follow.t > FROM)))) });
 new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) follow.kick(); }).observe(sec);
 window.addEventListener('resize', () => { resize(); paintAt(follow.t); });
 resize();

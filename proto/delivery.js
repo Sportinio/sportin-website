@@ -3,7 +3,7 @@
 // app, white label, then a client's own app. Between steps the 3D phone (delivery-3d.js) makes half a
 // turn on its vertical axis, and the next screen is on the face that comes round. Without WebGL
 // the flat phone stays still and its screens cross-fade.
-import { followScroll } from '/proto/scroll-follow.js?v=3';
+import { followScroll } from '/proto/scroll-follow.js?v=5';
 
 const sec = document.getElementById('delivery');
 if (sec) {
