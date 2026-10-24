@@ -29,21 +29,10 @@
 
 /* Short screens (landscape tablets, small laptop windows): the app points keep their titles only,
    and the Who panel takes its own height. */
-@media (max-height: 640px) {
+@media (max-height: 620px) {
   .points { gap: 10px; }
   .points span { display: none; }
   .aud__panel { min-height: 0; }
-}
-
-/* Landscape phones: less padding around the formats, no lede, and a smaller evidence page. */
-@media (max-height: 500px) {
-  .feat__panel { padding-top: calc(var(--nav-h) + 8px); padding-bottom: 60px; gap: 12px; }
-  .feat__lede, .evidence__sources { display: none; }
-  .feat__nav, .feat__skip { bottom: 10px; }
-  .feat__panel--app .feat__intro .feat__title { font-size: 26px; }
-  .evidence__title { font-size: 28px; }
-  .evidence__grid, html.has-jelly .jl-layer .evidence__grid { margin-top: 16px; }
-  .ev__num { font-size: 36px; margin-bottom: 6px; }
 }
 
 @media (max-width: 700px) {
@@ -95,4 +84,18 @@
   .dl__stage { height: 100%; gap: 8px; }
   .dl__three { flex: 1 1 auto; height: auto; min-height: 0; }
   .dl__phone { flex: 1 1 auto; height: auto; min-height: 0; }
+}
+
+/* Landscape phones: less padding around the formats, no lede, a smaller evidence page and Who in
+   two columns. Last, so it wins over the phone rules above on narrow landscape phones. */
+@media (max-height: 500px) {
+  .feat__panel { padding-top: calc(var(--nav-h) + 8px); padding-bottom: 60px; gap: 12px; }
+  .feat__lede, .evidence__sources { display: none; }
+  .feat__nav, .feat__skip { bottom: 10px; }
+  .feat__panel--app .feat__intro .feat__title { font-size: 26px; }
+  .evidence__title { font-size: 24px; }
+  .evidence__grid, html.has-jelly .jl-layer .evidence__grid { margin-top: 16px; }
+  .ev__num { font-size: 30px; margin-bottom: 4px; }
+  html.has-jelly .jl-layer { padding-top: calc(var(--nav-h) + 36px); padding-bottom: 8px; }
+  .aud__grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); column-gap: 24px; }
 }
