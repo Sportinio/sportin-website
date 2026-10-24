@@ -7,8 +7,10 @@
 /* Each scene: the clip plus its own comic colour layer. Scenes crossfade together. */
 .hv__scene { position: absolute; inset: 0; opacity: 0; transition: opacity 700ms var(--ease); }
 .hv__scene.is-active { opacity: 1; }
-.hv__clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); filter: saturate(1.25) contrast(1.12); transition: transform 4800ms linear; }
-.hv__scene.is-active .hv__clip { transform: scale(1); }
+/* The first clip's still sits under it, so the hero paints at once, before any video data arrives
+   (it is also what browsers measure as the page's largest paint, instead of the next clip's fade). */
+.hv__clip, .hv__still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); filter: saturate(1.25) contrast(1.12); transition: transform 4800ms linear; }
+.hv__scene.is-active .hv__clip, .hv__scene.is-active .hv__still { transform: scale(1); }
 
 /* Marvel-style colour: a bold two-colour wash multiplied over the footage, per audience. */
 .hv__scene[data-word='member'] { --a: #0751fb; --b: #00c2ff; }
