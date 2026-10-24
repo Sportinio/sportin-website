@@ -1,0 +1,207 @@
+<!doctype html>
+<!--
+  card-t12 — "Magazine Cover" share card (Story 9:16 ratio), static HTML port.
+  Ports (rork-sportin-io, origin/testing-ios):
+    ios/SportInIo/Views/Share/ShareCardTemplate12.swift          (ratio .story = 360x640, photo, black scrim)
+    ios/SportInIo/Views/Share/ShareCardTemplate12+Content.swift  (RunCam/3 sizes, wordmark, masthead, stat column)
+    ios/SportInIo/Views/Share/ShareCardTemplate12+Story.swift    (word-stacked Oswald quote, slash footer, quote pool)
+    ios/SportInIo/Utilities/ShareCardDisplayFont.swift           (BigShouldersDisplay-ExtraBold stat values)
+    ios/SportInIo/Utilities/ShareCardHarnessRunFixture.swift     (run data: 5:58, 31:00, 4.820 steps, 5.2 km)
+  Canvas: 360 x 640 pt (scale == 1, every literal is the RunCam value / 3), scaled to the iframe width.
+  Stat icons are drawn SVG stand-ins for the SF Symbols stopwatch, clock, shoeprints.fill, mappin.
+  The app picks a random quote per card; this mock fixes a 4-word one from the same pool.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magazine cover card</title>
+<style>
+  @font-face {
+    font-family: "BigShouldersDisplay-ExtraBold";
+    src: url("assets/card-BigShouldersDisplay-ExtraBold.ttf") format("truetype");
+    font-display: block;
+  }
+  @font-face {
+    font-family: "Oswald-Bold";
+    src: url("assets/card-Oswald-Bold.ttf") format("truetype");
+    font-display: block;
+  }
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #080d1e; }
+  :root {
+    --brand-blue: rgb(7, 81, 251);
+    --rule-blue: rgb(126, 163, 255);   /* #7EA3FF */
+    --icon-grey: rgb(152, 160, 181);   /* #98A0B5 */
+    --dark-bg: rgb(8, 13, 30);
+    --display: "BigShouldersDisplay-ExtraBold", -apple-system, "SF Pro Display", system-ui, sans-serif;
+    --quote: "Oswald-Bold", -apple-system, "SF Pro Display", system-ui, sans-serif;
+    --text: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  #card {
+    position: absolute; left: 0; top: 0;
+    width: 360px; height: 640px; overflow: hidden;
+    transform-origin: 0 0; background: var(--dark-bg);
+  }
+  .layer { position: absolute; left: 0; top: 0; width: 360px; height: 640px; }
+  .photo { object-fit: cover; display: block; }
+  .scrim {
+    background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 33.333%,
+      rgba(0, 0, 0, 0.45) 66.667%, rgba(0, 0, 0, 0.85) 100%);
+  }
+
+  /* content VStack(alignment: .leading, spacing: 0); side padding 55/3 */
+  /* justify center: if the column overflows 640 (as the Swift layout does by a few pt with
+     4-5 word quotes), SwiftUI centres the overflow, cropping top and bottom equally */
+  .content { display: flex; flex-direction: column; align-items: stretch; justify-content: center; }
+  .row { flex: none; box-sizing: border-box; padding: 0 18.333px; }
+  .sp-top { flex: none; height: 36.667px; }        /* 110/3 */
+  .sp-wm { flex: none; height: 5.333px; }          /* 16/3 */
+  .sp-stats { flex: none; height: 50px; }          /* 150/3 */
+  .sp-flex { flex: 1 1 auto; min-height: 8px; }  /* Spacer() default minLength */
+  .sp-footer { flex: none; height: 46.667px; }     /* 140/3 */
+  .sp-bottom { flex: none; height: 43.333px; }     /* 130/3 */
+
+  .wordmark { display: block; width: 323.333px; height: auto; filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.45)); }
+
+  .masthead {
+    display: flex; align-items: center; justify-content: space-between;
+    text-shadow: 0 0 5.333px rgba(0, 0, 0, 0.4);
+  }
+  .masthead .mag {
+    font-family: var(--text); font-size: 8.333px; font-weight: 400; letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.75); line-height: normal; white-space: nowrap;
+  }
+  .masthead .date {
+    font-family: var(--text); font-size: 8px; font-weight: 500;
+    color: rgba(255, 255, 255, 0.8); line-height: normal; white-space: nowrap;
+  }
+
+  .stat-col { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .stat {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2.333px;   /* 7/3 */
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  }
+  .stat .top { display: flex; align-items: center; gap: 4.667px; }               /* 14/3 */
+  .stat svg {
+    width: 14.667px; height: 14.667px; display: block; color: var(--icon-grey);    /* 44/3 */
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
+  }
+  .stat .value { font-family: var(--display); font-size: 22px; font-weight: 800; color: #fff; line-height: normal; }
+  .stat .label {
+    font-family: var(--text); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.68); line-height: normal;
+  }
+  .stat .rule { width: 98.667px; height: 0.75px; background: rgba(126, 163, 255, 0.4); }   /* 296/3 */
+
+  .quote { text-shadow: 0 0 9.333px rgba(0, 0, 0, 0.5); }
+  .quote div {
+    font-family: var(--quote); font-size: 33.333px; font-weight: 700; line-height: normal;  /* 100/3 */
+    color: #fff; text-transform: uppercase; white-space: nowrap;
+  }
+  .quote div.accent { color: var(--rule-blue); }
+
+  .footer { display: flex; align-items: center; gap: 6.333px; text-shadow: 0 0 5.333px rgba(0, 0, 0, 0.4); }
+  .footer svg { width: 7px; height: 11px; display: block; overflow: visible; filter: drop-shadow(0 0 2.667px rgba(0, 0, 0, 0.4)); }
+  .footer span {
+    font-family: var(--text); font-size: 8.333px; font-weight: 700; letter-spacing: 0.5px;
+    color: #fff; line-height: normal;
+  }
+</style>
+</head>
+<body>
+<div id="card">
+  <img class="layer photo" src="assets/card-photo-back.jpg" alt="">
+  <div class="layer scrim"></div>
+
+  <div class="layer content">
+    <div class="sp-top"></div>
+    <div class="row"><img class="wordmark" src="assets/card-sportin-wordmark.png" alt="SportIn"></div>
+    <div class="sp-wm"></div>
+    <div class="row masthead">
+      <span class="mag">THE MOVEMENT MAGAZINE</span>
+      <span class="date" id="date">OCT 22, 2026</span>
+    </div>
+    <div class="sp-stats"></div>
+    <div class="row" style="display:flex; justify-content:flex-end;">
+      <div class="stat-col">
+        <div class="stat">
+          <div class="top">
+            <!-- stopwatch (thin) -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round">
+              <circle cx="12" cy="13.6" r="8.2"/><path d="M9.6 2.6h4.8M12 2.6v2.8M12 13.6V8.6M18.4 6.4l1.5-1.5"/>
+            </svg>
+            <span class="value">5:58</span>
+          </div>
+          <span class="label">PACE</span>
+          <div class="rule"></div>
+        </div>
+        <div class="stat">
+          <div class="top">
+            <!-- clock (thin) -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round">
+              <circle cx="12" cy="12" r="9.4"/><path d="M12 12V6.2M12 12l3.8 2.4"/>
+            </svg>
+            <span class="value">31:00</span>
+          </div>
+          <span class="label">TIME</span>
+          <div class="rule"></div>
+        </div>
+        <div class="stat">
+          <div class="top">
+            <!-- shoeprints.fill (regular) -->
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <ellipse cx="7.4" cy="11.6" rx="3" ry="4.6" transform="rotate(-8 7.4 11.6)"/>
+              <ellipse cx="7.9" cy="19" rx="2.2" ry="2.1"/>
+              <ellipse cx="16.6" cy="5.8" rx="3" ry="4.6" transform="rotate(8 16.6 5.8)"/>
+              <ellipse cx="16.1" cy="13.2" rx="2.2" ry="2.1"/>
+            </svg>
+            <span class="value">4.820</span>
+          </div>
+          <span class="label">STEPS</span>
+          <div class="rule"></div>
+        </div>
+        <div class="stat">
+          <div class="top">
+            <!-- mappin (thin) -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round">
+              <circle cx="12" cy="7" r="4.4"/><path d="M12 11.4V21.6"/>
+            </svg>
+            <span class="value">5.2</span>
+          </div>
+          <span class="label">KM DISTANCE</span>
+          <div class="rule"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sp-flex"></div>
+    <div class="row quote">
+      <div>Movement</div>
+      <div>Makes</div>
+      <div class="accent">Us</div>
+      <div class="accent">Human</div>
+    </div>
+    <div class="sp-footer"></div>
+    <div class="row footer">
+      <svg viewBox="0 0 7 11" aria-hidden="true">
+        <path d="M5.667 0L1.333 11" stroke="rgb(7,81,251)" stroke-width="1.333" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span>Rise to the challenge.</span>
+    </div>
+    <div class="sp-bottom"></div>
+  </div>
+</div>
+<script>
+  (function () {
+    var card = document.getElementById("card");
+    function fit() { card.style.transform = "scale(" + (window.innerWidth / 360) + ")"; }
+    fit();
+    window.addEventListener("resize", fit);
+    // Same "MMM d, yyyy" uppercased as ShareCardTemplate12.dateText.
+    var m = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+    var d = new Date();
+    document.getElementById("date").textContent = m[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+  })();
+</script>
+</body>
+</html>

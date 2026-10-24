@@ -1,0 +1,115 @@
+<!doctype html>
+<!--
+  Run Cam "Magazine Cover" template, ported from the SportIn iOS app (rork-sportin-io, origin/testing-ios):
+    Views/RunCam/RunCamMagazineCoverHUDView.swift          scrim, palette (brand blue, rule blue, icon grey)
+    Views/RunCam/RunCamMagazineCoverHUDView+Content.swift  column layout, wordmark, masthead, stat column
+    Views/RunCam/RunCamMagazineCoverHUDView+Story.swift    word-stacked quote (Oswald Bold), footer motto, quote pool
+    Views/RunCam/RunCamHUDMetrics.swift                    1080x1920 canvas
+    Utilities/ShareCardDisplayFont.swift                   Big Shoulders Display ExtraBold (stat values)
+    Models/RunCamHUDModel.swift, Utilities/RunFormatters.swift   text formats
+  The quote is the pool entry the app picks for the line "Proof I went outside." (scalar sum % 16 = 8).
+  Stat icons are SF Symbols in the app (stopwatch, clock, shoeprints.fill, mappin); here they are
+  hand-drawn SVG stand-ins at the same 44pt box and #98A0B5 grey. All run data is fictional.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Cam Magazine Cover</title>
+<style>
+  @font-face { font-family: "BigShouldersDisplay"; src: url("assets/runcam-bigshoulders-extrabold.ttf") format("truetype"); font-weight: 100 900; font-display: block; }
+  @font-face { font-family: "OswaldBold"; src: url("assets/runcam-oswald-bold.ttf") format("truetype"); font-weight: 100 900; font-display: block; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+  #view { position: fixed; inset: 0; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; }
+  #stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .abs { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  .scrim { background: linear-gradient(to bottom, transparent 0%, transparent 33.333%, rgba(0,0,0,.45) 66.667%, rgba(0,0,0,.85) 100%); }
+  .content { box-sizing: border-box; display: flex; flex-direction: column; padding: 110px 55px 130px; }
+  .sys { font-family: -apple-system, "SF Pro Text", "SF Pro Display", system-ui, sans-serif; }
+  .wordmark { display: block; width: 970px; filter: drop-shadow(0 0 15px rgba(0,0,0,.45)); }
+  .masthead { margin-top: 16px; display: flex; align-items: center; justify-content: space-between; color: #fff; text-shadow: 0 0 16px rgba(0,0,0,.4); }
+  .masthead .t { font-size: 25px; font-weight: 400; letter-spacing: 3px; color: rgba(255,255,255,.75); }
+  .masthead .d { font-size: 24px; font-weight: 500; color: rgba(255,255,255,.8); }
+  .stats { margin-top: 150px; align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 18px; }
+  .row { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; text-shadow: 0 0 18px rgba(0,0,0,.4); }
+  .row .top { display: flex; align-items: center; gap: 14px; }
+  .row svg { width: 44px; height: 44px; flex: none; filter: drop-shadow(0 0 9px rgba(0,0,0,.4)); }
+  .row .v { font: 900 66px/normal "BigShouldersDisplay", system-ui, sans-serif; color: #fff; font-variant-numeric: tabular-nums; }
+  .row .l { font-size: 33px; font-weight: 700; letter-spacing: 4.5px; line-height: normal; color: rgba(255,255,255,.68); }
+  .row .r { width: 296px; height: 2px; background: rgba(126,163,255,.4); }
+  .quote { margin-top: auto; text-shadow: 0 0 28px rgba(0,0,0,.5); }
+  .quote div { font: 700 100px/normal "OswaldBold", system-ui, sans-serif; text-transform: uppercase; color: #fff; white-space: nowrap; }
+  .quote div.a { color: #7EA3FF; }
+  .footer { margin-top: 140px; display: flex; align-items: center; gap: 19px; text-shadow: 0 0 16px rgba(0,0,0,.4); }
+  .footer svg { width: 21px; height: 33px; flex: none; overflow: visible; filter: drop-shadow(0 0 8px rgba(0,0,0,.4)); }
+  .footer span { font-size: 25px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <video autoplay muted loop playsinline preload="auto" poster="/assets/site/media/clip-rungroup.jpg" src="/assets/site/media/clip-rungroup.mp4"></video>
+  <div class="abs scrim"></div>
+  <div class="abs content sys">
+    <img class="wordmark" src="assets/demo-northside-wordmark.png" alt="Northside Run Club, a made-up demo brand">
+    <div class="masthead"><span class="t">THE MOVEMENT MAGAZINE</span><span class="d" id="date"></span></div>
+    <div class="stats">
+      <div class="row"><div class="top">
+        <svg viewBox="0 0 44 44" fill="none" stroke="#98A0B5" stroke-width="1.6" stroke-linecap="round"><circle cx="22" cy="25" r="15"/><path d="M18.5 5.5h7M22 5.5v4.5M33 12.5l2.5-2.5M22 25V16"/></svg>
+        <span class="v" id="pace">-</span></div><span class="l">PACE</span><span class="r"></span></div>
+      <div class="row"><div class="top">
+        <svg viewBox="0 0 44 44" fill="none" stroke="#98A0B5" stroke-width="1.6" stroke-linecap="round"><circle cx="22" cy="22" r="18"/><path d="M22 10.5V22h8"/></svg>
+        <span class="v" id="time">0:00</span></div><span class="l">TIME</span><span class="r"></span></div>
+      <div class="row"><div class="top">
+        <svg viewBox="0 0 44 44" fill="#98A0B5"><path d="M10.5 6c3.6 0 5.4 3.6 5.4 8.4 0 3.8-1 6.6-1.6 9H7.6C7 21 5.6 18 5.6 14c0-4.8 1.7-8 4.9-8zM7.8 25.6h6.4c.2 2.8-.8 5.4-3.2 5.4s-3.4-2.6-3.2-5.4zM31.5 12.5c3.2 0 4.9 3.2 4.9 8 0 4-1.4 7-2 9.4h-6.7c-.6-2.4-1.6-5.2-1.6-9 0-4.8 1.8-8.4 5.4-8.4zM27.8 32.1h6.4c.2 2.8-.8 5.4-3.2 5.4s-3.4-2.6-3.2-5.4z"/></svg>
+        <span class="v" id="steps">0</span></div><span class="l">STEPS</span><span class="r"></span></div>
+      <div class="row"><div class="top">
+        <svg viewBox="0 0 44 44" fill="none" stroke="#98A0B5" stroke-width="1.6" stroke-linecap="round"><circle cx="22" cy="12" r="7.5"/><path d="M22 19.5V40"/></svg>
+        <span class="v" id="dist">0.00</span></div><span class="l">KM DISTANCE</span><span class="r"></span></div>
+    </div>
+    <div class="quote"><div>Stillness</div><div>Never</div><div class="a">Changed</div><div class="a">Me</div></div>
+    <div class="footer">
+      <svg viewBox="0 0 21 33"><path d="M17 0L4 33" stroke="#0751FB" stroke-width="4" stroke-linecap="round"/></svg>
+      <span>Rise to the challenge.</span>
+    </div>
+  </div>
+</div></div>
+<script>
+(() => {
+  const W = 1080;
+  const $ = id => document.getElementById(id);
+  // Masthead date: "MMM d, yyyy", uppercased (RunCamMagazineCoverHUDView.dateText).
+  const now = new Date();
+  $('date').textContent = `${now.toLocaleString('en-US', { month: 'short' })} ${now.getDate()}, ${now.getFullYear()}`.toUpperCase();
+
+  // ---- Fictional run (time-lapse of a 5 km run) ---------------------------------
+  const RUN = 13, HOLD = 1.5, LOOP = RUN + HOLD, TOTAL_S = 1530, TOTAL_M = 5000;
+  const V0 = TOTAL_M / TOTAL_S, A = 0.25, WV = 2 * Math.PI * 3 / TOTAL_S;
+  const pad2 = n => String(n).padStart(2, '0');
+  const elapsedText = s => { const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${pad2(m)}:${pad2(x)}` : `${m}:${pad2(x)}`; };
+  const stepsText = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const paceText = s => s == null ? '-' : `${Math.floor(s / 60)}:${pad2(s % 60)}`;
+
+  function render(t) {
+    const pr = Math.min(t / RUN, 1), E = Math.round(pr * TOTAL_S);
+    const d = V0 * pr * TOTAL_S + (A / WV) * (1 - Math.cos(WV * pr * TOTAL_S));
+    $('pace').textContent = paceText(d > 20 ? Math.round(E / (d / 1000)) : null);
+    $('time').textContent = elapsedText(E);
+    $('steps').textContent = stepsText(Math.round(E * 2.85));
+    $('dist').textContent = (d / 1000).toFixed(2);
+  }
+
+  const stage = $('stage');
+  const fit = () => { stage.style.transform = `scale(${innerWidth / W})`; };
+  addEventListener('resize', fit); fit();
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { const v = stage.querySelector('video'); v.removeAttribute('autoplay'); v.pause(); render(RUN); return; }
+  // ?capture: the page is painted frame by frame by the render script instead of the clock.
+  window.__render = (t) => render(t % LOOP); window.__loop = LOOP;
+  if (!location.search.includes('capture')) {
+    const t0 = performance.now();
+    (function tick(now) { render(((now - t0) / 1000) % LOOP); requestAnimationFrame(tick); })(t0);
+  } else { render(0); }
+})();
+</script>
+</body>
+</html>
