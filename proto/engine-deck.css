@@ -1,0 +1,25 @@
+/* The 3D scroll scenes (engine, then integrations) as pages of the deck, after the blue evidence page.
+   Only the engine's own rules are copied here (engine.css also styles .ring and .season,
+   which would clash with the games section). The pinned stage becomes one rounded white
+   card like every other page, and each of the seven steps is a snap point (set in deck.js).
+   Loaded before engine3d.css, which then sets the centred single-column layout. */
+.engine { position: relative; height: calc(100vh + 6 * 80vh); }
+.engine__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; padding-top: var(--nav-h); background: #fff; }
+.engine__grid { display: grid; align-items: center; height: 100%; }
+.engine__copy { position: relative; z-index: 2; }
+.eng-txt { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; opacity: 0; will-change: opacity, transform, filter; }
+.eng-eyebrow { color: var(--blue); margin-bottom: 16px; }
+.engine__title { font-size: var(--fs-l); }
+.eng-k { margin: 0 0 14px; font-family: var(--mono); font-size: 12px; }
+.eng-h { margin: 0; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: clamp(36px, 3.6vw, 56px); line-height: 1.02; letter-spacing: -0.02em; }
+.eng-p { margin: 18px 0 0; max-width: 30ch; font-size: clamp(17px, 1.3vw, 19px); line-height: 1.5; }
+.engine__stage { position: relative; height: 100%; }
+/* The stage stays white in dark mode (the chip reads as a product shot); text keeps light-mode colours. */
+.engine .eng-h, .engine .engine__title { color: #0a1020; }
+.engine .eng-p, .engine .eng-k { color: #5a6377; }
+
+html.is-full .engine { background: transparent; }
+html.is-full .engine .engine__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
+html.is-full .engine .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
+/* Present mode does not include the scroll scene yet. */
+html.is-deck .engine { display: none; }

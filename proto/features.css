@@ -1,0 +1,180 @@
+/* Competitions, after the integrations: an opening title, then one page per scroll step (snap
+   points set in deck.js). Pages sit on top of each other and never slide: the text turns to dust
+   and re-forms as the next page (dust.js), in slow motion; graphics fade out and in.
+   0 opening title, 1 Champions League style, 2 national division style, 3 Conquer (Game of Run),
+   4 walking board, 5 running board, 6 brand rewards. */
+.feat { position: relative; height: calc(100vh + 6 * 80vh); }
+.feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--paper); }
+html.is-full .feat__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
+html.is-full .feat .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
+html.is-deck .feat { display: none; } /* Present mode does not include the scroll scenes yet */
+
+.feat__track { position: relative; height: 100%; }
+/* Title block at the top, the graphic centred in the space between it and the rail. */
+.feat__panel { position: absolute; inset: 0; box-sizing: border-box; padding: calc(var(--nav-h) + 40px) max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)) 112px; display: grid; grid-template-rows: auto minmax(0, 1fr); justify-items: center; gap: 32px; }
+.feat__intro { text-align: center; max-width: 760px; opacity: var(--txt, 1); }
+.feat__intro .eng-k { margin: 0 0 14px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em; color: var(--slate); }
+/* Page number and chapter (option 2): blue number, the chapter in bold after a short rule, then the page. */
+.feat__intro .feat__idx { display: flex; justify-content: center; align-items: baseline; gap: 12px; margin-bottom: 18px; font-family: var(--body); font-size: 14px; letter-spacing: 0; color: var(--slate); }
+.feat__panel--app .feat__intro .feat__idx { justify-content: flex-start; }
+/* The same heading on the member content and technology pages (left aligned, after Competitions). */
+.ugc__kicker.feat__idx, #technology .eyebrow.feat__idx, .aud__idx.feat__idx, .dl__idx.feat__idx { display: flex; justify-content: flex-start; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--body); font-size: 14px; font-weight: 400; letter-spacing: 0; color: var(--slate); }
+.feat__idx b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 22px; line-height: 1; color: var(--blue); }
+.feat__idx span { font-weight: 600; color: var(--ink); }
+.feat__idx b + span { padding-left: 12px; border-left: 1px solid var(--line); }
+.feat__idx em { font-style: normal; }
+.feat__panel--app .feat__lede { max-width: 42ch; }
+.feat__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+.feat__title em { font-style: normal; color: var(--blue); white-space: nowrap; } /* the highlighted phrase never breaks */
+.feat__defs { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 0; opacity: var(--txt, 1); }
+.feat__defs dt { font-size: 15px; font-weight: 700; color: var(--ink); }
+.feat__defs dd { margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: var(--slate); }
+.feat__lede, .points span, .feat__defs dd, .fmt__foot { text-wrap: pretty; }
+.feat__lede { margin: 14px auto 0; max-width: 60ch; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; color: var(--slate); }
+/* The opening page: one big title and its line, in the middle of the page. */
+.feat__panel--lead { grid-template-rows: 1fr; align-items: center; }
+.feat__intro--lead { max-width: 1000px; }
+.feat__intro--lead .feat__title { font-size: clamp(52px, 6vw, 96px); line-height: 1; letter-spacing: -0.03em; }
+.feat__intro--lead .feat__lede { margin-top: 24px; max-width: 52ch; font-size: clamp(18px, 1.5vw, 22px); }
+/* Graphics fade out and in (--gfx); all text goes through the dust and shows again when it lands (--txt). */
+.feat__panel .big:not(.big--app), .feat__panel--app .phone__screen { opacity: var(--gfx, 1); }
+.feat__panel--app .phone__frame { opacity: var(--frame, var(--gfx, 1)); }
+.feat__panel--app .points { opacity: var(--txt, 1); }
+.feat__dust { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+.feat__skip { position: absolute; right: max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)); bottom: 28px; z-index: 4; display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--slate); font: 600 13px/1 var(--body); cursor: pointer; transition: color 160ms ease-out, transform 160ms ease-out; }
+.feat__skip:hover { color: var(--ink); }
+.feat__skip:active { transform: scale(0.97); }
+.feat__skip:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.big { width: 100%; max-width: 1120px; display: grid; gap: 28px; align-content: start; align-self: center; }
+
+/* Shared small parts. */
+.fix__row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; background: var(--infield); font-size: 15px; color: var(--ink); }
+.fix__row span:last-child { text-align: right; }
+.fix__score { min-width: 64px; padding: 4px 12px; border-radius: 999px; background: var(--surface); font-family: var(--mono); font-size: 14px; text-align: center; color: var(--ink); }
+.fix__row.is-live .fix__score { background: var(--blue); color: #fff; }
+.fix__day { display: flex; align-items: center; height: 32px; font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.bar { height: 10px; border-radius: 5px; background: var(--infield); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 100%; border-radius: 5px; background: var(--blue); transform-origin: left; transform: scaleX(var(--f, 0)); transition: transform 1200ms cubic-bezier(0.23, 1, 0.32, 1); }
+.fmt__foot { margin: 0; font-size: 14px; color: var(--slate); }
+
+/* 1 Champions League style: qualifying and groups on the left feeding the knockout bracket on the right. */
+
+.cup { display: grid; grid-template-columns: 400px 1fr; gap: 40px; align-items: center; }
+.cup__left { display: grid; gap: 12px; }
+.cup__lbl { display: block; margin-bottom: 2px; font: 500 11px var(--mono); color: var(--slate); }
+.cup__lbl--groups { margin: 6px 0 -4px; }
+.cup__qual { display: grid; gap: 8px; }
+.cup__qual .fix__row { font-size: 13px; padding: 8px 12px; gap: 8px; }
+.cup__qual .fix__score { min-width: 52px; font-size: 13px; }
+.cup__groups { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grp { padding: 12px 14px; border-radius: 12px; background: var(--infield); transition: box-shadow 300ms ease-out; }
+.grp b { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--slate); }
+.grp span { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 1.7; color: var(--slate); }
+.grp span em { font-style: normal; font-family: var(--mono); font-size: 13px; }
+.grp span.q { color: var(--ink); font-weight: 600; }
+.cup [data-stage] { opacity: 0.3; transition: opacity 300ms ease-out; }
+.cup [data-stage].is-on, .cup [data-stage].is-done { opacity: 1; }
+.cup__groups.is-on .grp { box-shadow: inset 0 0 0 2px var(--blue); }
+.cup__ko { width: 100%; height: auto; overflow: visible; }
+.cup__ko path { fill: none; stroke: var(--line); stroke-width: 2; transition: stroke 300ms ease-out; }
+.cup__ko [data-stage].is-on path, .cup__ko [data-stage].is-done path { stroke: var(--blue); }
+.cup__ko rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; transition: stroke 300ms ease-out; }
+.cup__ko [data-stage].is-on rect { stroke: var(--blue); }
+.cup__ko text { font: 600 13px var(--body); fill: var(--ink); }
+.cup__ko .win rect { fill: var(--blue); stroke: var(--blue); }
+.cup__ko .win text { fill: #fff; }
+.cup__ko .lbl { font: 500 11px var(--mono); fill: var(--slate); }
+
+/* 2 National division style: the matchday on the left, the table on the right. */
+.big--division { grid-template-columns: 1fr 1.25fr; gap: 40px; align-items: center; }
+.fix--big { display: grid; gap: 10px; }
+.tbl { position: relative; display: grid; }
+.tbl__row { display: grid; grid-template-columns: 32px 1fr repeat(4, 40px) 52px; align-items: center; height: 42px; padding: 0 14px; border-radius: 10px; font-size: 15px; color: var(--ink); transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1), background-color 300ms ease-out; }
+.tbl__row span { font-family: var(--mono); font-size: 14px; color: var(--slate); text-align: center; }
+.tbl__row span:nth-child(2) { font-family: var(--body); font-size: 15px; color: var(--ink); text-align: left; }
+.tbl__row span:last-child { color: var(--ink); font-weight: 700; }
+.tbl__row--head { height: 32px; }
+.tbl__row--head span, .tbl__row--head span:nth-child(2) { font-family: var(--mono); font-size: 12px; color: var(--slate); font-weight: 500; }
+.tbl__row[data-team] { background: var(--infield); margin-bottom: 6px; }
+.tbl__row.is-up { background: var(--blue-soft); }
+
+/* 3 Conquer (Game of Run): the map, big, with the territory shares beside it. */
+.big--conq { grid-template-columns: 1.7fr 1fr; gap: 40px; align-items: center; }
+.hexmap-f { width: 100%; height: auto; max-height: min(460px, calc(100vh - 420px)); }
+.hexmap-f polygon { stroke: var(--paper); stroke-width: 2; transition: fill 400ms ease-out; }
+.hexmap-f .runner { fill: var(--surface); stroke: var(--blue); stroke-width: 3; }
+.terr-wrap { display: grid; gap: 24px; padding: 20px; border-radius: 12px; background: var(--infield); }
+.terr { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+.terr li { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; font-size: 16px; color: var(--ink); }
+.terr li > span { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.terr li > span small { margin-left: 2px; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--slate); }
+.terr li > span i { width: 12px; height: 12px; border-radius: 3px; }
+.terr li .bar { grid-column: 1 / -1; grid-row: 2; }
+.terr li em { font-style: normal; font-family: var(--mono); font-size: 14px; color: var(--slate); }
+.terr li[data-team="0"] > span i, .terr li[data-team="0"] .bar i { background: #0751fb; }
+.terr li[data-team="1"] > span i, .terr li[data-team="1"] .bar i { background: #6f97ff; }
+.terr li[data-team="2"] > span i, .terr li[data-team="2"] .bar i { background: #9aa3b5; }
+
+/* Timeline along the bottom: the engine's layers in order. Layer 1 (Competition) has its formats
+   as steps you can jump to; layers 2 and 3 come next. */
+.tl { align-items: center; gap: 10px; padding: 4px 14px 4px 4px; }
+.tl__layer { display: flex; align-items: center; gap: 8px; color: var(--slate); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.tl__layer.is-on { color: var(--ink); }
+.tl__num { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--infield); font: 600 12px/1 var(--mono); color: var(--slate); }
+.tl__layer.is-on .tl__num { background: var(--blue); color: #fff; }
+.tl__steps { display: flex; gap: 2px; margin-left: 4px; padding: 2px; border-radius: 999px; background: var(--infield); }
+.tl__line { width: 20px; height: 2px; border-radius: 1px; background: var(--line); }
+/* Rail along the bottom: where you are, and a way to jump. */
+.feat__nav { z-index: 4; position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.feat__nav button { height: 30px; padding: 0 11px; border: 0; border-radius: 999px; background: transparent; color: var(--slate); font: 600 13px/1 var(--body); cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out; }
+.feat__nav button:hover { color: var(--ink); }
+.feat__nav button:active { transform: scale(0.97); }
+.feat__nav button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.feat__nav button[aria-current="true"] { background: var(--blue-soft); color: var(--blue); }
+
+@media (max-width: 1100px) {
+  .cup, .big--division, .big--conq { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cup [data-stage], .tbl__row, .bar i { transition: none; }
+}
+
+/* ---------- Layer 2: app screens in Adrian's phone frame ----------
+   The phone takes the full height on the right; the title and the points sit on the left. The
+   screens are the SportIn app's own elements (leaderboard, weekly progress), rebuilt in HTML so
+   they move; names and avatars are placeholders, not real members. */
+.feat__panel--app { padding-inline: max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)); grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 1fr auto auto 1fr; justify-items: start; align-content: center; align-items: initial; column-gap: clamp(40px, 6vw, 96px); row-gap: 28px; }
+.feat__panel--app .feat__intro { grid-column: 1; grid-row: 2; text-align: left; align-self: end; }
+.feat__panel--app .feat__lede { margin-left: 0; }
+.big--app { display: contents; }
+.phone { grid-column: 2; grid-row: 1 / 5; position: relative; height: min(680px, calc(100vh - var(--nav-h) - 190px)); aspect-ratio: 871 / 1771; align-self: center; }
+.phone__frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+/* Fill the frame's whole screen opening with the app's dark, so no page white shows at the corners
+   where the rounded screen does not quite reach the bezel. The mask is the opening of the same render. */
+.feat__panel--app .phone::before { content: ''; position: absolute; inset: 0; z-index: 0; background: rgb(20, 21, 32); -webkit-mask: url('/proto/media/frames/phone-screen-mask-3d.png') center / 100% 100% no-repeat; mask: url('/proto/media/frames/phone-screen-mask-3d.png') center / 100% 100% no-repeat; opacity: var(--frame, var(--gfx, 1)); }
+/* The frame is the 3D phone (phone3d.js) rendered face-on: media/frames/phone-frame-3d.png. */
+.phone__screen { position: absolute; left: 5.1%; top: 2.1%; width: 89.83%; height: 95.81%; border-radius: 12.9% / 5.94%; overflow: hidden; z-index: 1; }
+.points { grid-column: 1; grid-row: 3; align-self: start; list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; max-width: 460px; }
+.points li { display: grid; gap: 4px; padding-left: 22px; position: relative; }
+.points li::before { content: ''; position: absolute; left: 0; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+.points b { font-size: 16px; font-weight: 650; color: var(--ink); }
+.points span { font-size: 15px; line-height: 1.5; color: var(--slate); }
+
+
+/* The 3D phone for the turn between app pages (features-3d.js); placed over the flat phone. */
+.feat__three { position: absolute; z-index: 3; pointer-events: none; visibility: hidden; }
+.feat__three canvas { display: block; }
+
+/* Narrow screens: no pinned scene (features.js does not start it). The pages stack like ordinary
+   sections, so the rail, Skip, the dust and the 3D phone are not needed; each phone sits under its title. */
+@media (max-width: 900px) {
+  .feat { height: auto; }
+  .feat__stick { position: static; height: auto; overflow: visible; }
+  .feat__track { height: auto; display: grid; gap: 88px; padding: calc(var(--nav-h) + 24px) 0 72px; }
+  .feat__panel { position: static; padding: 0 var(--gutter); row-gap: 28px; }
+  .feat__dust, .feat__nav, .feat__skip, .feat__three { display: none; }
+  .feat__panel--app { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; justify-items: stretch; }
+  .feat__panel--app .feat__intro, .feat__panel--app .points { grid-column: auto; grid-row: auto; }
+  .feat__panel--app .phone { grid-column: auto; grid-row: auto; height: auto; width: min(300px, 78vw); justify-self: center; }
+}

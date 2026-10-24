@@ -1,0 +1,46 @@
+/* 10 Delivery: a pinned scroll scene on the same light grey rounded block as "Who it's for".
+   One phone, three ways to launch; each scroll turns the phone to the next one and swaps the text beside it:
+   the SportIn app, white label (the same app in a made-up brand), the engine inside the client's own app. */
+.dl { position: relative; height: calc(100vh + 2 * 80vh); }
+.dl__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--infield); box-sizing: border-box; padding: calc(var(--nav-h) + 28px) 0 40px; }
+html.is-full .dl__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
+html.is-full .dl .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
+html.is-deck .dl { display: none; } /* Present mode does not include the scroll scenes yet */
+.dl__grid { height: 100%; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); column-gap: clamp(48px, 5.5vw, 88px); align-items: center; }
+
+/* Left: heading, title, the three options. */
+.dl__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(40px, 3.8vw, 58px); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); }
+.dl__title em { font-style: normal; color: var(--blue); white-space: nowrap; }
+/* Only the option on the phone is shown; the three sit in one place and swap with the phone's turn. */
+.dl__list { display: grid; list-style: none; margin: clamp(28px, 2.6vw, 36px) 0 0; padding: 0; }
+.dl__row { grid-area: 1 / 1; padding: clamp(14px, 1.2vw, 18px) 0 0; border-top: 2px solid var(--blue); opacity: var(--on, 0); transform: translateY(calc((1 - var(--on, 0)) * 10px)); }
+.dl__name { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: clamp(26px, 2.3vw, 32px); line-height: 1.1; letter-spacing: -0.01em; color: var(--ink); }
+.dl__line { margin: 8px 0 0; max-width: 40ch; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.45; color: var(--slate); }
+.dl__effort { display: flex; align-items: center; gap: 5px; margin: 14px 0 0; font-size: 13px; color: var(--slate); }
+.dl__effort i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.dl__effort i.is-on { background: var(--blue); }
+.dl__effort span { margin-left: 6px; }
+
+/* Right: the phone, with the three screens stacked; delivery.js cross-fades them. */
+.dl__stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; height: 100%; min-height: 0; }
+.dl__phone { position: relative; flex: none; grid-area: auto; margin: 0; height: min(640px, calc(100vh - var(--nav-h) - 170px)); aspect-ratio: 871 / 1771; }
+/* The 3D phone (delivery-3d.js). The flat phone below stays as the fallback when WebGL is missing. */
+.dl__three { display: none; width: 100%; height: min(700px, calc(100vh - var(--nav-h) - 150px)); }
+.dl.is-3d .dl__three { display: block; }
+.dl.is-3d .dl__phone { display: none; }
+.dl__phone .phone__frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.dl__phone .phone__screen { position: absolute; left: 5.1%; top: 2.1%; width: 89.83%; height: 95.81%; border-radius: 12.9% / 5.94%; overflow: hidden; z-index: 1; background: #0b0d14; }
+.dl__layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; opacity: var(--o, 0); }
+.dl__cap { position: relative; height: 20px; margin: 0; width: 100%; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); }
+.dl__cap span { position: absolute; inset: 0; opacity: var(--o, 0); }
+
+@media (max-width: 900px) {
+  .dl { height: auto; }
+  .dl__stick { position: static; height: auto; }
+  .dl__grid { grid-template-columns: 1fr; row-gap: 32px; }
+  /* All three options are listed; delivery.js turns the phone to the one tapped. */
+  .dl__list { row-gap: 20px; }
+  .dl__row { grid-area: auto; opacity: 0.5; transform: none; border-top-color: var(--line); cursor: pointer; transition: opacity 200ms ease-out, border-color 200ms ease-out; }
+  .dl__row.is-on { opacity: 1; border-top-color: var(--blue); }
+  .dl__row:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+}

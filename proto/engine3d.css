@@ -1,0 +1,68 @@
+/* Engine 3D mockup: the stage is a real 3D scene (three.js) instead of CSS plates. */
+.engine__stage { perspective: none; }
+/* The canvas fills the whole pinned screen behind the text, so the scene is never clipped. */
+#eng3d, .eng-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
+.engine__grid { position: relative; z-index: 1; }
+.eng-caption { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); margin: 0; display: flex; gap: 28px; font-family: var(--mono); font-size: 12px; color: #5a6377; opacity: var(--cap, 0); pointer-events: none; white-space: nowrap; }
+.eng-caption span { display: inline-flex; align-items: center; gap: 8px; }
+.eng-caption span::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+
+/* Layout: the text sits above, the 3D scene fills the middle of the page. */
+.engine__grid { grid-template-columns: 1fr; grid-template-rows: auto 1fr; align-items: stretch; justify-items: center; padding-top: clamp(16px, 3vh, 36px); }
+.engine__copy { width: 100%; max-width: 1040px; height: clamp(150px, 19vh, 200px); text-align: center; }
+.eng-txt { align-items: center; justify-content: flex-start; }
+.engine__title { max-width: none; }
+.eng-p { margin-left: auto; margin-right: auto; max-width: 46ch; }
+.engine__stage { width: 100%; min-height: 0; }
+/* Seven steps now (intro, Competitions, Challenges, Leaderboard, Reward, Connected, Engine). */
+.engine { height: calc(100vh + 6 * 80vh); }
+
+/* The demo button arrives with the finished chip. */
+.eng-cta { align-self: center; margin-top: 20px; opacity: var(--cap, 0); pointer-events: none; transition: none; }
+.eng-cta.is-on { pointer-events: auto; }
+
+/* Still chip, shown only if the 3D cannot start. */
+.eng-fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; }
+.eng-fallback__lid { width: min(520px, 80%); aspect-ratio: 5.2 / 3.4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; border-radius: 14px; background: #f1f3f6; box-shadow: inset 0 0 0 1px rgba(10, 16, 32, 0.08), inset 0 0 0 26px #f7f8fa, inset 0 0 0 27px rgba(10, 16, 32, 0.06); }
+.eng-fallback__lid img { width: 46%; height: auto; opacity: 0.85; }
+.eng-fallback__lid span { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--blue); }
+html.eng3d-failed .eng-fallback { display: flex; }
+html.eng3d-failed #eng3d, html.eng3d-failed .eng-canvas { display: none; }
+html.eng3d-failed .eng-txt { opacity: 0; }
+html.eng3d-failed .eng-txt[data-c="6"] { opacity: 1; }
+html.eng3d-failed .engine { --cap: 1; }
+html.eng3d-failed .eng-cta { pointer-events: auto; }
+
+/* Sound switch, bottom right of the engine card. One small neutral shadow, no glow. */
+.eng-sound { position: absolute; right: clamp(16px, 2vw, 28px); bottom: clamp(16px, 2vw, 28px); z-index: 3; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 12px; border: 1px solid rgba(10, 16, 32, 0.1); border-radius: 999px; background: #fff; color: #5a6377; font: 500 12px/1 var(--mono); cursor: pointer; box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); transition: color 160ms ease-out, border-color 160ms ease-out, transform 160ms ease-out; }
+.eng-sound:hover { color: #0a1020; border-color: rgba(10, 16, 32, 0.22); }
+.eng-sound:active { transform: scale(0.97); }
+.eng-sound:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.eng-sound svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.eng-sound svg path:first-child { fill: currentColor; stroke: none; }
+.eng-sound[aria-pressed="true"] { color: var(--blue); border-color: rgba(7, 81, 251, 0.35); }
+
+/* Every step title carries one highlight in brand blue; descriptions stay on one line. */
+.engine .eng-h em, .engine .engine__title em { font-style: normal; color: var(--blue); }
+.engine .eng-p { max-width: 64ch; }
+@media (min-width: 900px) { .engine .eng-p { max-width: none; white-space: nowrap; } }
+
+/* The integrations scene: five steps (0..4). */
+.engine.engine--int { height: calc(100vh + 4 * 80vh); }
+/* Switch between the two ways data reaches the engine: tabs centred below the title (placed by JS).
+   The blue dot on eMotion pulses: it is the live technology. */
+.int-switch { position: absolute; left: 0; top: 0; z-index: 3; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: #fff; border: 1px solid rgba(10, 16, 32, 0.1); box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); opacity: 0; will-change: transform, opacity; }
+.int-switch button { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; color: #5a6377; font: 600 14px/1 var(--body, "Instrument Sans"), sans-serif; cursor: pointer; transition: background-color 160ms ease-out, color 160ms ease-out, transform 160ms ease-out; }
+.int-switch button:hover { color: #0a1020; }
+.int-switch button:active { transform: scale(0.97); }
+.int-switch button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.int-switch button[aria-pressed="true"] { background: #eef3ff; color: var(--blue); }
+.int-switch button i { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); animation: int-live 1.6s ease-in-out infinite; }
+@keyframes int-live { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.6); opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .int-switch button i { animation: none; } }
+
+/* Title under the eMotion chip, placed by JS. */
+.int-chip-title { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; white-space: nowrap; font: 600 14px/1 var(--mono); color: var(--blue); opacity: 0; will-change: transform, opacity; }
+
+/* The engine with the integrations after it, as one continuous scene (deck): eleven steps. */
+.engine[data-steps="10"] { height: calc(100vh + 10 * 80vh); }

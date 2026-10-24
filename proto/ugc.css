@@ -1,0 +1,34 @@
+/* Member content (UGC), after the Competitions section: every game comes with share templates
+   carrying the brand's logo, so members post real content for the brand. A slow, endless strip of
+   the app's own share templates (images, and videos pre-rendered from the app's Run Cam looks).
+   Type sizes follow the Competitions pages (features.css) so the two read as one system. */
+.ugc { background: var(--paper); }
+.ugc__head { display: grid; }
+.ugc__kicker { margin: 0 0 14px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em; color: var(--slate); }
+.ugc__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+.ugc__title em { font-style: normal; color: var(--blue); white-space: nowrap; }
+.ugc__lede { margin: 14px 0 0; max-width: 60ch; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; color: var(--slate); text-wrap: pretty; }
+
+/* The strip runs edge to edge of the page block and loops: the items are listed twice. Cards are
+   sized from the height left after the heading, so the page fits without being scaled down. */
+.ugc__stage { position: relative; margin: clamp(28px, 4vh, 48px) calc(50% - 50vw + var(--inset)) 0; }
+.ugc__strip { overflow: hidden; } /* no fade: the cards run to the page block's rounded edge and are cut there */
+.ugc__track { display: flex; gap: 20px; width: max-content; animation: ugc-drift 110s linear infinite; }
+.ugc__strip:hover .ugc__track, .ugc__stage:focus-within .ugc__track, .ugc__stage.is-paused .ugc__track, .ugc.is-off .ugc__track { animation-play-state: paused; }
+@keyframes ugc-drift { to { transform: translateX(calc(-50% - 10px)); } }
+.ugc__card { --ugc-h: clamp(270px, calc(100vh - 440px), 510px); flex: none; margin: 0; display: grid; gap: 12px; width: calc(var(--ugc-h) * 9 / 16); }
+.ugc__media { display: block; width: 100%; height: var(--ugc-h); object-fit: cover; object-position: 50% 0; border: 0; border-radius: 16px; background: #0b1020; }
+.ugc__card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 22px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.ugc__card figcaption span { padding: 3px 9px; border-radius: 999px; background: var(--blue-soft); font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--blue); }
+/* Pause control (WCAG 2.2.2): bottom right, over the strip. */
+.ugc__pause { position: absolute; right: 28px; bottom: 46px; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); cursor: pointer; transition: transform 160ms ease-out; }
+.ugc__pause:active { transform: scale(0.97); }
+.ugc__pause:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.ugc__pause .ugc__ico-play, .ugc__stage.is-paused .ugc__pause .ugc__ico-pause { display: none; }
+.ugc__stage.is-paused .ugc__pause .ugc__ico-play { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ugc__track { animation: none; }
+  .ugc__strip { overflow-x: auto; }
+  .ugc__card[aria-hidden="true"], .ugc__pause { display: none; }
+}
