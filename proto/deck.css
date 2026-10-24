@@ -1,0 +1,150 @@
+/* Deck mockup. Two modes:
+   1. Scrolling (default, desktop): every section is one full-screen page. The browser's own
+      scroll snap lands on exactly one page at a time, and nothing intercepts the wheel, so the
+      page always moves with your fingers. Scroll scenes keep their steps as snap points.
+   2. Present (button, bottom left): one slide at a time, arrow keys or a clicker only. Esc exits. */
+html.is-full, html.is-deck { scroll-behavior: auto; scroll-padding-top: 0; } /* phones keep the site's padding, so a menu jump does not hide the heading under the bar */
+
+/* Pages: one rounded card per screen, with the page gap showing around it. */
+html.is-full { scroll-snap-type: y mandatory; }
+html.is-full .page { box-sizing: border-box; height: calc(100vh - 2 * var(--inset)); min-height: 0; margin: var(--inset) var(--inset) !important; padding: calc(var(--nav-h) + 20px) 0 32px !important; border-radius: var(--r-block); overflow: clip; display: flex; flex-direction: column; justify-content: center; scroll-snap-align: center; scroll-snap-stop: always; }
+html.is-full .page > .slide__fit { flex: none; transform-origin: 50% 50%; }
+html.is-full .hero.block.hero--video.page { min-height: 0; justify-content: flex-end; align-items: stretch; padding-bottom: clamp(40px, 6vw, 80px) !important; }
+html.is-full #impact.page { padding-top: calc(var(--nav-h) + 20px) !important; }
+html.is-full #games-more .games { margin-top: 0; }
+
+/* Problem: the page holds still while each scroll step moves members one stage further. */
+html.is-full .problem-pin { position: relative; }
+html.is-full .problem-pin > .page { position: sticky; top: var(--inset) !important; scroll-snap-align: none; }
+.snap-mark { position: absolute; left: 0; width: 1px; height: 1px; pointer-events: none; }
+html.is-full .problem-pin .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
+html.is-full #belief .belief__panel { scroll-snap-align: center; scroll-snap-stop: always; }
+html.is-full #what { position: relative; scroll-snap-align: start; }
+html.is-full #what .snap-mark--end { bottom: 0; scroll-snap-align: end; }
+html.is-full body > footer.page { justify-content: center; }
+
+/* Scroll-linked entrance: a page's content rises in as it arrives and rewinds on the way back.
+   Browsers without scroll timelines simply show the content. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html.is-full .page:not(.hero) > .slide__fit > * { animation: deck-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+  }
+}
+@keyframes deck-rise { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Present mode ---------- */
+html.is-deck, html.is-deck body { height: 100%; overflow: hidden; }
+html.is-deck .slide { position: fixed !important; inset: var(--inset) !important; top: var(--inset) !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: calc(var(--nav-h) + 28px) 0 36px !important; border-radius: var(--r-block); overflow: clip; display: flex !important; flex-direction: column; justify-content: center; align-items: stretch; opacity: 0; visibility: hidden; transform: translateY(28px) scale(0.985); transition: opacity 480ms var(--ease), transform 600ms var(--ease), visibility 0s linear 600ms; }
+html.is-deck .slide.is-current { opacity: 1; visibility: visible; transform: none; transition: opacity 480ms var(--ease), transform 600ms var(--ease), visibility 0s; z-index: 1; }
+html.is-deck .slide.is-before { transform: translateY(-28px) scale(0.985); }
+html.is-deck .slide__fit { flex: none; transform-origin: 50% 50%; }
+html.is-deck .problem-pin { height: auto !important; }
+html.is-deck .sentence, html.is-deck .sentence__stick { height: auto; position: static; }
+html.is-deck .belief__stage { position: static; height: auto; }
+html.is-deck .belief__panels { padding-bottom: 0; display: grid; }
+html.is-deck .belief__panel { grid-area: 1 / 1; min-height: 0; opacity: 0; transform: translateY(18px); transition: opacity 500ms var(--ease), transform 600ms var(--ease); }
+html.is-deck .belief__panel.is-shown { opacity: 1; transform: none; }
+html.is-deck .hero.block.hero--video { padding-bottom: clamp(40px, 6vw, 80px) !important; justify-content: flex-end; align-items: stretch; }
+
+/* Controls, bottom left: the Present button while scrolling; counter and exit while presenting. */
+.deck-bar { position: fixed; left: clamp(20px, 2vw, 32px); bottom: clamp(20px, 2vw, 32px); z-index: 60; display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 999px; background: color-mix(in srgb, var(--surface) 86%, transparent); box-shadow: var(--shadow-sm); font-size: 13px; }
+.deck-btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--ink); color: var(--paper); font: inherit; font-weight: 600; cursor: pointer; transition: transform 160ms var(--ease), opacity 160ms var(--ease); }
+.deck-btn:hover { opacity: 0.9; }
+.deck-btn:active { transform: scale(0.97); }
+.deck-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.deck-btn__play { width: 0; height: 0; border-left: 8px solid currentColor; border-block: 5px solid transparent; }
+.deck-btn--ghost { background: transparent; color: var(--ink); }
+.deck-count { display: none; align-items: center; gap: 10px; padding: 0 10px; font-family: var(--mono); font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.deck-count__bar { width: 64px; height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.deck-count__bar i { display: block; height: 100%; background: var(--blue); transform-origin: left; transform: scaleX(var(--p, 0)); transition: transform 500ms var(--ease); }
+.deck-hint { display: none; color: var(--slate); padding-right: 8px; }
+html.is-deck .deck-count, html.is-deck .deck-hint { display: inline-flex; }
+html.is-deck .deck-btn--present { display: none; }
+html:not(.is-deck) .deck-btn--exit { display: none; }
+@media (max-width: 899px), (pointer: coarse) { .deck-bar { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-deck .slide, html.is-deck .slide.is-current, html.is-deck .slide.is-before { transform: none; transition: opacity 200ms linear, visibility 0s; }
+}
+
+/* ---------- Pages 1 and 2: layout pass from the design lead ---------- */
+/* Page 1: the copy block sits lower, its CTA row on one line with the pause button. */
+html.is-full #why.page { --hero-pb: clamp(32px, 3.4vw, 48px); padding-bottom: var(--hero-pb) !important; }
+html.is-full #why .eyebrow { margin-bottom: 18px; }
+html.is-full #why .hero__lede { margin-top: 20px; max-width: 32em; }
+html.is-full #why .hero__actions { margin-top: 32px; }
+/* The pause button's right edge lines up with the content column (the nav's Book a demo). */
+html.is-full #why .hv__pause { bottom: calc(var(--hero-pb) + 4px); right: calc(max(var(--gutter), (100vw - var(--wrap)) / 2 + var(--gutter)) - var(--inset)); }
+html.js #why [data-reveal] { transform: translateY(20px); transition-duration: 700ms; transition-timing-function: var(--ease); }
+html.js #why [data-reveal].is-in { transform: none; }
+/* The nav is as wide as the content column plus 20px each side, so the logo and the last
+   button sit exactly on the column's edges, the same edges as the page text. */
+html.is-full .nav, html.is-deck .nav { --nav-pad: 20px; top: calc(var(--inset) * 2); left: calc(max(var(--gutter), (100vw - var(--wrap)) / 2 + var(--gutter)) - var(--nav-pad)); right: calc(max(var(--gutter), (100vw - var(--wrap)) / 2 + var(--gutter)) - var(--nav-pad)); max-width: none; margin: 0; }
+html.is-full .nav .nav__inner, html.is-deck .nav .nav__inner { max-width: none; padding: 0 var(--nav-pad); }
+/* Present lives in the nav while scrolling; the floating bar only shows while presenting. */
+html.is-full .deck-bar { display: none; }
+html.is-deck .deck-bar { left: 50%; transform: translateX(-50%); }
+.deck-nav-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; flex: none; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: border-color 160ms var(--ease), transform 160ms var(--ease); }
+.deck-nav-btn:hover { border-color: var(--slate); }
+.deck-nav-btn:active { transform: scale(0.97); }
+.deck-nav-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.deck-nav-btn .deck-btn__play { border-left-width: 7px; border-block-width: 4.5px; }
+html:not(.is-full):not(.is-deck) .deck-nav-btn { display: none; }
+
+/* Page 2: clearer grouping, an even headline, and one gentle entrance. */
+html.is-full #problem .eyebrow { margin-bottom: 18px; }
+html.is-full #problem .problem__title { max-width: 24ch; text-wrap: balance; }
+html.is-full #problem .problem__lede { margin-top: 20px; max-width: 40em; }
+html.is-full #problem .problem__steps { margin-top: clamp(48px, 6vh, 72px); }
+@keyframes deck-rise-sm { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+html.is-full #problem.page > .slide__fit > * { animation-name: deck-rise-sm; animation-range: entry 10% entry 60%; }
+
+/* Numbered heading row on the pages that had a plain eyebrow (hero, problem, evidence, engine,
+   closing): the same row as 06 to 15 in features.css (.feat__idx b / span / em). */
+#why .feat__idx, #problem .feat__idx, .evidence__eyebrow.feat__idx, #engine .feat__idx, #demo .feat__idx { display: flex; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--body); font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--slate); }
+#engine .feat__idx, #demo .feat__idx { justify-content: center; }
+/* On the video and on the blue block the row turns light. jelly.js moves the evidence into the
+   problem page, so its row is matched by class, not by #evidence. */
+#why .feat__idx b { color: #8fb0ff; }
+.feat__idx.evidence__eyebrow b { color: #fff; }
+#why .feat__idx span, .feat__idx.evidence__eyebrow span { color: #fff; }
+#why .feat__idx em, .feat__idx.evidence__eyebrow em { color: rgba(255, 255, 255, 0.9); }
+#why .feat__idx b + span, .feat__idx.evidence__eyebrow b + span { border-left-color: rgba(255, 255, 255, 0.3); }
+
+/* Footer legal links (the live sportin.io set) read like the rest of the footer. */
+.foot__base a { color: inherit; text-decoration: none; }
+.foot__base a:hover { color: var(--ink); }
+
+/* 16 Start with a pilot: an inset block like the other pages, with the track (closing-track.js)
+   drawn around the content. */
+#demo.closing { background: var(--infield); }
+html:not(.is-full) #demo.closing { margin: var(--inset); border-radius: var(--r-block); }
+#demo .closing__lanes rect { fill: none; stroke: rgba(7, 81, 251, 0.14); stroke-width: 2; }
+:root[data-theme='dark'] #demo .closing__lanes rect { stroke: rgba(111, 151, 255, 0.18); }
+
+/* Footer: as tall as its content, not a full page, and the bottom row on three columns so the
+   mark sits in the middle. */
+html.is-full body > footer.page { height: auto !important; padding: 56px 0 40px !important; }
+@media (min-width: 601px) {
+  .foot__base { display: grid; grid-template-columns: 1fr auto 1fr; }
+  .foot__base > :last-child { justify-self: end; text-align: right; }
+}
+
+/* 16: the two buttons side by side under the title. */
+.closing__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 32px; }
+.closing__actions .btn--ghost { padding: 0 24px; border: 1px solid var(--line); background: var(--surface); }
+
+/* UI audit fixes (2026-10-24): defects only, the design stays. */
+.eng-cta { flex: none; } /* the engine's Book a demo kept its full height */
+#who .aud__row::before { display: none; } /* every audience shows at rest: no highlight rule */
+#technology .st { opacity: 1; } /* resting stations dim only their picture, so the text stays readable */
+#technology .st:not(.is-live) .st__stage { opacity: 0.55; transition: opacity 600ms ease-out; }
+#technology .tb__inner { max-width: var(--wrap); padding: 0 var(--gutter); } /* same column as every page */
+html.has-jelly .jl-layer .evidence__eyebrow, html.has-jelly .jl-layer .ev__tag { color: rgba(255, 255, 255, 0.92); }
+html.has-jelly .jl-layer .evidence__sources { color: rgba(255, 255, 255, 0.9); font-size: 12px; }
+.problem.is-scrub .problem__step:not(.is-current) .problem__label { opacity: 0.7; }
+html.is-full body > footer.page > .slide__fit { transform: none !important; } /* the footer is not scaled down */
+.ugc__pause:hover { color: var(--ink); border-color: var(--slate); }
+@media (max-width: 900px) {
+  #who .aud__stick, #delivery .dl__stick { margin: var(--inset); border-radius: var(--r-block); }
+}

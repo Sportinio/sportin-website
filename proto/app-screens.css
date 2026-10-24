@@ -1,0 +1,177 @@
+/* SportIn app screens inside the phone frame (layer 2 of the Competitions section).
+   Every size, colour and asset here is copied from the iOS app, not drawn for the website:
+   - Leaderboard: LeaderboardRowView, RankBadgeView, LeaderboardRowView+Value,
+     LeaderboardSubviews.tierCard, FilterChipRow, CountryChipView,
+     GlassAvatar, and the app's own tier, puma coin, turtle coin, flag and default avatar images.
+   - Weekly progress: ShareCardTemplate4.
+   Each screen is laid out on a canvas in iOS points (.ios, 393 or 360 wide) and scaled to the
+   phone's screen by features.js, so 1px here is 1pt in the app. Names are placeholders. */
+
+.ios { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(var(--k, 0.72)); overflow: hidden; color: #fff; font-family: -apple-system, "SF Pro Text", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.ios .r { font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+
+/* ---------- Leaderboard (393pt wide) ---------- */
+.ios--lb { width: 393px; height: 857px; background: linear-gradient(180deg, rgb(20, 21, 32) 0%, rgb(13, 13, 19) 46%); }
+.ios__status { height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 6px 30px 0 44px; font-size: 17px; font-weight: 600; }
+.ios__status svg { display: block; }
+.lbh { display: flex; align-items: center; justify-content: space-between; margin: 20px 16px 0; height: 34px; }
+.lbh__me { width: 34px; height: 34px; border-radius: 50%; }
+.lbh__btns { display: flex; gap: 10px; }
+.lbh__btn { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: rgb(25, 38, 64); color: rgb(26, 140, 255); }
+.lbh__btn--round { border-radius: 50%; background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09); color: rgba(255, 255, 255, 0.9); }
+.lbt { display: grid; grid-template-columns: 1fr 1fr; margin: 16px 16px 0; text-align: center; font-size: 17px; font-weight: 600; line-height: 22px; }
+.lbt span { padding-bottom: 6px; color: rgba(255, 255, 255, 0.5); border-bottom: 3px solid transparent; }
+.lbt span.is-on { color: #fff; border-color: rgb(66, 138, 246); border-radius: 0 0 1.5px 1.5px; }
+/* tierCard: 100x110, 48pt tier image, label 13 medium, count 11. */
+.lbtiers { display: flex; gap: 10px; margin-top: 26px; padding-left: 16px; }
+.tcard { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 100px; height: 110px; border-radius: 14px; background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09); }
+.tcard b { font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.5); }
+.tcard img { width: 48px; height: 48px; }
+.tcard span { font-size: 11px; color: rgba(255, 255, 255, 0.3); }
+.tcard span i { font-style: normal; font-weight: 500; }
+/* FilterChipRow + CountryChipView. */
+.lbf { display: flex; align-items: center; gap: 10px; margin: 31px 0 0 16px; white-space: nowrap; }
+.lbf > span { font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, 0.5); }
+.lbchip { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 20px; background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09); font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.5); }
+.lbchip--all { padding: 0 18px; }
+.lbchip.is-on { color: #fff; box-shadow: inset 0 0 0 1.5px rgb(26, 140, 255); }
+.lbchip img { width: 18px; height: 18px; border-radius: 50%; }
+/* The list sheet. */
+.lbs { position: absolute; left: 0; right: 0; top: 406px; bottom: 0; border-radius: 20px 20px 0 0; background: rgb(21, 21, 21); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+.lbs__grab { width: 36px; height: 5px; margin: 8px auto 0; border-radius: 3px; background: rgba(255, 255, 255, 0.28); }
+.lbs__tools { display: flex; gap: 8px; margin: 0 16px; }
+.lbs__tools span { display: grid; place-items: center; width: 30px; height: 28px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.7); font-size: 15px; font-weight: 600; }
+.lbs__tools span.push { margin-left: auto; }
+.lbs__rows { position: absolute; left: 16px; right: 16px; top: 52px; }
+/* LeaderboardRowView: padding 14/12, glass, radius 14, slot = 70pt row + 10pt gap. */
+.lbr { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; height: 70px; padding: 0 14px; box-sizing: border-box; border-radius: 14px; background: rgba(255, 255, 255, 0.03); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09); transform: translateY(calc(var(--slot, 0) * 80px)); transition: transform 700ms cubic-bezier(0.77, 0, 0.175, 1); }
+.lbr.is-me { background: rgba(7, 81, 251, 0.08); box-shadow: inset 0 0 0 0.5px rgba(7, 81, 251, 0.4); }
+/* RankBadgeView: 32x46, radius 8, 2pt track and steps progress from the top centre. */
+.rk { position: relative; flex: none; width: 32px; height: 46px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); }
+.rk svg { position: absolute; inset: 0; overflow: visible; }
+.rk__track { fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 2; }
+.rk__prog { fill: none; stroke: var(--sc); stroke-width: 2; stroke-linecap: round; stroke-dasharray: var(--sp) 1; transition: stroke-dasharray 600ms cubic-bezier(0.23, 1, 0.32, 1), stroke 300ms ease-out; }
+.rk__in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.rk__n { font-size: 13px; font-weight: 600; line-height: 1; }
+.rk__c { height: 9px; display: grid; place-items: center; font-size: 8px; line-height: 1; color: rgba(255, 255, 255, 0.2); }
+.rk__c svg { position: static; }
+/* GlassAvatar 44 with the tier badge 20x20, offset 8 below. */
+.lbav { position: relative; flex: none; width: 44px; height: 44px; margin-left: 12px; }
+.lbav > img:first-child { width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.lbav__tier { position: absolute; left: 12px; bottom: -8px; width: 20px; height: 20px; }
+.lbw { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; margin-left: 12px; }
+.lbw__n { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; white-space: nowrap; }
+.lbw__n img { width: 14.4px; height: 14.4px; border-radius: 50%; }
+.lbw__s { font-size: 12px; color: rgba(255, 255, 255, 0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Value column: 15 bold rounded, "st" 9 medium, then the puma or turtle coin (20) or the trend. */
+.val { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.val__n { display: flex; align-items: flex-start; gap: 2px; }
+.val__n b { font-size: 15px; font-weight: 700; line-height: 18px; }
+.val__n sup { padding-top: 1px; font-size: 9px; font-weight: 500; line-height: 1; color: rgba(255, 255, 255, 0.5); }
+.val img { width: 20px; height: 20px; }
+.val em { font-style: normal; font-size: 11px; font-weight: 700; line-height: 14px; }
+.val em.up { color: rgb(52, 199, 89); }
+.val em.down { color: rgb(226, 75, 74); }
+/* Floating tab bar. */
+.lbtab { position: absolute; left: 16px; right: 16px; bottom: 30px; height: 62px; display: flex; align-items: center; justify-content: space-around; padding: 0 10px; border-radius: 31px; background: rgba(44, 44, 48, 0.92); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.55); }
+.lbtab span { display: grid; place-items: center; width: 52px; height: 44px; border-radius: 16px; }
+.lbtab span.is-on { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.lbtab img { width: 38px; height: 38px; border-radius: 50%; box-shadow: 0 0 0 2px rgb(212, 166, 52); }
+
+/* ---------- Weekly progress share card (ShareCardTemplate4, 360pt wide) ---------- */
+.ios--wk { width: 360px; height: 785px; background: rgb(4, 8, 18); }
+.wk2__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wk2__blue { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 21, 63, 0.1) 0%, rgba(7, 21, 63, 0.5) 50%, rgba(7, 21, 63, 0.9) 100%); }
+.wk2__dark { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4, 8, 18, 0) 0%, rgba(4, 8, 18, 0.5) 45%, rgba(4, 8, 18, 0.97) 100%); }
+.wk2__logo { position: absolute; left: 24px; top: 58px; display: flex; align-items: center; gap: 6px; }
+.wk2__logo img:first-child { height: 20px; }
+.wk2__logo img:last-child { height: 10px; }
+.wk2__body { position: absolute; left: 0; right: 0; bottom: 48px; }
+.wk2__head { display: flex; flex-direction: column; gap: 6px; padding: 0 24px; }
+.wk2__kick { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: rgb(7, 81, 251); }
+.wk2__rule { width: 36px; height: 2px; background: rgb(7, 81, 251); }
+.wk2__title { display: flex; align-items: baseline; justify-content: space-between; }
+.wk2__title b { font-size: 20px; font-weight: 700; }
+.wk2__title span { font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.5); }
+.wk2__bars { display: flex; align-items: flex-end; gap: 6px; height: 180px; margin-top: 16px; padding: 0 20px; }
+.wk2__col { flex: 1; display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+.wk2__lbl { height: 10px; display: flex; justify-content: center; align-items: flex-start; gap: 1px; color: rgba(255, 255, 255, 0.6); opacity: 0; transition: opacity 300ms ease-out; }
+.wk2__lbl b { font-size: 7px; font-weight: 700; line-height: 9px; }
+.wk2__lbl sup { font-size: 5px; font-weight: 600; line-height: 1; }
+.wk2__col.is-shown .wk2__lbl { opacity: 1; }
+.wk2__stack { position: relative; height: 150px; }
+.wk2__prev { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 4px; background: rgba(255, 255, 255, 0.18); box-shadow: none; }
+.wk2__prev::after { content: ''; position: absolute; inset: 0; border-radius: 4px; border: 1px dashed rgba(255, 255, 255, 0.25); }
+.wk2__now { position: absolute; left: 0; right: 0; bottom: 0; height: 0; overflow: hidden; border-radius: 4px; transition: height 900ms cubic-bezier(0.23, 1, 0.32, 1); }
+.wk2__now i { position: absolute; left: 0; right: 0; display: block; }
+.wk2__in { bottom: 0; background: rgba(7, 81, 251, 0.7); }
+.wk2__above { background: rgb(7, 81, 251); border-radius: 4px 4px 0 0; }
+.wk2__day { font-size: 8px; font-weight: 500; text-align: center; color: rgba(255, 255, 255, 0.5); }
+.wk2__col.is-future .wk2__day { color: rgba(255, 255, 255, 0.2); }
+.wk2__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; padding: 0 24px; }
+.wk2__stat { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; border-radius: 10px; background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.08); }
+.wk2__stat.is-accent { background: rgba(7, 81, 251, 0.15); box-shadow: inset 0 0 0 0.5px rgba(7, 81, 251, 0.3); }
+.wk2__stat b { font-size: 16px; font-weight: 700; line-height: 19px; }
+.wk2__stat span, .wk2__cmp span { font-size: 8px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255, 255, 255, 0.4); }
+.wk2__cmp { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; margin: 10px 24px 0; padding: 10px 0; border-radius: 10px; background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.06); text-align: center; }
+.wk2__cmp > div { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.wk2__cmp p { margin: 0; display: flex; align-items: flex-start; gap: 1px; color: rgba(255, 255, 255, 0.6); }
+.wk2__cmp p b { font-size: 13px; font-weight: 700; line-height: 16px; }
+.wk2__cmp p sup { padding-top: 1px; font-size: 7px; font-weight: 600; line-height: 1; }
+.wk2__cmp span { font-size: 7px; color: rgba(255, 255, 255, 0.3); }
+.wk2__cmp p.is-now { color: rgb(7, 81, 251); }
+.wk2__pct { display: flex; align-items: center; justify-content: center; gap: 3px; color: rgb(46, 204, 113); font-size: 12px; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) { .lbr, .rk__prog, .wk2__now, .wk2__lbl { transition: none; } }
+
+/* ---------- Running board (LeaderboardRunningRow, LeaderboardRaceCards) ----------
+   Same screen as the steps board, with race cards in place of tiers and rows ranked by pace. */
+.tcard.is-on { background: rgba(var(--acc), 0.1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09), inset 0 0 0 1.5px rgba(var(--acc), 0.95); }
+.tcard.is-on b { color: rgba(255, 255, 255, 0.9); }
+.tcard.is-on span { color: rgba(255, 255, 255, 0.5); }
+.tcard[style*="--acc"] b { font-size: 12px; } /* race cards use .caption */
+.lbr--run .lbw__n { font-size: 17px; } /* .body semibold */
+.lbr--run .lbw__s { font-size: 12px; color: rgba(255, 255, 255, 0.4); } /* .caption, textTertiaryStrong */
+.val__run { font-size: 17px; font-weight: 700; line-height: 22px; } /* .headline bold */
+.lbav__race { position: absolute; right: -3px; bottom: -3px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+
+/* ---------- Brand rewards (RewardsHubView, ScrubWheel, RewardsBrandRow, RewardRowView) ---------- */
+/* ScrubWheel: knurled rails above and below, 17pt medium labels, the neighbour smaller and faded. */
+.rww { height: 76px; margin: 6px 16px 16px; display: flex; flex-direction: column; }
+.rww__rail { display: block; height: 5px; background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.32) 0 2px, transparent 2px 3px, rgba(255, 255, 255, 0.12) 3px 4px, transparent 4px 6px); -webkit-mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); }
+.rww__labels { flex: 1; display: flex; align-items: center; justify-content: center; gap: 28px; padding-left: 92px; font-size: 17px; font-weight: 500; }
+.rww__labels span { color: rgba(255, 255, 255, 0.46); transform: scale(0.82); }
+.rww__labels span.is-on { color: rgba(255, 255, 255, 0.9); transform: none; }
+/* RewardsBrandRow: the tier card shell with a 38pt brand logo and the reward count. */
+.bcards { display: flex; gap: 10px; padding-left: 16px; }
+.bcard { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 100px; height: 110px; border-radius: 14px; background: rgba(255, 255, 255, 0.05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09); }
+.bcard.is-on { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09), inset 0 0 0 1.5px rgb(7, 81, 251); }
+.bcard b { font-size: 13px; font-weight: 500; color: rgba(255, 255, 255, 0.5); white-space: nowrap; }
+.bcard.is-on b { color: #fff; }
+.bcard > span.r { font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.3); }
+.bcard.is-on > span.r { color: rgba(255, 255, 255, 0.5); }
+.bcard__logo { display: grid; place-items: center; width: 38px; height: 38px; margin: 5px; border-radius: 4px; background: rgba(255, 255, 255, 0.06); font-size: 15px; font-weight: 700; color: rgba(255, 255, 255, 0.5); }
+.ios--rw .lbf { margin-top: 16px; }
+.lbs--rw { top: 384px; }
+.rws__rows { display: flex; flex-direction: column; gap: 10px; margin: 14px 16px 0; }
+/* RewardRowView: 13pt padding, radius 18, a 2pt edge and the progress ring around the card. */
+.rwr { position: relative; display: flex; align-items: center; gap: 13px; min-height: 90px; box-sizing: border-box; padding: 13px; border-radius: 18px; background: rgba(255, 255, 255, 0.03); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06); }
+.rwr__ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rwr__ring path { fill: none; stroke-width: 2; stroke-dasharray: var(--rp, 0) 1; transition: stroke-dasharray 1050ms cubic-bezier(0.22, 1, 0.36, 1), stroke 300ms ease-out; }
+.rwr[data-ring="ready"] path { stroke: rgb(7, 81, 251); }
+.rwr[data-ring="day"] path { stroke: rgb(46, 204, 113); }
+.rwr[data-ring="neutral"] path { stroke: rgba(255, 255, 255, 0.18); }
+.rwr[data-ring="none"] path { stroke: transparent; }
+.rwr__slot { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); font-size: 13px; font-weight: 800; color: rgba(255, 255, 255, 0.5); }
+.rwr__copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rwr__copy b { font-size: 14px; font-weight: 700; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rwr__line { font-size: 12px; line-height: 1.3; color: rgba(255, 255, 255, 0.5); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rwr__ind { display: flex; align-items: center; min-height: 10px; margin-top: 4px; }
+.rwr__pips { display: flex; gap: 6px; }
+.rwr__pips i { width: 10px; height: 10px; box-sizing: border-box; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.42); transition: background-color 300ms ease-out, border-color 300ms ease-out; }
+.rwr__pips i.is-on { border-color: rgb(46, 204, 113); background: rgb(46, 204, 113); }
+.rwr__tgt { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, 0.62); font-variant-numeric: tabular-nums; }
+.rwr__tgt.is-ok { color: rgb(46, 204, 113); }
+.rwr__logo { flex: none; display: grid; place-items: center; width: 37px; height: 37px; border-radius: 6px; background: rgba(255, 255, 255, 0.06); font-size: 15px; font-weight: 700; color: rgba(255, 255, 255, 0.5); }
+.rwr__done { flex: none; display: grid; place-items: center; width: 34px; height: 34px; margin: 0 1.5px; border-radius: 50%; background: rgba(46, 204, 113, 0.12); box-shadow: inset 0 0 0 1px rgba(46, 204, 113, 0.4); color: rgb(46, 204, 113); }
+@media (prefers-reduced-motion: reduce) { .rwr__ring path, .rwr__pips i { transition: none; } }
