@@ -15,7 +15,7 @@ if (sec && sec.classList.contains('aud')) {
 
   function paint(t) {
     // Every audience is shown in its resting state (name, line, no highlight rule).
-    rows.forEach((row) => { row.style.setProperty('--on', '1'); row.style.setProperty('--ln', '1'); row.style.setProperty('--dim', '1'); });
+    rows.forEach((row) => { row.style.setProperty('--on', '1'); row.style.setProperty('--ln', '1'); row.style.setProperty('--dim', '0'); });
     const N = 0; // the number fills on the first scroll
     const k = RM ? sm(N + 0.45, N + 0.55, t) : sm(N + 0.15, N + 0.95, t);
     const n = RM ? (k < 0.5 ? 20 : 75) : 20 + 55 * k;

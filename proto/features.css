@@ -34,7 +34,6 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 /* The opening page: one big title and its line, in the middle of the page. */
 .feat__panel--lead { grid-template-rows: 1fr; align-items: center; }
 .feat__intro--lead { max-width: 1000px; }
-.feat__intro--lead .eng-k { margin-bottom: 22px; }
 .feat__intro--lead .feat__title { font-size: clamp(52px, 6vw, 96px); line-height: 1; letter-spacing: -0.03em; }
 .feat__intro--lead .feat__lede { margin-top: 24px; max-width: 52ch; font-size: clamp(18px, 1.5vw, 22px); }
 /* Graphics fade out and in (--gfx); all text goes through the dust and shows again when it lands (--txt). */
@@ -145,7 +144,7 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
    The phone takes the full height on the right; the title and the points sit on the left. The
    screens are the SportIn app's own elements (leaderboard, weekly progress), rebuilt in HTML so
    they move; names and avatars are placeholders, not real members. */
-.feat__panel--app { padding-inline: max(var(--gutter), (100% - 1120px) / 2); grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 1fr auto auto 1fr; justify-items: start; align-content: center; align-items: initial; column-gap: clamp(40px, 6vw, 96px); row-gap: 28px; }
+.feat__panel--app { padding-inline: max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)); grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 1fr auto auto 1fr; justify-items: start; align-content: center; align-items: initial; column-gap: clamp(40px, 6vw, 96px); row-gap: 28px; }
 .feat__panel--app .feat__intro { grid-column: 1; grid-row: 2; text-align: left; align-self: end; }
 .feat__panel--app .feat__lede { margin-left: 0; }
 .big--app { display: contents; }
@@ -166,3 +165,16 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 /* The 3D phone for the turn between app pages (features-3d.js); placed over the flat phone. */
 .feat__three { position: absolute; z-index: 3; pointer-events: none; visibility: hidden; }
 .feat__three canvas { display: block; }
+
+/* Narrow screens: no pinned scene (features.js does not start it). The pages stack like ordinary
+   sections, so the rail, Skip, the dust and the 3D phone are not needed; each phone sits under its title. */
+@media (max-width: 900px) {
+  .feat { height: auto; }
+  .feat__stick { position: static; height: auto; overflow: visible; }
+  .feat__track { height: auto; display: grid; gap: 88px; padding: calc(var(--nav-h) + 24px) 0 72px; }
+  .feat__panel { position: static; padding: 0 var(--gutter); row-gap: 28px; }
+  .feat__dust, .feat__nav, .feat__skip, .feat__three { display: none; }
+  .feat__panel--app { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; justify-items: stretch; }
+  .feat__panel--app .feat__intro, .feat__panel--app .points { grid-column: auto; grid-row: auto; }
+  .feat__panel--app .phone { grid-column: auto; grid-row: auto; height: auto; width: min(300px, 78vw); justify-self: center; }
+}

@@ -3,7 +3,7 @@
       scroll snap lands on exactly one page at a time, and nothing intercepts the wheel, so the
       page always moves with your fingers. Scroll scenes keep their steps as snap points.
    2. Present (button, bottom left): one slide at a time, arrow keys or a clicker only. Esc exits. */
-html { scroll-behavior: auto; scroll-padding-top: 0; }
+html.is-full, html.is-deck { scroll-behavior: auto; scroll-padding-top: 0; } /* phones keep the site's padding, so a menu jump does not hide the heading under the bar */
 
 /* Pages: one rounded card per screen, with the page gap showing around it. */
 html.is-full { scroll-snap-type: y mandatory; }
@@ -108,7 +108,7 @@ html.is-full #problem.page > .slide__fit > * { animation-name: deck-rise-sm; ani
 #why .feat__idx b { color: #8fb0ff; }
 .feat__idx.evidence__eyebrow b { color: #fff; }
 #why .feat__idx span, .feat__idx.evidence__eyebrow span { color: #fff; }
-#why .feat__idx em, .feat__idx.evidence__eyebrow em { color: rgba(255, 255, 255, 0.72); }
+#why .feat__idx em, .feat__idx.evidence__eyebrow em { color: rgba(255, 255, 255, 0.9); }
 #why .feat__idx b + span, .feat__idx.evidence__eyebrow b + span { border-left-color: rgba(255, 255, 255, 0.3); }
 
 /* Footer legal links (the live sportin.io set) read like the rest of the footer. */
@@ -133,3 +133,18 @@ html.is-full body > footer.page { height: auto !important; padding: 56px 0 40px 
 /* 16: the two buttons side by side under the title. */
 .closing__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 32px; }
 .closing__actions .btn--ghost { padding: 0 24px; border: 1px solid var(--line); background: var(--surface); }
+
+/* UI audit fixes (2026-10-24): defects only, the design stays. */
+.eng-cta { flex: none; } /* the engine's Book a demo kept its full height */
+#who .aud__row::before { display: none; } /* every audience shows at rest: no highlight rule */
+#technology .st { opacity: 1; } /* resting stations dim only their picture, so the text stays readable */
+#technology .st:not(.is-live) .st__stage { opacity: 0.55; transition: opacity 600ms ease-out; }
+#technology .tb__inner { max-width: var(--wrap); padding: 0 var(--gutter); } /* same column as every page */
+html.has-jelly .jl-layer .evidence__eyebrow, html.has-jelly .jl-layer .ev__tag { color: rgba(255, 255, 255, 0.92); }
+html.has-jelly .jl-layer .evidence__sources { color: rgba(255, 255, 255, 0.9); font-size: 12px; }
+.problem.is-scrub .problem__step:not(.is-current) .problem__label { opacity: 0.7; }
+html.is-full body > footer.page > .slide__fit { transform: none !important; } /* the footer is not scaled down */
+.ugc__pause:hover { color: var(--ink); border-color: var(--slate); }
+@media (max-width: 900px) {
+  #who .aud__stick, #delivery .dl__stick { margin: var(--inset); border-radius: var(--r-block); }
+}
