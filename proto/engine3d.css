@@ -66,3 +66,6 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
 
 /* The engine with the integrations after it, as one continuous scene (deck): eleven steps. */
 .engine[data-steps="10"] { height: calc(100vh + 10 * 80vh); }
+/* In chapters (data-chapters), each scroll plays a whole chapter, so the scene needs only one
+   screen of scroll per chapter after the first; deck.js snaps to each. */
+.engine[data-chapters] { height: 200vh; }
