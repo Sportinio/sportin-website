@@ -11,7 +11,7 @@
    (it is also what browsers measure as the page's largest paint, instead of the next clip's fade).
    Until deck.js makes the hero a page, it fills the screen, so the first paint is never smaller than
    a later one (a larger later paint would count as the largest paint instead). */
-html.js:not(.is-full):not(.is-deck) .hero.block.hero--video { min-height: 100vh; }
+html.js:not(.is-full):not(.is-deck) .hero.block.hero--video { min-height: 100vh; min-height: 100svh; }
 .hv__clip, .hv__still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); filter: saturate(1.25) contrast(1.12); transition: transform 4800ms linear; }
 .hv__scene.is-active .hv__clip, .hv__scene.is-active .hv__still { transform: scale(1); }
 
