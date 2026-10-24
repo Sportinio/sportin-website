@@ -1,0 +1,101 @@
+/* Phones and small tablets. The site scrolls page by page on every screen (deck.js snaps each
+   page and each step of a scroll scene), so every page and every step must fit one screen.
+   Loaded last; it only adjusts sizes and stacking, the design and the motion stay the same. */
+
+/* Pages and pinned scenes use the small viewport height, so a phone's address bar never covers
+   the bottom of a page. */
+@supports (height: 100svh) {
+  html.is-full .page { height: calc(100svh - 2 * var(--inset)); }
+  .feat__stick, .aud__stick, .dl__stick, .engine__stick { height: 100svh; }
+  html.is-full .feat__stick, html.is-full .aud__stick, html.is-full .dl__stick,
+  html.is-full .engine .engine__stick { height: calc(100svh - 2 * var(--inset)); }
+}
+
+/* Tablets and small laptops: the format rail shows only the current layer's formats, so it fits
+   between the screen edges and the Skip button. */
+@media (max-width: 1180px) {
+  .tl__layer:not(.is-on) .tl__name, .tl__layer:not(.is-on) .tl__steps { display: none; }
+}
+
+/* 03 Evidence: the three figures stay side by side on every screen, so the page fits (it sits on a
+   layer of the problem card, which deck.js does not scale). */
+@media (max-width: 900px) {
+  .evidence__grid, html.has-jelly .jl-layer .evidence__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 28px; }
+  .ev, .ev:first-child { padding: 0 8px; box-shadow: none; }
+  .ev:first-child { padding-left: 0; }
+  .ev + .ev, html.has-jelly .jl-layer .ev + .ev { padding-top: 0; box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28); }
+  .ev__num { font-size: clamp(36px, 11vw, 48px); margin-bottom: 10px; }
+}
+
+/* Short screens (landscape tablets, small laptop windows): the app points keep their titles only,
+   and the Who panel takes its own height. */
+@media (max-height: 620px) {
+  .points { gap: 10px; }
+  .points span { display: none; }
+  .aud__panel { min-height: 0; }
+}
+
+@media (max-width: 700px) {
+  /* 03 Evidence: smaller title and tags on phones. */
+  .evidence__title { font-size: clamp(30px, 8.6vw, 38px); }
+  .ev__tag { font-size: 10.5px; }
+
+  /* 04 Engine: the sound switch sits above the layer captions. */
+  .eng-sound { bottom: 64px; }
+
+  /* 05-11 Formats: title on top, the demo below it, scaled to the room left (features.js). */
+  .feat__panel { padding: calc(var(--nav-h) + 16px) var(--gutter) 20px; row-gap: 16px; }
+  .feat__nav, .feat__skip { display: none; }
+  .feat__intro .feat__idx { margin-bottom: 12px; }
+  .feat__title { font-size: clamp(26px, 7.4vw, 34px); }
+  .feat__intro--lead .feat__title { font-size: clamp(42px, 12.5vw, 58px); }
+  .feat__lede { margin-top: 10px; font-size: 15px; }
+  .big { align-self: start; justify-self: center; transform-origin: 50% 0; }
+  .cup__qual, .feat__defs, .fmt__foot { display: none; }
+  .feat__panel--app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); justify-items: center; align-content: stretch; row-gap: 14px; }
+  .feat__panel--app .feat__intro { grid-row: 1; grid-column: 1; justify-self: stretch; align-self: start; }
+  .feat__panel--app .phone { grid-row: 2; grid-column: 1; height: 100%; max-height: 600px; align-self: center; }
+  .feat__panel--app .points { display: none; }
+
+  /* 13 Technology: three compact stations under the title. */
+  .tb__title { font-size: clamp(24px, 6.6vw, 30px); }
+  .tb__stations { grid-template-columns: 1fr; gap: 10px; }
+  .st { grid-template-rows: auto auto; gap: 8px; padding: 10px; border-radius: 16px; }
+  .st__stage { min-height: 0; height: clamp(84px, 13svh, 132px); }
+
+  /* 14 Who it's for: one column; the number panel under the four audiences. */
+  .aud__stick { padding: calc(var(--nav-h) + 14px) 0 16px; }
+  .aud__grid { height: auto; grid-template-columns: minmax(0, 1fr); align-content: start; row-gap: 14px; transform-origin: 50% 0; }
+  .aud__title { font-size: clamp(28px, 8vw, 36px); }
+  .aud__list { margin-top: 12px; }
+  .aud__row { padding: 8px 0 10px; }
+  .aud__name { font-size: 18px; }
+  .aud__line { margin-top: 2px; font-size: 13.5px; }
+  .aud__panel { min-height: 0; padding: 16px 18px; }
+  .aud__num { font-size: 64px; }
+  .aud__bars { margin-top: 10px; gap: 10px; }
+  .aud__support { margin-top: 10px; font-size: 13.5px; }
+
+  /* 15 Delivery: the option on top, the 3D phone filling the room below it. */
+  .dl__stick { padding: calc(var(--nav-h) + 14px) 0 16px; }
+  .dl__grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); row-gap: 10px; align-items: stretch; }
+  .dl__title { font-size: clamp(28px, 8vw, 36px); }
+  .dl__list { margin-top: 14px; }
+  .dl__stage { height: 100%; gap: 8px; }
+  .dl__three { flex: 1 1 auto; height: auto; min-height: 0; }
+  .dl__phone { flex: 1 1 auto; height: auto; min-height: 0; }
+}
+
+/* Landscape phones: less padding around the formats, no lede, a smaller evidence page and Who in
+   two columns. Last, so it wins over the phone rules above on narrow landscape phones. */
+@media (max-height: 500px) {
+  .feat__panel { padding-top: calc(var(--nav-h) + 8px); padding-bottom: 60px; gap: 12px; }
+  .feat__lede, .evidence__sources { display: none; }
+  .feat__nav, .feat__skip { bottom: 10px; }
+  .feat__panel--app .feat__intro .feat__title { font-size: 26px; }
+  .evidence__title { font-size: 24px; }
+  .evidence__grid, html.has-jelly .jl-layer .evidence__grid { margin-top: 16px; }
+  .ev__num { font-size: 30px; margin-bottom: 4px; }
+  html.has-jelly .jl-layer { padding-top: calc(var(--nav-h) + 36px); padding-bottom: 8px; }
+  .aud__grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); column-gap: 24px; }
+}

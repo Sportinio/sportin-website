@@ -4,15 +4,15 @@
 // legacy speaking waves driven by the audio level while a clip plays.
 // createSphereRenderer(canvas, size, read) returns one frame; read() returns the inputs each frame.
 
-// Latitude rings x longitude points on the unit sphere (the dot sphere's 68 x 136 grid).
-function buildParticles() {
+// Latitude rings x longitude points on the unit sphere (the dot sphere's 68 x 136 grid). Phones use a
+// 48 x 96 grid: the sphere is small there, so it looks the same with half the dots to move.
+function buildParticles(LAT = 68) {
   const particles = [];
-  const LAT = 68;
   for (let lat = 0; lat <= LAT; lat++) {
     const phi = (lat / LAT) * Math.PI;
     const y0 = Math.cos(phi);
     const ringR = Math.sin(phi);
-    const lonCount = Math.max(1, Math.round(136 * ringR));
+    const lonCount = Math.max(1, Math.round(LAT * 2 * ringR));
     for (let lon = 0; lon < lonCount; lon++) {
       const theta = (lon / lonCount) * Math.PI * 2;
       particles.push({ phi, theta, x0: ringR * Math.cos(theta), y0, z0: ringR * Math.sin(theta) });
@@ -25,7 +25,7 @@ export function createSphereRenderer(canvas, size, read) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
   let inputs = read();
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = Math.min(window.innerWidth <= 700 ? 1.5 : 3, window.devicePixelRatio || 1); // phones: 1.5x is sharp at this size and far less work
   const pad = 2.0; // canvas is 2x the size to avoid clipping waves
   const s = Math.round(size * pad * dpr);
   canvas.width = s;
@@ -79,7 +79,7 @@ export function createSphereRenderer(canvas, size, read) {
 
   // ── Build particle grid (latitude rings × longitude points) ──
   const FOLD = false;
-  const particles = buildParticles();
+  const particles = buildParticles(window.innerWidth <= 700 ? 48 : 68);
 
   let time = 0, rotY = 0;
   let thinkingIntensity = 0; // 0=normal, 1=fully thinking — smoothly lerped

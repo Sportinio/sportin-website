@@ -133,7 +133,7 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .feat__nav button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .feat__nav button[aria-current="true"] { background: var(--blue-soft); color: var(--blue); }
 
-@media (max-width: 1100px) {
+@media (max-width: 1100px) and (orientation: portrait) {
   .cup, .big--division, .big--conq { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -166,20 +166,3 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .feat__three { position: absolute; z-index: 3; pointer-events: none; visibility: hidden; }
 .feat__three canvas { display: block; }
 
-/* Narrow screens: no pinned scene (features.js does not start it). The pages stack like ordinary
-   sections, so the rail, Skip, the dust and the 3D phone are not needed; each phone sits under its title. */
-@media (max-width: 900px) {
-  .feat { height: auto; }
-  .feat__stick { position: static; height: auto; overflow: visible; }
-  .feat__track { height: auto; display: grid; gap: 88px; padding: calc(var(--nav-h) + 24px) 0 72px; }
-  .feat__panel { position: static; padding: 0 var(--gutter); row-gap: 28px; }
-  .feat__dust, .feat__nav, .feat__skip, .feat__three { display: none; }
-  .feat__panel--app { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; justify-items: stretch; }
-  .feat__panel--app .feat__intro, .feat__panel--app .points { grid-column: auto; grid-row: auto; }
-  .feat__panel--app .phone { grid-column: auto; grid-row: auto; height: auto; width: min(300px, 78vw); justify-self: center; }
-}
-
-/* Narrow screens: the bracket shows every stage at full strength, so no step is unreadable grey. */
-@media (max-width: 900px) {
-  .cup [data-stage] { opacity: 1; }
-}
