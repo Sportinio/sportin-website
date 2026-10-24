@@ -1,13 +1,13 @@
 // Deck mockup.
-// Scrolling (desktop): every section is one full-screen page and the browser's own scroll snap
+// Scrolling (every screen): every section is one full-screen page and the browser's own scroll snap
 // lands on exactly one page at a time. Nothing intercepts the wheel, so the page always moves
 // with your fingers. Scroll scenes keep their steps as snap points: the problem's four stages,
 // the three belief panels, and the start and end of the sentence. Content taller than a page is
 // scaled to fit; the two fullest sections are split into two pages.
 // Present (button, bottom left): one slide at a time with arrow keys or a clicker. Esc exits.
 (() => {
-  const desktop = window.matchMedia('(min-width: 900px) and (pointer: fine)');
-  if (!desktop.matches) return;
+  // Present mode needs a keyboard or clicker, so it is offered only with a mouse on a wide screen.
+  const presentable = window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const root = document.documentElement;
   const main = document.querySelector('main');
@@ -72,12 +72,18 @@
     if (root.classList.contains('is-deck')) return;
     pages.forEach(fitOne);
     if (window.problemMeasure) window.problemMeasure();
-    scenes3d.forEach(({ sec, steps, marks }) => { const span = sec.offsetHeight - window.innerHeight; marks.forEach((m, k) => { m.style.top = `${Math.round((k / (steps + 0.6)) * span)}px`; }); });
+    // The last step's mark sits at the very end of the scene, so leaving it takes one screen of
+    // scroll, the same as between any two pages (otherwise a phone swipe springs back there).
+    scenes3d.forEach(({ sec, steps, marks }) => { const span = sec.offsetHeight - window.innerHeight; marks.forEach((m, k) => { m.style.top = `${k === steps ? span : Math.round((k / (steps + 0.6)) * span)}px`; }); });
     const seg = Math.max(360, window.innerHeight * 0.7);
     marks.forEach((m, k) => { m.style.top = `${k * seg + (k ? 2 : 0)}px`; });
   }
 
   // ---------- Present mode ----------
+  layout();
+  window.addEventListener('load', layout);
+  if (document.fonts) document.fonts.ready.then(layout);
+  if (!presentable) { window.addEventListener('resize', layout); return; }
   const bar = document.createElement('div'); bar.className = 'deck-bar';
   bar.innerHTML = '<button class="deck-btn deck-btn--present" type="button"><span class="deck-btn__play" aria-hidden="true"></span>Present</button>'
     + '<span class="deck-count" aria-hidden="true"><span class="deck-count__n"></span><span class="deck-count__bar"><i></i></span></span>'
@@ -186,7 +192,4 @@
   window.addEventListener('wheel', (e) => { if (on) e.preventDefault(); }, { passive: false });
   window.addEventListener('resize', () => { if (on) { all.forEach(fitOne); if (window.problemMeasure) window.problemMeasure(); } else layout(); });
 
-  layout();
-  window.addEventListener('load', layout);
-  if (document.fonts) document.fonts.ready.then(layout);
 })();

@@ -15,7 +15,9 @@ export function followScroll(sec, { steps, hold = 0.6, reduced = false, onFrame,
   }
   function loop(now) {
     const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60); last = now;
-    if (reduced) { shown = target; vel = 0; } else if (shown !== target) {
+    const r = sec.getBoundingClientRect();
+    const away = r.bottom <= 0 || r.top >= window.innerHeight; // nobody sees the way there, so skip it
+    if (reduced || away) { shown = target; vel = 0; } else if (shown !== target) {
       const d = target - shown; const dist = Math.abs(d);
       const vmax = cruise + 0.5 * Math.max(0, dist - 1);
       const want = Math.sign(d) * Math.min(vmax, Math.sqrt(2 * acc * dist)); // still able to stop in time

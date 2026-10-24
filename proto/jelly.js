@@ -20,9 +20,12 @@
     ...layer.querySelectorAll('.ev'), layer.querySelector('.evidence__sources')].filter(Boolean);
   order.forEach((el) => el.classList.add('jl'));
 
-  // Scroll room: L1 for the dots, L2 for the jelly push.
+  // Scroll room: L1 for the dots, L2 for the jelly push. Touch screens keep page snapping: one
+  // swipe (one screen of room) goes from the problem to the evidence, and the transition then
+  // plays at its own calm pace, like the other scroll scenes (see render).
+  const touch = window.matchMedia('(pointer: coarse)').matches;
   const seg = () => Math.max(360, window.innerHeight * 0.7);
-  const L1 = () => window.innerHeight * 1.5; const L2 = () => window.innerHeight * 0.9;
+  const L1 = () => window.innerHeight * (touch ? 0.55 : 1.5); const L2 = () => window.innerHeight * (touch ? 0.45 : 0.9);
   window.problemExtra = () => L1() + L2();
   const zone = document.createElement('i'); zone.className = 'jelly-zone'; zone.setAttribute('aria-hidden', 'true');
   const end = document.createElement('i'); end.className = 'jelly-end'; end.setAttribute('aria-hidden', 'true');
@@ -170,13 +173,28 @@
 
   // ---------- Driving it ----------
   let q = 0; let present = null; let raf = 0; let tween = 0; let cameBack = false;
+  let vq = 0; let lastQ = 0; const CRUISE = 0.4; const ACC = 0.8; // touch: about 3 s for the whole transition
   function scrollQ() {
     const off = -pin.getBoundingClientRect().top - (3 * seg() + 2);
     return clamp(off / (L1() + L2()));
   }
-  function render() {
+  // Touch: q eases toward the scroll position (speeds up gently, cruises, slows to a soft stop).
+  function chase(target, now) {
+    const r = pin.getBoundingClientRect();
+    const dt = Math.min(0.05, lastQ ? (now - lastQ) / 1000 : 1 / 60); lastQ = now;
+    if (r.bottom <= 0 || r.top >= window.innerHeight) { q = target; vq = 0; } // off screen: no need to play it
+    const d = target - q; const dist = Math.abs(d);
+    if (dist) {
+      const want = Math.sign(d) * Math.min(CRUISE, Math.sqrt(2 * ACC * dist));
+      const dv = want - vq; vq += Math.sign(dv) * Math.min(Math.abs(dv), ACC * dt); q += vq * dt;
+      if (Math.sign(target - q) !== Math.sign(d) || (Math.abs(target - q) < 0.001 && Math.abs(vq) < 0.03)) { q = target; vq = 0; }
+    }
+    if (q !== target) schedule(); else lastQ = 0;
+  }
+  function render(now) {
     raf = 0;
-    if (present === null) {
+    if (present === null && touch && !reduced) chase(scrollQ(), now || performance.now());
+    else if (present === null) {
       q = scrollQ();
       // Inside the transition the page scrolls freely (no snapping), so you can stop anywhere.
       // Leaving it at either end turns snapping back on, which settles on the nearest page.

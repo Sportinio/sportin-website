@@ -9,7 +9,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createEngineSound } from '/proto/engine-sound.js?v=2';
 import { createChip } from '/proto/chip3d.js?v=2';
-import { followScroll } from '/proto/scroll-follow.js?v=1';
+import { followScroll } from '/proto/scroll-follow.js?v=3';
 
 const root = document.documentElement;
 const sec = document.getElementById('engine');
@@ -280,7 +280,7 @@ function measureChip() {
   const textBottom = copy.getBoundingClientRect().top + last.offsetTop + last.offsetHeight - f.top;
   const capTop = capEl.getBoundingClientRect().top - f.top;
   const targetY = (textBottom + capTop) / 2;
-  const aspectK = Math.max(1, 1.45 / (W / H)); const dist = 11 * aspectK; const ey = 0.1;
+  const aspectK = Math.max(1, 1.45 / (W / H)) ** 0.8; // on tall phone screens the board may fill more of the width const dist = 11 * aspectK; const ey = 0.1;
   chip.position.set(0, 0.55, 0); chip.rotation.set(Math.PI / 2, 0, 0, 'YXZ'); chip.updateMatrixWorld(true);
   camera.position.set(0, 0.55 + dist * ey, dist * Math.sqrt(1 - ey * ey)); camera.lookAt(0, 0.55, 0); camera.updateMatrixWorld(true);
   frame(0);
@@ -366,7 +366,7 @@ function paint(T) {
 
   // Camera: close on the single plate (pulling back a little mid-flip), out for the split stack,
   // and at eye level for the standing chip, so it reads truly vertical.
-  const aspectK = Math.max(1, 1.45 / (W / H));
+  const aspectK = Math.max(1, 1.45 / (W / H)) ** 0.8; // on tall phone screens the board may fill more of the width
   const dist = (lerp(lerp(10.4, 18, split), 11, up) + 1.4 * bob) * aspectK;
   const look = new THREE.Vector3(0, lerp(lerp(0, 0.05, split), chip.position.y, up), 0);
   const ey = lerp(0.62, 0.1, up); const ez = Math.sqrt(1 - ey * ey);

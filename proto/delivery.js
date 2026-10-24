@@ -3,7 +3,7 @@
 // app, white label, then a client's own app. Between steps the 3D phone (delivery-3d.js) makes half a
 // turn on its vertical axis, and the next screen is on the face that comes round. Without WebGL
 // the flat phone stays still and its screens cross-fade.
-import { followScroll } from '/proto/scroll-follow.js?v=2';
+import { followScroll } from '/proto/scroll-follow.js?v=3';
 
 const sec = document.getElementById('delivery');
 if (sec) {
@@ -33,36 +33,14 @@ if (sec) {
     else layers.forEach((l, k) => l.style.setProperty('--o', k === shown ? o : '0'));
   }
 
-  let follow = null;
-  let at = 0; // narrow screens: the option on the phone now
-  if (window.matchMedia('(max-width: 900px)').matches) {
-    // No pinned scene: all three options are listed, and tapping one turns the phone to it.
-    let raf = 0;
-    const pick = (k) => {
-      rows.forEach((r, j) => { r.classList.toggle('is-on', j === k); r.setAttribute('aria-pressed', String(j === k)); });
-      cancelAnimationFrame(raf);
-      const from = at; const t0 = performance.now(); const ms = RM ? 1 : 900 * Math.max(1, Math.abs(k - from));
-      const step = (now) => { const u = Math.min(1, (now - t0) / ms); at = from + (k - from) * u; paint(at); if (u < 1) raf = requestAnimationFrame(step); };
-      raf = requestAnimationFrame(step);
-    };
-    rows.forEach((r, k) => {
-      r.setAttribute('role', 'button'); r.tabIndex = 0;
-      r.parentElement.setAttribute('role', 'group'); // a list may only hold list items; these rows act as buttons
-      r.addEventListener('click', () => pick(k));
-      r.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(k); } });
-    });
-    rows.forEach((r, j) => { r.classList.toggle('is-on', j === 0); r.setAttribute('aria-pressed', String(j === 0)); });
-    paint(0);
-  } else {
-    follow = followScroll(sec, { steps: last, hold: 0.6, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
-    follow.sync();
-    window.deliveryAt = (v) => follow.jump(v); // debugging: show any point of the scene
-  }
+  const follow = followScroll(sec, { steps: last, hold: 0.6, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
+  follow.sync();
+  window.deliveryAt = (v) => follow.jump(v); // debugging: show any point of the scene
 
   // Swap in the 3D phone when the visitor nears the page: starting it costs main-thread time.
   const load3d = () => import('/proto/delivery-3d.js?v=4')
     .then(({ makePhone3D }) => makePhone3D(sec.querySelector('.dl__three'), layers.map((l) => l.getAttribute('src'))))
-    .then((p) => { if (!p) return; phone3d = p; sec.classList.add('is-3d'); p.resize(); paint(follow ? follow.t : at); })
+    .then((p) => { if (!p) return; phone3d = p; sec.classList.add('is-3d'); p.resize(); paint(follow.t); })
     .catch((e) => console.warn('Delivery 3D phone unavailable, keeping the flat one', e));
   new IntersectionObserver(([e], io) => { if (e.isIntersecting) { io.disconnect(); load3d(); } }, { rootMargin: '1500px 0px' }).observe(sec);
 }

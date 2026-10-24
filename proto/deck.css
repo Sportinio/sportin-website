@@ -145,9 +145,5 @@ html.has-jelly .jl-layer .evidence__sources { color: rgba(255, 255, 255, 0.9); f
 .problem.is-scrub .problem__step:not(.is-current) .problem__label { opacity: 0.7; }
 html.is-full body > footer.page > .slide__fit { transform: none !important; } /* the footer is not scaled down */
 .ugc__pause:hover { color: var(--ink); border-color: var(--slate); }
-@media (max-width: 900px) {
-  #who .aud__stick, #delivery .dl__stick { margin: var(--inset); border-radius: var(--r-block); }
-}
-
 /* The engine's opening line shows before its 3D scene has loaded (engine3d.js then drives the text). */
 html:not(.eng3d-ready) .eng-txt[data-c="0"] { opacity: 1; }

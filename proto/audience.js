@@ -2,7 +2,7 @@
 // (scroll-follow.js); t runs 0..1. All four audiences are shown from the start; the one scroll
 // counts the engagement number from 20 to 75 and grows the SportIn bar with it. Everything is
 // painted from t, so scrolling back plays it in reverse.
-import { followScroll } from '/proto/scroll-follow.js?v=2';
+import { followScroll } from '/proto/scroll-follow.js?v=3';
 
 const sec = document.getElementById('who');
 if (sec && sec.classList.contains('aud')) {
@@ -26,11 +26,22 @@ if (sec && sec.classList.contains('aud')) {
     if (whole !== shown) { shown = whole; nEl.textContent = String(whole); vEl.textContent = `${whole}%`; }
   }
 
-  if (window.matchMedia('(max-width: 900px)').matches) paint(1); // no pinned scene on narrow screens
-  else {
-    const follow = followScroll(sec, { steps: 1, hold: 0.6, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
-    follow.sync();
-    if (document.fonts) document.fonts.ready.then(() => follow.sync());
-    window.audienceAt = (v) => follow.jump(v); // debugging: show any point of the scene
+  // Phones: the audiences and the number panel are scaled down together when the screen is too
+  // short for both (mobile.css stacks them and lets the grid take its own height).
+  const stick = sec.querySelector('.aud__stick'); const grid = sec.querySelector('.aud__grid');
+  const narrow = window.matchMedia('(max-width: 700px)');
+  function fit() {
+    grid.style.transform = '';
+    if (!narrow.matches) return;
+    const cs = getComputedStyle(stick);
+    const k = Math.min(1, (stick.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / grid.scrollHeight);
+    if (k < 1) grid.style.transform = `scale(${k.toFixed(3)})`;
   }
+  fit();
+  window.addEventListener('resize', fit);
+
+  const follow = followScroll(sec, { steps: 1, hold: 0.6, reduced: RM, onFrame: paint, cruise: 0.3, acc: 0.7 });
+  follow.sync();
+  if (document.fonts) document.fonts.ready.then(() => { fit(); follow.sync(); });
+  window.audienceAt = (v) => follow.jump(v); // debugging: show any point of the scene
 }
