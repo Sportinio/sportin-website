@@ -428,10 +428,12 @@ if (sec) {
     follow.sync();
     window.featuresAt = (v) => follow.jump(v); // debugging: show any point of the section
     if (appPanels.length && !RM) {
-      import('/proto/features-3d.js?v=1')
+      // The 3D phone is heavy to start; load it when the visitor nears the formats.
+      const load3d = () => import('/proto/features-3d.js?v=1')
         .then(({ makeFeatPhone3D }) => makeFeatPhone3D(stick, appPanels.map((p) => p.querySelector('.phone').dataset.screen)))
         .then((p) => { if (!p) return; phone3d = p; placePhone3d(); paint(follow.t); })
         .catch((e) => console.warn('Formats 3D phone unavailable, keeping the flat one', e));
+      new IntersectionObserver(([e], io) => { if (e.isIntersecting) { io.disconnect(); load3d(); } }, { rootMargin: '1500px 0px' }).observe(sec);
     }
   }
 }
