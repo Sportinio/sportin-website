@@ -63,7 +63,7 @@ if (root) {
   }
 
   // ---- Play buttons (commentary and Sportinho) ----
-  const audios = STATIONS.map((s) => (s.audio ? new Audio(s.audio) : null));
+  const audios = STATIONS.map((s) => { if (!s.audio) return null; const a = new Audio(); a.preload = 'none'; a.src = s.audio; return a; }); // fetched on first play
   const buttons = cards.map((c) => c.querySelector('.st__play'));
   let manual = -1; // the station whose clip is playing, or -1 for the automatic cycle
   function stopManual() {
