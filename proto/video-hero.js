@@ -1,11 +1,11 @@
 // Video hero mockup: the title's audience word and the background clip change together.
-// member, fan, client, employee, each with its own footage. A pause button stops both.
+// One word per clip, in page order (each clip's data-word). A pause button stops both.
 (() => {
-  const AUDIENCE = ['member', 'fan', 'client', 'employee'];
   const CYCLE = 4800;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const rot = document.querySelector('.rot__word');
   const clips = [...document.querySelectorAll('.hv__clip')];
+  const AUDIENCE = clips.map((v) => v.dataset.word);
   const pauseBtn = document.getElementById('hvPause');
   if (!rot || !clips.length) return;
 
