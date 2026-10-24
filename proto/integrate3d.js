@@ -13,7 +13,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createChip } from '/proto/chip3d.js?v=2';
 import { PHONE, buildPhone, plate } from '/proto/phone3d.js?v=2';
-import { followScroll } from '/proto/scroll-follow.js?v=4';
+import { followScroll } from '/proto/scroll-follow.js?v=5';
 
 // It runs on its own page (integrate3d.html) or, in the deck, inside the engine's section right
 // after the engine's last step (data-int-from), so the chip carries straight on.

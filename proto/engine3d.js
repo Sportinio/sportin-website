@@ -9,7 +9,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createEngineSound } from '/proto/engine-sound.js?v=3';
 import { createChip } from '/proto/chip3d.js?v=2';
-import { followScroll } from '/proto/scroll-follow.js?v=4';
+import { followScroll } from '/proto/scroll-follow.js?v=5';
 
 const root = document.documentElement;
 const sec = document.getElementById('engine');

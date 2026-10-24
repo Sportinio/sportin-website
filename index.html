@@ -492,11 +492,11 @@
 <script src="/proto/closing-track.js?v=8" defer></script>
 <script src="/proto/deck-menu.js?v=4" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="/proto/features.js?v=33"></script>
+<script type="module" src="/proto/features.js?v=34"></script>
 <script type="module" src="/proto/ugc.js?v=5"></script>
 <script type="module" src="/proto/tech-b.js?v=7"></script>
-<script type="module" src="/proto/audience.js?v=9"></script>
-<script type="module" src="/proto/delivery.js?v=14"></script>
+<script type="module" src="/proto/audience.js?v=10"></script>
+<script type="module" src="/proto/delivery.js?v=15"></script>
 <script type="module">
 // The engine's 3D scenes take seconds of main-thread work to start on a phone, so they do not run
 // at page load. They start when the visitor nears the engine page or clicks a menu link to it;
@@ -506,9 +506,9 @@ const root = document.documentElement;
 let started = false;
 const start = () => {
   if (started) return; started = true;
-  import('/proto/engine3d.js?v=43')
+  import('/proto/engine3d.js?v=44')
     .catch(() => { if (!root.classList.contains('eng3d-ready')) root.classList.add('eng3d-failed'); })
-    .finally(() => import('/proto/integrate3d.js?v=28').catch(() => {}));
+    .finally(() => import('/proto/integrate3d.js?v=29').catch(() => {}));
 };
 if (!sec || !('IntersectionObserver' in window)) start();
 else new IntersectionObserver(([e], io) => { if (e.isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '1500px 0px' }).observe(sec);

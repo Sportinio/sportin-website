@@ -2,7 +2,7 @@
 // (scroll-follow.js); t runs 0..1. All four audiences are shown from the start; the one scroll
 // counts the engagement number from 20 to 75 and grows the SportIn bar with it. Everything is
 // painted from t, so scrolling back plays it in reverse.
-import { followScroll } from '/proto/scroll-follow.js?v=4';
+import { followScroll } from '/proto/scroll-follow.js?v=5';
 
 const sec = document.getElementById('who');
 if (sec && sec.classList.contains('aud')) {
