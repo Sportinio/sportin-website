@@ -423,7 +423,7 @@ if (sec) {
       const cs = getComputedStyle(p);
       const availH = p.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - intro.offsetHeight - (parseFloat(cs.rowGap) || 0);
       const availW = p.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-      const k = Math.min(1, availH / big.scrollHeight, availW / big.scrollWidth);
+      const k = Math.max(0.3, Math.min(1, availH / big.scrollHeight, availW / big.scrollWidth)); // never flipped or vanishing
       if (k < 1) big.style.transform = `scale(${k.toFixed(3)})`;
     });
   }

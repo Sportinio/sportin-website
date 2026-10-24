@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createEngineSound } from '/proto/engine-sound.js?v=2';
+import { createEngineSound } from '/proto/engine-sound.js?v=3';
 import { createChip } from '/proto/chip3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=3';
 
@@ -280,7 +280,7 @@ function measureChip() {
   const textBottom = copy.getBoundingClientRect().top + last.offsetTop + last.offsetHeight - f.top;
   const capTop = capEl.getBoundingClientRect().top - f.top;
   const targetY = (textBottom + capTop) / 2;
-  const aspectK = Math.max(1, 1.45 / (W / H)) ** 0.8; // on tall phone screens the board may fill more of the width const dist = 11 * aspectK; const ey = 0.1;
+  const aspectK = Math.max(1, 1.45 / (W / H)) ** 0.8; const dist = 11 * aspectK; const ey = 0.1; // on tall phone screens the board may fill more of the width
   chip.position.set(0, 0.55, 0); chip.rotation.set(Math.PI / 2, 0, 0, 'YXZ'); chip.updateMatrixWorld(true);
   camera.position.set(0, 0.55 + dist * ey, dist * Math.sqrt(1 - ey * ey)); camera.lookAt(0, 0.55, 0); camera.updateMatrixWorld(true);
   frame(0);
@@ -409,7 +409,7 @@ if (sound) {
 // ---------- Scroll ----------
 // The scene follows the scroll at a steady, eased pace (scroll-follow.js); the last part of the
 // scroll holds the finished chip.
-const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: (t) => { paint(t); if (sound) sound.update(t); } });
+const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: (t) => { paint(t); if (sound) { const r = sec.getBoundingClientRect(); sound.update(t, r.bottom <= 0 || r.top >= window.innerHeight); } } });
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
 document.fonts.ready.then(() => { measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });

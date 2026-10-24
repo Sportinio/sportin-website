@@ -26,16 +26,14 @@ if (sec && sec.classList.contains('aud')) {
     if (whole !== shown) { shown = whole; nEl.textContent = String(whole); vEl.textContent = `${whole}%`; }
   }
 
-  // Phones: the audiences and the number panel are scaled down together when the screen is too
-  // short for both (mobile.css stacks them and lets the grid take its own height).
+  // The audiences and the number panel are scaled down together when the screen is too short for
+  // them (phones, where mobile.css stacks them, landscape phones, short windows).
   const stick = sec.querySelector('.aud__stick'); const grid = sec.querySelector('.aud__grid');
-  const narrow = window.matchMedia('(max-width: 700px)');
   function fit() {
-    grid.style.transform = '';
-    if (!narrow.matches) return;
+    grid.style.transform = ''; grid.style.height = 'auto'; grid.style.transformOrigin = '50% 0';
     const cs = getComputedStyle(stick);
-    const k = Math.min(1, (stick.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / grid.scrollHeight);
-    if (k < 1) grid.style.transform = `scale(${k.toFixed(3)})`;
+    const k = Math.max(0.3, Math.min(1, (stick.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / grid.scrollHeight));
+    if (k < 1) grid.style.transform = `scale(${k.toFixed(3)})`; else grid.style.height = '';
   }
   fit();
   window.addEventListener('resize', fit);
