@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sportin.io/sitemap.xml
+Sitemap: https://www.sportin.io/sitemap.xml

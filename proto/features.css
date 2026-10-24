@@ -178,3 +178,8 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
   .feat__panel--app .feat__intro, .feat__panel--app .points { grid-column: auto; grid-row: auto; }
   .feat__panel--app .phone { grid-column: auto; grid-row: auto; height: auto; width: min(300px, 78vw); justify-self: center; }
 }
+
+/* Narrow screens: the bracket shows every stage at full strength, so no step is unreadable grey. */
+@media (max-width: 900px) {
+  .cup [data-stage] { opacity: 1; }
+}

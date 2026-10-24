@@ -38,6 +38,7 @@ try {
   root.classList.add('eng3d-failed'); // the page shows a still chip instead
   throw e;
 }
+root.classList.remove('eng3d-failed'); // a slow load may have shown the still chip first
 root.classList.add('eng3d-ready');
 renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;

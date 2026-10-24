@@ -3,29 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SportIn: your community, in motion</title>
-  <meta name="description" content="We turn your members' steps, runs and rides into competitions and rewards. In your app, under your name." />
-  <link rel="canonical" href="https://sportin.io/" />
+  <title>SportIn: step challenges and rewards for your community</title>
+  <meta name="description" content="SportIn turns your members' steps, runs and rides into competitions, live leaderboards and partner rewards, in your app and under your name. Book a demo." />
+  <link rel="canonical" href="https://www.sportin.io/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SportIn" />
-  <meta property="og:title" content="SportIn — Your community, in motion" />
-  <meta property="og:description" content="We turn your members' steps, runs and rides into competitions and rewards. In your app, under your name." />
-  <meta property="og:url" content="https://sportin.io/" />
-  <meta property="og:image" content="https://sportin.io/hero-banner.png" />
+  <meta property="og:title" content="SportIn: step challenges and rewards for your community" />
+  <meta property="og:description" content="SportIn turns your members' steps, runs and rides into competitions, live leaderboards and partner rewards, in your app and under your name. Book a demo." />
+  <meta property="og:url" content="https://www.sportin.io/" />
+  <meta property="og:image" content="https://www.sportin.io/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="SportIn: give every member a part to play." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#0751FB" />
   <meta property="og:locale" content="en_US" />
   <meta name="twitter:site" content="@sportin_io" />
+  <meta name="twitter:title" content="SportIn: step challenges and rewards for your community" />
+  <meta name="twitter:description" content="SportIn turns your members' steps, runs and rides into competitions, live leaderboards and partner rewards, in your app and under your name. Book a demo." />
+  <meta name="twitter:image" content="https://www.sportin.io/og-image.jpg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "SportIn",
   "legalName": "SportIn.io SRL",
-  "url": "https://sportin.io/",
-  "logo": "https://sportin.io/sportin-shirt.png",
-  "description": "We turn your members' steps, runs and rides into competitions and rewards. In your app, under your name.",
+  "url": "https://www.sportin.io/",
+  "logo": "https://www.sportin.io/apple-touch-icon.png",
+  "description": "SportIn turns your members' steps, runs and rides into competitions, live leaderboards and partner rewards, in your app and under your name. Book a demo.",
   "address": { "@type": "PostalAddress", "addressCountry": "RO" },
   "sameAs": [
     "https://www.linkedin.com/company/sportin-io",
@@ -47,8 +54,8 @@
   "name": "SportIn",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web, iOS, Android",
-  "url": "https://sportin.io/",
-  "description": "We turn your members' steps, runs and rides into competitions and rewards. In your app, under your name.",
+  "url": "https://www.sportin.io/",
+  "description": "SportIn turns your members' steps, runs and rides into competitions, live leaderboards and partner rewards, in your app and under your name. Book a demo.",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "availability": "https://schema.org/InStock" },
   "audience": [
     { "@type": "Audience", "audienceType": "Head of Marketing" },
@@ -65,16 +72,16 @@
   <link rel="stylesheet" href="/assets/site/site.css?v=teams1" />
   <link rel="stylesheet" href="/proto/particles.css?v=9" />
   <link rel="stylesheet" href="/proto/video-hero.css?v=4" />
-  <link rel="stylesheet" href="/proto/deck.css?v=15" />
+  <link rel="stylesheet" href="/proto/deck.css?v=16" />
   <link rel="stylesheet" href="/proto/evidence.css?v=4" />
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
-  <link rel="stylesheet" href="/proto/features.css?v=30" />
+  <link rel="stylesheet" href="/proto/features.css?v=31" />
   <link rel="stylesheet" href="/proto/app-screens.css?v=7" />
   <link rel="stylesheet" href="/proto/ugc.css?v=10" />
   <link rel="stylesheet" href="/proto/audience.css?v=3" />
-  <link rel="stylesheet" href="/proto/delivery.css?v=8" />
+  <link rel="stylesheet" href="/proto/delivery.css?v=9" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
   <meta name="color-scheme" content="light dark" />
   <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('sportin-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
@@ -383,288 +390,7 @@
       </article>
     </div>
     </div>
-    <!-- site.js still animates the old tracking card by these ids; this hidden stub keeps it from failing. -->
-    <div hidden aria-hidden="true"><svg id="gps" viewBox="0 0 10 10"><path id="gpsPath" d="M0 5H10" /><circle id="gpsDot" r="1" /></svg><p id="gpsPace"></p></div>
   </section>
-
-  <!-- Removed from the site on 2026-10-23: why/how/what, what we do, ecosystem, games, how it works,
-       revenue. They are not shown, but site.js (shared with the live site) still drives their demos,
-       so their markup stays here, hidden, to keep it from failing. -->
-  <div hidden aria-hidden="true">
-  <!-- WHY → HOW → WHAT on the track -->
-  <section class="belief" id="belief" aria-label="Why, how and what">
-    <div class="wrap belief__grid">
-      <div class="belief__stage">
-        <svg class="track" id="track" viewBox="0 0 600 420" aria-hidden="true">
-          <path class="track__lane" data-lane="2" d="M300,30 H390 A180 180 0 0 1 390,390 H210 A180 180 0 0 1 210,30 Z" />
-          <path class="track__lane" data-lane="1" d="M300,70 H390 A140 140 0 0 1 390,350 H210 A140 140 0 0 1 210,70 Z" />
-          <path class="track__lane" data-lane="0" d="M300,110 H390 A100 100 0 0 1 390,310 H210 A100 100 0 0 1 210,110 Z" />
-          <path class="track__progress" data-lane="2" d="M300,30 H390 A180 180 0 0 1 390,390 H210 A180 180 0 0 1 210,30 Z" />
-          <path class="track__progress" data-lane="1" d="M300,70 H390 A140 140 0 0 1 390,350 H210 A140 140 0 0 1 210,70 Z" />
-          <path class="track__progress" data-lane="0" d="M300,110 H390 A100 100 0 0 1 390,310 H210 A100 100 0 0 1 210,110 Z" />
-          <path class="track__infield" d="M300,130 H390 A80 80 0 0 1 390,290 H210 A80 80 0 0 1 210,130 Z" />
-          <text class="track__label" data-lane="2" x="228" y="35">What</text>
-          <text class="track__label" data-lane="1" x="228" y="75">How</text>
-          <text class="track__label" data-lane="0" x="228" y="115">Why</text>
-          <text class="track__core" id="trackCore" x="300" y="225" text-anchor="middle">Why</text>
-          <circle class="track__runner" id="trackRunner" cx="300" cy="110" r="11" />
-        </svg>
-      </div>
-
-      <div class="belief__panels">
-        <article class="belief__panel" data-step="0">
-          <p class="belief__tag" data-reveal>Why</p>
-          <h2 class="display display--l" data-reveal style="--d:.06s">Every move brings us <em>closer.</em></h2>
-          <p class="belief__text" data-reveal style="--d:.14s">Belonging shouldn't have to wait for the next event. People already walk, run and move every day. That movement can bring them closer to the clubs, brands and causes they care about.</p>
-        </article>
-        <article class="belief__panel" data-step="1">
-          <p class="belief__tag" data-reveal>How</p>
-          <h2 class="display display--l" data-reveal style="--d:.06s">Movement becomes a way to <em>take part.</em></h2>
-          <p class="belief__text" data-reveal style="--d:.14s">A morning walk can score for a team. A run can claim territory on a map, climb a leaderboard or move a whole community toward a shared goal. You don't need to be in the stadium to play a part.</p>
-        </article>
-        <article class="belief__panel" data-step="2">
-          <p class="belief__tag" data-reveal>What</p>
-          <h2 class="display display--l" data-reveal style="--d:.06s">Games built on real-world <em>movement.</em></h2>
-          <p class="belief__text" data-reveal style="--d:.14s">SportIn turns everyday steps and kilometres into leagues, races, challenges and rewards, in your brand and for your community.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHAT WE DO: the sentence, read as you scroll -->
-  <section class="sentence" id="what" aria-labelledby="whatTitle">
-    <div class="sentence__stick">
-      <div class="wrap">
-        <p class="eyebrow" id="whatTitle">What we do</p>
-        <p class="sentence__text" id="sentence">
-          We turn communities into <span data-key>active ecosystems</span> that generate <span data-key>new revenue</span> and <span data-key>measurable impact</span> by <span data-key>gamifying real-world movement.</span>
-        </p>
-        <nav class="sentence__chips" id="sentenceChips" aria-label="Jump to a part of what we do">
-          <a class="chip" href="#ecosystem">Active ecosystems →</a>
-          <a class="chip" href="#revenue">New revenue →</a>
-          <a class="chip" href="#impact">Measurable impact →</a>
-          <a class="chip" href="#games">Gamifying movement →</a>
-        </nav>
-      </div>
-    </div>
-  </section>
-
-  <!-- ACTIVE ECOSYSTEMS -->
-  <section class="sec ends-round" id="ecosystem" aria-labelledby="ecoTitle">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="from" data-reveal>Active ecosystems</p>
-        <h2 class="display display--l" id="ecoTitle" data-reveal style="--d:.06s">One game. Everyone <em>wins.</em></h2>
-        <p class="lede" data-reveal style="--d:.12s">Every side brings something, and every side gets something back. The game is what holds them together.</p>
-      </div>
-      <div class="eco">
-        <div class="card eco__role eco__role--a" data-reveal="left">
-          <p class="eco__who">The organisation</p>
-          <p class="eco__what">brings the community</p>
-        </div>
-        <div class="card eco__role eco__role--b" data-reveal style="--d:.1s">
-          <p class="eco__who">Partners</p>
-          <p class="eco__what">bring the rewards</p>
-        </div>
-        <div class="eco__core" data-reveal="scale" style="--d:.05s">
-          <svg viewBox="0 0 300 300" aria-hidden="true">
-            <circle class="eco__orbit" cx="150" cy="150" r="130" />
-            <circle class="eco__orbit" cx="150" cy="150" r="96" />
-            <g class="eco__spin"><circle class="eco__dot" cx="150" cy="20" r="9" /></g>
-            <g class="eco__spin eco__spin--slow"><circle class="eco__dot eco__dot--blue" cx="150" cy="54" r="7" /></g>
-            <text class="eco__center" x="150" y="152" text-anchor="middle">The game</text>
-            <text class="eco__center-sub" x="150" y="176" text-anchor="middle">every day</text>
-          </svg>
-        </div>
-        <div class="card eco__role eco__role--c" data-reveal="left" style="--d:.15s">
-          <p class="eco__who">Members</p>
-          <p class="eco__what">bring the movement</p>
-        </div>
-        <div class="card eco__role eco__role--d" data-reveal style="--d:.25s">
-          <p class="eco__who">SportIn</p>
-          <p class="eco__what">makes it a game</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- GAMIFYING REAL-WORLD MOVEMENT -->
-  <section class="sec band band--pale" id="games" aria-labelledby="gamesTitle">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="from" data-reveal>Gamifying real-world movement</p>
-        <h2 class="display display--l" id="gamesTitle" data-reveal style="--d:.06s">Built like real <em>sport.</em></h2>
-        <p class="lede" data-reveal style="--d:.12s">Formats people already love, played with the steps and kilometres they already do.</p>
-      </div>
-
-      <div class="games">
-        <article class="card game game--lob" data-reveal data-game="lob">
-          <div class="game__head"><h3 class="h3">League of Brands</h3><span class="live">Live</span></div>
-          <div class="game__viz">
-            <div class="score">
-              <div class="score__team">
-                <span class="score__crest" style="background:#0751fb">R</span>
-                <div><div class="score__name">Riverside Runners</div><div class="score__km" data-km="home">412.6 km</div></div>
-              </div>
-              <div class="score__mid">
-                <div class="score__goals"><span data-goals="home">2</span>–<span data-goals="away">1</span></div>
-                <div class="score__clock" data-clock>Day 4 of 7</div>
-              </div>
-              <div class="score__team score__team--away">
-                <span class="score__crest" style="background:#f2552c">N</span>
-                <div><div class="score__name">Northside Movers</div><div class="score__km" data-km="away">398.1 km</div></div>
-              </div>
-            </div>
-          </div>
-          <p class="card__text">A Champions League or a national division for teams. Every kilometre moves the score.</p>
-        </article>
-
-        <article class="card game game--gor" data-reveal style="--d:.08s" data-game="gor">
-          <div class="game__head"><h3 class="h3">Game of Run</h3><span class="live">Live</span></div>
-          <div class="game__viz"><svg class="hexmap" id="hexmap" viewBox="0 0 300 330" role="img" aria-label="A hexagon-shaped map of hexes being claimed by three teams"></svg></div>
-          <div class="hexmap__legend"><span><i style="background:#0751fb"></i>House Blue</span><span><i style="background:#f2552c"></i>House Red</span><span><i style="background:#c9d6ff"></i>House Sky</span></div>
-          <p class="card__text">Run a street, claim it for your House. Conquer the map one run at a time.</p>
-        </article>
-
-        <article class="card game game--race" data-reveal style="--d:.04s" data-game="race">
-          <div class="game__head"><h3 class="h3">Live races</h3><span class="live">Live</span></div>
-          <div class="game__viz">
-            <div class="race" id="race">
-              <div class="race__lane"><span class="race__finish"></span><span class="race__runner">AM</span></div>
-              <div class="race__lane"><span class="race__finish"></span><span class="race__runner">LI</span></div>
-              <div class="race__lane"><span class="race__finish"></span><span class="race__runner">ED</span></div>
-              <div class="race__lane"><span class="race__finish"></span><span class="race__runner">SA</span></div>
-            </div>
-          </div>
-          <p class="card__text">Race together in real time, from anywhere in the world.</p>
-        </article>
-
-        <article class="card game game--challenge" data-reveal style="--d:.12s" data-game="challenge">
-          <div class="game__head"><h3 class="h3">Challenges</h3></div>
-          <div class="game__viz">
-            <div class="ring">
-              <svg viewBox="0 0 150 150" aria-hidden="true"><circle class="ring__bg" cx="75" cy="75" r="64" /><circle class="ring__fg" id="ringFg" cx="75" cy="75" r="64" /></svg>
-              <div class="ring__label"><span class="ring__num" id="ringNum">0</span><span class="ring__sub">of 10,000 steps</span></div>
-            </div>
-          </div>
-          <p class="card__text">Daily and weekly goals that bring people back tomorrow.</p>
-        </article>
-
-        <article class="card game game--season" data-reveal data-game="season">
-          <div class="game__head"><h3 class="h3">Seasons and leaderboards</h3><span class="live">Live</span></div>
-          <div class="game__viz"><div class="board" id="board" aria-hidden="true"></div></div>
-          <p class="card__text">Every season gives everyone a fresh start and a reason to climb.</p>
-        </article>
-
-        <article class="card game game--medals" data-reveal style="--d:.08s">
-          <div class="game__head"><h3 class="h3">Medals and trophies</h3></div>
-          <div class="game__viz">
-            <div class="medals">
-              <img src="/medals/silver.png" alt="Silver medal" width="112" height="112" loading="lazy" />
-              <img src="/medals/gold.png" alt="Gold medal" width="140" height="140" loading="lazy" />
-              <img src="/medals/bronze.png" alt="Bronze medal" width="112" height="112" loading="lazy" />
-            </div>
-          </div>
-          <p class="card__text">Rewards people are proud to show, earned with every move.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section class="sec" id="how-it-works" aria-labelledby="howTitle">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow" data-reveal>How it works</p>
-        <h2 class="display display--l" id="howTitle" data-reveal style="--d:.06s">We build it. You <em>launch</em> it.</h2>
-      </div>
-      <div class="steps">
-        <div class="steps__line" data-reveal="fade"></div>
-        <div class="card step" data-reveal>
-          <p class="step__num">1</p>
-          <h3 class="h3 step__title">We design your game</h3>
-          <p class="step__text">Format, rules and rewards, in your brand and built around your community.</p>
-        </div>
-        <div class="card step" data-reveal style="--d:.12s">
-          <p class="step__num">2</p>
-          <h3 class="h3 step__title">We build the screens</h3>
-          <p class="step__text">You add them to your app, or your community plays in the SportIn app.</p>
-        </div>
-        <div class="card step" data-reveal style="--d:.24s">
-          <p class="step__num">3</p>
-          <h3 class="h3 step__title">You run it</h3>
-          <p class="step__text">Build leagues, invite teams and see results from the SportIn Console, with us beside you.</p>
-        </div>
-      </div>
-      <div class="choices">
-        <div class="choice" data-reveal><p class="choice__if">You have an app</p><p class="choice__then">We build the screens in your design. Your members never leave your app.</p></div>
-        <div class="choice" data-reveal style="--d:.08s"><p class="choice__if">You don't have an app</p><p class="choice__then">Your community plays in the SportIn app, under your name.</p></div>
-        <div class="choice" data-reveal style="--d:.16s"><p class="choice__if">You want your own app</p><p class="choice__then">We launch a fully branded app for you.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NEW REVENUE + MEASURABLE IMPACT, one inset block -->
-  <section class="sec block" id="revenue" aria-labelledby="revTitle">
-    <div class="wrap split">
-      <div class="split__aside">
-        <p class="from" data-reveal>New revenue</p>
-        <h2 class="display display--l" id="revTitle" data-reveal style="--d:.06s">Participation becomes <em>revenue.</em></h2>
-        <p class="lede" data-reveal style="--d:.12s">When people show up every day, partners want to be part of it. The game creates new places to sell.</p>
-      </div>
-      <ul class="list">
-        <li class="list__item" data-reveal>
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></span>
-          <div><h3 class="h3 list__title">Sponsored leagues and seasons</h3><p class="list__text">A partner's name on the league, the season or the trophy, seen by every member, every day.</p></div>
-        </li>
-        <li class="list__item" data-reveal style="--d:.08s">
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span>
-          <div><h3 class="h3 list__title">Partners who found a House</h3><p class="list__text">Brands found a House on the map. Members run under its colours and claim territory in its name.</p></div>
-        </li>
-        <li class="list__item" data-reveal style="--d:.16s">
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1.5S9 8 12 8Zm0 0c2-4 6-4 6-1.5S15 8 12 8Z"/></svg></span>
-          <div><h3 class="h3 list__title">Brand-funded rewards</h3><p class="list__text">Partners fund the prizes members play for, and meet people at the moment they earn them.</p></div>
-        </li>
-        <li class="list__item" data-reveal style="--d:.24s">
-          <span class="list__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 0 0 6v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-3a2 2 0 0 0 0-6V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v3Z"/><path d="M14 5v14" stroke-dasharray="2 2.5"/></svg></span>
-          <div><h3 class="h3 list__title">Premium seasons and team entries</h3><p class="list__text">Members and teams pay to enter the seasons they care about most.</p></div>
-        </li>
-      </ul>
-    </div>
-  
-    <div class="block__split" id="impact" aria-labelledby="impactTitle">
-    <div class="wrap split">
-      <div class="split__aside">
-        <p class="from" data-reveal>Measurable impact</p>
-        <h2 class="display display--l" id="impactTitle" data-reveal style="--d:.06s">Impact you can <em>measure.</em></h2>
-        <p class="lede" data-reveal style="--d:.12s">Active members, return rate, kilometres moved and goals reached for a cause, in one report you can share with partners and your board.</p>
-      </div>
-      <div class="card report" id="report" data-reveal="scale">
-        <div class="report__head">
-          <span class="report__title">Season report</span>
-          <span class="report__tag">Sample, illustrative figures</span>
-        </div>
-        <div class="report__metrics">
-          <div class="metric"><div class="metric__num" data-count="1248">0</div><div class="metric__label">Active members</div></div>
-          <div class="metric"><div class="metric__num" data-count="71" data-suffix="%">0</div><div class="metric__label">Came back every week</div></div>
-          <div class="metric"><div class="metric__num" data-count="38420">0</div><div class="metric__label">Kilometres moved</div></div>
-          <div class="metric"><div class="metric__num" data-count="12" data-suffix=" / 12">0</div><div class="metric__label">Weeks with a live game</div></div>
-        </div>
-        <div class="bars" aria-hidden="true">
-          <i class="bars__bar" style="--h:34%"></i><i class="bars__bar" style="--h:42%"></i><i class="bars__bar" style="--h:47%"></i><i class="bars__bar" style="--h:55%"></i><i class="bars__bar" style="--h:58%"></i><i class="bars__bar" style="--h:66%"></i><i class="bars__bar" style="--h:63%"></i><i class="bars__bar" style="--h:72%"></i><i class="bars__bar" style="--h:78%"></i><i class="bars__bar" style="--h:84%"></i><i class="bars__bar" style="--h:88%"></i><i class="bars__bar" style="--h:96%"></i>
-        </div>
-        <div class="bars__axis"><span>Week 1</span><span>Weekly active members</span><span>Week 12</span></div>
-        <div class="goal">
-          <div class="goal__row"><span>Kilometres for a local charity</span><strong>82%</strong></div>
-          <div class="goal__track"><div class="goal__fill" style="--w:82%"></div></div>
-        </div>
-      </div>
-    </div>
-      </div>
-  </section>
-
-  <!-- TECHNOLOGY WE OWN -->
-  </div>
 
   <!-- WHO IT'S FOR: a pinned scroll scene (audience.css / audience.js). All audiences show at once; one
        scroll counts the engagement number from around 20% to 75%. -->
@@ -721,42 +447,6 @@
     </div></div>
   </section>
 
-  <!-- Stories, removed 2026-10-23: hidden, kept only in case site.js reads it. -->
-  <div hidden aria-hidden="true">
-  <!-- STORIES -->
-  <section class="sec band band--vivid" id="stories" aria-labelledby="storiesTitle">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow" data-reveal>Stories</p>
-        <h2 class="display display--l" id="storiesTitle" data-reveal style="--d:.06s">Already in <em>motion.</em></h2>
-      </div>
-      <div class="stories">
-        <article class="card story" data-reveal>
-          <span class="story__year">September 2024</span>
-          <h3 class="h3">Steps of an Entrepreneur</h3>
-          <p class="story__big">100</p>
-          <p class="story__unit">entrepreneurs, 10 days</p>
-          <p class="story__text">Each one walked 10,000 steps a day, together.</p>
-        </article>
-        <article class="card story" data-reveal style="--d:.1s">
-          <span class="story__year">July 2025</span>
-          <h3 class="h3">Steps of an Entrepreneur 2</h3>
-          <p class="story__big">300</p>
-          <p class="story__unit">entrepreneurs</p>
-          <p class="story__text">They moved together for the season and finished with a gala.</p>
-        </article>
-        <article class="card story" data-reveal style="--d:.2s">
-          <span class="story__year">October 2025</span>
-          <h3 class="h3">League of Brands</h3>
-          <!-- Team count withheld until one verified figure is agreed (data room shows 22, 25 and 35). -->
-          <p class="story__big story__big--word">A Champions League for brands</p>
-          <p class="story__text">Company teams turned their kilometres into goals, match after match.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-  </div>
-
   <!-- VISION + CLOSING -->
   <section class="sec closing rises" id="demo" aria-labelledby="closingTitle">
     <!-- Three lanes drawn around the content by closing-track.js, so every oval stays whole at any size. -->
@@ -793,7 +483,7 @@
   </div>
 </footer>
 
-<script src="/assets/site/site.js?v=teams1" defer></script>
+<script src="/proto/home.js?v=1" defer></script>
 <script src="/proto/video-hero.js?v=5" defer></script>
 <script src="/proto/problem-scroll.js?v=3" defer></script>
 <script src="/proto/jelly.js?v=15" defer></script>
@@ -801,13 +491,27 @@
 <script src="/proto/closing-track.js?v=8" defer></script>
 <script src="/proto/deck-menu.js?v=3" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="/proto/engine3d.js?v=38"></script>
-<script type="module" src="/proto/integrate3d.js?v=26"></script>
-<script type="module" src="/proto/features.js?v=27"></script>
+<script type="module" src="/proto/features.js?v=28"></script>
 <script type="module" src="/proto/ugc.js?v=4"></script>
 <script type="module" src="/proto/tech-b.js?v=4"></script>
 <script type="module" src="/proto/audience.js?v=4"></script>
-<script type="module" src="/proto/delivery.js?v=10"></script>
-<script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
+<script type="module" src="/proto/delivery.js?v=11"></script>
+<script type="module">
+// The engine's 3D scenes take seconds of main-thread work to start on a phone, so they do not run
+// at page load. They start when the visitor nears the engine page or clicks a menu link to it;
+// its opening line shows meanwhile (deck.css). The still chip shows only if loading fails.
+const sec = document.getElementById('engine');
+const root = document.documentElement;
+let started = false;
+const start = () => {
+  if (started) return; started = true;
+  import('/proto/engine3d.js?v=39')
+    .catch(() => { if (!root.classList.contains('eng3d-ready')) root.classList.add('eng3d-failed'); })
+    .finally(() => import('/proto/integrate3d.js?v=26').catch(() => {}));
+};
+if (!sec || !('IntersectionObserver' in window)) start();
+else new IntersectionObserver(([e], io) => { if (e.isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '1500px 0px' }).observe(sec);
+document.querySelectorAll('.nav__link[data-go="engine"]').forEach((a) => a.addEventListener('pointerdown', start));
+</script>
 </body>
 </html>

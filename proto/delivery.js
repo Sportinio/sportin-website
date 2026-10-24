@@ -47,6 +47,7 @@ if (sec) {
     };
     rows.forEach((r, k) => {
       r.setAttribute('role', 'button'); r.tabIndex = 0;
+      r.parentElement.setAttribute('role', 'group'); // a list may only hold list items; these rows act as buttons
       r.addEventListener('click', () => pick(k));
       r.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(k); } });
     });
@@ -58,9 +59,10 @@ if (sec) {
     window.deliveryAt = (v) => follow.jump(v); // debugging: show any point of the scene
   }
 
-  // Swap in the 3D phone once Three.js and the three screens have loaded.
-  import('/proto/delivery-3d.js?v=4')
+  // Swap in the 3D phone when the visitor nears the page: starting it costs main-thread time.
+  const load3d = () => import('/proto/delivery-3d.js?v=4')
     .then(({ makePhone3D }) => makePhone3D(sec.querySelector('.dl__three'), layers.map((l) => l.getAttribute('src'))))
     .then((p) => { if (!p) return; phone3d = p; sec.classList.add('is-3d'); p.resize(); paint(follow ? follow.t : at); })
     .catch((e) => console.warn('Delivery 3D phone unavailable, keeping the flat one', e));
+  new IntersectionObserver(([e], io) => { if (e.isIntersecting) { io.disconnect(); load3d(); } }, { rootMargin: '1500px 0px' }).observe(sec);
 }
