@@ -74,7 +74,9 @@
     });
     if (pixels) { requestAnimationFrame(() => layer.classList.remove('is-px')); dissolve(box); }
     // Warm the next clip so the change never shows a blank frame.
-    clips[(i + 1) % clips.length].preload = 'auto';
+    // Warm the next clip shortly before it rotates in, not at once, so first load stays light.
+    const next = clips[(i + 1) % clips.length];
+    setTimeout(() => { next.preload = 'auto'; }, Math.max(0, CYCLE - 2000));
   }
 
   let i = 0; let paused = reduced; let timer = 0;
