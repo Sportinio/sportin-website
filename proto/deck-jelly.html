@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=15" />
-  <link rel="stylesheet" href="/proto/features.css?v=30" />
+  <link rel="stylesheet" href="/proto/features.css?v=31" />
   <link rel="stylesheet" href="/proto/app-screens.css?v=7" />
   <link rel="stylesheet" href="/proto/ugc.css?v=10" />
   <link rel="stylesheet" href="/proto/audience.css?v=3" />
@@ -145,72 +145,27 @@
 
 
   <!-- COMPETITIONS: one big format per scroll, moving sideways -->
-  <section class="feat" id="features" data-steps="6" aria-label="The engine, layer by layer">
+  <section class="feat" id="features" data-steps="4" aria-label="The engine, layer by layer">
     <div class="feat__stick">
       <div class="feat__track">
         <article class="feat__panel feat__panel--lead" aria-labelledby="featLeadTitle">
           <div class="feat__intro feat__intro--lead"><p class="eng-k feat__idx"><b>05</b><span>The engine</span><em>Layer by layer</em></p><h2 class="feat__title" id="featLeadTitle">Three layers. <em>Every game</em>.</h2><p class="feat__lede">Competitions to enter. Leaderboards to climb. Rewards to claim.</p></div>
         </article>
-        <article class="feat__panel" aria-labelledby="featClTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>06</b><span>Competition</span><em>Knockout</em></p><h2 class="feat__title" id="featClTitle">Knockout, <em>down to one final</em>.</h2><p class="feat__lede">Qualifying, groups, quarter-finals, semi-finals and a final.</p></div>
-          <div class="big" data-demo="knockout">
-            <div class="cup cup--big" aria-hidden="true">
-              <div class="cup__left">
-                <div class="cup__qual" data-stage="0"><span class="cup__lbl">Qualifying</span>
-                  <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">5.4 – 4.9</span><span>Westgate</span></div>
-                  <div class="fix__row"><span>Park Crew</span><span class="fix__score">5.1 – 4.7</span><span>Canal Club</span></div>
-                </div>
-                <span class="cup__lbl cup__lbl--groups">Groups</span><div class="cup__groups" data-stage="1">
-                  <div class="grp"><b>Group A</b><span class="q">North Runners<em>9</em></span><span class="q">Bike Club<em>6</em></span><span>Lakeside<em>3</em></span></div>
-                  <div class="grp"><b>Group B</b><span class="q">Office Team<em>7</em></span><span class="q">Harbour Gym<em>5</em></span><span>Hill Club<em>4</em></span></div>
-                  <div class="grp"><b>Group C</b><span class="q">Riverside<em>9</em></span><span class="q">Park Crew<em>4</em></span><span>Sunrise<em>2</em></span></div>
-                  <div class="grp"><b>Group D</b><span class="q">City Walkers<em>7</em></span><span class="q">Team Blue<em>6</em></span><span>Old Town<em>1</em></span></div>
-                </div>
-              </div>
-              <svg class="cup__ko" role="img" aria-label="Knockout rounds from the quarter-finals to the final"></svg>
-            </div>
-          </div>
-        </article>
-        <article class="feat__panel" aria-labelledby="featNdTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>07</b><span>Competition</span><em>Table</em></p><h2 class="feat__title" id="featNdTitle">Table, <em>all season long</em>.</h2><p class="feat__lede">A season of head-to-head rounds won on movement index. The table updates after every result.</p></div>
-          <div class="big big--division" data-demo="division">
-            <div class="fix fix--big">
-              <span class="fix__day">Round 7</span>
-              <div class="fix__row"><span>North Runners</span><span class="fix__score">6.2 – 4.8</span><span>City Walkers</span></div>
-              <div class="fix__row"><span>Harbour Gym</span><span class="fix__score">5.0 – 5.0</span><span>Bike Club</span></div>
-              <div class="fix__row"><span>Riverside</span><span class="fix__score">4.6 – 5.3</span><span>Team Blue</span></div>
-              <div class="fix__row is-live" data-live><span>Park Crew</span><span class="fix__score">5.1 – 5.2</span><span>Office Team</span></div>
-            </div>
-            <div class="tbl tbl--big">
-              <div class="tbl__row tbl__row--head"><span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span>Pts</span></div>
-              <div class="tbl__row" data-team><span>1</span><span>North Runners</span><span>7</span><span>5</span><span>1</span><span>1</span><span>16</span></div>
-              <div class="tbl__row" data-team><span>2</span><span>Harbour Gym</span><span>7</span><span>4</span><span>3</span><span>0</span><span>15</span></div>
-              <div class="tbl__row" data-team data-passed data-before="3|7|4|2|1|14" data-after="4|7|4|2|1|14"><span>3</span><span>Bike Club</span><span>7</span><span>4</span><span>2</span><span>1</span><span>14</span></div>
-              <div class="tbl__row" data-team data-climb data-before="4|6|4|0|2|12" data-after="3|7|5|0|2|15"><span>4</span><span>Park Crew</span><span>6</span><span>4</span><span>0</span><span>2</span><span>12</span></div>
-              <div class="tbl__row" data-team><span>5</span><span>Team Blue</span><span>7</span><span>3</span><span>2</span><span>2</span><span>11</span></div>
-              <div class="tbl__row" data-team><span>6</span><span>City Walkers</span><span>7</span><span>3</span><span>1</span><span>3</span><span>10</span></div>
-              <div class="tbl__row" data-team data-loser data-before="7|6|2|2|2|8" data-after="7|7|2|2|3|8"><span>7</span><span>Office Team</span><span>6</span><span>2</span><span>2</span><span>2</span><span>8</span></div>
-              <div class="tbl__row" data-team><span>8</span><span>Riverside</span><span>7</span><span>1</span><span>1</span><span>5</span><span>4</span></div>
-            </div>
-          </div>
-        </article>
-        <article class="feat__panel" aria-labelledby="featConqTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>08</b><span>Competition</span><em>Conquer</em></p><h2 class="feat__title" id="featConqTitle">Run it, <em>own it</em>.</h2><p class="feat__lede">Game of Run: every run claims ground on the map.</p></div>
-          <div class="big big--conq" data-demo="conquer">
-            <svg class="hexmap-f" role="img" aria-label="A hexagon-shaped map of hexes being claimed by three teams"></svg>
-            <div class="terr-wrap">
-              <dl class="feat__defs"><div><dt>Teams</dt><dd>Members run for a team. Every run paints the hexes it crosses.</dd></div><div><dt>Houses</dt><dd>Each team runs under a House. The House holding most of a region owns it.</dd></div></dl>
-              <ul class="terr">
-                <li data-team="0"><span><i></i>North Runners<small>House of the Wolf</small></span><div class="bar"><i></i></div><em>0%</em></li>
-                <li data-team="1"><span><i></i>Office Team<small>House of the Falcon</small></span><div class="bar"><i></i></div><em>0%</em></li>
-                <li data-team="2"><span><i></i>Harbour Gym<small>House of the Lion</small></span><div class="bar"><i></i></div><em>0%</em></li>
-              </ul>
-              <p class="fmt__foot">A hex belongs to the last team that ran through it.</p>
-            </div>
+        <article class="feat__panel feat__panel--formats" aria-labelledby="featFmtTitle">
+          <div class="feat__intro"><p class="eng-k feat__idx"><b>06</b><span>Competition</span><em>Two formats</em></p><h2 class="feat__title" id="featFmtTitle">Two formats, <em>inside the app</em>.</h2><p class="feat__lede">League and Conquer both run inside the SportIn app, for any community.</p></div>
+          <div class="big big--formats" data-demo="formats">
+            <figure class="fmtv">
+              <div class="fmtv__frame"><video class="fmtv__video" src="/proto/media/formats/league.mp4" poster="/proto/media/formats/league.jpg" muted loop playsinline preload="none"></video><button class="fmtv__sound" type="button" aria-pressed="false" aria-label="Turn on the sound of the League video"><svg class="fmtv__i-off" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/><path d="M11 6l3 4M14 6l-3 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="fmtv__i-on" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/><path d="M10.5 5.5a3.5 3.5 0 0 1 0 5M12.5 3.5a6 6 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button></div>
+              <figcaption><b>League</b><span>A season of rounds, won on movement index.</span></figcaption>
+            </figure>
+            <figure class="fmtv">
+              <div class="fmtv__frame"><video class="fmtv__video" src="/proto/media/formats/conquer.mp4" poster="/proto/media/formats/conquer.jpg" muted loop playsinline preload="none"></video><button class="fmtv__sound" type="button" aria-pressed="false" aria-label="Turn on the sound of the Conquer video"><svg class="fmtv__i-off" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/><path d="M11 6l3 4M14 6l-3 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="fmtv__i-on" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/><path d="M10.5 5.5a3.5 3.5 0 0 1 0 5M12.5 3.5a6 6 0 0 1 0 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button></div>
+              <figcaption><b>Conquer</b><span>Every run claims ground on the map.</span></figcaption>
+            </figure>
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRankTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>09</b><span>Leaderboard</span><em>Walking</em></p><h2 class="feat__title" id="featRankTitle">Every step, <em>ranked live</em>.</h2><p class="feat__lede">The steps board from the SportIn app, by person, team or country.</p></div>
+          <div class="feat__intro"><p class="eng-k feat__idx"><b>07</b><span>Leaderboard</span><em>Walking</em></p><h2 class="feat__title" id="featRankTitle">Every step, <em>ranked live</em>.</h2><p class="feat__lede">The steps board from the SportIn app, by person, team or country.</p></div>
           <div class="big big--app" data-demo="ranking">
             <div class="phone" aria-hidden="true" data-screen="/proto/media/features/screen-walking.jpg?v=2">
               <div class="phone__screen"><div class="ios ios--lb" data-w="393">
@@ -234,7 +189,7 @@
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRunTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>10</b><span>Leaderboard</span><em>Running</em></p><h2 class="feat__title" id="featRunTitle">Every run, <em>ranked your way</em>.</h2><p class="feat__lede">The running board from the SportIn app, one board per distance.</p></div>
+          <div class="feat__intro"><p class="eng-k feat__idx"><b>08</b><span>Leaderboard</span><em>Running</em></p><h2 class="feat__title" id="featRunTitle">Every run, <em>ranked your way</em>.</h2><p class="feat__lede">The running board from the SportIn app, one board per distance.</p></div>
           <div class="big big--app" data-demo="running">
             <div class="phone" aria-hidden="true" data-screen="/proto/media/features/screen-running.jpg?v=2">
               <div class="phone__screen"><div class="ios ios--lb" data-w="393">
@@ -258,7 +213,7 @@
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRewTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>11</b><span>Reward</span><em>Brand rewards</em></p><h2 class="feat__title" id="featRewTitle">Steps that <em>earn rewards</em>.</h2><p class="feat__lede">Partners set the reward. Members earn it by moving.</p></div>
+          <div class="feat__intro"><p class="eng-k feat__idx"><b>09</b><span>Reward</span><em>Brand rewards</em></p><h2 class="feat__title" id="featRewTitle">Steps that <em>earn rewards</em>.</h2><p class="feat__lede">Partners set the reward. Members earn it by moving.</p></div>
           <div class="big big--app" data-demo="rewards">
             <div class="phone" aria-hidden="true" data-screen="/proto/media/features/screen-rewards.jpg?v=2">
               <div class="phone__screen"><div class="ios ios--lb ios--rw" data-w="393">
@@ -283,7 +238,7 @@
       </div>
       <canvas class="feat__dust" aria-hidden="true"></canvas>
       <nav class="feat__nav tl" aria-label="Engine layers">
-        <div class="tl__layer"><span class="tl__num">1</span><span class="tl__name">Competition</span><span class="tl__steps"><button type="button">Knockout</button><button type="button">Table</button><button type="button">Conquer</button></span></div>
+        <div class="tl__layer"><span class="tl__num">1</span><span class="tl__name">Competition</span><span class="tl__steps"><button type="button">League and Conquer</button></span></div>
         <i class="tl__line" aria-hidden="true"></i>
         <div class="tl__layer"><span class="tl__num">2</span><span class="tl__name">Leaderboard</span><span class="tl__steps"><button type="button">Walking</button><button type="button">Running</button></span></div>
         <i class="tl__line" aria-hidden="true"></i>
@@ -298,7 +253,7 @@
     <div class="wrap">
       <div class="ugc__head">
         <div>
-          <p class="ugc__kicker feat__idx"><b>12</b><span>Content</span><em>Made by members</em></p>
+          <p class="ugc__kicker feat__idx"><b>10</b><span>Content</span><em>Made by members</em></p>
           <h2 class="ugc__title" id="ugcTitle">Content money <em>can&rsquo;t buy</em>.</h2>
           <p class="ugc__lede">Ready-made templates. Your logo on every post.</p>
         </div>
@@ -312,7 +267,7 @@
   <section class="sec block tb" id="technology" aria-labelledby="techTitle">
     <div class="tb__inner">
     <div class="tb__head">
-      <p class="tb__idx"><b>13</b><span>Technology</span><em>Built in-house</em></p>
+      <p class="tb__idx"><b>11</b><span>Technology</span><em>Built in-house</em></p>
       <h2 class="tb__title" id="techTitle">We build proprietary technology, so every game <em>feels alive</em>.</h2>
     </div>
 
@@ -627,7 +582,7 @@
   <section class="aud" id="who" data-steps="1" aria-labelledby="whoTitle">
     <div class="aud__stick"><div class="wrap aud__grid">
       <div class="aud__copy">
-        <p class="aud__idx feat__idx"><b>14</b><span>Who it's for</span><em>Every community</em></p>
+        <p class="aud__idx feat__idx"><b>12</b><span>Who it's for</span><em>Every community</em></p>
         <h2 class="aud__title" id="whoTitle">It all starts with people who <em>show up</em>.</h2>
         <ol class="aud__list">
           <li class="aud__row"><p class="aud__name">Companies</p><p class="aud__line">Your people move more, feel better, and stay longer.</p></li>
@@ -654,7 +609,7 @@
   <section class="dl" id="delivery" data-steps="2" aria-labelledby="dlTitle">
     <div class="dl__stick"><div class="wrap dl__grid">
       <div class="dl__copy">
-        <p class="dl__idx feat__idx"><b>15</b><span>Delivery</span><em>Three ways to launch</em></p>
+        <p class="dl__idx feat__idx"><b>13</b><span>Delivery</span><em>Three ways to launch</em></p>
         <h2 class="dl__title" id="dlTitle">Launch it <em>your way</em>.</h2>
         <ol class="dl__list">
           <li class="dl__row"><p class="dl__name">The SportIn app</p><p class="dl__line">Members join the SportIn app and play from day one.</p><p class="dl__effort" aria-label="Effort: low"><i class="is-on"></i><i></i><i></i><span>Fastest start</span></p></li>
@@ -718,7 +673,7 @@
     <!-- Three lanes drawn around the content by closing-track.js, so every oval stays whole at any size. -->
     <svg class="closing__lanes" aria-hidden="true"><rect /><rect /><rect /></svg>
     <div class="wrap closing__inner">
-      <p class="feat__idx" data-reveal style="--d:.03s"><b>16</b><span>Get started</span><em>Pilot</em></p>
+      <p class="feat__idx" data-reveal style="--d:.03s"><b>14</b><span>Get started</span><em>Pilot</em></p>
       <h2 class="display display--xl" id="closingTitle" data-reveal style="--d:.06s">Start with <em>a pilot</em>.</h2>
       <div class="closing__actions" data-reveal style="--d:.12s"><a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Plan your pilot <span class="btn__arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="https://apps.apple.com/us/app/sportin-rise-to-the-challenge/id6762152651" target="_blank" rel="noopener">Try for Free<span class="sr-only"> (opens the App Store)</span></a></div>
     </div>
@@ -759,7 +714,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="/proto/engine3d.js?v=38"></script>
 <script type="module" src="/proto/integrate3d.js?v=26"></script>
-<script type="module" src="/proto/features.js?v=27"></script>
+<script type="module" src="/proto/features.js?v=28"></script>
 <script type="module" src="/proto/ugc.js?v=4"></script>
 <script type="module" src="/proto/tech-b.js?v=4"></script>
 <script type="module" src="/proto/audience.js?v=4"></script>
