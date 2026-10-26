@@ -12,41 +12,64 @@
   const MIN = 12; // px of wheel movement a gesture needs before the page moves
   const ease = (u) => (u < 0.5 ? 4 * u * u * u : 1 - (-2 * u + 2) ** 3 / 2);
 
-  // Snap points: every element whose CSS gives it a snap alignment, as page scroll positions.
+  // Snap points: the elements the CSS gives a snap alignment, as page scroll positions.
   let points = null;
+  const SNAPPERS = '.page, .snap-mark, .jelly-end, .belief__panel, #what, body > footer';
+  const findPoints = () => [...document.querySelectorAll(SNAPPERS)].filter((el) => { const a = getComputedStyle(el).scrollSnapAlign; return a && a !== 'none'; });
   function stops() {
-    if (!points) points = [...document.querySelectorAll('main *, body > footer')].filter((el) => { const a = getComputedStyle(el).scrollSnapAlign; return a && a !== 'none'; });
+    if (!points) points = findPoints();
     const vh = window.innerHeight; const max = root.scrollHeight - vh;
     const ys = points.map((el) => {
-      const r = el.getBoundingClientRect(); const top = r.top + window.scrollY; const align = getComputedStyle(el).scrollSnapAlign.split(' ').pop();
+      const r = el.getBoundingClientRect(); const top = r.top + window.scrollY;
+      const align = getComputedStyle(el).scrollSnapAlign.split(' ')[0]; // the block axis comes first
       const y = align === 'center' ? top + r.height / 2 - vh / 2 : align === 'end' ? top + r.height - vh : top;
       return Math.round(Math.max(0, Math.min(max, y)));
     }).sort((a, b) => a - b);
     return ys.filter((y, i) => i === 0 || y - ys[i - 1] > 4);
   }
   window.addEventListener('resize', () => { points = null; });
+  if ('requestIdleCallback' in window) requestIdleCallback(() => { points = points || findPoints(); });
 
   // The glide to a stop. Snapping is paused while it runs, so the page moves smoothly, and it
-  // ends exactly on the stop, so snapping has nothing to correct.
-  let gliding = false; let raf = 0;
+  // ends exactly on the stop, so snapping has nothing to correct. Anything else that scrolls the
+  // page meanwhile (a menu link, a key, the formats rail) ends the glide and keeps its scroll.
+  let gliding = false; let raf = 0; let queued = 0;
+  function stopGlide() { cancelAnimationFrame(raf); gliding = false; queued = 0; root.style.scrollSnapType = ''; }
+  function step(dir) {
+    const y = window.scrollY; const ys = stops();
+    const to = dir > 0 ? ys.find((s) => s > y + 4) : [...ys].reverse().find((s) => s < y - 4);
+    if (to != null) glide(to);
+  }
   function glide(to) {
     const from = window.scrollY; const dist = Math.abs(to - from);
     if (dist < 2) return;
     const dur = reduced ? 0 : Math.min(1500, Math.max(650, 450 + (350 * dist) / window.innerHeight));
+    cancelAnimationFrame(raf);
     gliding = true; root.style.scrollSnapType = 'none';
-    const t0 = performance.now();
+    const t0 = performance.now(); let wrote = from;
     const frame = (now) => {
+      if (Math.abs(window.scrollY - wrote) > 2) { stopGlide(); return; } // someone else scrolled
       const u = dur ? Math.min(1, (now - t0) / dur) : 1;
-      window.scrollTo(0, from + (to - from) * ease(u));
-      if (u < 1) raf = requestAnimationFrame(frame); else { gliding = false; root.style.scrollSnapType = ''; }
+      wrote = Math.round(from + (to - from) * ease(u)); window.scrollTo(0, wrote);
+      if (u < 1) { raf = requestAnimationFrame(frame); return; }
+      gliding = false; root.style.scrollSnapType = '';
+      if (queued) { const d = queued; queued = 0; step(d); } // a wheel click that came during the glide
     };
-    cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+    raf = requestAnimationFrame(frame);
   }
+  window.addEventListener('keydown', () => { if (gliding) stopGlide(); });
+  window.addEventListener('pointerdown', () => { if (gliding) stopGlide(); });
 
-  // Gestures: wheel events that follow each other within QUIET ms are one gesture. A gesture
-  // moves one stop once its movement passes MIN; the rest of it (the momentum tail) is
-  // swallowed, and so is any gesture that starts while the page is still gliding.
-  let lastWheel = 0; let sum = 0; let used = false; let prevAbs = 0;
+  // Gestures. Wheel events less than QUIET ms apart are one gesture. A gesture moves one stop once
+  // its movement passes MIN; the rest of it (a trackpad's momentum tail) is swallowed, and so is
+  // a trackpad gesture that starts mid-glide. A new gesture also starts when the direction flips,
+  // or when a fresh swipe rises well above the tail's recent floor for two events in a row once
+  // the glide has ended (one jump alone is a coalesced tail event, not a new swipe). A mouse
+  // wheel (whose gestures start with a big click, not a small ramp) moves one stop per click,
+  // with at most one click waiting while the page glides; a lone click too small to pass MIN
+  // still moves the page when its gesture ends.
+  let lastWheel = 0; let sum = 0; let used = false; const recent = []; let rising = 0; let dir = 0; let clicks = false; let count = 0; let endTimer = 0;
+  const pxOf = (e) => (e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY);
   const scrollableInside = (el, dy) => {
     for (let n = el; n && n !== document.body && n !== root; n = n.parentElement) {
       const oy = getComputedStyle(n).overflowY;
@@ -56,21 +79,32 @@
     }
     return false;
   };
+  function endGesture() { if (!used && Math.abs(sum) >= 3 && count <= 2) { used = true; step(Math.sign(sum)); } }
   window.addEventListener('wheel', (e) => {
-    if (!root.classList.contains('is-full') || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // present mode, zoom, sideways
+    if (!e.cancelable) return; // the browser already scrolls this sequence itself
+    if (!root.classList.contains('is-full') || e.ctrlKey) return; // present mode, zoom
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 2) return; // sideways
     if (scrollableInside(e.target, e.deltaY)) return; // a panel of its own scrolls first
     e.preventDefault();
-    const now = performance.now(); const abs = Math.abs(e.deltaY);
-    // A new gesture: after a quiet gap, or a fresh swipe rising out of the last one's momentum tail
-    // once the glide has ended. One that starts mid-glide is swallowed.
-    if (now - lastWheel > QUIET || (used && !gliding && abs > Math.max(20, prevAbs * 2))) { sum = 0; used = gliding; }
-    lastWheel = now; prevAbs = abs;
+    const now = performance.now(); const px = pxOf(e); const abs = Math.abs(px); const sign = Math.sign(px);
+    const rise = used && !gliding && !clicks && recent.length >= 3 && abs >= Math.max(25, 3 * Math.min(...recent));
+    rising = rise ? rising + 1 : 0;
+    const fresh = now - lastWheel > QUIET || (sign && dir && sign !== dir) || rising >= 2;
+    // A swipe rising out of a tail is a trackpad, not wheel clicks.
+    if (fresh) { sum = 0; count = 0; clicks = rising < 2 && abs >= 40; used = !clicks && gliding; recent.length = 0; rising = 0; }
+    // The tail's floor stays put while a rise is being checked.
+    lastWheel = now; if (!rising) { recent.push(abs); if (recent.length > 6) recent.shift(); }
+    if (sign) dir = sign; count += 1;
+    clearTimeout(endTimer); endTimer = setTimeout(endGesture, QUIET);
+    if (clicks && fresh === false && abs >= 40) { // another wheel click within the same spin
+      if (gliding) queued = sign; else step(sign);
+      return;
+    }
     if (used) return;
-    sum += e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    sum += px;
     if (Math.abs(sum) < MIN) return;
     used = true;
-    const y = window.scrollY; const ys = stops();
-    const to = sum > 0 ? ys.find((s) => s > y + 4) : [...ys].reverse().find((s) => s < y - 4);
-    if (to != null) glide(to);
+    if (gliding) { queued = Math.sign(sum); return; } // a wheel click during a glide waits for it
+    step(Math.sign(sum));
   }, { passive: false });
 })();
