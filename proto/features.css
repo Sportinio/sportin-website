@@ -4,7 +4,7 @@
    0 opening title, 1 Champions League style, 2 national division style, 3 Conquer (Game of Run),
    4 walking board, 5 running board, 6 brand rewards. */
 .feat { position: relative; height: calc(100vh + 2 * 80vh); }
-.feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--paper); }
+.feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--infield); } /* 06 to 08 sit on the very light grey block, the same shape as the other pages */
 html.is-full .feat__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
 html.is-full .feat .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
 html.is-deck .feat { display: none; } /* Present mode does not include the scroll scenes yet */
