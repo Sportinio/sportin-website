@@ -3,7 +3,7 @@
    and re-forms as the next page (dust.js), in slow motion; graphics fade out and in.
    0 opening title, 1 Champions League style, 2 national division style, 3 Conquer (Game of Run),
    4 walking board, 5 running board, 6 brand rewards. */
-.feat { position: relative; height: calc(100vh + 4 * 80vh); }
+.feat { position: relative; height: calc(100vh + 2 * 80vh); }
 .feat__stick { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--paper); }
 html.is-full .feat__stick { top: var(--inset); height: calc(100vh - 2 * var(--inset)); margin: 0 var(--inset); border-radius: var(--r-block); }
 html.is-full .feat .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
@@ -11,7 +11,7 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 
 .feat__track { position: relative; height: 100%; }
 /* Title block at the top, the graphic centred in the space between it and the rail. */
-.feat__panel { position: absolute; inset: 0; box-sizing: border-box; padding: calc(var(--nav-h) + 40px) max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)) 112px; display: grid; grid-template-rows: auto minmax(0, 1fr); justify-items: center; gap: 32px; }
+.feat__panel { position: absolute; inset: 0; box-sizing: border-box; padding: calc(var(--nav-h) + 40px) max(var(--gutter), (100% - var(--wrap)) / 2 + var(--gutter)) 48px; display: grid; grid-template-rows: auto minmax(0, 1fr); justify-items: center; gap: 32px; }
 .feat__intro { text-align: center; max-width: 760px; opacity: var(--txt, 1); }
 .feat__intro .eng-k { margin: 0 0 14px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em; color: var(--slate); }
 /* Page number and chapter (option 2): blue number, the chapter in bold after a short rule, then the page. */
@@ -162,21 +162,6 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
 .points span { font-size: 15px; line-height: 1.5; color: var(--slate); }
 
 
-/* 06 Two formats: the League and Conquer videos side by side (3:4), each with its name and one line. */
-.big--formats { grid-template-columns: repeat(2, auto); justify-content: center; gap: clamp(24px, 3vw, 48px); }
-.fmtv { margin: 0; display: grid; gap: 14px; }
-.fmtv__frame { position: relative; height: min(520px, calc(100vh - var(--nav-h) - 400px)); min-height: 260px; aspect-ratio: 3 / 4; border-radius: var(--r-card); overflow: hidden; background: #0b0d14; }
-.fmtv__video { display: block; width: 100%; height: 100%; object-fit: cover; }
-.fmtv__sound { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(11, 13, 20, 0.6); color: #fff; cursor: pointer; transition: transform 120ms ease-out, background-color 160ms ease; }
-.fmtv__sound:hover { background: rgba(11, 13, 20, 0.8); }
-.fmtv__sound:active { transform: scale(0.95); }
-.fmtv__sound:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-.fmtv__i-on, .has-sound .fmtv__i-off { display: none; }
-.has-sound .fmtv__i-on { display: block; }
-.fmtv figcaption { display: grid; gap: 4px; text-align: left; opacity: var(--txt, 1); }
-.fmtv figcaption b { font-family: var(--display); font-stretch: var(--display-stretch); font-size: 22px; font-weight: 700; color: var(--ink); }
-.fmtv figcaption span { font-size: 15px; color: var(--slate); }
-
 /* The 3D phone for the turn between app pages (features-3d.js); placed over the flat phone. */
 .feat__three { position: absolute; z-index: 3; pointer-events: none; visibility: hidden; }
 .feat__three canvas { display: block; }
@@ -192,6 +177,4 @@ html.is-deck .feat { display: none; } /* Present mode does not include the scrol
   .feat__panel--app { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; justify-items: stretch; }
   .feat__panel--app .feat__intro, .feat__panel--app .points { grid-column: auto; grid-row: auto; }
   .feat__panel--app .phone { grid-column: auto; grid-row: auto; height: auto; width: min(300px, 78vw); justify-self: center; }
-  .big--formats { grid-template-columns: minmax(0, 1fr); justify-items: center; }
-  .fmtv__frame { height: auto; width: min(360px, 84vw); }
 }

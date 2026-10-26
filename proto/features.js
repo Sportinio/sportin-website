@@ -3,8 +3,8 @@
 // text (titles, descriptions, bullet points) turns to dust and re-forms as the next page's text
 // (dust.js), in slow motion, while the graphic fades out and the next one fades in. The rail at the bottom shows progress; Skip leaves the section.
 // Demos for other feature panels stay ready (guarded) in case those panels come back.
-// Page 06 shows the two competition formats, League and Conquer, as two videos side by side that
-// play while the page is on screen.
+// The two competition formats, League and Conquer, are on their own page before this scene (05,
+// formats.js); this scene holds the app pages: Walking, Running and Brand rewards.
 import { followScroll } from '/proto/scroll-follow.js?v=2';
 import { createDust, WIN } from '/proto/dust.js?v=8';
 
@@ -219,18 +219,6 @@ if (sec) {
       start() { reset(); if (RM) { while (i < PATH.length) step(); return; } timer = window.setInterval(step, 420); },
       stop() { window.clearInterval(timer); timer = 0; },
     }; } }
-
-  // Two formats (League and Conquer): both videos play muted, side by side, while the page is on
-  // screen. Each has a sound button; turning one on turns the other off.
-  { const box = panelOf('formats'); if (box) {
-    const cards = [...box.querySelectorAll('.fmtv')].map((card) => ({ card, video: card.querySelector('video'), btn: card.querySelector('.fmtv__sound') }));
-    const setSound = (on) => cards.forEach((c) => { const live = c === on; c.video.muted = !live; c.btn.setAttribute('aria-pressed', String(live)); c.card.classList.toggle('has-sound', live); });
-    cards.forEach((c) => c.btn.addEventListener('click', () => { setSound(c.video.muted ? c : null); c.video.play().catch(() => {}); }));
-    demos.formats = {
-      start() { if (RM) return; cards.forEach((c) => c.video.play().catch(() => {})); },
-      stop() { setSound(null); cards.forEach((c) => c.video.pause()); },
-    };
-  } }
 
   // App screens are laid out in iOS points (app-screens.css) and scaled to fit the phone screen.
   const canvases = [...sec.querySelectorAll('.ios')];
