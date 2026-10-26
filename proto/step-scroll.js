@@ -35,14 +35,15 @@
   // page meanwhile (a menu link, a key, the formats rail) ends the glide and keeps its scroll.
   let gliding = false; let raf = 0; let queued = 0; // stops waiting for the glide to end (signed count)
   function stopGlide() { cancelAnimationFrame(raf); gliding = false; queued = 0; root.style.scrollSnapType = ''; }
+  // Returns whether the page started moving (false at the first or last stop).
   function step(dir) {
     const y = window.scrollY; const ys = stops();
     const to = dir > 0 ? ys.find((s) => s > y + 4) : [...ys].reverse().find((s) => s < y - 4);
-    if (to != null) glide(to);
+    return to != null && glide(to);
   }
   function glide(to) {
     const from = window.scrollY; const dist = Math.abs(to - from);
-    if (dist < 2) return;
+    if (dist < 2) return false;
     const dur = reduced ? 0 : Math.min(1500, Math.max(650, 450 + (350 * dist) / window.innerHeight));
     cancelAnimationFrame(raf);
     gliding = true; root.style.scrollSnapType = 'none';
@@ -53,10 +54,11 @@
       wrote = Math.round(from + (to - from) * ease(u)); window.scrollTo(0, wrote);
       if (u < 1) { raf = requestAnimationFrame(frame); return; }
       gliding = false; root.style.scrollSnapType = '';
-      // Wheel clicks that came during the glide.
-      if (queued) { const d = Math.sign(queued); queued -= d; step(d); }
+      // Wheel clicks that came during the glide; at the end of the page the rest are dropped.
+      if (queued) { const d = Math.sign(queued); queued -= d; if (!step(d)) queued = 0; }
     };
     raf = requestAnimationFrame(frame);
+    return true;
   }
   window.addEventListener('keydown', () => { if (gliding) stopGlide(); });
   window.addEventListener('pointerdown', () => { if (gliding) stopGlide(); });
@@ -69,7 +71,7 @@
   // wheel (whose gestures start with a big click, not a small ramp) moves one stop per click,
   // with at most one click waiting while the page glides; a lone click too small to pass MIN
   // still moves the page when its gesture ends.
-  let lastWheel = 0; let sum = 0; let used = false; const recent = []; let rising = 0; let dir = 0; let clicks = false; let clickSize = 0; let prevAbs = 0; let count = 0; let endTimer = 0;
+  let lastWheel = 0; let sum = 0; let used = false; const recent = []; let rising = 0; let dir = 0; let clicks = false; let clickSize = 0; let prevAbs = 0; let count = 0; let endTimer = 0; let total = 0; let midGlide = false;
   const pxOf = (e) => (e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY);
   const scrollableInside = (el, dy) => {
     for (let n = el; n && n !== document.body && n !== root; n = n.parentElement) {
@@ -80,7 +82,16 @@
     }
     return false;
   };
-  function endGesture() { if (!used && Math.abs(sum) >= 3 && count <= 2) { used = true; step(Math.sign(sum)); } }
+  // A separate wheel click during a glide waits for it; up to two can wait.
+  const wait = (d) => { queued = Math.sign(queued) === d ? Math.max(-2, Math.min(2, queued + d)) : d; };
+  // At a gesture's end: a lone tick (one or two events) still moves the page, even a small one or
+  // one that came while the page was gliding (it waits its turn). A longer swipe that started
+  // mid-glide stays swallowed.
+  function endGesture() {
+    if (count > 2 || Math.abs(total) < 3 || (used && !midGlide)) return;
+    used = true; midGlide = false; const d = Math.sign(total);
+    if (gliding) wait(d); else step(d);
+  }
   window.addEventListener('wheel', (e) => {
     if (!e.cancelable) return; // the browser already scrolls this sequence itself
     if (!root.classList.contains('is-full') || e.ctrlKey) return; // present mode, zoom
@@ -94,11 +105,12 @@
     // the same gesture, not a new one. A flip counts only from a real movement (4px), not a
     // lift-off wobble of 1-3px.
     const gap = now - lastWheel;
-    const resumed = gap < 600 && !clicks && sign === dir && prevAbs >= 8 && abs >= prevAbs * 0.5 && abs <= prevAbs * 1.3;
+    const resumed = gap < 600 && !clicks && count >= 6 && sign === dir && prevAbs >= 8 && abs >= prevAbs * 0.5 && abs <= prevAbs * 1.3;
     const fresh = (gap > QUIET && !resumed) || (sign && dir && sign !== dir && abs >= 4) || rising >= 2;
     prevAbs = abs;
     // A swipe rising out of a tail is a trackpad, not wheel clicks.
-    if (fresh) { sum = 0; count = 0; clicks = rising < 2 && abs >= 40; clickSize = abs; used = !clicks && gliding; recent.length = 0; rising = 0; }
+    if (fresh) { sum = 0; total = 0; count = 0; clicks = rising < 2 && abs >= 40; clickSize = abs; used = !clicks && gliding; midGlide = used; recent.length = 0; rising = 0; }
+    total += px;
     // The tail's floor stays put while a rise is being checked; empty events do not lower it.
     lastWheel = now;
     if (!rising && abs >= 1) { recent.push(abs); if (recent.length > 6) recent.shift(); }
@@ -106,9 +118,10 @@
     count += 1;
     clearTimeout(endTimer); endTimer = setTimeout(endGesture, QUIET);
     if (clicks && !fresh) {
-      // Wheel clicks repeat one exact size. A stream of changing sizes is a trackpad after all (a
-      // big first event after a pause or a busy moment), and its one move already happened.
-      if (Math.abs(abs - clickSize) > Math.max(1, clickSize * 0.02)) { clicks = false; used = true; return; }
+      // Wheel clicks repeat one exact size and come at least 25ms apart. A dense stream, or one of
+      // changing sizes, is a trackpad after all (a big first event after a pause or a busy
+      // moment), and its one move already happened.
+      if (gap < 25 || Math.abs(abs - clickSize) > Math.max(1, clickSize * 0.02)) { clicks = false; used = true; return; }
       if (!gliding) step(sign); else if (!queued) queued = sign; // one spin: at most one waits
       return;
     }
@@ -116,8 +129,7 @@
     sum += px;
     if (Math.abs(sum) < MIN) return;
     used = true;
-    // A separate wheel click during a glide waits for it; up to two can wait.
-    if (gliding) { const d = Math.sign(sum); queued = Math.sign(queued) === d ? Math.max(-2, Math.min(2, queued + d)) : d; return; }
+    if (gliding) { wait(Math.sign(sum)); return; }
     step(Math.sign(sum));
   }, { passive: false });
 })();
