@@ -16,6 +16,8 @@ html.is-full #games-more .games { margin-top: 0; }
 /* Problem: the page holds still while each scroll step moves members one stage further. */
 html.is-full .problem-pin { position: relative; }
 html.is-full .problem-pin > .page { position: sticky; top: var(--inset) !important; scroll-snap-align: none; }
+/* Snap points. proto/step-scroll.js (desktop step scrolling) finds them by the selector list in
+   its SNAPPERS; a snap rule on a new selector must be added there too. */
 .snap-mark { position: absolute; left: 0; width: 1px; height: 1px; pointer-events: none; }
 html.is-full .problem-pin .snap-mark { scroll-snap-align: start; scroll-snap-stop: always; }
 html.is-full #belief .belief__panel { scroll-snap-align: center; scroll-snap-stop: always; }
