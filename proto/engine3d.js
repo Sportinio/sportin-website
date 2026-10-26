@@ -261,6 +261,7 @@ function resize() {
   const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
   W = Math.max(1, r.width); H = Math.max(1, r.height);
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
+  stickW = f.width; stickH = f.height; if (coSvg) coSvg.setAttribute('viewBox', `0 0 ${stickW} ${stickH}`);
   // Framed a little above the stage centre, so the near edge of a tilted layer never reaches the screen bottom.
   view = { x: f.left - r.left, y: f.top - r.top + H * 0.07, w: f.width, h: f.height };
   frame(0);
@@ -292,6 +293,77 @@ function measureChip() {
   window.sportinChipShift = chipShift; // the integrations scene starts from the same framing
 }
 
+// ---------- Callouts ----------
+// Steps 1 to 5 explain the plate with callouts instead of a title: a card beside the plate and a
+// thin line from it to a dot on the feature. The dot is projected from the 3D scene on every frame,
+// so it stays on its feature while the plate moves. A callout comes in (dot, then the line draws,
+// then the card) once the scene rests near its step, and fades out when the scene moves on.
+const HOLD = 5; // the 04 eyebrow stays on screen through the callout steps
+const coLayer = sec.querySelector('.eng-callouts');
+const NS = 'http://www.w3.org/2000/svg';
+const coSvg = coLayer ? coLayer.querySelector('svg') : null;
+const callouts = coLayer ? [...coLayer.querySelectorAll('.eng-co')].map((el) => {
+  const at = el.dataset.at ? el.dataset.at.split(',').map(Number) : null;
+  const line = document.createElementNS(NS, 'path'); line.setAttribute('class', 'eng-co__line'); line.setAttribute('pathLength', '1'); coSvg.appendChild(line);
+  const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class', 'eng-co__dot'); dot.setAttribute('r', '3'); coSvg.appendChild(dot);
+  return { el, step: Number(el.dataset.step), screen: el.dataset.screen, at, rod: Number(el.dataset.rod || 0), dy: Number(el.dataset.dy || 0), side: el.dataset.side, line, dot, on: false };
+}) : [];
+// The second callout of a step follows the first by 80 ms.
+callouts.forEach((c) => { const n = callouts.filter((o) => o.step === c.step).indexOf(c); [c.el, c.line, c.dot].forEach((e) => e.style.setProperty('--co-d', `${n * 80}ms`)); });
+let stickW = 1; let stickH = 1;
+const FW = PW - 0.16; const FD = PD - 0.16; const _p = new THREE.Vector3();
+// The mesh that shows a screen at time t: the single flipping plate until the split, then the stack.
+function faceOf(screen, t) {
+  if (t >= 4.05) return { mesh: { glass: pGlass, board: pBoard, reward: pReward }[screen].userData.face, back: false };
+  return screen === 'board' ? { mesh: fBot, back: true } : { mesh: fTop, back: false };
+}
+const toPx = (v) => [((v.x + 1) / 2) * stickW, ((1 - v.y) / 2) * stickH];
+// A point on a screen canvas (SW × SH) to pixels in the pinned frame.
+function project(face, cx, cy) {
+  _p.set((cx / SW - 0.5) * FW, 0, (cy / SH - 0.5) * FD * (face.back ? -1 : 1)).applyMatrix4(face.mesh.matrixWorld).project(camera);
+  return toPx(_p);
+}
+// The middle of a rod (1: between Competition and Leaderboard, 2: between Leaderboard and Reward)
+// at the stack's left or right tip, whichever is on the callout's side.
+function rodPoint(rod, side) {
+  const pts = links.map((L) => { const r = rod === 1 ? L.r1 : L.r2; _p.set(0, -0.5, 0).applyMatrix4(r.matrixWorld).project(camera); return toPx(_p); });
+  pts.sort((p, q) => p[0] - q[0]);
+  return side === 'left' ? pts[0] : pts[pts.length - 1];
+}
+function plateBox(t) {
+  const faces = t >= 4.05 ? ['glass', 'board', 'reward'].map((s) => faceOf(s, t)) : [faceOf('glass', t)];
+  let minX = Infinity; let maxX = -Infinity;
+  faces.forEach((fc) => [[0, 0], [SW, 0], [0, SH], [SW, SH]].forEach(([u, v]) => { const [px] = project(fc, u, v); minX = Math.min(minX, px); maxX = Math.max(maxX, px); }));
+  return [minX, maxX];
+}
+function placeCallouts(T, t) {
+  if (!callouts.length) return;
+  const [minX, maxX] = plateBox(t);
+  const top = stickH * 0.14; const EDGE = 32; const BOTTOM = 76; const GAP = 24; // BOTTOM clears the sound button
+  const used = { left: [], right: [] };
+  callouts.forEach((c) => {
+    const on = T < 6 && Math.abs(T - c.step) < 0.22;
+    if (on !== c.on) { c.on = on; [c.el, c.line, c.dot].forEach((e) => e.classList.toggle('is-on', on)); }
+    if (!on) return; // a leaving callout keeps its last place while it fades
+    const [ax, ay] = c.rod ? rodPoint(c.rod, c.side) : project(faceOf(c.screen, t), c.at[0], c.at[1]);
+    // The card is centred on its dot's height, just outside the plate on its side, inside the frame.
+    const w = c.el.offsetWidth; const h = c.el.offsetHeight;
+    const x = c.side === 'left' ? Math.max(EDGE, minX - GAP - w) : Math.min(stickW - EDGE - w, maxX + GAP);
+    // dy drops a card below its dot, so its line can reach the feature through empty plate.
+    let y = Math.max(top, Math.min(stickH - BOTTOM - h, ay - h / 2 + c.dy));
+    used[c.side].forEach(([y0, h0]) => { if (y < y0 + h0 + 120 && y + h > y0 - 120) y = y0 + h0 + 120; });
+    used[c.side].push([y, h]);
+    c.el.style.left = `${x.toFixed(1)}px`; c.el.style.top = `${y.toFixed(1)}px`;
+    // A 20 px level stub off the card's inner edge at the title's height, then straight to the dot,
+    // ending 4 px short of it.
+    const ex = c.side === 'left' ? x + w : x; const ey = y + 24; const kx = c.side === 'left' ? ex + 20 : ex - 20;
+    const dx = ax - kx; const dy = ay - ey; const len = Math.hypot(dx, dy) || 1; const k = Math.max(0, len - 4) / len;
+    c.line.setAttribute('d', `M${ex.toFixed(1)} ${ey.toFixed(1)}H${kx.toFixed(1)}L${(kx + dx * k).toFixed(1)} ${(ey + dy * k).toFixed(1)}`);
+    c.dot.setAttribute('cx', ax.toFixed(1)); c.dot.setAttribute('cy', ay.toFixed(1));
+    c.dot.style.transformOrigin = `${ax.toFixed(1)}px ${ay.toFixed(1)}px`;
+  });
+}
+
 // ---------- Choreography ----------
 const GAP = 2.4;
 function setOpacity(g, o) { g.userData.body.material.opacity = o; g.userData.face.material.opacity = o; g.visible = o > 0.004; }
@@ -302,10 +374,17 @@ function paint(T) {
   // integrations scene, which starts from this exact finished chip.
   const t = Math.min(T, 6);
   // Copy: one block at a time. Reduced motion: a plain cross-fade, no blur or slide.
-  texts.forEach((el, k) => {
-    const d = Math.abs(T - k); const o = 1 - sm(clamp((d - 0.28) / 0.22));
+  texts.forEach((el) => {
+    const k = Number(el.dataset.c);
+    // The opening heading stays on screen through the callout steps (1 to HOLD); the callouts on
+    // the plate explain each step instead of a title of its own.
+    const d = k === 0 ? Math.max(0, T - HOLD) : Math.abs(T - k); const o = 1 - sm(clamp((d - 0.28) / 0.22));
+    if (k === 0) { // the display title and its line give way to the callouts after step 0
+      const ot = 1 - sm(clamp((T - 0.28) / 0.22));
+      [...el.children].forEach((ch) => { if (!ch.classList.contains('eng-eyebrow')) ch.style.opacity = String(ot); });
+    }
     el.style.opacity = String(o);
-    el.style.transform = RM ? 'none' : `translateY(${((T - k) * -18).toFixed(1)}px)`;
+    el.style.transform = RM ? 'none' : `translateY(${((k === 0 ? Math.max(0, T - HOLD) : T - k) * -18).toFixed(1)}px)`;
     el.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none';
   });
 
@@ -371,7 +450,9 @@ function paint(T) {
   const ey = lerp(0.62, 0.1, up); const ez = Math.sqrt(1 - ey * ey);
   camera.position.set(look.x + dist * 0.05 * (1 - up), look.y + dist * ey, look.z + dist * ez);
   camera.lookAt(look);
-  frame(chipShift * up); // the standing chip settles exactly mid-way between title and caption
+  // With the display title gone after step 0, the plate rises into its space until the chip stands up.
+  const lift = stickH * 0.09 * win(t, 0.3, 0.8) * (1 - up);
+  frame(chipShift * up + lift); // the standing chip settles exactly mid-way between title and caption
 
   // Screens: redraw only when their state changes.
   const za = t < 0.4 ? 1 : 0.4 + 0.6 * Math.max(win(t, 0.4, 0.55) * (1 - win(t, 1.1, 1.3)), t > 4.05 ? 1 : 0);
@@ -389,7 +470,9 @@ function paint(T) {
   sec.style.setProperty('--cap', String(cap * (1 - win(T, 6.1, 6.4)))); // gone once the integrations begin
   if (cta) cta.classList.toggle('is-on', cap > 0.5 && T < 6.5);
   canvas.style.visibility = T > 6.02 ? 'hidden' : 'visible';
-  if (T > 6.02) return; // the integrations scene has taken over
+  if (T > 6.02) { placeCallouts(T, t); return; } // the integrations scene has taken over
+  scene.updateMatrixWorld(); camera.updateMatrixWorld();
+  placeCallouts(T, t);
   renderer.render(scene, camera);
 }
 
