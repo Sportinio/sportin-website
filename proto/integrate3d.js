@@ -336,8 +336,9 @@ function resize() {
   const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
   W = Math.max(1, r.width); H = Math.max(1, r.height); view = { w: f.width, h: f.height };
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
-  // Same framing as the engine scene: the scene sits right of the verbs column.
-  viewBase = { x: f.left - r.left - 0.22 * f.width, y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
+  // Same framing as the engine scene: centred in the space right of the words (engine3d.js).
+  const shift = window.sportinSceneShiftX ? window.sportinSceneShiftX(sec, f) : 0.22 * f.width;
+  viewBase = { x: f.left - r.left - shift, y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
   camera.setViewOffset(W, H, viewBase.x, viewBase.y, viewBase.w, viewBase.h);
   camera.updateProjectionMatrix();
 }
@@ -457,7 +458,7 @@ function paint(t, now = performance.now()) {
   // One camera for both views, so the phone never jumps when the view changes. At step 2 the
   // camera pans to centre the phone and watch under the title, then settles on the grid as the
   // brands arrive. look.y drops the scene into the middle of the space between tabs and caption.
-  const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK * 1.38; // smaller, beside the verbs column, matching the engine
+  const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK * 1.6; // smaller, beside the verbs column, matching the engine
   // eMotion fills its columns one step later, so its pan settles over steps 2 to 4.
   const pan = lerp(lerp(-3.0, 0, win(t, 2.0, 2.6)), lerp(-3.0, 0, win(t, 2.0, 3.6)), emo);
   const look = new THREE.Vector3(lerp(0, pan, side), lerp(lerp(0, 0.45, a), 0.6, side), 0);
@@ -485,12 +486,9 @@ function paintAt(T, now) {
 const follow = followScroll(sec, { steps: STEPS_ALL, reduced: RM, onFrame: paintAt, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t - FROM >= 2 || (mode > 0 && follow.t > FROM)))) });
 new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) follow.kick(); }).observe(sec);
 window.addEventListener('resize', () => { resize(); paintAt(follow.t); });
-// Connect opens into the verbs column with a CSS transition; place the switch again once it settles.
-const connectWord = sec.querySelector('.eng-verbs [data-v="3"]');
-if (connectWord) connectWord.addEventListener('transitionend', (e) => { if (e.propertyName === 'max-height') paintAt(follow.t); });
 resize();
 drawWatchScreen();
-document.fonts.ready.then(() => { engine.drawEngraving(); emotion.drawEngraving(); drawWatchScreen(); follow.sync(); });
+document.fonts.ready.then(() => { resize(); engine.drawEngraving(); emotion.drawEngraving(); drawWatchScreen(); follow.sync(); });
 follow.sync();
 window.integrateAt = (v) => follow.jump(v + FROM);
 window.integrateMode = (m) => sw.querySelector(`button[data-mode="${m}"]`).click();

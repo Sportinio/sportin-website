@@ -250,7 +250,18 @@ const chipKit = createChip(renderer, { PW, PD });
 const chip = chipKit.group; scene.add(chip);
 
 // ---------- Layout ----------
-const SHIFT = 0.22; const DIST_K = 1.38; // beside the verbs the scene is smaller and to the right
+// How far right of the frame's centre the 3D scene goes: half-way between the widest word in the
+// column and the right edge of the content (the same edge as the menu). Shared with integrate3d.js.
+export function sceneShiftX(section, frameRect) {
+  const words = [...section.querySelectorAll('.eng-verbs [data-v]')];
+  const grid = section.querySelector('.engine__grid');
+  if (!words.length || !grid) return 0;
+  const left = Math.max(...words.map((w) => w.getBoundingClientRect().right));
+  const g = grid.getBoundingClientRect(); const right = g.right - parseFloat(getComputedStyle(grid).paddingRight || 0);
+  return (left + right) / 2 - (frameRect.left + frameRect.width / 2);
+}
+window.sportinSceneShiftX = sceneShiftX;
+const DIST_K = 1.38; // beside the verbs the scene is smaller
 // The canvas covers the whole pinned screen, so nothing can ever be cut off at its edge. The camera
 // is still framed on the stage area below the text: the projection is widened to the full canvas.
 let W = 1; let H = 1;
@@ -264,8 +275,8 @@ function resize() {
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
   stickW = f.width; stickH = f.height; if (coSvg) coSvg.setAttribute('viewBox', `0 0 ${stickW} ${stickH}`);
   // Framed a little above the stage centre, so the near edge of a tilted layer never reaches the screen bottom.
-  // The scene sits in the right part of the frame, beside the verbs column (SHIFT of the width).
-  view = { x: f.left - r.left - SHIFT * f.width, y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
+  // The scene is centred in the space between the words and the content's right edge.
+  view = { x: f.left - r.left - sceneShiftX(sec, f), y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
   frame(0);
   measureChip();
 }
@@ -367,17 +378,14 @@ function placeCallouts(T, t) {
 }
 
 // ---------- The verbs ----------
-// Competitions, Leaderboards, Rewards stand on the left for the whole section; the one for the step
-// on screen is ink, the rest are pale. The opening, the split stack and the chip light all three.
-// Connect joins the list only when the integration scene starts, and is the one lit from then on.
+// Compete, Rank, Rewards, Connect stand on the left for the whole section; the one for the step on
+// screen is ink, the rest are pale. The opening, the split stack and the chip light the engine's
+// three layers; Connect lights for the integration.
 const verbs = [...sec.querySelectorAll('.eng-verbs [data-v]')];
 const verbRanges = [[0.6, 2.5], [2.5, 3.5], [3.5, 4.6], [6.5, 99]];
 function paintVerbs(T) {
   const all = T < 0.6 || (T >= 4.6 && T < 6.5);
-  verbs.forEach((el, k) => {
-    if (k === 3) el.classList.toggle('is-shown', T >= 6.5);
-    el.classList.toggle('is-on', (all && k < 3) || (T >= verbRanges[k][0] && T < verbRanges[k][1]));
-  });
+  verbs.forEach((el, k) => el.classList.toggle('is-on', (all && k < 3) || (T >= verbRanges[k][0] && T < verbRanges[k][1])));
 }
 
 // ---------- Choreography ----------
@@ -511,6 +519,6 @@ if (sound) {
 const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: (t) => { paint(t); if (sound) sound.update(t); } });
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
-document.fonts.ready.then(() => { measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });
+document.fonts.ready.then(() => { resize(); measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });
 follow.sync();
 window.engineAt = (v) => follow.jump(v);
