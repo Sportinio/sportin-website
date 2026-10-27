@@ -250,7 +250,7 @@ const chipKit = createChip(renderer, { PW, PD });
 const chip = chipKit.group; scene.add(chip);
 
 // ---------- Layout ----------
-const SHIFT = 0.2; const DIST_K = 1.35; // beside the verbs the scene is smaller and to the right
+const SHIFT = 0.22; const DIST_K = 1.38; // beside the verbs the scene is smaller and to the right
 // The canvas covers the whole pinned screen, so nothing can ever be cut off at its edge. The camera
 // is still framed on the stage area below the text: the projection is widened to the full canvas.
 let W = 1; let H = 1;
@@ -367,13 +367,17 @@ function placeCallouts(T, t) {
 }
 
 // ---------- The verbs ----------
-// Compete, Climb, Claim, Connect stand on the left for the whole section; the one for the step on
-// screen is ink, the rest are pale. The opening, the split stack and the chip light all four.
+// Competitions, Leaderboards, Rewards stand on the left for the whole section; the one for the step
+// on screen is ink, the rest are pale. The opening, the split stack and the chip light all three.
+// Connect joins the list only when the integration scene starts, and is the one lit from then on.
 const verbs = [...sec.querySelectorAll('.eng-verbs [data-v]')];
 const verbRanges = [[0.6, 2.5], [2.5, 3.5], [3.5, 4.6], [6.5, 99]];
 function paintVerbs(T) {
   const all = T < 0.6 || (T >= 4.6 && T < 6.5);
-  verbs.forEach((el, k) => el.classList.toggle('is-on', all || (T >= verbRanges[k][0] && T < verbRanges[k][1])));
+  verbs.forEach((el, k) => {
+    if (k === 3) el.classList.toggle('is-shown', T >= 6.5);
+    el.classList.toggle('is-on', (all && k < 3) || (T >= verbRanges[k][0] && T < verbRanges[k][1]));
+  });
 }
 
 // ---------- Choreography ----------
