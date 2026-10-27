@@ -1,0 +1,29 @@
+/* 14 The film: the SportIn product film, 16:9, as large as the page allows, with a big play button.
+   The hero's "Watch the film" button opens the same film in a full-screen player (film-modal). */
+.film { background: var(--infield); }
+.film__inner { display: grid; justify-items: center; row-gap: 28px; }
+.film__head { text-align: center; max-width: 1000px; }
+.film__idx.feat__idx { display: flex; justify-content: center; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--body); font-size: 14px; color: var(--slate); }
+.film__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch, 112%); font-weight: 800; font-size: clamp(40px, 4vw, 60px); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); text-wrap: balance; }
+.film__title em { font-style: normal; color: var(--blue); }
+.film__frame { position: relative; margin: 0; width: min(100%, 1120px, calc((100vh - var(--nav-h) - 240px) * 16 / 9)); aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #0b0d14; }
+.film__video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.film__play, .film-open svg { flex: none; }
+.film__play { position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 104px; height: 104px; margin: -52px 0 0 -52px; padding-left: 5px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.94); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18); cursor: pointer; transition: transform 140ms ease-out, opacity 200ms ease; }
+.film__play:hover { transform: scale(1.04); }
+.film__play:active { transform: scale(0.96); }
+.film__play:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.film__frame.is-playing .film__play { opacity: 0; pointer-events: none; }
+
+/* The hero button */
+.film-open { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: inherit; }
+
+/* The full-screen player */
+.film-modal { width: min(92vw, calc(88vh * 16 / 9)); max-width: none; max-height: none; padding: 0; border: 0; border-radius: 12px; overflow: visible; background: #000; }
+.film-modal::backdrop { background: rgba(10, 16, 32, 0.88); }
+.film-modal__video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: #000; }
+.film-modal__close { position: absolute; right: 0; top: -52px; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer; transition: background-color 160ms ease, transform 120ms ease-out; }
+.film-modal__close:hover { background: rgba(255, 255, 255, 0.24); }
+.film-modal__close:active { transform: scale(0.95); }
+.film-modal__close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .film__play, .film-modal__close { transition: none; } }
