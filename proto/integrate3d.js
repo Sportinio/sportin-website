@@ -39,7 +39,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(renderer), 0.04).texture;
-const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
+const camera = new THREE.PerspectiveCamera(26, 1, 1, 100); // near at 1: the scene is 15+ units away, and depth precision keeps the phone's screen off its body
 const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(2.5, 14, 5); scene.add(key);
 const fill = new THREE.DirectionalLight(0xffffff, 0.45); fill.position.set(-6, 4, 8); scene.add(fill); // same lights as the engine, for a seamless handover
 const rig = new THREE.Group(); scene.add(rig); // everything turns together for a little depth
@@ -98,7 +98,7 @@ const bodyMats = new Set();
 body.traverse((o) => { if (o.material && o.material.colorWrite !== false) bodyMats.add(o.material); });
 phone.add(body);
 const pScreen = new THREE.Mesh(plate(PHONE.SW * MM, PHONE.SH * MM, PHONE.SR * MM, 32), pm(new THREE.MeshBasicMaterial({ map: PS.tex, toneMapped: false, depthWrite: false })));
-pScreen.position.z = 0.05 * MM; phone.add(pScreen);
+pScreen.position.z = 0.3 * MM; phone.add(pScreen); // far enough in front of the body that depth never mixes them
 function composePhone() { PS.tex.needsUpdate = true; }
 // The body is drawn opaque at rest and only blends while it fades in.
 function fadePhone(o) {
