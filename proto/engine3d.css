@@ -88,3 +88,16 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
   .eng-co, .eng-co.is-on, .eng-co__dot, .eng-co__dot.is-on { translate: none; transform: none; transition: opacity 120ms linear; }
   .eng-co__line, .eng-co__line.is-on { stroke-dashoffset: 0; transition: opacity 120ms linear; }
 }
+
+/* 04 One engine: the verbs stand in a column on the left for the whole section (Compete, Climb,
+   Claim, Connect), the one for the step on screen in ink; the 3D scene sits to their right. */
+.engine__grid { grid-template-rows: 1fr; }
+.engine__copy { position: absolute; left: var(--gutter); top: 0; bottom: 0; z-index: 2; width: min(36%, 470px); height: auto; max-width: none; display: flex; align-items: center; text-align: left; pointer-events: none; }
+.eng-a { position: relative; pointer-events: auto; }
+#engine .eng-a .eng-eyebrow.feat__idx { display: flex; justify-content: flex-start; align-items: baseline; gap: 12px; margin: 0 0 22px; font-family: var(--body); font-size: 14px; color: var(--slate); }
+.eng-verbs { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch, 112%); font-weight: 800; font-size: clamp(48px, 4.8vw, 74px); line-height: 1.02; letter-spacing: -0.03em; }
+.eng-verbs span { display: block; color: color-mix(in srgb, var(--ink) 15%, transparent); transition: color 420ms cubic-bezier(0.23, 1, 0.32, 1); }
+.eng-verbs span.is-on { color: var(--ink); }
+.eng-a .eng-cta { position: absolute; left: 0; top: calc(100% + 28px); margin: 0; align-self: auto; white-space: nowrap; }
+.eng-caption { left: 70%; }
+@media (prefers-reduced-motion: reduce) { .eng-verbs span { transition: none; } }

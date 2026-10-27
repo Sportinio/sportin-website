@@ -322,12 +322,12 @@ sw.addEventListener('click', (ev) => {
   sw.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
   follow.kick();
 });
-const copyBox = sec.querySelector('.engine__copy');
+const copyBox = sec.querySelector('.eng-a') || sec.querySelector('.engine__copy');
 function placeSwitch(o) {
   sw.style.opacity = String(o); sw.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
-  // Tabs sit centred just below the title block.
+  // Tabs sit under the verbs, left aligned with them.
   const cr = copyBox.getBoundingClientRect(); const f = stick.getBoundingClientRect();
-  sw.style.transform = `translate(${Math.round(cr.left - f.left + cr.width / 2 - sw.offsetWidth / 2)}px, ${Math.round(cr.bottom - f.top + 6)}px)`;
+  sw.style.transform = `translate(${Math.round(cr.left - f.left)}px, ${Math.round(cr.bottom - f.top + 28)}px)`;
 }
 
 // ---------- Layout ----------
@@ -336,7 +336,8 @@ function resize() {
   const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
   W = Math.max(1, r.width); H = Math.max(1, r.height); view = { w: f.width, h: f.height };
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
-  viewBase = { x: f.left - r.left, y: f.top - r.top + H * 0.07, w: f.width, h: f.height };
+  // Same framing as the engine scene: the scene sits right of the verbs column.
+  viewBase = { x: f.left - r.left - 0.2 * f.width, y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
   camera.setViewOffset(W, H, viewBase.x, viewBase.y, viewBase.w, viewBase.h);
   camera.updateProjectionMatrix();
 }
@@ -456,7 +457,7 @@ function paint(t, now = performance.now()) {
   // One camera for both views, so the phone never jumps when the view changes. At step 2 the
   // camera pans to centre the phone and watch under the title, then settles on the grid as the
   // brands arrive. look.y drops the scene into the middle of the space between tabs and caption.
-  const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK;
+  const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK * 1.35; // smaller, beside the verbs column, matching the engine
   // eMotion fills its columns one step later, so its pan settles over steps 2 to 4.
   const pan = lerp(lerp(-3.0, 0, win(t, 2.0, 2.6)), lerp(-3.0, 0, win(t, 2.0, 3.6)), emo);
   const look = new THREE.Vector3(lerp(0, pan, side), lerp(lerp(0, 0.45, a), 0.6, side), 0);

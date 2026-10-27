@@ -250,6 +250,7 @@ const chipKit = createChip(renderer, { PW, PD });
 const chip = chipKit.group; scene.add(chip);
 
 // ---------- Layout ----------
+const SHIFT = 0.2; const DIST_K = 1.35; // beside the verbs the scene is smaller and to the right
 // The canvas covers the whole pinned screen, so nothing can ever be cut off at its edge. The camera
 // is still framed on the stage area below the text: the projection is widened to the full canvas.
 let W = 1; let H = 1;
@@ -263,7 +264,8 @@ function resize() {
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
   stickW = f.width; stickH = f.height; if (coSvg) coSvg.setAttribute('viewBox', `0 0 ${stickW} ${stickH}`);
   // Framed a little above the stage centre, so the near edge of a tilted layer never reaches the screen bottom.
-  view = { x: f.left - r.left, y: f.top - r.top + H * 0.07, w: f.width, h: f.height };
+  // The scene sits in the right part of the frame, beside the verbs column (SHIFT of the width).
+  view = { x: f.left - r.left - SHIFT * f.width, y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
   frame(0);
   measureChip();
 }
@@ -364,6 +366,16 @@ function placeCallouts(T, t) {
   });
 }
 
+// ---------- The verbs ----------
+// Compete, Climb, Claim, Connect stand on the left for the whole section; the one for the step on
+// screen is ink, the rest are pale. The opening, the split stack and the chip light all four.
+const verbs = [...sec.querySelectorAll('.eng-verbs [data-v]')];
+const verbRanges = [[0.6, 2.5], [2.5, 3.5], [3.5, 4.6], [6.5, 99]];
+function paintVerbs(T) {
+  const all = T < 0.6 || (T >= 4.6 && T < 6.5);
+  verbs.forEach((el, k) => el.classList.toggle('is-on', all || (T >= verbRanges[k][0] && T < verbRanges[k][1])));
+}
+
 // ---------- Choreography ----------
 const GAP = 2.4;
 function setOpacity(g, o) { g.userData.body.material.opacity = o; g.userData.face.material.opacity = o; g.visible = o > 0.004; }
@@ -445,13 +457,13 @@ function paint(T) {
   // Camera: close on the single plate (pulling back a little mid-flip), out for the split stack,
   // and at eye level for the standing chip, so it reads truly vertical.
   const aspectK = Math.max(1, 1.45 / (W / H));
-  const dist = (lerp(lerp(10.4, 18, split), 11, up) + 1.4 * bob) * aspectK;
+  const dist = (lerp(lerp(10.4, 18, split), 11, up) + 1.4 * bob) * aspectK * DIST_K;
   const look = new THREE.Vector3(0, lerp(lerp(0, 0.05, split), chip.position.y, up), 0);
   const ey = lerp(0.62, 0.1, up); const ez = Math.sqrt(1 - ey * ey);
   camera.position.set(look.x + dist * 0.05 * (1 - up), look.y + dist * ey, look.z + dist * ez);
   camera.lookAt(look);
   // With the display title gone after step 0, the plate rises into its space until the chip stands up.
-  const lift = stickH * 0.09 * win(t, 0.3, 0.8) * (1 - up);
+  const lift = 0; // no title above the scene any more, so nothing to rise into
   frame(chipShift * up + lift); // the standing chip settles exactly mid-way between title and caption
 
   // Screens: redraw only when their state changes.
@@ -465,12 +477,13 @@ function paint(T) {
     if (k !== s.key) { s.key = k; fn(st); s.tex.needsUpdate = true; }
   });
 
+  paintVerbs(T);
   // Caption and the demo button arrive with the finished chip.
   const cap = win(t, 5.8, 6);
   sec.style.setProperty('--cap', String(cap * (1 - win(T, 6.1, 6.4)))); // gone once the integrations begin
   if (cta) cta.classList.toggle('is-on', cap > 0.5 && T < 6.5);
   canvas.style.visibility = T > 6.02 ? 'hidden' : 'visible';
-  if (T > 6.02) { placeCallouts(T, t); return; } // the integrations scene has taken over
+  if (T > 6.02) { placeCallouts(T, t); return; } // the integrations scene has taken over (the verbs are painted above)
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
   placeCallouts(T, t);
   renderer.render(scene, camera);
