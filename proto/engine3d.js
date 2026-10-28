@@ -27,7 +27,8 @@ const sc = (u) => u * u * (3 - 2 * u); // cubic: gentler, used for the flips
 const win = (t, a, b) => sm(clamp((t - a) / (b - a)));
 const winC = (t, a, b) => sc(clamp((t - a) / (b - a)));
 const lerp = (a, b, u) => a + (b - a) * u;
-const BLUE = '#0751fb'; const INK = '#0a1020'; const SLATE = '#5a6377'; const MUTE = '#8a93a6';
+const CLUB = '#d7192d'; // the club's colour (sample club, Northside FC): the engine wears it
+const INK = '#0a1020'; const SLATE = '#5a6377'; const MUTE = '#8a93a6';
 const GREEN = '#0f9f6e'; const GREEN_SOFT = '#effaf5'; // unlocked rewards
 
 // ---------- Renderer, camera, light ----------
@@ -74,12 +75,12 @@ function polyline(ctx, pts, f) {
   }
   ctx.stroke();
 }
-// Layer label on the left, the client's brand on the right: the engine runs in their brand.
+// Layer label on the left, the club on the right: the engine runs in the club's name and colour.
 function head(ctx, label) {
   font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText(label, 44, 56);
-  ctx.textAlign = 'right'; ctx.fillStyle = SLATE; ctx.fillText('Your brand', SW - 44, 56);
-  const w = ctx.measureText('Your brand').width; ctx.textAlign = 'left';
-  ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(SW - 44 - w - 16, 48, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.textAlign = 'right'; ctx.fillStyle = SLATE; ctx.fillText('Northside FC', SW - 44, 56);
+  const w = ctx.measureText('Northside FC').width; ctx.textAlign = 'left';
+  ctx.fillStyle = CLUB; ctx.beginPath(); ctx.arc(SW - 44 - w - 16, 48, 6, 0, Math.PI * 2); ctx.fill();
 }
 function title(ctx, text, meta, x, y) {
   font(ctx, 700, 30); ctx.fillStyle = INK; ctx.fillText(text, x, y);
@@ -92,16 +93,16 @@ function drawGlass(s) {
   const g = ctx.createLinearGradient(0, 0, SW, SH); g.addColorStop(0, 'rgba(255,255,255,0.97)'); g.addColorStop(1, 'rgba(240,244,252,0.94)');
   card(ctx, 0, 0, SW, SH, 28, g, 'rgba(7,81,251,0.16)');
   head(ctx, 'L1 · Competition');
-  // Competitions: a knockout, four teams to one champion.
+  // Competitions: a knockout, four supporters' clubs abroad to one champion.
   ctx.globalAlpha = s.za; card(ctx, 40, 80, 600, 560);
-  title(ctx, 'Competitions', 'knockout', 68, 132);
+  title(ctx, 'Fan Cup', 'knockout', 68, 132);
   const X0 = 68; const Y0 = 172; const BW = 544; const BH = 440;
   const pill = (x, w, cy, label, on, alpha, solid) => {
     if (alpha <= 0.01) return; ctx.save(); ctx.globalAlpha *= alpha;
-    card(ctx, x, cy - 32, w, 64, 14, solid ? BLUE : '#fff', solid ? null : (on ? BLUE : 'rgba(10,16,32,0.12)'), on ? 3 : 2);
-    font(ctx, solid ? 700 : 600, 28); ctx.fillStyle = solid ? '#fff' : (on ? BLUE : SLATE); ctx.fillText(label, x + 18, cy + 10); ctx.restore();
+    card(ctx, x, cy - 32, w, 64, 14, solid ? CLUB : '#fff', solid ? null : (on ? CLUB : 'rgba(10,16,32,0.12)'), on ? 3 : 2);
+    font(ctx, solid ? 700 : 600, 28); ctx.fillStyle = solid ? '#fff' : (on ? CLUB : SLATE); ctx.fillText(label, x + 18, cy + 10); ctx.restore();
   };
-  ctx.strokeStyle = BLUE; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+  ctx.strokeStyle = CLUB; ctx.lineWidth = 3; ctx.lineJoin = 'round';
   const r1x = X0; const r1w = BW * 0.33; const r2x = X0 + BW * 0.41; const r2w = BW * 0.28; const r3x = X0 + BW * 0.72; const r3w = BW * 0.28;
   const y = (f) => Y0 + BH * f; const jx = X0 + BW * 0.37; const kx = X0 + BW * 0.70;
   polyline(ctx, [[r1x + r1w, y(0.12)], [jx, y(0.12)], [jx, y(0.23)], [r2x, y(0.23)]], s.k1);
@@ -110,19 +111,19 @@ function drawGlass(s) {
   polyline(ctx, [[r1x + r1w, y(0.88)], [jx, y(0.88)], [jx, y(0.77)]], s.k1);
   polyline(ctx, [[r2x + r2w, y(0.23)], [kx, y(0.23)], [kx, y(0.5)], [r3x, y(0.5)]], s.k2);
   polyline(ctx, [[r2x + r2w, y(0.77)], [kx, y(0.77)], [kx, y(0.5)]], s.k2);
-  pill(r1x, r1w, y(0.12), 'Team A', s.r1, s.o1); pill(r1x, r1w, y(0.34), 'Team B', false, s.o1);
-  pill(r1x, r1w, y(0.66), 'Team C', s.r1, s.o1); pill(r1x, r1w, y(0.88), 'Team D', false, s.o1);
-  pill(r2x, r2w, y(0.23), 'Team A', s.r2, s.o2); pill(r2x, r2w, y(0.77), 'Team C', false, s.o2);
-  pill(r3x, r3w, y(0.5), 'Team A', false, s.o3, true);
-  if (s.o3 > 0.01) { ctx.save(); ctx.globalAlpha *= s.o3; font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('Champion', r3x, y(0.5) - 46); ctx.restore(); }
+  pill(r1x, r1w, y(0.12), 'London', s.r1, s.o1); pill(r1x, r1w, y(0.34), 'Dublin', false, s.o1);
+  pill(r1x, r1w, y(0.66), 'Madrid', s.r1, s.o1); pill(r1x, r1w, y(0.88), 'Toronto', false, s.o1);
+  pill(r2x, r2w, y(0.23), 'London', s.r2, s.o2); pill(r2x, r2w, y(0.77), 'Madrid', false, s.o2);
+  pill(r3x, r3w, y(0.5), 'London', false, s.o3, true);
+  if (s.o3 > 0.01) { ctx.save(); ctx.globalAlpha *= s.o3; font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = CLUB; ctx.fillText('Champion', r3x, y(0.5) - 46); ctx.restore(); }
   ctx.globalAlpha = 1;
   // Challenges: a short goal, the ring fills fast.
   ctx.globalAlpha = s.zb; card(ctx, 660, 80, 340, 560);
-  title(ctx, 'Challenges', null, 688, 132);
-  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('3 days', 688, 172);
+  title(ctx, 'Matchday walk', null, 688, 132);
+  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('Home game', 688, 172);
   const cx = 830; const cy = 370; ctx.lineWidth = 22; ctx.lineCap = 'round';
   ctx.strokeStyle = '#e9edf4'; ctx.beginPath(); ctx.arc(cx, cy, 100, 0, Math.PI * 2); ctx.stroke();
-  if (s.rp > 0.001) { ctx.strokeStyle = BLUE; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * 0.74 * s.rp); ctx.stroke(); }
+  if (s.rp > 0.001) { ctx.strokeStyle = CLUB; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * 0.74 * s.rp); ctx.stroke(); }
   font(ctx, 800, 58, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; ctx.textAlign = 'center';
   ctx.fillText(Math.round(7412 * s.rp).toLocaleString('en-US'), cx, cy + 20);
   font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 10,000 steps', cx, 560); ctx.textAlign = 'left';
@@ -147,7 +148,7 @@ function drawBoard(s) {
   head(ctx, 'L2 · Leaderboard');
   card(ctx, 40, 80, 960, 72, 16);
   const lw = (960 - 12) / 3;
-  if (s.lo > 0.01) { ctx.save(); ctx.globalAlpha = s.lo; card(ctx, 46 + s.ln * lw, 86, lw, 60, 12, BLUE, null); ctx.restore(); }
+  if (s.lo > 0.01) { ctx.save(); ctx.globalAlpha = s.lo; card(ctx, 46 + s.ln * lw, 86, lw, 60, 12, CLUB, null); ctx.restore(); }
   ['Walking', 'Running', 'Cycling'].forEach((l, k) => { font(ctx, 600, 28); ctx.textAlign = 'center'; ctx.fillStyle = s.lo > 0.5 && Math.round(s.ln) === k ? '#fff' : MUTE; ctx.fillText(l, 46 + lw * k + lw / 2, 126); });
   ctx.textAlign = 'left';
   // Values roll like an odometer between lanes instead of jumping.
@@ -156,12 +157,12 @@ function drawBoard(s) {
     const [ini, name, vals, from, to] = ROWS[i];
     const slot = lerp(from, to, s.ov); const y = 176 + slot * 116; const rank = Math.round(slot);
     const mover = i === MOVER && s.ov > 0.001;
-    card(ctx, 40, y, 960, 96, 16, mover ? '#f2f6ff' : '#fff', rank === 0 ? BLUE : (mover ? 'rgba(7,81,251,0.35)' : 'rgba(10,16,32,0.07)'), rank === 0 ? 3 : 2);
+    card(ctx, 40, y, 960, 96, 16, mover ? '#fff4f5' : '#fff', rank === 0 ? CLUB : (mover ? 'rgba(215,25,45,0.35)' : 'rgba(10,16,32,0.07)'), rank === 0 ? 3 : 2);
     font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText(String(rank + 1), 72, y + 58);
-    ctx.fillStyle = '#e8eeff'; ctx.beginPath(); ctx.arc(144, y + 48, 28, 0, Math.PI * 2); ctx.fill();
-    font(ctx, 700, 22); ctx.fillStyle = BLUE; ctx.textAlign = 'center'; ctx.fillText(ini, 144, y + 56); ctx.textAlign = 'left';
+    ctx.fillStyle = '#fdeaec'; ctx.beginPath(); ctx.arc(144, y + 48, 28, 0, Math.PI * 2); ctx.fill();
+    font(ctx, 700, 22); ctx.fillStyle = CLUB; ctx.textAlign = 'center'; ctx.fillText(ini, 144, y + 56); ctx.textAlign = 'left';
     font(ctx, 600, 30); ctx.fillStyle = INK; ctx.fillText(name, 196, y + 59);
-    if (mover && s.ov > 0.5) { const nw = ctx.measureText(name).width; ctx.save(); ctx.globalAlpha = clamp((s.ov - 0.5) * 4); font(ctx, 600, 24, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('▲ 2', 196 + nw + 18, y + 58); ctx.restore(); }
+    if (mover && s.ov > 0.5) { const nw = ctx.measureText(name).width; ctx.save(); ctx.globalAlpha = clamp((s.ov - 0.5) * 4); font(ctx, 600, 24, 'IBM Plex Mono'); ctx.fillStyle = CLUB; ctx.fillText('▲ 2', 196 + nw + 18, y + 58); ctx.restore(); }
     ctx.save(); rr(ctx, 700, y + 8, 290, 80, 10); ctx.clip();
     font(ctx, 500, 28, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'right';
     if (u < 0.001) ctx.fillText(vals[a], 968, y + 58);
@@ -173,7 +174,7 @@ function drawBoard(s) {
   });
 }
 
-const PERKS = [['Free coffee', 500], ['20% off running gear', 1500], ['Spa day pass', 2500]];
+const PERKS = [['10% off club shop', 500], ['Stadium tour', 1500], ['Signed shirt', 2500]];
 function drawReward(s) {
   const { ctx } = scr.reward;
   ctx.clearRect(0, 0, SW, SH);
@@ -182,12 +183,12 @@ function drawReward(s) {
   card(ctx, 40, 80, 440, 560);
   title(ctx, 'Earned', 'this week', 68, 132);
   font(ctx, 800, 104, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; const pts = Math.round(2500 * s.pr).toLocaleString('en-US'); ctx.fillText(pts, 64, 290);
-  const pw = ctx.measureText(pts).width; font(ctx, 500, 30, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('pts', 78 + pw, 288);
+  const pw = ctx.measureText(pts).width; font(ctx, 500, 30, 'IBM Plex Mono'); ctx.fillStyle = CLUB; ctx.fillText('pts', 78 + pw, 288);
   const tx = 72; const tw = 376; const ty = 500;
   card(ctx, tx, ty - 6, tw, 12, 6, '#e9edf4', null);
-  if (s.pr > 0.001) card(ctx, tx, ty - 6, tw * s.pr, 12, 6, BLUE, null);
+  if (s.pr > 0.001) card(ctx, tx, ty - 6, tw * s.pr, 12, 6, CLUB, null);
   [[0.2, '500'], [0.6, '1,500'], [1, '2,500']].forEach(([f, l]) => {
-    ctx.beginPath(); ctx.arc(tx + tw * f, ty, 12, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = s.pr >= f - 0.001 ? BLUE : '#cfd6e2'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(tx + tw * f, ty, 12, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = s.pr >= f - 0.001 ? CLUB : '#cfd6e2'; ctx.stroke();
     font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.textAlign = f === 1 ? 'right' : 'center'; ctx.fillText(l, tx + tw * f + (f === 1 ? 12 : 0), ty + 54); ctx.textAlign = 'left';
   });
   PERKS.forEach(([name, cost], k) => {
