@@ -156,6 +156,8 @@
       el.style.opacity = String(smoother(clamp(u / 0.4)));
       el.style.transform = u >= 1 ? 'none' : `translateY(${y.toFixed(2)}px)`;
       el.style.filter = blur > 0.05 ? `blur(${blur.toFixed(2)}px)` : 'none';
+      // Each card's graphic (bars, dots) builds a beat after the card lands, through --v.
+      el.style.setProperty('--v', clamp((p2 - n * 0.1 - 0.1) / 0.3).toFixed(3));
       const c = nums[n]; if (c) c.textContent = String(Math.round(Number(c.dataset.to) * (1 - (1 - clamp(u / 0.85)) ** 3)));
     });
   }
