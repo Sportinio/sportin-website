@@ -61,7 +61,7 @@ Third… rewards. Every step earns club points, and points unlock real prizes fr
 
 [excited] Team against team. Friends against friends. Or just a plain run… for the fun of it.
 
-[warmly] And on matchday… a walk to the stadium.
+[warmly] And on matchday… every step fans take to the stadium counts.
 
 ## 06 · Every fan on the board (about 9 s)
 
