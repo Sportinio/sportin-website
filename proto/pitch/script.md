@@ -10,7 +10,7 @@ so generate two or three takes per page and keep the best. Delete the tags if yo
 without audio-tag support.
 
 **Voice:** warm, confident, conversational. A storyteller who loves football, not an advertiser.
-Medium pace. Around 2 minutes 50 seconds in all.
+Medium pace. Around 3 minutes 20 seconds in all.
 
 **Sample club:** Northside FC is made up for the demo. Say "your club" wherever it fits.
 
@@ -40,13 +40,19 @@ Between matches, most fans have no reason to take part. No reason to come back. 
 
 [warmly] And eighty-eight percent of people trust a friend's word above anything else.
 
-## 04 · The solution (about 11 s)
+## 04 · The solution (about 40 s)
 
-[excited] Meet the engine.
+[excited] Meet the engine… three layers, working together, in your club's name and colours.
 
-[confident] Compete. Rank. Rewards. Connect… All in your club's name, and your club's colours.
+[confident] Layer one… competition. For the long run, there are two formats. League… where supporters' clubs, cities and countries play a full season, and every kilometre moves the table. And Conquer… where fans run their streets to claim the city for the club, block by block.
 
-It works with the phones and watches your fans already wear. Nothing new to buy… nothing new to learn.
+[warmly] For the short run, there are challenges. A daily step goal. A matchday walk. Three days to hit ten thousand steps… quick wins that bring fans back tomorrow.
+
+[confident] Layer two… leaderboards. Walking, running and cycling, ranked live… by fan, by supporters' club, or by country.
+
+[excited] Layer three… rewards. Every step earns club points, and points unlock real prizes… a shop discount, a stadium tour, a signed shirt.
+
+[confident] And it all connects… to Apple Health, Garmin, Fitbit, Strava, and the phones and watches fans already wear. Nothing new to buy… nothing new to learn.
 
 ## 05 · The games (about 13 s)
 
