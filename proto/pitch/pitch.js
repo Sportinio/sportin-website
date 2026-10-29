@@ -1,7 +1,9 @@
 // Pitch mode: the deck plays itself. A Pitch button in the menu goes full screen and shows a short
 // intro; once played it scrolls the deck page by page while a voice tells the pitch
-// (proto/pitch/audio/NN.mp3) and captions show the words, then thanks the viewer and closes. The words come from proto/pitch/script.md, the one source for the script; a page with no
-// clip runs on the script's estimate. No controls on screen: Esc ends the pitch; Space pauses and
+// (proto/pitch/audio/NN.mp3), then thanks the viewer and closes. No transcript on screen: the
+// caption line is for screen readers and times the scroll. The words come from
+// proto/pitch/script.md, the one source for the script; a page with no clip runs on the script's
+// estimate. No controls on screen: Esc ends the pitch; Space pauses and
 // the arrow keys skip, for whoever presents; scrolling by hand pauses. deck.html#pitch opens it.
 // The scroll follows the words: each paragraph (or sentence) of a page has its own resting place,
 // so the engine (04), the problem (02) and delivery (14) hold on the step being spoken and glide to
@@ -11,9 +13,7 @@
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s) => document.querySelector(s);
   const topOf = (el) => el.getBoundingClientRect().top + window.scrollY;
-  // The captions take a band at the foot of the screen, so a page centres in the space above it.
-  const band = () => ui.querySelector('.pitch__band').offsetHeight;
-  const centre = (el) => topOf(el) + el.offsetHeight / 2 - (window.innerHeight - band()) / 2;
+  const centre = (el) => topOf(el) + el.offsetHeight / 2 - window.innerHeight / 2;
   const stepAt = (el, k) => topOf(el) + (k / (Number(el.dataset.steps) + 0.6)) * (el.offsetHeight - window.innerHeight);
   const seg = () => Math.max(360, window.innerHeight * 0.7); // the problem's stage height (problem-scroll.js)
 
@@ -58,12 +58,12 @@
     return pages;
   }
 
-  // ---- UI: a Pitch button in the menu; on screen the captions, an Esc hint at first, and the intro.
+  // ---- UI: a Pitch button in the menu; on screen an Esc hint at first and the intro.
   const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'deck-nav-btn pitch-open';
   btn.innerHTML = '<span class="pitch-open__dot" aria-hidden="true"></span>Pitch';
   btn.setAttribute('aria-label', 'Play the pitch: the deck scrolls itself with a voice. Esc ends it.');
   const ui = document.createElement('div'); ui.className = 'pitch'; ui.hidden = true;
-  ui.innerHTML = '<div class="pitch__band"><p class="pitch__cap" aria-live="polite"></p></div>'
+  ui.innerHTML = '<p class="pitch__cap" aria-live="polite"></p>'
     + '<p class="pitch__hint">Press <kbd>Esc</kbd> to exit</p>'
     + '<div class="pitch__card pitch__intro"><button class="pitch__play" type="button" aria-label="Play the pitch"><i></i></button>'
     + '<p class="pitch__h">Watch the SportIn pitch</p><p class="pitch__sub"><span class="pitch__len"></span> · Sound on</p></div>'
@@ -111,7 +111,7 @@
   function paint() {
     const pg = pages[k]; if (!pg) return;
     const i = lineAt(pg, clock);
-    if (cap.textContent !== pg.lines[i]) { cap.textContent = pg.lines[i]; cap.classList.remove('is-in'); void cap.offsetWidth; cap.classList.add('is-in'); }
+    if (cap.textContent !== pg.lines[i]) cap.textContent = pg.lines[i];
     if (held) return; // paused by hand: leave the scroll alone
     const tgt = targetFor(i);
     if (tgt !== glideTo) { glideFrom = window.scrollY; glideTo = tgt; glideAt = clock; } // the voice moved on
