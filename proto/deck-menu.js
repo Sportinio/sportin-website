@@ -1,4 +1,4 @@
-// The deck's menu: Problem, Solution, Integration, Gamification. Integration is a step inside the
+// The deck's menu: Problem, Solution, Integration, Games, Revenue. Integration is a step inside the
 // engine's scroll scene (data-int-from), so each link scrolls to its section, or to a step of a
 // scroll scene the way deck.js places its snap marks: step k sits at k / (steps + 0.6) of the
 // scene's scroll span. The link for what is on screen is underlined.
@@ -40,8 +40,8 @@
   }));
 
   // Underline the last link whose place is at or above the middle of the screen, while the reader
-  // is still within the four sections (Problem to the end of Gamification).
-  const last = document.getElementById('features');
+  // is still within the menu's sections (Problem to the end of Revenue).
+  const last = document.getElementById('pay');
   function mark() {
     const y = window.scrollY + window.innerHeight * 0.5;
     let on = null;
