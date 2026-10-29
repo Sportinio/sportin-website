@@ -1,7 +1,7 @@
 /* Pitch mode (pitch.js): the deck plays itself with a voice. While it runs the menu steps aside and
    snapping is off, so the player's own scroll is smooth. On screen: the captions, in a lower-third
    band at the foot of the screen with each page centred above it so the words cover nothing, and an
-   Esc hint for the first seconds. No controls. An intro opens the pitch and an end card closes it. */
+   Esc hint for the first seconds. No controls. An intro opens the pitch; it closes by itself. */
 .pitch-open__dot { width: 8px; height: 8px; border-radius: 50%; background: #d7192d; }
 html.is-pitch, html.is-pitch.is-full { scroll-snap-type: none !important; scroll-behavior: auto !important; }
 html.is-pitch #nav { opacity: 0; pointer-events: none; transition: opacity 300ms ease; }
@@ -24,9 +24,9 @@ html.is-pitch .hero__actions, html.is-pitch .hv__pause, html.is-pitch .eng-sound
 .pitch__hint.is-gone, .pitch:not([data-state="play"]) .pitch__hint { opacity: 0; }
 .pitch__hint kbd { padding: 1px 6px; border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 5px; font-family: var(--mono); font-size: 12px; }
 
-/* Intro and end card: a dark veil over the page with one action in the middle. */
+/* Intro: a dark veil over the page with one action in the middle. */
 .pitch__card { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; padding: 24px; background: rgba(6, 8, 15, 0.72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); text-align: center; opacity: 0; visibility: hidden; transition: opacity 500ms ease, visibility 0s 500ms; }
-.pitch[data-state="intro"] .pitch__intro, .pitch[data-state="end"] .pitch__end { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 500ms ease; }
+.pitch[data-state="intro"] .pitch__intro { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 500ms ease; }
 .pitch__h { margin: 0; font-family: var(--display, inherit); font-size: clamp(28px, 3.6vw, 52px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
 .pitch__sub { margin: -6px 0 0; font-size: 15px; color: rgba(255, 255, 255, 0.72); }
 .pitch__play { position: relative; display: grid; place-items: center; width: 104px; height: 104px; margin-bottom: 10px; border: 0; border-radius: 50%; background: #fff; cursor: pointer; transition: transform 200ms ease; }
@@ -35,15 +35,9 @@ html.is-pitch .hero__actions, html.is-pitch .hv__pause, html.is-pitch .eng-sound
 .pitch__play::before, .pitch__play::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.7); animation: pitch-ring 2.4s cubic-bezier(.2, .6, .3, 1) infinite; }
 .pitch__play::after { animation-delay: 1.2s; }
 @keyframes pitch-ring { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.7); opacity: 0; } }
-.pitch__acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px; }
-.pitch__btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 999px; background: transparent; color: #fff; font: inherit; font-size: 16px; font-weight: 600; text-decoration: none; cursor: pointer; transition: background 200ms ease, transform 200ms ease; }
-.pitch__btn:hover { background: rgba(255, 255, 255, 0.12); transform: translateY(-1px); }
-.pitch__btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.pitch__btn--go { border-color: #d7192d; background: #d7192d; }
-.pitch__btn--go:hover { background: #e52a3e; }
-.pitch__play:focus-visible, .pitch__btn:focus-visible, .pitch__x:focus-visible { outline: 2px solid #9bb8ff; outline-offset: 3px; }
+.pitch__play:focus-visible, .pitch__x:focus-visible { outline: 2px solid #9bb8ff; outline-offset: 3px; }
 .pitch__x { position: absolute; top: 18px; right: 18px; display: none; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.12); color: #fff; font: inherit; font-size: 22px; line-height: 1; cursor: pointer; pointer-events: auto; }
-.pitch[data-state="intro"] .pitch__x, .pitch[data-state="end"] .pitch__x { display: grid; }
+.pitch[data-state="intro"] .pitch__x { display: grid; }
 
 @media (prefers-reduced-motion: reduce) {
   .pitch__play::before, .pitch__play::after, .pitch__cap.is-in { animation: none; }

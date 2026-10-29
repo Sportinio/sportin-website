@@ -1,7 +1,6 @@
 // Pitch mode: the deck plays itself. A Pitch button in the menu goes full screen and shows a short
 // intro; once played it scrolls the deck page by page while a voice tells the pitch
-// (proto/pitch/audio/NN.mp3) and captions show the words, and an end card offers Replay and the
-// pilot. The words come from proto/pitch/script.md, the one source for the script; a page with no
+// (proto/pitch/audio/NN.mp3) and captions show the words, then thanks the viewer and closes. The words come from proto/pitch/script.md, the one source for the script; a page with no
 // clip runs on the script's estimate. No controls on screen: Esc ends the pitch; Space pauses and
 // the arrow keys skip, for whoever presents; scrolling by hand pauses. deck.html#pitch opens it.
 // The scroll follows the words: each paragraph (or sentence) of a page has its own resting place,
@@ -59,8 +58,7 @@
     return pages;
   }
 
-  // ---- UI: a Pitch button in the menu; on screen the captions, an Esc hint at first, and the
-  // intro and end cards around the pitch.
+  // ---- UI: a Pitch button in the menu; on screen the captions, an Esc hint at first, and the intro.
   const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'deck-nav-btn pitch-open';
   btn.innerHTML = '<span class="pitch-open__dot" aria-hidden="true"></span>Pitch';
   btn.setAttribute('aria-label', 'Play the pitch: the deck scrolls itself with a voice. Esc ends it.');
@@ -69,14 +67,11 @@
     + '<p class="pitch__hint">Press <kbd>Esc</kbd> to exit</p>'
     + '<div class="pitch__card pitch__intro"><button class="pitch__play" type="button" aria-label="Play the pitch"><i></i></button>'
     + '<p class="pitch__h">Watch the SportIn pitch</p><p class="pitch__sub"><span class="pitch__len"></span> · Sound on</p></div>'
-    + '<div class="pitch__card pitch__end"><p class="pitch__h">Let&rsquo;s plan your pilot.</p><div class="pitch__acts">'
-    + '<button class="pitch__btn pitch__replay" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/></svg>Replay</button>'
-    + '<a class="pitch__btn pitch__btn--go" href="https://calendly.com/sportin" target="_blank" rel="noopener">Plan your pilot <span aria-hidden="true">→</span></a></div></div>'
     + '<button class="pitch__x" type="button" aria-label="Close the pitch (Esc)">&times;</button>';
   document.body.appendChild(ui);
   const cap = ui.querySelector('.pitch__cap'); const hint = ui.querySelector('.pitch__hint');
   const placeBtn = () => { const present = document.querySelector('#nav .deck-nav-btn:not(.pitch-open)'); const t = present || document.getElementById('themeToggle'); if (t) t.after(btn); };
-  const show = (state) => { ui.dataset.state = state; }; // intro, play, end
+  const show = (state) => { ui.dataset.state = state; }; // intro, play
 
   // ---- Playback
   let pages = []; let k = 0; let playing = false; let on = false;
@@ -135,7 +130,7 @@
         if (ending >= GAP) { if (k < pages.length - 1) loadPage(k + 1); else finish(); }
       }
     }
-    if (ui.dataset.state === 'play') paint();
+    if (ui.dataset.state === 'play' && !done) paint();
     raf = requestAnimationFrame(frame);
   }
 
@@ -146,7 +141,7 @@
     if (p && hasAudio && clock < dur) { if (Math.abs(audio.currentTime - clock) > 0.25) audio.currentTime = clock; audio.play().catch(() => {}); } else if (p) audio.play().catch(() => {}); else audio.pause();
   }
 
-  // The intro sits over the hero until Play; the end card holds the last page.
+  // The intro sits over the hero until Play.
   const fmt = (s) => `${Math.floor(s / 60)} min ${String(Math.round(s % 60)).padStart(2, '0')} s`;
   async function open() {
     if (on) return; on = true;
@@ -161,15 +156,17 @@
   }
   function play() {
     if (root.requestFullscreen && !document.fullscreenElement) root.requestFullscreen().catch(() => {});
-    show('play'); loadPage(0); setPlaying(true);
+    done = false; show('play'); loadPage(0); setPlaying(true);
     hint.classList.remove('is-gone'); clearTimeout(hint.t); hint.t = setTimeout(() => hint.classList.add('is-gone'), 3000);
   }
+  // After the last page: a thank-you, then the pitch closes by itself and leaves the reader on the film.
+  let done = false;
   function finish() {
-    setPlaying(false); show('end');
-    ui.querySelector('.pitch__replay').focus({ preventScroll: true });
+    setPlaying(false); done = true; cap.textContent = 'Thanks for watching.';
+    clearTimeout(finish.t); finish.t = setTimeout(stop, 2500);
   }
   function stop() {
-    if (!on) return; on = false; playing = false;
+    if (!on) return; on = false; playing = false; clearTimeout(finish.t);
     cancelAnimationFrame(raf); if (audio) audio.pause();
     root.classList.remove('is-pitch'); ui.hidden = true; delete ui.dataset.state;
     if (location.hash === '#pitch') history.replaceState(null, '', location.pathname + location.search);
@@ -179,7 +176,6 @@
 
   btn.addEventListener('click', open);
   ui.querySelector('.pitch__play').addEventListener('click', play);
-  ui.querySelector('.pitch__replay').addEventListener('click', play);
   ui.querySelector('.pitch__x').addEventListener('click', stop);
   window.addEventListener('keydown', (e) => {
     if (!on) return;
