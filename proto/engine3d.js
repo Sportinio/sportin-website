@@ -123,10 +123,10 @@ function drawGlass(s) {
   font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('Home game', 688, 172);
   const cx = 830; const cy = 370; ctx.lineWidth = 22; ctx.lineCap = 'round';
   ctx.strokeStyle = '#e9edf4'; ctx.beginPath(); ctx.arc(cx, cy, 100, 0, Math.PI * 2); ctx.stroke();
-  if (s.rp > 0.001) { ctx.strokeStyle = CLUB; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * 0.74 * s.rp); ctx.stroke(); }
+  if (s.rp > 0.001) { ctx.strokeStyle = CLUB; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (7412 / 8000) * s.rp); ctx.stroke(); } // the matchday goal, as on 05
   font(ctx, 800, 58, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; ctx.textAlign = 'center';
   ctx.fillText(Math.round(7412 * s.rp).toLocaleString('en-US'), cx, cy + 20);
-  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 10,000 steps', cx, 560); ctx.textAlign = 'left';
+  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 8,000 steps', cx, 560); ctx.textAlign = 'left';
   ctx.globalAlpha = 1; ctx.lineCap = 'butt';
 }
 
