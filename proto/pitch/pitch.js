@@ -1,25 +1,30 @@
 // Pitch mode: the deck plays itself. A Pitch button in the menu goes full screen and, page by
 // page, scrolls the deck while a voice tells the pitch (proto/pitch/audio/NN.mp3) and captions show
-// the words. The words and timings come from proto/pitch/script.md, the one source for the script;
-// when a page's clip is missing the page runs on the script's timing, captions only. Scroll scenes
-// are walked through while the voice talks. Space pauses, arrows skip, Esc ends; scrolling by hand
-// pauses. Each frame is painted from the page's clock, so pausing freezes scroll and words together.
+// the words. The words come from proto/pitch/script.md, the one source for the script; a page with
+// no clip runs on the script's estimate. No controls on screen: Esc ends the pitch; Space pauses and
+// the arrow keys skip, for whoever presents; scrolling by hand pauses.
+// The scroll follows the words: each paragraph (or sentence) of a page has its own resting place,
+// so the engine (04), the problem (02) and delivery (14) hold on the step being spoken and glide to
+// the next one only when the voice moves on. Each frame is painted from the page's clock.
 (() => {
   const root = document.documentElement;
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s) => document.querySelector(s);
   const topOf = (el) => el.getBoundingClientRect().top + window.scrollY;
   const centre = (el) => topOf(el) + el.offsetHeight / 2 - window.innerHeight / 2;
-  const sceneEnd = (el) => topOf(el) + el.offsetHeight - window.innerHeight;
   const stepAt = (el, k) => topOf(el) + (k / (Number(el.dataset.steps) + 0.6)) * (el.offsetHeight - window.innerHeight);
   const seg = () => Math.max(360, window.innerHeight * 0.7); // the problem's stage height (problem-scroll.js)
 
-  // Where each page sits. "to": scroll there, then hold. "span": walk from a to b while it plays.
+  // Where each page rests. { to } holds one place for the whole page. { para: [...] } gives one
+  // place per paragraph of the script, { sent: [...] } one per sentence (the last value repeats).
   const PLACES = {
     '01': () => ({ to: 0 }),
-    '02': () => { const p = $('#problemPin'); return { a: topOf(p), b: topOf(p) + 3 * seg() + 2 }; },
+    // 02: the reached fans, the drop to fans you know, then all four stages as the line lands.
+    '02': () => { const p = topOf($('#problemPin')); return { para: [0, 1.4, 3].map((k) => p + k * seg() + 2) }; },
     '03': () => { const e = $('.jelly-end'); return { to: e ? topOf(e) : centre($('#evidence')) }; },
-    '04': () => { const s = $('#engine'); return { a: topOf(s), b: sceneEnd(s) }; },
+    // 04, in the order the voice tells it: intro, competition, challenges, leaderboards, rewards,
+    // then the connections (the integration steps start at the scene's data-int-from).
+    '04': () => { const s = $('#engine'); const i = Number(s.dataset.intFrom || 6); return { para: [0.2, 1, 2, 3, 4, i + 1.6].map((k) => stepAt(s, k)) }; },
     '05': () => ({ to: centre($('#formats')) }),
     '06': () => ({ to: stepAt($('#features'), 0) }),
     '07': () => ({ to: stepAt($('#features'), 1) }),
@@ -29,7 +34,8 @@
     '11': () => ({ to: centre($('#season')) }),
     '12': () => ({ to: centre($('#pay')) }),
     '13': () => ({ to: centre($('#fandata')) }),
-    '14': () => { const s = $('#delivery'); return { a: topOf(s), b: sceneEnd(s) }; },
+    // 14: "Launch it your way. In the SportIn app. With your crest on top. Or inside your own app…"
+    '14': () => { const s = $('#delivery'); return { sent: [0, 0, 1, 2].map((k) => stepAt(s, k)) }; },
     '15': () => ({ to: centre($('#demo')) }),
     '16': () => ({ to: centre($('#film')) }),
   };
@@ -41,88 +47,104 @@
     md.split(/^## /m).slice(1).forEach((block) => {
       const m = block.match(/^(\d\d) · (.+?) \(about (\d+) s\)\s*\n([\s\S]*)$/);
       if (!m || !PLACES[m[1]]) return;
-      const text = m[4].replace(/\[[^\]]+\]\s*/g, '').replace(/\s+/g, ' ').trim();
-      const lines = text.split(/(?<=[.?!])\s+/).filter(Boolean);
-      pages.push({ n: m[1], title: m[2], est: Number(m[3]), lines });
+      const lines = []; const paraOf = [];
+      m[4].split(/\n\s*\n/).map((p) => p.replace(/\[[^\]]+\]\s*/g, '').replace(/\s+/g, ' ').trim()).filter(Boolean).forEach((p, pi) => {
+        p.split(/(?<=[.?!])\s+/).filter(Boolean).forEach((l) => { lines.push(l); paraOf.push(pi); });
+      });
+      pages.push({ n: m[1], title: m[2], est: Number(m[3]), lines, paraOf });
     });
     return pages;
   }
 
-  // ---- UI
+  // ---- UI: a Pitch button in the menu; on screen only the captions and, at first, an Esc hint.
   const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'deck-nav-btn pitch-open';
   btn.innerHTML = '<span class="pitch-open__dot" aria-hidden="true"></span>Pitch';
-  btn.setAttribute('aria-label', 'Play the pitch: the deck scrolls itself with a voice');
+  btn.setAttribute('aria-label', 'Play the pitch: the deck scrolls itself with a voice. Esc ends it.');
   const ui = document.createElement('div'); ui.className = 'pitch'; ui.hidden = true;
-  ui.innerHTML = '<p class="pitch__cap" aria-live="polite"></p>'
-    + '<div class="pitch__bar"><button class="pitch__b pitch__toggle" type="button" aria-label="Pause"><i></i></button>'
-    + '<button class="pitch__b pitch__prev" type="button" aria-label="Previous page">&#8249;</button>'
-    + '<button class="pitch__b pitch__next" type="button" aria-label="Next page">&#8250;</button>'
-    + '<span class="pitch__where"><b></b><span></span></span><span class="pitch__prog"><i></i></span>'
-    + '<button class="pitch__b pitch__close" type="button" aria-label="End the pitch (Esc)">&times;</button></div>';
+  ui.innerHTML = '<p class="pitch__cap" aria-live="polite"></p><p class="pitch__hint">Press <kbd>Esc</kbd> to exit</p>';
   document.body.appendChild(ui);
-  const cap = ui.querySelector('.pitch__cap'); const where = ui.querySelector('.pitch__where'); const prog = ui.querySelector('.pitch__prog i');
+  const cap = ui.querySelector('.pitch__cap'); const hint = ui.querySelector('.pitch__hint');
   const placeBtn = () => { const present = document.querySelector('#nav .deck-nav-btn:not(.pitch-open)'); const t = present || document.getElementById('themeToggle'); if (t) t.after(btn); };
 
   // ---- Playback
   let pages = []; let k = 0; let playing = false; let on = false;
   let audio = null; let hasAudio = false; let dur = 0; let clock = 0; let last = 0; let raf = 0;
-  let place = null; let from = 0; let ending = 0;
+  let place = null; let ending = 0;
+  let glideFrom = 0; let glideTo = 0; let glideAt = 0; // the current glide: from, to, and its start on the clock
   const ease = (u) => (u < 0.5 ? 4 * u * u * u : 1 - (-2 * u + 2) ** 3 / 2);
   const clamp = (v) => Math.max(0, Math.min(1, v));
   const GAP = 0.7; // seconds of quiet between pages
+  const GLIDE = 1.1; // seconds to glide from one resting place to the next
 
   function loadPage(i) {
     k = i; const pg = pages[k];
-    if (audio) { audio.pause(); audio.src = ''; }
-    audio = new Audio(`/proto/pitch/audio/${pg.n}.mp3`); audio.preload = 'auto';
+    if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); }
+    audio = new Audio(`/proto/pitch/audio/${pg.n}.mp3?v=1`); audio.preload = 'auto';
     hasAudio = false; dur = pg.est; clock = 0; ending = 0;
-    audio.addEventListener('loadedmetadata', () => { if (pages[k] === pg && audio.duration) { hasAudio = true; dur = audio.duration; if (playing) audio.play().catch(() => { hasAudio = false; }); } }, { once: true });
-    audio.addEventListener('error', () => { hasAudio = false; }, { once: true });
-    from = window.scrollY; place = PLACES[pg.n]();
-    where.querySelector('b').textContent = `${pg.n} / ${String(pages.length).padStart(2, '0')}`;
-    where.querySelector('span').textContent = pg.title;
+    place = PLACES[pg.n]();
+    glideFrom = window.scrollY; glideTo = targetFor(0); glideAt = 0;
     if (playing) audio.play().catch(() => {});
+  }
+
+  // The sentence being spoken: each holds for a share of the clip in proportion to its length.
+  function lineAt(pg, c) {
+    const total = pg.lines.reduce((s, l) => s + l.length, 0); const at = clamp(c / dur) * total; let acc = 0;
+    for (let i = 0; i < pg.lines.length; i++) { acc += pg.lines[i].length; if (acc >= at) return i; }
+    return pg.lines.length - 1;
+  }
+  function targetFor(i) {
+    const pg = pages[k];
+    if (place.to != null) return place.to;
+    if (place.para) return place.para[Math.min(place.para.length - 1, pg.paraOf[i] || 0)];
+    return place.sent[Math.min(place.sent.length - 1, i)];
   }
 
   function paint() {
     const pg = pages[k]; if (!pg) return;
-    // Scroll: glide to the place (1.2 s), or walk a scene from its start to its end over the clip.
-    let y;
-    if (place.to != null) y = from + (place.to - from) * (RM ? 1 : ease(clamp(clock / 1.2)));
-    else { const into = RM ? 1 : ease(clamp(clock / 1.0)); const walk = clamp((clock - 1.0) / Math.max(1, dur - 1.6)); y = from + (place.a - from) * into + (place.b - place.a) * (RM ? walk : ease(walk)); }
-    window.scrollTo(0, Math.round(y));
-    // Captions: each sentence holds for a share of the clip in proportion to its length.
-    const total = pg.lines.reduce((s, l) => s + l.length, 0); let acc = 0; const at = clamp(clock / dur) * total;
-    const line = pg.lines.find((l) => (acc += l.length) >= at) || pg.lines[pg.lines.length - 1];
-    if (cap.textContent !== line) cap.textContent = line;
-    prog.style.setProperty('--p', ((k + clamp(clock / dur)) / pages.length).toFixed(4));
+    const i = lineAt(pg, clock);
+    const tgt = targetFor(i);
+    if (tgt !== glideTo) { glideFrom = window.scrollY; glideTo = tgt; glideAt = clock; } // the voice moved on
+    const u = RM ? 1 : ease(clamp((clock - glideAt) / GLIDE));
+    window.scrollTo(0, Math.round(glideFrom + (glideTo - glideFrom) * u));
+    if (cap.textContent !== pg.lines[i]) cap.textContent = pg.lines[i];
   }
 
   function frame(now) {
     const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; last = now;
     if (playing) {
-      clock = hasAudio && !audio.paused ? audio.currentTime : clock + dt;
-      if (clock >= dur) { ending += dt; clock = dur; if (ending >= GAP) { if (k < pages.length - 1) loadPage(k + 1); else { setPlaying(false); cap.textContent = 'Thanks for watching.'; } } }
+      // Follow the clip as soon as its length is known (read every frame: a load event can be missed).
+      if (!hasAudio && audio && Number.isFinite(audio.duration) && audio.duration > 0) { hasAudio = true; dur = audio.duration; }
+      clock = hasAudio ? (audio.ended ? dur : audio.paused ? clock : audio.currentTime) : clock + dt;
+      if (clock >= dur) {
+        ending += dt; clock = dur;
+        if (ending >= GAP) { if (k < pages.length - 1) loadPage(k + 1); else finish(); }
+      }
     }
-    paint();
+    if (!done) paint();
     raf = requestAnimationFrame(frame);
+  }
+
+  // After the last page: a thank-you, then the pitch closes by itself and leaves the reader on the film.
+  let done = false;
+  function finish() {
+    setPlaying(false); done = true; cap.textContent = 'Thanks for watching.';
+    setTimeout(stop, 2500);
   }
 
   function setPlaying(p) {
     playing = p; ui.classList.toggle('is-paused', !p);
-    ui.querySelector('.pitch__toggle').setAttribute('aria-label', p ? 'Pause' : 'Play');
     if (!audio) return;
-    if (p && hasAudio && clock < dur) { audio.currentTime = clock; audio.play().catch(() => { hasAudio = false; }); } else audio.pause();
-    if (p && k === pages.length - 1 && clock >= dur) loadPage(0);
+    if (p && hasAudio && clock < dur) { audio.currentTime = clock; audio.play().catch(() => {}); } else if (p) audio.play().catch(() => {}); else audio.pause();
   }
 
   async function start() {
     if (on) return; on = true;
     if (!pages.length) pages = await loadScript();
     if (!pages.length) { on = false; return; }
-    root.classList.add('is-pitch'); ui.hidden = false; last = 0;
+    root.classList.add('is-pitch'); ui.hidden = false; last = 0; done = false;
     if (root.requestFullscreen && !document.fullscreenElement) root.requestFullscreen().catch(() => {});
     playing = true; loadPage(0); ui.classList.remove('is-paused');
+    hint.classList.remove('is-gone'); clearTimeout(hint.t); hint.t = setTimeout(() => hint.classList.add('is-gone'), 3000);
     raf = requestAnimationFrame(frame);
   }
   function stop() {
@@ -134,10 +156,6 @@
   const go = (d) => { const i = Math.max(0, Math.min(pages.length - 1, k + d)); if (i !== k) loadPage(i); };
 
   btn.addEventListener('click', start);
-  ui.querySelector('.pitch__toggle').addEventListener('click', () => setPlaying(!playing));
-  ui.querySelector('.pitch__prev').addEventListener('click', () => go(-1));
-  ui.querySelector('.pitch__next').addEventListener('click', () => go(1));
-  ui.querySelector('.pitch__close').addEventListener('click', stop);
   window.addEventListener('keydown', (e) => {
     if (!on) return;
     if (e.key === 'Escape') { e.preventDefault(); stop(); }
@@ -145,11 +163,12 @@
     else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); go(1); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
   }, true); // capture: the deck's own arrow keys stay out of it while the pitch runs
-  // Taking the scroll by hand pauses the pitch; Play picks up from the page it was on.
-  ['wheel', 'touchmove'].forEach((ev) => window.addEventListener(ev, () => { if (on && playing) { setPlaying(false); from = window.scrollY; } }, { passive: true }));
+  // Taking the scroll by hand pauses the pitch; Space picks up on the page it was on.
+  ['wheel', 'touchmove'].forEach((ev) => window.addEventListener(ev, () => { if (on && playing) setPlaying(false); }, { passive: true }));
+  // Leaving full screen (the browser's own Esc) ends the pitch too.
   document.addEventListener('fullscreenchange', () => { if (on && !document.fullscreenElement && root.requestFullscreen) stop(); });
 
   // The deck adds its Present button on load; sit right after it.
   if (document.readyState === 'complete') placeBtn(); else window.addEventListener('load', placeBtn);
-  window.pitch = { start, stop, go: (i) => loadPage(i) }; // debugging
+  window.pitch = { start, stop, go: (i) => loadPage(i), state: () => ({ page: pages[k] && pages[k].n, clock, dur, hasAudio, line: cap.textContent }) }; // debugging
 })();
