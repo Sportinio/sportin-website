@@ -1,4 +1,4 @@
-// Pitch mode: the deck plays itself. A Pitch button in the menu goes full screen and shows a short
+// Pitch mode: the deck plays itself. A Present button in the menu goes full screen and shows a short
 // intro; once played it scrolls the deck page by page while a voice tells the pitch
 // (proto/pitch/audio/NN.mp3), then thanks the viewer and closes. No transcript on screen: the
 // caption line is for screen readers and times the scroll. The words come from
@@ -60,8 +60,8 @@
 
   // ---- UI: a Pitch button in the menu; on screen an Esc hint at first and the intro.
   const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'deck-nav-btn pitch-open';
-  btn.innerHTML = '<span class="pitch-open__dot" aria-hidden="true"></span>Pitch';
-  btn.setAttribute('aria-label', 'Play the pitch: the deck scrolls itself with a voice. Esc ends it.');
+  btn.innerHTML = '<span class="pitch-open__dot" aria-hidden="true"></span>Present';
+  btn.setAttribute('aria-label', 'Present: the deck scrolls itself with a voice. Esc ends it.');
   const ui = document.createElement('div'); ui.className = 'pitch'; ui.hidden = true;
   ui.innerHTML = '<p class="pitch__cap" aria-live="polite"></p>'
     + '<p class="pitch__hint">Press <kbd>Esc</kbd> to exit</p>'
@@ -70,7 +70,7 @@
     + '<button class="pitch__x" type="button" aria-label="Close the pitch (Esc)">&times;</button>';
   document.body.appendChild(ui);
   const cap = ui.querySelector('.pitch__cap'); const hint = ui.querySelector('.pitch__hint');
-  const placeBtn = () => { const present = document.querySelector('#nav .deck-nav-btn:not(.pitch-open)'); const t = present || document.getElementById('themeToggle'); if (t) t.after(btn); };
+  const placeBtn = () => { const t = document.getElementById('themeToggle'); if (t) t.before(btn); }; // next to the light/dark switch
   const show = (state) => { ui.dataset.state = state; }; // intro, play
 
   // ---- Playback
@@ -191,7 +191,7 @@
   // Leaving full screen (the browser's own Esc) during the pitch ends it too.
   document.addEventListener('fullscreenchange', () => { if (on && !document.fullscreenElement && root.requestFullscreen && ui.dataset.state === 'play') stop(); });
 
-  // The deck adds its Present button on load; sit right after it. A #pitch link opens the intro.
+  // The Present button sits next to the light/dark switch. A #pitch link opens the intro.
   const ready = () => { placeBtn(); if (location.hash === '#pitch') open(); };
   if (document.readyState === 'complete') ready(); else window.addEventListener('load', ready);
   window.addEventListener('hashchange', () => { if (location.hash === '#pitch') open(); });
