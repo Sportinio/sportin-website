@@ -350,7 +350,7 @@ if (sec) {
     const dust = createDust(stick, sec.querySelector('.feat__dust'), panels.map((p) => [...p.querySelectorAll('.feat__intro > *, .points, .feat__defs')]));
     const sm = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
     // The app pages' 3D phone (features-3d.js): it stands in for the flat phone while it turns.
-    const appPanels = panels.filter((p) => p.classList.contains('feat__panel--app'));
+    const appPanels = panels.filter((p) => p.classList.contains('feat__panel--app') && p.querySelector('.phone')); // pages that still show a phone
     const isApp = (k) => appPanels.includes(panels[k]);
     const appIdx = (k) => appPanels.indexOf(panels[k]);
     let phone3d = null;
