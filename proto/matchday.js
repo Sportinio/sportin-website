@@ -1,12 +1,15 @@
-// Matchday live (matchday.html): one fan-league match, then the whole matchday, then the table.
-// Everything is painted from one clock, render(t), so the commentary audio can drive it later
-// (t = audio.currentTime). States are classes on .mdx; matchday.css animates them.
+// Matchday live (matchday.html): the app's Matches screen, played with the commentary. The audio's
+// clock drives everything (render(t)): each score reaches the number the voice says at the moment
+// it says it, the match being called lights up, and the line being said shows under the header.
+// Play and pause, stop to reset; scrolling the matchday out of view pauses it.
 (() => {
   const root = document.getElementById('matchday'); if (!root) return;
-  const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const audio = document.querySelector('.mdx__audio');
   const $ = (s) => root.querySelector(s);
+  const LINES = window.MATCHDAY_LINES || [];
+  const FT = 177.5; // "And that is full time…"
 
-  // ---- Fan-team crests: a shield in the team colour with one white mark. Made up for the demo.
+  // ---- Fan-team crests (placeholders until the app's crests): a shield in the team colour, one mark.
   const MARK = {
     eagle: '<path d="M8 18 20 26 32 18 28 30 20 34 12 30Z"/><circle cx="20" cy="15" r="3"/>',
     wolf: '<path d="M12 31V14l5 5 3-2 3 2 5-5v17l-8 6Z"/>',
@@ -21,88 +24,83 @@
     stag: '<path d="M16 22h8l-2 12h-4Z"/><path d="M16 22l-4-10m1 3-4-2m15 9 4-10m-1 3 4-2" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
     summit: '<path d="M7 34 20 12l13 22Z"/>',
   };
+  // [name, colour, mark, flag, members, likes by full time]
   const TEAMS = {
-    eagles: ['Riverside Eagles', '#1d3b8f', 'eagle'], wolves: ['Valley Wolves', '#3b4a63', 'wolf'],
-    alpine: ['Alpine United', '#2a3242', 'alpine'], pinecrest: ['Pinecrest FC', '#1f6b3a', 'pine'],
-    sunset: ['Sunset Athletic', '#d9622b', 'sun'], cedar: ['Cedar Town', '#0e6aa8', 'wave'],
-    maple: ['Maple United', '#c8102e', 'maple'], hill: ['Sporting Hill', '#1f5bd6', 'bolt'],
-    harbor: ['Harbor City', '#13254d', 'anchor'], green: ['Greenfield Town', '#198754', 'clover'],
-    oxford: ['Oxford Rangers', '#b8860b', 'stag'], summit: ['Summit FC', '#24324f', 'summit'],
+    eagles: ['Riverside Eagles', '#1d3b8f', 'eagle', 'ro', 15, 24], wolves: ['Valley Wolves', '#3b4a63', 'wolf', 'ro', 17, 11],
+    alpine: ['Alpine United', '#2a3242', 'alpine', 'fr', 9, 18], pinecrest: ['Pinecrest FC', '#1f6b3a', 'pine', 'es', 15, 9],
+    sunset: ['Sunset Athletic', '#d9622b', 'sun', 'es', 17, 31], cedar: ['Cedar Town', '#0e6aa8', 'wave', 'fr', 26, 27],
+    maple: ['Maple United', '#c8102e', 'maple', 'ca', 11, 3], hill: ['Sporting Hill', '#1f5bd6', 'bolt', 'us', 10, 12],
+    harbor: ['Harbour City', '#13254d', 'anchor', 'ro', 10, 36], green: ['Greenfield Town', '#198754', 'clover', 'fr', 13, 14],
+    oxford: ['Oxford Rangers', '#b8860b', 'stag', 'us', 10, 2], summit: ['Summit FC', '#24324f', 'summit', 'ro', 15, 8],
   };
-  const crest = (id) => { const [, c, m] = TEAMS[id]; return `<svg viewBox="0 0 40 46" aria-hidden="true"><path d="M20 2 37 8v14c0 11-8 19-17 22C11 41 3 33 3 22V8Z" fill="${c}" stroke="rgba(255,255,255,.85)" stroke-width="1.6"/><g fill="#fff">${MARK[m]}</g></svg>`; };
+  const crest = (id) => { const [, c, m] = TEAMS[id]; return `<svg viewBox="0 0 40 46" aria-hidden="true"><path d="M20 2 37 8v14c0 11-8 19-17 22C11 41 3 33 3 22V8Z" fill="${c}"/><g fill="#fff">${MARK[m]}</g></svg>`; };
 
-  // ---- The timeline, in seconds. The match runs 90 minutes between KICK and FT.
-  const T = { walk: 0.2, kick: 3.5, ft: 36, dock: 38.6, round: 39.2, table: 41.6, shuffle: 43.2, end: 46, head: 47.2, total: 52 };
-  // The score by match minute: Wolves start faster, Eagles level on the hour, Wolves hit back, Eagles win it.
-  const SCORE = [[0, 0, 0], [15, 1.1, 1.6], [30, 2.3, 3.1], [45, 3.5, 3.9], [60, 4.8, 4.7], [70, 5.3, 5.5], [80, 6.0, 5.8], [90, 6.8, 6.2]];
-  // Placeholder lines until the real commentary arrives; same timing model (match minute).
-  const CAPS = [[0, 'And we’re under way… Matchday 3 of the Northside FC Fan League.'], [12, 'Valley Wolves out of the blocks fast… seventeen fans on the move.'],
-    [38, 'Wolves still in front as we reach half-time.'], [56, 'Here come the Eagles! Level… and now they’re ahead!'],
-    [68, 'But the Wolves answer straight back!'], [79, 'Eagles in front again… every step counts now.'], [88, 'Final whistle on its way…'],
-    [90, 'It’s over! Riverside Eagles win it, six point eight to six point two!']];
-  const ROUND = [['eagles', 6.8, 6.2, 'wolves'], ['alpine', 5.7, 5.6, 'pinecrest'], ['sunset', 7.3, 7.4, 'cedar'], ['maple', 0.2, 5.4, 'hill'], ['harbor', 8.6, 7.4, 'green'], ['oxford', 0.0, 5.2, 'summit']];
-  // The table before and after Matchday 3: [team, position before, points before, position after, points after]
-  const TABLE = [['harbor', 0, 6, 0, 9], ['pinecrest', 1, 4, 5, 4], ['eagles', 2, 4, 1, 7], ['cedar', 3, 3, 2, 6], ['hill', 4, 3, 3, 6], ['summit', 5, 3, 4, 6]];
+  // ---- The six matches, in the app's order, and each score by audio second: [t, home, away].
+  // Every value the commentator reads is hit exactly when it is read.
+  const MATCHES = [
+    { id: 'eagles', a: 'eagles', b: 'wolves', k: [[0, 3.4, 3.2], [14.6, 4.1, 3.8], [64.2, 5.6, 4.7], [FT, 6.8, 6.2]] },
+    { id: 'alpine', a: 'alpine', b: 'pinecrest', k: [[0, 4.0, 4.2], [74.8, 4.9, 5.1], [92.8, 5.3, 5.2], [FT, 5.7, 5.6]] },
+    { id: 'sunset', a: 'sunset', b: 'cedar', k: [[0, 4.3, 4.4], [35, 5.2, 5.2], [113, 6.8, 6.6], [114.8, 6.9, 6.6], [159.7, 7.3, 7.3], [171.4, 7.3, 7.3], [171.8, 7.3, 7.4], [FT, 7.3, 7.4]] },
+    { id: 'maple', a: 'maple', b: 'hill', k: [[0, 0.1, 3.6], [98, 0.2, 4.8], [FT, 0.2, 5.4]] },
+    { id: 'harbor', a: 'harbor', b: 'green', k: [[0, 5.2, 4.1], [21.5, 5.9, 4.5], [28.6, 5.9, 4.7], [135.7, 8.1, 7.2], [151.9, 8.6, 7.3], [FT, 8.6, 7.4]] },
+    { id: 'oxford', a: 'oxford', b: 'summit', k: [[0, 0.0, 3.2], [48.9, 0.0, 3.9], [FT, 0.0, 5.2]] },
+  ];
+  // The day's clock, as the commentary tells it: lunchtime, "not even 2 o'clock", the final hours, the evening run.
+  const DAY = [[0, 720], [62, 835], [134, 1080], [FT, 1260]];
 
-  // ---- Build
-  const sideA = $('.mdx__side--a'); const sideB = $('.mdx__side--b');
-  [sideA, sideB].forEach((s) => {
-    s.querySelector('.mdx__crest').innerHTML = crest(s.dataset.team);
-    const n = s.querySelector('.mdx__name'); let i = 0; // letters reveal in turn; words never break
-    n.innerHTML = n.textContent.split(' ').map((w) => `<span class="mdx__w">${[...w].map((ch) => `<span style="--i:${i++}">${ch}</span>`).join('')}</span>`).join(' ');
-  });
-  $('.mdx__fx').innerHTML = ROUND.map(([a, sa, sb, b], i) => `<li class="${i ? '' : 'is-feature'}" style="--i:${i}"><span class="ft">FT</span><span class="tm tm--a">${TEAMS[a][0]}</span><span class="cr">${crest(a)}</span><span class="sc"><b class="${sa > sb ? 'w' : 'l'}">${sa.toFixed(1)}</b><i>-</i><b class="${sb > sa ? 'w' : 'l'}">${sb.toFixed(1)}</b></span><span class="cr">${crest(b)}</span><span class="tm">${TEAMS[b][0]}</span></li>`).join('');
-  $('.mdx__tb').innerHTML = TABLE.map(([id]) => `<li class="${id === 'eagles' ? 'is-up' : ''}"><span class="pos"></span><span class="tn">${crest(id)}${TEAMS[id][0]}${id === 'eagles' ? '<em>&#9650; 1</em>' : ''}</span><span class="p"></span><span class="pts"></span></li>`).join('');
+  const lerp = (k, t) => {
+    if (t <= k[0][0]) return k[0].slice(1);
+    for (let i = 1; i < k.length; i++) if (t <= k[i][0]) { const u = (t - k[i - 1][0]) / (k[i][0] - k[i - 1][0]); return k[i].slice(1).map((v, j) => k[i - 1][j + 1] + (v - k[i - 1][j + 1]) * u); }
+    return k[k.length - 1].slice(1);
+  };
+  const ICON_P = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="5" r="2.5"/><path d="M1.5 14c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5M11 2.8a2.5 2.5 0 0 1 0 4.4M12.5 9.8c1.2.6 2 1.9 2 3.4"/></svg>';
+  const ICON_H = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 14S1.5 10 1.5 5.6A3.1 3.1 0 0 1 8 4a3.1 3.1 0 0 1 6.5 1.6C14.5 10 8 14 8 14Z"/></svg>';
+  const team = (id, side) => { const [n, , , f, m] = TEAMS[id]; return `<span class="mdx__t mdx__t--${side}"><b><img src="/proto/media/app/flag_${f}.png" alt="" />${n}</b><small>${ICON_P}<span>${m}</span>${ICON_H}<span class="mdx__lk">0</span></small></span>`; };
 
-  const sA = $('.mdx__s--a'); const sB = $('.mdx__s--b'); const clockEl = $('.mdx__clock'); const mo = $('.mdx__mo i'); const cap = $('.mdx__cap');
-  const fansEl = [sideA, sideB].map((s) => s.querySelector('.mdx__fans')); const FANS = [15, 17];
-  const rows = [...root.querySelectorAll('.mdx__tb li')];
+  // ---- Build the rows
+  $('.mdx__rows').innerHTML = MATCHES.map((m) => `<li data-m="${m.id}"><span class="mdx__st"></span><span class="mdx__m">${team(m.a, 'a')}<span class="mdx__cr">${crest(m.a)}</span><span class="mdx__sc"><b></b><i>-</i><b></b></span><span class="mdx__cr">${crest(m.b)}</span>${team(m.b, 'b')}</span><span class="mdx__chev"></span></li>`).join('');
+  const rows = MATCHES.map((m) => { const li = root.querySelector(`[data-m="${m.id}"]`); const [sa, sb] = li.querySelectorAll('.mdx__sc b'); return { m, li, sa, sb, st: li.querySelector('.mdx__st'), lk: li.querySelectorAll('.mdx__lk') }; });
+  const line = $('.mdx__line'); const prog = $('.mdx__prog i'); const timeEl = $('.mdx__time');
+  const playBtn = $('.mdx__play'); const stopBtn = $('.mdx__stop');
 
-  const clamp = (v) => Math.max(0, Math.min(1, v));
-  function scoreAt(min) {
-    for (let i = 1; i < SCORE.length; i++) {
-      const [m1, a1, b1] = SCORE[i]; const [m0, a0, b0] = SCORE[i - 1];
-      if (min <= m1) { const u = (min - m0) / (m1 - m0); return [a0 + (a1 - a0) * u, b0 + (b1 - b0) * u]; }
-    }
-    return SCORE[SCORE.length - 1].slice(1);
-  }
-  const setText = (el, v, tick) => { if (el.textContent === v) return; el.textContent = v; if (tick && !RM) { el.classList.remove('is-tick'); void el.offsetWidth; el.classList.add('is-tick'); } };
+  const setText = (el, v, tick) => { if (el.textContent === v) return; const had = el.textContent !== ''; el.textContent = v; if (tick && had) { el.classList.remove('is-tick'); void el.offsetWidth; el.classList.add('is-tick'); } };
+  const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const hhmm = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(Math.floor(min % 60)).padStart(2, '0')}`;
 
-  // ---- Paint one moment
-  function render(t) {
-    const on = (k) => t >= T[k];
-    root.classList.toggle('is-walk', on('walk'));
-    root.classList.toggle('is-live', on('kick') && !on('ft'));
-    ['ft', 'dock', 'round', 'table', 'shuffle', 'end', 'head'].forEach((k) => root.classList.toggle(`is-${k === 'dock' ? 'docked' : k}`, on(k)));
-
-    fansEl.forEach((el, i) => setText(el, String(Math.round(clamp((t - 1.5) / 1.2) * FANS[i]))));
-    const min = clamp((t - T.kick) / (T.ft - T.kick)) * 90;
-    const [a, b] = scoreAt(min);
-    setText(sA, a.toFixed(1), true); setText(sB, b.toFixed(1), true);
-    const tie = a.toFixed(1) === b.toFixed(1);
-    sA.classList.toggle('is-lead', !tie && a > b); sB.classList.toggle('is-lead', !tie && b > a); sA.classList.toggle('is-tie', tie); sB.classList.toggle('is-tie', tie);
-    sideA.classList.toggle('is-lead', a > b); sideB.classList.toggle('is-lead', b > a);
-    setText(clockEl, on('ft') ? '90′ · Full time' : `${Math.floor(min)}′`);
-    const m = Math.max(-1, Math.min(1, (a - b) / 0.8));
-    mo.style.setProperty('--m', Math.abs(m).toFixed(3)); mo.classList.toggle('is-b', m < 0);
-
-    let line = ''; if (on('kick')) CAPS.forEach(([cm, txt]) => { if (min >= cm) line = txt; });
-    if (cap.dataset.line !== line) { cap.dataset.line = line; cap.classList.add('is-swap'); clearTimeout(cap.t); cap.t = setTimeout(() => { cap.textContent = line; cap.classList.remove('is-swap'); }, RM ? 0 : 220); }
-
-    const after = on('shuffle');
-    rows.forEach((li, i) => { const r = TABLE[i]; li.style.setProperty('--r', after ? r[3] : r[1]); li.querySelector('.pos').textContent = (after ? r[3] : r[1]) + 1; li.querySelector('.p').textContent = after ? 3 : 2; li.querySelector('.pts').textContent = after ? r[4] : r[2]; });
+  // ---- Paint one moment of the commentary
+  function render(t, started) {
+    const live = started && t < FT; const ft = t >= FT;
+    root.classList.toggle('is-live', live);
+    const [clock] = lerp(DAY, t);
+    let cur = null; let said = ''; LINES.forEach(([s, f, txt]) => { if (t >= s) { cur = f; said = txt; } });
+    if (!started) said = 'Press Listen live for the commentary.'; else if (!said) said = 'Live from Matchday 3…';
+    rows.forEach(({ m, li, sa, sb, st, lk }) => {
+      const [a, b] = lerp(m.k, t); const A = a.toFixed(1); const B = b.toFixed(1);
+      setText(sa, A, started); setText(sb, B, started);
+      sa.className = sa.className.replace(/\b[wl]\b/g, '').trim(); sb.className = sb.className.replace(/\b[wl]\b/g, '').trim();
+      if (A !== B) { sa.classList.add(a > b ? 'w' : 'l'); sb.classList.add(b > a ? 'w' : 'l'); }
+      const stHtml = ft ? 'FT' : started ? `<b>Live</b><span>${hhmm(clock)}</span>` : `<span>12:00</span>`;
+      if (st.innerHTML !== stHtml) st.innerHTML = stHtml;
+      li.classList.toggle('is-focus', started && cur === m.id);
+      const u = Math.min(1, t / FT); [m.a, m.b].forEach((id, i) => setText(lk[i], String(Math.round(TEAMS[id][5] * u)), false));
+    });
+    if (line.dataset.s !== said) { line.dataset.s = said; line.classList.add('is-swap'); clearTimeout(line.t); line.t = setTimeout(() => { line.textContent = said; line.classList.remove('is-swap'); }, 160); }
+    const dur = audio.duration || 230.4;
+    prog.style.setProperty('--p', (t / dur).toFixed(4));
+    timeEl.textContent = started ? `${mmss(t)} / ${mmss(dur)}` : mmss(dur);
   }
 
-  // ---- Clock: plays once, holds on the headline. Replay starts over. Pauses when off screen.
-  let t = 0; let last = 0; let playing = true; let visible = true;
-  function frame(now) {
-    const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; last = now;
-    if (playing && visible && !document.hidden) t = Math.min(T.total, t + dt);
-    render(t); requestAnimationFrame(frame);
-  }
-  $('.mdx__replay').addEventListener('click', () => { t = 0; render(0); playing = true; });
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.4 }).observe(root);
-  if (RM) t = T.head;
-  render(t); requestAnimationFrame(frame);
-  window.matchday = { seek: (s) => { t = s; render(t); }, play: () => { playing = true; }, pause: () => { playing = false; }, state: () => ({ t }), T }; // debugging, and the audio hook later
+  // ---- Player
+  let started = false; let raf = 0;
+  const loop = () => { render(audio.currentTime, started); if (!audio.paused) raf = requestAnimationFrame(loop); };
+  const sync = () => { root.classList.toggle('is-playing', !audio.paused); playBtn.querySelector('span').textContent = audio.paused ? (started ? 'Resume' : 'Listen live') : 'Pause'; stopBtn.hidden = !started; };
+  playBtn.addEventListener('click', () => { if (audio.paused) { started = true; if (audio.ended) audio.currentTime = 0; audio.play().catch(() => {}); } else audio.pause(); });
+  stopBtn.addEventListener('click', () => { audio.pause(); audio.currentTime = 0; started = false; sync(); render(0, false); });
+  audio.addEventListener('play', () => { sync(); cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); });
+  ['pause', 'ended'].forEach((ev) => audio.addEventListener(ev, () => { sync(); render(audio.currentTime, started); }));
+  audio.addEventListener('loadedmetadata', () => render(audio.currentTime, started));
+  // Scrolling the matchday away pauses the commentary; Resume picks it up where it stopped.
+  new IntersectionObserver(([e]) => { if (!e.isIntersecting && !audio.paused) audio.pause(); }, { threshold: 0.15 }).observe($('.mdx__day.is-open'));
+  render(0, false);
+  window.matchday = { render: (t) => render(t, true), audio }; // debugging
 })();
