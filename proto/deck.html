@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="/proto/pilot.css?v=2" />
   <link rel="stylesheet" href="/proto/pitch/pitch.css?v=3" />
   <link rel="stylesheet" href="/proto/pages.css?v=2" />
-  <link rel="stylesheet" href="/proto/features-viz.css?v=2" />
+  <link rel="stylesheet" href="/proto/features-viz.css?v=4" />
   <link rel="stylesheet" href="/proto/delivery.css?v=8" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
   <meta name="color-scheme" content="light dark" />
@@ -217,9 +217,10 @@
           <div class="feat__intro"><p class="eng-k feat__idx"><b>06</b><span>Leaderboard</span><em>Walking</em></p><h2 class="feat__title" id="featRankTitle">Every fan, <em>on the board</em>.</h2><p class="feat__lede">By fan, supporters&rsquo; club or country.</p></div>
           <div class="big fv fv--board" data-demo="fv-board" aria-hidden="true">
             <div class="fv__card">
-              <div class="fv__tabs"><span class="is-on">Fans</span><span>Supporters&rsquo; clubs</span><span>Countries</span></div>
+              <div class="fv__tabs"><span class="is-on">Individuals</span><span>Supporters&rsquo; clubs</span><span>Countries</span></div>
+              <div class="lv"><div class="lv__c" data-t="bronze"><img src="/proto/media/app/tier_bronze.png" alt="" /><b>Bronze</b><span><i>21</i> fans</span></div><div class="lv__c" data-t="silver"><img src="/proto/media/app/tier_silver.png" alt="" /><b>Silver</b><span><i>69</i> fans</span></div><div class="lv__c" data-t="gold"><img src="/proto/media/app/tier_gold.png" alt="" /><b>Gold</b><span><i>45</i> fans</span></div><div class="lv__c" data-t="platinum"><img src="/proto/media/app/tier_platinum.png" alt="" /><b>Platinum</b><span><i>10</i> fans</span></div><div class="lv__c" data-t="diamond"><img src="/proto/media/app/tier_diamond.png" alt="" /><b>Diamond</b><span><i>2</i> fans</span></div><div class="lv__c" data-t="master"><img src="/proto/media/app/tier_master.png" alt="" /><b>Master</b><span><i>3</i> fans</span></div></div>
+              <div class="fvb__head"><span>#</span><span>Fan</span><span>Steps</span><span>MI</span></div>
               <ol class="fvb"></ol>
-              <p class="fv__foot"><span class="fv__live"></span>Steps today, live</p>
             </div>
           </div>
         </article>
@@ -227,14 +228,10 @@
           <div class="feat__intro"><p class="eng-k feat__idx"><b>07</b><span>Leaderboard</span><em>Running</em></p><h2 class="feat__title" id="featRunTitle">Fans racing <em>fans</em>.</h2><p class="feat__lede">A board for every distance.</p></div>
           <div class="big fv fv--race" data-demo="fv-race" aria-hidden="true">
             <div class="fv__card">
-              <div class="fvr__head">
-                <span class="fvr__side"><i class="fvr__crest">N</i><b class="fvr__km" data-side="0">1,284</b><small>km &middot; North Stand</small></span>
-                <span class="fvr__vs">vs</span>
-                <span class="fvr__side fvr__side--b"><small>South Stand &middot; km</small><b class="fvr__km" data-side="1">1,201</b><i class="fvr__crest">S</i></span>
-              </div>
-              <div class="fvr__tug"><i></i></div>
-              <div class="fv__tabs fvr__dist"><span class="is-on">3K</span><span>5K</span><span>10K</span></div>
-              <div class="fvr__lanes"></div>
+              <div class="md"><div class="md__c" data-d="0"><img src="/proto/media/app/race_3k.png" alt="" /><b>3K</b><span><i>3</i> runners</span></div><div class="md__c" data-d="1"><img src="/proto/media/app/race_5k.png" alt="" /><b>5K</b><span><i>2</i> runners</span></div><div class="md__c" data-d="2"><img src="/proto/media/app/race_10k.png" alt="" /><b>10K</b><span><i>2</i> runners</span></div><div class="md__c" data-d="3"><img src="/proto/media/app/race_15k.png" alt="" /><b>15K</b><span><i>0</i> runners</span></div><div class="md__c" data-d="4"><img src="/proto/media/app/race_half.png" alt="" /><b>21K</b><span><i>0</i> runners</span></div><div class="md__c" data-d="5"><img src="/proto/media/app/race_full.png" alt="" /><b>42K</b><span><i>0</i> runners</span></div></div>
+              <p class="rk__title"><b class="rk__dist">3K</b> &middot; Race split time<span class="rk__claim">Medal claimed</span></p>
+              <div class="fvb__head fvb__head--run"><span>#</span><span>Runner</span><span>Time</span><span>&Delta; Leader</span></div>
+              <ol class="fvr"></ol>
             </div>
           </div>
         </article>
@@ -760,7 +757,7 @@
 <script src="/proto/when-shown.js?v=1" defer></script>
 <script src="/proto/formats.js?v=3" defer></script>
 <script type="module" src="/proto/features.js?v=32"></script>
-<script src="/proto/features-viz.js?v=2" defer></script>
+<script src="/proto/features-viz.js?v=4" defer></script>
 <script type="module" src="/proto/ugc.js?v=4"></script>
 <script type="module" src="/proto/tech-b.js?v=4"></script>
 <script src="/proto/season.js?v=2" defer></script>

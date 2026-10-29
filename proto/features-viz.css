@@ -1,10 +1,9 @@
 /* 06 to 08: one live animation per page in the phone's place (features-viz.js), on a white card
-   over the page's grey block. 06 a leaderboard that turns from fans to supporters' clubs to
-   countries; 07 two teams of the club's own fans racing; 08 a step count that unlocks rewards in turn. */
-.fv { --club: #d7192d; --team-b: #e0a200; --bar: #24345e; --ok: #0f9f6e; grid-column: 2; grid-row: 1 / 5; align-self: center; width: min(600px, 44vw); }
-:root[data-theme='dark'] .fv { --team-b: #f2b821; --bar: #8ea2e0; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .fv { --team-b: #f2b821; --bar: #8ea2e0; } }
-.fv__card { display: grid; gap: 18px; padding: 28px; border-radius: var(--r-card, 24px); background: var(--surface); box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); box-sizing: border-box; align-content: start; overflow: hidden; }
+   over the page's grey block. 06 the app's steps leaderboard, where a fan levels up; 07 the app's
+   running board, where a fan finishes and claims the distance medal; 08 a step count that unlocks
+   rewards in turn. */
+.fv { --club: #d7192d; --ok: #0f9f6e; grid-column: 2; grid-row: 1 / 5; align-self: center; width: min(600px, 44vw); }
+.fv__card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; padding: 28px; border-radius: var(--r-card, 24px); background: var(--surface); box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); box-sizing: border-box; align-content: start; overflow: hidden; }
 .fv__tabs { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: var(--infield); width: fit-content; }
 .fv__tabs span { padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--slate); transition: background 300ms ease, color 300ms ease; }
 .fv__tabs span.is-on { background: var(--ink); color: var(--paper); }
@@ -12,35 +11,56 @@
 .fv__live { width: 8px; height: 8px; border-radius: 50%; background: var(--club); animation: fv-live 1.4s ease-in-out infinite; }
 @keyframes fv-live { 50% { opacity: 0.25; } }
 
-/* 06 Leaderboard: rows slide to their rank; each bar is its share of the leader. */
-.fvb { position: relative; margin: 0; padding: 0; list-style: none; height: calc(5 * 64px); }
-.fvb li { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: 24px 40px minmax(0, 1fr) auto; align-items: center; gap: 12px; height: 56px; transform: translateY(calc(var(--r, 0) * 64px)); transition: transform 700ms var(--ease), opacity 300ms ease; }
-.fvb .fvb__n { font-family: var(--mono); font-size: 13px; color: var(--slate); }
-.fvb .fvb__av { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--infield); font-size: 13px; font-weight: 700; color: var(--ink); }
-.fvb .fvb__name { display: grid; gap: 6px; min-width: 0; font-size: 15px; font-weight: 600; color: var(--ink); }
-.fvb .fvb__name i { display: block; height: 6px; border-radius: 3px; background: var(--infield); overflow: hidden; }
-.fvb .fvb__name i::after { content: ''; display: block; height: 100%; width: calc(var(--w, 0) * 100%); background: var(--bar); border-radius: 3px; transition: width 700ms var(--ease); }
-.fvb li.is-top .fvb__name i::after { background: var(--club); }
-.fvb li.is-top .fvb__av { background: var(--club); color: #fff; }
-.fvb .fvb__v { font-family: var(--mono); font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; }
-.fvb li.is-up .fvb__v { color: var(--club); }
+/* 06 and 07 follow the SportIn web app's leaderboard (try.sportin.io/leaderboard): level or medal
+   cards with their counts, then app-style rows: a rank box, the avatar with its level badge, flag and
+   name, the figures on the right. Names are made up; the badges and medals are the app's own. */
+.lv, .md { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.lv__c, .md__c { display: grid; justify-items: center; gap: 2px; padding: 10px 4px 9px; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow 300ms ease, background 300ms ease, transform 300ms var(--ease); }
+.lv__c img, .md__c img { width: 36px; height: 36px; margin-bottom: 4px; }
+.lv__c b, .md__c b { font-size: 12px; font-weight: 700; color: var(--ink); }
+.lv__c span, .md__c span { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--slate); }
+.lv__c i, .md__c i { font-style: normal; }
+.lv__c.is-flash { box-shadow: inset 0 0 0 2px var(--ok); transform: translateY(-2px); }
+.md__c.is-on { background: #fbefe8; box-shadow: inset 0 0 0 1.5px #c98a64; }
+.md__c.is-on b { color: var(--blue); }
+:root[data-theme='dark'] .md__c.is-on { background: #2a2026; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .md__c.is-on { background: #2a2026; } }
+.md__c.is-flash { transform: translateY(-3px); }
+
+.fvb__head { display: grid; grid-template-columns: 44px minmax(0, 1fr) 76px 44px; gap: 12px; padding: 0 14px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate); }
+.fvb__head span:nth-child(n+3) { text-align: right; }
+.fvb__head--run { grid-template-columns: 44px minmax(0, 1fr) 70px 70px; }
+
+.fvb, .fvr { position: relative; margin: 0; padding: 0; list-style: none; }
+.fvb { height: calc(5 * 62px); }
+.fvr { height: calc(4 * 62px); }
+.fvb li, .fvr li { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: 44px minmax(0, 1fr) 76px 44px; align-items: center; gap: 12px; height: 54px; padding: 0 14px; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); transform: translateY(calc(var(--r, 0) * 62px)); transition: transform 700ms var(--ease), opacity 350ms ease; }
+.fvr li { grid-template-columns: 44px minmax(0, 1fr) 70px 70px; }
+.fvr li.is-new { opacity: 0; }
+/* The app's rank box: a rounded square with a green outline. */
+.fvb__rk { display: grid; place-items: center; width: 28px; height: 34px; border-radius: 8px; box-shadow: inset 0 0 0 2px #34c759; font-size: 14px; font-weight: 700; color: var(--ink); }
+.fvr .fvb__rk { box-shadow: none; }
+.fvb__who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.fvb__av { position: relative; flex: none; width: 38px; height: 38px; }
+.fvb__av > img, .fvb__av > i { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; object-fit: cover; background: var(--infield); font-style: normal; font-size: 11px; font-weight: 700; color: var(--ink); }
+.fvb__av > .fvb__lvl { position: absolute; right: -6px; bottom: -6px; width: 22px; height: 22px; border-radius: 0; background: none; transition: transform 300ms var(--ease); }
+.fvb__lvl.is-pop { animation: fv-pop 900ms var(--ease); }
+@keyframes fv-pop { 0% { transform: scale(1); } 35% { transform: scale(1.9); } 100% { transform: scale(1); } }
+.fvb__nm { display: grid; gap: 2px; min-width: 0; }
+.fvb__nm b { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fvb__nm b img { width: 14px; height: 14px; border-radius: 50%; }
+.fvb__nm small { font-size: 12px; color: var(--slate); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fvb__nm small em { font-style: normal; font-weight: 700; color: var(--ok); }
+.fvb__v { text-align: right; font-size: 14px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fvb__mi { text-align: right; font-size: 14px; color: var(--slate); font-variant-numeric: tabular-nums; }
 .fvb.is-swap li { opacity: 0; }
 
-/* 07 Race: the two fanbases' kilometres, a tug-of-war bar, and lanes of runners. */
-.fvr__head { display: flex; align-items: center; justify-content: space-between; }
-.fvr__side { display: flex; align-items: baseline; gap: 10px; }
-.fvr__side b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(30px, 2.6vw, 42px); color: var(--ink); font-variant-numeric: tabular-nums; }
-.fvr__side small { font-size: 13px; color: var(--slate); white-space: nowrap; }
-.fvr__crest { display: grid; place-items: center; align-self: center; width: 40px; height: 46px; clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); background: var(--club); color: #fff; font-family: var(--display); font-style: normal; font-weight: 800; font-size: 18px; padding-bottom: 6px; box-sizing: border-box; }
-.fvr__side--b .fvr__crest { background: var(--team-b); color: #0b0f1a; }
-.fvr__vs { font-family: var(--mono); font-size: 13px; color: var(--slate); }
-.fvr__tug { height: 10px; border-radius: 5px; background: var(--team-b); overflow: hidden; }
-.fvr__tug i { display: block; height: 100%; width: calc(var(--a, 0.5) * 100%); background: var(--club); border-right: 3px solid var(--surface); transition: width 900ms var(--ease); }
-.fvr__lanes { display: grid; gap: 12px; }
-.fvr__lane { position: relative; height: 40px; border-radius: 20px; background: var(--infield); }
-.fvr__lane::after { content: ''; position: absolute; right: 16px; top: 9px; bottom: 9px; width: 3px; border-radius: 2px; background: repeating-linear-gradient(var(--ink) 0 3px, transparent 3px 6px); opacity: 0.35; } /* the finish line */
-.fvr__run { position: absolute; top: 5px; left: 5px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--club); color: #fff; font-size: 11px; font-weight: 700; transform: translateX(var(--x, 0px)); }
-.fvr__run--b { background: var(--team-b); color: #0b0f1a; }
+.rk__title { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 13px; font-weight: 600; color: var(--ink); }
+.rk__claim { margin-left: auto; padding: 4px 10px; border-radius: 999px; background: var(--ok); color: #fff; font-size: 12px; font-weight: 700; opacity: 0; transform: translateY(4px); transition: opacity 300ms ease, transform 300ms var(--ease); }
+.rk__claim.is-on { opacity: 1; transform: none; }
+/* The medal that flies from its card to the runner who earned it. */
+.md__fly { position: absolute; z-index: 5; width: 36px; height: 36px; pointer-events: none; transition: transform 900ms cubic-bezier(0.5, 0, 0.2, 1), opacity 250ms ease; }
+.fv__card { position: relative; }
 
 /* 08 Rewards: the count, a bar with the three goals marked, and the rewards unlocking in turn. */
 .fvw__count { display: flex; align-items: baseline; gap: 12px; margin: 0; }
@@ -65,13 +85,14 @@
 @media (max-width: 900px) {
   .fv { grid-column: auto; grid-row: auto; width: 100%; }
   .fv__card { height: auto; padding: 20px; }
-  .fv__tabs span { padding: 7px 11px; font-size: 13px; white-space: nowrap; }
-  .fvr__side { gap: 6px; }
-  .fvr__side b { font-size: 26px; }
-  .fvr__side small { display: none; }
-  .fvr__crest { width: 32px; height: 38px; font-size: 15px; }
+  .fv__tabs { max-width: 100%; }
+  .fv__tabs span { padding: 7px 9px; font-size: 13px; white-space: nowrap; }
+  .lv, .md { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fvb li, .fvr li, .fvb__head { grid-template-columns: 34px minmax(0, 1fr) 64px 34px; gap: 8px; padding: 0 10px; }
+  .fvr li, .fvb__head--run { grid-template-columns: 34px minmax(0, 1fr) 54px 54px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fvb li, .fvb .fvb__name i::after, .fvr__tug i, .fvw__list li { transition: none; }
+  .fvb li, .fvr li, .lv__c, .md__c, .fvw__list li { transition: none; }
+  .fvb__lvl.is-pop { animation: none; }
   .fv__live { animation: none; }
 }
