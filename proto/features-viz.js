@@ -16,7 +16,6 @@
   function board(root) {
     const list = root.querySelector('.fvb'); const tabs = [...root.querySelectorAll('.fv__tabs span')];
     const cards = Object.fromEntries([...root.querySelectorAll('.lv__c')].map((c) => [c.dataset.t, c]));
-    const BASE = { bronze: 21, silver: 69, gold: 45, platinum: 10, diamond: 2, master: 3 };
     // [avatar, flag, name, sub, steps, MI, level]
     const SETS = [
       [['default_avatar_female_1', 'ro', 'Ana M.', 'London SC', 25588, 8.4, 'gold'], ['default_avatar_male_1', 'ro', 'Radu P.', 'North Stand', 23270, 8.1, 'platinum'],
@@ -29,7 +28,6 @@
     ];
     let set = 0; let rows = []; let timers = [];
     const later = (ms, fn) => timers.push(setTimeout(fn, ms));
-    const counts = () => { for (const t in cards) cards[t].querySelector('i').textContent = BASE[t]; };
     function build() {
       list.innerHTML = '';
       rows = SETS[set].map(([av, flag, name, sub, v, mi, lvl]) => {
@@ -40,14 +38,13 @@
         list.appendChild(li);
         return { li, v, lvl, rk: li.querySelector('.fvb__rk'), out: li.querySelector('.fvb__v'), sub: li.querySelector('small'), badge: li.querySelector('.fvb__lvl') };
       });
-      tabs.forEach((t, i) => t.classList.toggle('is-on', i === set)); counts(); place();
+      tabs.forEach((t, i) => t.classList.toggle('is-on', i === set)); place();
     }
     function place() { [...rows].sort((p, q) => q.v - p.v).forEach((r, i) => { r.li.style.setProperty('--r', i); r.rk.textContent = i + 1; r.out.textContent = fmt(r.v); }); }
     function levelUp() { // Sofia A. reaches Gold
       const r = rows.find((x) => x.lvl === 'silver'); if (!r) return;
       r.lvl = 'gold'; r.badge.src = `${A}tier_gold.png`; r.badge.classList.remove('is-pop'); void r.badge.offsetWidth; r.badge.classList.add('is-pop');
       r.sub.innerHTML = '<em>Level up · Gold</em>';
-      cards.silver.querySelector('i').textContent = BASE.silver - 1; cards.gold.querySelector('i').textContent = BASE.gold + 1;
       ['silver', 'gold'].forEach((t) => { cards[t].classList.add('is-flash'); later(1400, () => cards[t].classList.remove('is-flash')); });
     }
     function cycle() { // one tab: steps come in, (on Individuals a level up), then the next tab
@@ -67,7 +64,6 @@
   function race(root) {
     const card = root.querySelector('.fv__card'); const list = root.querySelector('.fvr'); const claim = root.querySelector('.rk__claim');
     const medals = [...root.querySelectorAll('.md__c')]; const dist = root.querySelector('.rk__dist');
-    const BASE = [3, 2, 2, 0, 0, 0];
     // per distance: the board before, then the runner who finishes [avatar, flag, name, team, pace, time in s]
     const RUNS = [
       { d: 0, rows: [['default_avatar_male_3', 'ro', 'Radu P.', 'North Stand', '5:37', 1010], ['default_avatar_female_2', 'fr', 'Emma L.', 'South Stand', '6:12', 1116], ['default_avatar_male_2', 'us', 'Jake M.', 'North Stand', '7:05', 1275]],
@@ -83,7 +79,7 @@
     function place() { const all = [...list.children].sort((p, q) => p.t - q.t); const lead = all[0] && all[0].t; all.forEach((li, k) => { li.style.setProperty('--r', k); li.querySelector('.fvb__rk').textContent = k + 1; li.querySelector('.fvb__mi').textContent = k ? `+${clock(li.t - lead)}` : 'Leader'; }); }
     function show(n) {
       const run = RUNS[n]; list.innerHTML = ''; claim.classList.remove('is-on');
-      medals.forEach((m, k) => { m.classList.toggle('is-on', k === run.d); m.querySelector('i').textContent = BASE[k] + (k < run.d ? 1 : 0); });
+      medals.forEach((m, k) => { m.classList.toggle('is-on', k === run.d); });
       dist.textContent = medals[run.d].querySelector('b').textContent;
       run.rows.forEach((r) => list.appendChild(row(r))); place();
       later(1600, () => { // the new runner finishes and slides into place
@@ -96,10 +92,10 @@
       const from = medals[d].querySelector('img').getBoundingClientRect(); const to = li.querySelector('.fvb__av').getBoundingClientRect(); const box = card.getBoundingClientRect();
       const m = document.createElement('img'); m.className = 'md__fly'; m.src = medals[d].querySelector('img').src;
       m.style.left = `${from.left - box.left}px`; m.style.top = `${from.top - box.top}px`; card.appendChild(m);
-      requestAnimationFrame(() => requestAnimationFrame(() => { m.style.transform = `translate(${to.left - from.left + 14}px, ${to.top - from.top + 14}px) scale(0.62)`; }));
+      requestAnimationFrame(() => requestAnimationFrame(() => { m.style.transform = `translate(${to.left - from.left + 10}px, ${to.top - from.top + 10}px) scale(0.47)`; }));
       later(950, () => {
         m.remove(); const badge = document.createElement('img'); badge.className = 'fvb__lvl is-pop'; badge.src = medals[d].querySelector('img').src; li.querySelector('.fvb__av').appendChild(badge);
-        const c = medals[d].querySelector('i'); c.textContent = Number(c.textContent) + 1; medals[d].classList.add('is-flash'); later(900, () => medals[d].classList.remove('is-flash'));
+        medals[d].classList.add('is-flash'); later(900, () => medals[d].classList.remove('is-flash'));
         claim.classList.add('is-on');
       });
       later(4200, () => { i = (i + 1) % RUNS.length; show(i); });
