@@ -33,6 +33,7 @@
   <link rel="stylesheet" href="/proto/ugc.css?v=10" />
   <link rel="stylesheet" href="/proto/season.css?v=1" />
   <link rel="stylesheet" href="/proto/pay.css?v=1" />
+  <link rel="stylesheet" href="/proto/report.css?v=1" />
   <link rel="stylesheet" href="/proto/delivery.css?v=8" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
   <meta name="color-scheme" content="light dark" />
@@ -617,12 +618,28 @@
     </div>
   </section>
 
+  <!-- 13 Fan data: fans who opt in become known contacts; the club gets one season report
+       (report.css / report.js). Sample figures, labelled as such. -->
+  <section class="sec block rpt" id="fandata" aria-labelledby="rptTitle">
+    <div class="wrap">
+      <p class="rpt__idx feat__idx"><b>13</b><span>Fan data</span><em>The season report</em></p>
+      <h2 class="rpt__title" id="rptTitle">Know every fan <em>who plays</em>.</h2>
+      <div class="rpt__card">
+        <div class="rpt__bar"><span class="rpt__club"><i aria-hidden="true">N</i>Northside FC</span><span class="rpt__meta">Season report &middot; weeks 1&ndash;12</span><span class="rpt__note">Sample figures</span></div>
+        <div class="rpt__body">
+          <div class="rpt__kpis"><div class="rpt__kpi"><span class="rpt__k">Active fans</span><b class="rpt__v" data-to="48200" data-fmt="n">48,200</b></div><div class="rpt__kpi"><span class="rpt__k">Back every week</span><b class="rpt__v" data-to="61" data-fmt="p">61%</b></div><div class="rpt__kpi"><span class="rpt__k">New CRM contacts</span><b class="rpt__v" data-to="12900" data-fmt="n">12,900</b></div><div class="rpt__kpi"><span class="rpt__k">Offers redeemed</span><b class="rpt__v" data-to="3400" data-fmt="n">3,400</b></div></div>
+          <div class="rpt__plot"><p class="rpt__pk">Weekly active fans</p><svg class="rpt__chart" viewBox="0 0 640 260" role="img" aria-label="Sample chart: weekly active fans climb from about 9,000 in week 1 to about 29,000 in week 12."><defs><linearGradient id="rptFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d7192d" stop-opacity=".22"/><stop offset="1" stop-color="#d7192d" stop-opacity="0"/></linearGradient></defs><line class="rpt__grid" x1="20" x2="620" y1="167.5" y2="167.5"/><text class="rpt__ax" x="620" y="161.5">10k</text><line class="rpt__grid" x1="20" x2="620" y1="105.0" y2="105.0"/><text class="rpt__ax" x="620" y="99.0">20k</text><line class="rpt__grid" x1="20" x2="620" y1="42.5" y2="42.5"/><text class="rpt__ax" x="620" y="36.5">30k</text><path class="rpt__area" d="M20.0 173.1 C29.1 168.6 56.4 154.7 74.5 146.2 C92.7 137.8 110.9 129.5 129.1 122.5 C147.3 115.5 165.5 110.0 183.6 104.4 C201.8 98.7 220.0 92.8 238.2 88.8 C256.4 84.7 274.5 83.3 292.7 80.0 C310.9 76.7 329.1 71.2 347.3 68.8 C365.5 66.2 383.6 67.2 401.8 65.0 C420.0 62.8 438.2 57.6 456.4 55.6 C474.5 53.6 492.7 54.3 510.9 53.1 C529.1 52.0 547.3 49.9 565.5 48.8 C583.6 47.6 610.9 46.7 620.0 46.2 L620.0 230 L20.0 230 Z" fill="url(#rptFill)"/><path class="rpt__line" d="M20.0 173.1 C29.1 168.6 56.4 154.7 74.5 146.2 C92.7 137.8 110.9 129.5 129.1 122.5 C147.3 115.5 165.5 110.0 183.6 104.4 C201.8 98.7 220.0 92.8 238.2 88.8 C256.4 84.7 274.5 83.3 292.7 80.0 C310.9 76.7 329.1 71.2 347.3 68.8 C365.5 66.2 383.6 67.2 401.8 65.0 C420.0 62.8 438.2 57.6 456.4 55.6 C474.5 53.6 492.7 54.3 510.9 53.1 C529.1 52.0 547.3 49.9 565.5 48.8 C583.6 47.6 610.9 46.7 620.0 46.2" pathLength="1"/><circle class="rpt__dot" r="6" cx="620.0" cy="46.2"/><text class="rpt__wk" x="20.0" y="254">W1</text><text class="rpt__wk" x="183.6" y="254">W4</text><text class="rpt__wk" x="401.8" y="254">W8</text><text class="rpt__wk" x="620.0" y="254">W12</text></svg></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 10 Delivery: a pinned scroll scene (delivery.css / delivery.js). One phone, three ways to launch:
        the SportIn app, white label (the same app in a demo brand), and the engine inside the client's own app. -->
   <section class="dl" id="delivery" data-steps="2" aria-labelledby="dlTitle">
     <div class="dl__stick"><div class="wrap dl__grid">
       <div class="dl__copy">
-        <p class="dl__idx feat__idx"><b>13</b><span>Delivery</span><em>Three ways to launch</em></p>
+        <p class="dl__idx feat__idx"><b>14</b><span>Delivery</span><em>Three ways to launch</em></p>
         <h2 class="dl__title" id="dlTitle">Launch it <em>your way</em>.</h2>
         <ol class="dl__list">
           <li class="dl__row"><p class="dl__name">The SportIn app</p><p class="dl__line">Members join the SportIn app and play from day one.</p><p class="dl__effort" aria-label="Effort: low"><i class="is-on"></i><i></i><i></i><span>Fastest start</span></p></li>
@@ -686,7 +703,7 @@
     <!-- Three lanes drawn around the content by closing-track.js, so every oval stays whole at any size. -->
     <svg class="closing__lanes" aria-hidden="true"><rect /><rect /><rect /></svg>
     <div class="wrap closing__inner">
-      <p class="feat__idx" data-reveal style="--d:.03s"><b>14</b><span>Get started</span><em>Pilot</em></p>
+      <p class="feat__idx" data-reveal style="--d:.03s"><b>15</b><span>Get started</span><em>Pilot</em></p>
       <h2 class="display display--xl" id="closingTitle" data-reveal style="--d:.06s">Start with <em>a pilot</em>.</h2>
       <div class="closing__actions" data-reveal style="--d:.12s"><a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Plan your pilot <span class="btn__arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="https://apps.apple.com/us/app/sportin-rise-to-the-challenge/id6762152651" target="_blank" rel="noopener">Try for Free<span class="sr-only"> (opens the App Store)</span></a></div>
     </div>
@@ -695,7 +712,7 @@
   <!-- 14 The film: the SportIn product film, 16:9, with a big play button (film.css / film.js). -->
   <section class="sec block film" id="film" aria-labelledby="filmTitle">
     <div class="wrap film__inner">
-      <div class="film__head"><p class="film__idx feat__idx"><b>15</b><span>The product</span><em>The film</em></p><h2 class="film__title" id="filmTitle">See SportIn <em>in action</em>.</h2></div>
+      <div class="film__head"><p class="film__idx feat__idx"><b>16</b><span>The product</span><em>The film</em></p><h2 class="film__title" id="filmTitle">See SportIn <em>in action</em>.</h2></div>
       <figure class="film__frame">
         <video class="film__video" src="/proto/media/film/sportin-film.mp4" poster="/proto/media/film/poster.jpg" playsinline preload="none"></video>
         <button class="film__play" type="button" aria-label="Play the SportIn film"><svg width="34" height="34" viewBox="0 0 30 30" aria-hidden="true"><path d="M10 6.5v17l14-8.5z" fill="currentColor"/></svg></button>
@@ -750,6 +767,7 @@
 <script type="module" src="/proto/tech-b.js?v=4"></script>
 <script src="/proto/season.js?v=1" defer></script>
 <script src="/proto/pay.js?v=1" defer></script>
+<script src="/proto/report.js?v=1" defer></script>
 <script type="module" src="/proto/delivery.js?v=10"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
