@@ -55,11 +55,11 @@ Third… rewards. Every step earns club points, and points unlock real prizes fr
 
 [confident] And it all connects to the watches and apps fans already use… Apple Health, Garmin, Strava. Nothing new to buy.
 
-## 05 · The games (about 12 s)
+## 05 · The games (about 9 s)
 
 [playful] And the games? Fans already know them.
 
-[excited] Stand against stand… your North Stand against your South Stand. Conquer the city, team by team. A league for supporters' clubs, from London to Toronto.
+[excited] Team against team. Friends against friends. Or just a plain run… for the fun of it.
 
 [warmly] And on matchday… a walk to the stadium.
 
