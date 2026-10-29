@@ -1,9 +1,9 @@
 /* 06 to 08: one live animation per page in the phone's place (features-viz.js), on a white card
    over the page's grey block. 06 a leaderboard that turns from fans to supporters' clubs to
-   countries; 07 our fans racing the rival's; 08 a step count that unlocks rewards in turn. */
-.fv { --club: #d7192d; --rival: #24345e; --ok: #0f9f6e; grid-column: 2; grid-row: 1 / 5; align-self: center; width: min(600px, 44vw); }
-:root[data-theme='dark'] .fv { --rival: #8ea2e0; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .fv { --rival: #8ea2e0; } }
+   countries; 07 two teams of the club's own fans racing; 08 a step count that unlocks rewards in turn. */
+.fv { --club: #d7192d; --team-b: #e0a200; --bar: #24345e; --ok: #0f9f6e; grid-column: 2; grid-row: 1 / 5; align-self: center; width: min(600px, 44vw); }
+:root[data-theme='dark'] .fv { --team-b: #f2b821; --bar: #8ea2e0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .fv { --team-b: #f2b821; --bar: #8ea2e0; } }
 .fv__card { display: grid; gap: 18px; padding: 28px; border-radius: var(--r-card, 24px); background: var(--surface); box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); box-sizing: border-box; align-content: start; overflow: hidden; }
 .fv__tabs { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: var(--infield); width: fit-content; }
 .fv__tabs span { padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--slate); transition: background 300ms ease, color 300ms ease; }
@@ -19,7 +19,7 @@
 .fvb .fvb__av { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--infield); font-size: 13px; font-weight: 700; color: var(--ink); }
 .fvb .fvb__name { display: grid; gap: 6px; min-width: 0; font-size: 15px; font-weight: 600; color: var(--ink); }
 .fvb .fvb__name i { display: block; height: 6px; border-radius: 3px; background: var(--infield); overflow: hidden; }
-.fvb .fvb__name i::after { content: ''; display: block; height: 100%; width: calc(var(--w, 0) * 100%); background: var(--rival); border-radius: 3px; transition: width 700ms var(--ease); }
+.fvb .fvb__name i::after { content: ''; display: block; height: 100%; width: calc(var(--w, 0) * 100%); background: var(--bar); border-radius: 3px; transition: width 700ms var(--ease); }
 .fvb li.is-top .fvb__name i::after { background: var(--club); }
 .fvb li.is-top .fvb__av { background: var(--club); color: #fff; }
 .fvb .fvb__v { font-family: var(--mono); font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -30,18 +30,17 @@
 .fvr__head { display: flex; align-items: center; justify-content: space-between; }
 .fvr__side { display: flex; align-items: baseline; gap: 10px; }
 .fvr__side b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(30px, 2.6vw, 42px); color: var(--ink); font-variant-numeric: tabular-nums; }
-.fvr__side small { font-size: 14px; color: var(--slate); }
+.fvr__side small { font-size: 13px; color: var(--slate); white-space: nowrap; }
 .fvr__crest { display: grid; place-items: center; align-self: center; width: 40px; height: 46px; clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); background: var(--club); color: #fff; font-family: var(--display); font-style: normal; font-weight: 800; font-size: 18px; padding-bottom: 6px; box-sizing: border-box; }
-.fvr__side--rv .fvr__crest { background: var(--rival); }
+.fvr__side--b .fvr__crest { background: var(--team-b); color: #0b0f1a; }
 .fvr__vs { font-family: var(--mono); font-size: 13px; color: var(--slate); }
-.fvr__tug { height: 10px; border-radius: 5px; background: var(--rival); overflow: hidden; }
+.fvr__tug { height: 10px; border-radius: 5px; background: var(--team-b); overflow: hidden; }
 .fvr__tug i { display: block; height: 100%; width: calc(var(--a, 0.5) * 100%); background: var(--club); border-right: 3px solid var(--surface); transition: width 900ms var(--ease); }
 .fvr__lanes { display: grid; gap: 12px; }
 .fvr__lane { position: relative; height: 40px; border-radius: 20px; background: var(--infield); }
 .fvr__lane::after { content: ''; position: absolute; right: 16px; top: 9px; bottom: 9px; width: 3px; border-radius: 2px; background: repeating-linear-gradient(var(--ink) 0 3px, transparent 3px 6px); opacity: 0.35; } /* the finish line */
 .fvr__run { position: absolute; top: 5px; left: 5px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--club); color: #fff; font-size: 11px; font-weight: 700; transform: translateX(var(--x, 0px)); }
-.fvr__run--rv { background: var(--rival); }
-:root[data-theme='dark'] .fvr__run--rv { color: #0b0f1a; }
+.fvr__run--b { background: var(--team-b); color: #0b0f1a; }
 
 /* 08 Rewards: the count, a bar with the three goals marked, and the rewards unlocking in turn. */
 .fvw__count { display: flex; align-items: baseline; gap: 12px; margin: 0; }

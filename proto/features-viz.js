@@ -45,14 +45,14 @@
     };
   }
 
-  // ---------- 07 Race: our fans against the rival's ----------
+  // ---------- 07 Race: two teams of the club's own fans (North Stand, South Stand) ----------
   function race(root) {
     const lanesEl = root.querySelector('.fvr__lanes'); const km = [...root.querySelectorAll('.fvr__km')];
     const tug = root.querySelector('.fvr__tug'); const dist = [...root.querySelectorAll('.fvr__dist span')];
     const RUN = ['AM', 'DW', 'SA', 'KB', 'EL', 'TR'];
     const runners = RUN.map((ini, i) => {
       const lane = document.createElement('div'); lane.className = 'fvr__lane';
-      const r = document.createElement('span'); r.className = `fvr__run${i % 2 ? ' fvr__run--rv' : ''}`; r.textContent = ini;
+      const r = document.createElement('span'); r.className = `fvr__run${i % 2 ? ' fvr__run--b' : ''}`; r.textContent = ini;
       lane.appendChild(r); lanesEl.appendChild(lane);
       return { el: r, lane, side: i % 2, x: rnd(0, 0.6), v: rnd(0.07, 0.12) };
     });
@@ -65,7 +65,7 @@
     const frame = (now) => {
       const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; last = now;
       runners.forEach((r) => {
-        r.x += r.v * dt; tot[r.side] += r.v * dt * (r.side ? 9 : 10); // our fans edge it, just
+        r.x += r.v * dt; tot[r.side] += r.v * dt * (r.side ? 9.6 : 10); // a close race
         if (r.x >= 1) { r.x = 0; r.v = rnd(0.07, 0.12); }
       });
       paint(); raf = requestAnimationFrame(frame);

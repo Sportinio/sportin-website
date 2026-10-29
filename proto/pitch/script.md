@@ -59,7 +59,7 @@ Third… rewards. Every step earns club points, and points unlock real prizes fr
 
 [playful] And the games? Fans already know them.
 
-[excited] Derby week… your fans against the rival's. Conquer the city. A league for supporters' clubs, from London to Toronto.
+[excited] Stand against stand… your North Stand against your South Stand. Conquer the city, team by team. A league for supporters' clubs, from London to Toronto.
 
 [warmly] And on matchday… a walk to the stadium.
 
@@ -69,9 +69,9 @@ Third… rewards. Every step earns club points, and points unlock real prizes fr
 
 Ranked by fan, by supporters' club, or by country. Because a fan in Dublin is still a fan.
 
-## 07 · Race the rival's fans (about 7 s)
+## 07 · Fans racing fans (about 7 s)
 
-[mischievously] And yes… they can race the rival's fans.
+[mischievously] And yes… fans can race each other.
 
 [excited] Three K, five K, ten K… a board for every distance.
 
@@ -91,7 +91,7 @@ A magazine cover. A route on their photo. [warmly] Shared with friends… with y
 
 [confident] We build the technology ourselves.
 
-AI commentary calls each run like a match. Sportinho coaches every step. And live tracking keeps every derby fair.
+AI commentary calls each run like a match. Sportinho coaches every step. And live tracking keeps every result fair.
 
 ## 11 · The season (about 10 s)
 

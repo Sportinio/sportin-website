@@ -10,7 +10,7 @@
   const loops = [];
   const every = (ms, fn) => loops.push({ ms, fn, id: 0 });
 
-  // Derby week: the movement index scores nudge up or down; the bar follows the share.
+  // Stand vs stand: two teams of the club's own fans; the movement index scores nudge up, the bar follows the share.
   const derby = sec.querySelector('.derby');
   if (derby) {
     const A = derby.querySelector('[data-a]'); const B = derby.querySelector('[data-b]'); const bar = derby.querySelector('.derby__bar i');
@@ -26,7 +26,7 @@
   }
 
   // Conquer the city: the runner loops through the streets and turns each one club red;
-  // after every lap the rival takes a few back, so the map never settles.
+  // after every lap the other team takes a few back, so the map never settles.
   const city = sec.querySelector('.city');
   if (city) {
     const cells = [...city.querySelectorAll('.city__c')]; const run = city.querySelector('.city__run');
