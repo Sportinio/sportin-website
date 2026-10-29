@@ -1,9 +1,10 @@
 /* 05 The games: the title, then four small live cards on the light grey, one per format.
-   Derby week, Conquer the city, Supporters' clubs, Walk to the stadium. No copy beyond the names;
+   Stand vs stand, Conquer the city, Supporters' clubs, Walk to the stadium: all inside one fanbase
+   (teams of the club's own fans, never another club). Names and a type tag only;
    each card's graphic moves on its own while the page is on screen (formats.js). */
-.fmts { --club: #d7192d; --rival: #24345e; background: var(--paper); }
-:root[data-theme='dark'] .fmts { --rival: #8ea2e0; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .fmts { --rival: #8ea2e0; } }
+.fmts { --club: #d7192d; --team-b: #e0a200; background: var(--paper); } /* team B: the club's second colour */
+:root[data-theme='dark'] .fmts { --team-b: #f2b821; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .fmts { --team-b: #f2b821; } }
 
 .fmts__inner { display: grid; justify-items: center; row-gap: clamp(28px, 4vh, 44px); }
 .fmts__head { text-align: center; max-width: 1000px; }
@@ -13,6 +14,7 @@
 
 .fmts__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 24px); width: 100%; }
 .game { position: relative; display: flex; flex-direction: column; aspect-ratio: 3 / 4; max-height: calc(100vh - var(--nav-h) - 260px); min-height: 300px; padding: 20px; border-radius: var(--r-card, 24px); background: var(--infield); overflow: hidden; }
+.game__tag { margin: 4px 0 0; font-family: var(--mono); font-size: 12px; color: var(--slate); }
 .game__name { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: 17px; letter-spacing: -0.01em; color: var(--ink); }
 .game__viz { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; align-content: center; min-height: 0; }
 
@@ -21,19 +23,18 @@
 .js .fmts.is-in .game { opacity: 1; transform: none; }
 .game:nth-child(2) { --i: 1; } .game:nth-child(3) { --i: 2; } .game:nth-child(4) { --i: 3; }
 
-/* Derby week: two crests, the movement index score, a tug of war bar. */
+/* Stand vs stand: two teams of the same fans, the movement index score, a tug of war bar. */
 .derby { width: 100%; gap: 18px; }
 .derby__teams { display: flex; justify-content: space-between; width: 100%; }
 .derby__team { display: grid; justify-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--slate); }
 .derby__crest { display: grid; place-items: center; width: 46px; height: 52px; border-radius: 10px 10px 23px 23px; background: var(--club); color: #fff; font-family: var(--display); font-style: normal; font-weight: 800; font-size: 20px; }
-.derby__team--rival .derby__crest { background: var(--rival); }
-:root[data-theme='dark'] .derby__team--rival .derby__crest { color: #0b0f1a; }
+.derby__team--b .derby__crest { background: var(--team-b); color: #0b0f1a; }
 .derby__score { display: flex; align-items: baseline; gap: 10px; margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(40px, 3.6vw, 56px); line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
 .derby__score span { color: var(--slate); font-weight: 500; }
 .derby__score b { display: inline-block; font-weight: inherit; transition: transform 380ms var(--ease), color 380ms ease; }
 .derby__score b.is-up { transform: translateY(-6px); color: var(--club); }
-.derby__score b[data-b].is-up { color: var(--rival); }
-.derby__bar { width: 100%; height: 8px; border-radius: 4px; background: var(--rival); overflow: hidden; }
+.derby__score b[data-b].is-up { color: var(--team-b); }
+.derby__bar { width: 100%; height: 8px; border-radius: 4px; background: var(--team-b); overflow: hidden; }
 .derby__bar i { display: block; height: 100%; width: calc(var(--a) * 100%); background: var(--club); border-right: 2px solid var(--infield); transition: width 900ms var(--ease); }
 .derby__day { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--slate); }
 
@@ -41,7 +42,7 @@
 .city { width: min(100%, 220px); height: auto; overflow: visible; }
 .city__c { fill: var(--hex-empty); transition: fill 420ms ease; }
 .city__c[data-o='1'] { fill: var(--club); }
-.city__c[data-o='2'] { fill: var(--rival); }
+.city__c[data-o='2'] { fill: var(--team-b); }
 .city__run { fill: #fff; stroke: var(--ink); stroke-width: 2.5; transition: cx 300ms linear, cy 300ms linear; }
 
 /* Supporters' clubs: four rows that swap places as the scores move. */
