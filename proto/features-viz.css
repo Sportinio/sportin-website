@@ -1,0 +1,78 @@
+/* 06 to 08: one live animation per page in the phone's place (features-viz.js), on a white card
+   over the page's grey block. 06 a leaderboard that turns from fans to supporters' clubs to
+   countries; 07 our fans racing the rival's; 08 a step count that unlocks rewards in turn. */
+.fv { --club: #d7192d; --rival: #24345e; --ok: #0f9f6e; grid-column: 2; grid-row: 1 / 5; align-self: center; width: min(600px, 44vw); }
+:root[data-theme='dark'] .fv { --rival: #8ea2e0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .fv { --rival: #8ea2e0; } }
+.fv__card { display: grid; gap: 18px; padding: 28px; border-radius: var(--r-card, 24px); background: var(--surface); box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); box-sizing: border-box; align-content: start; overflow: hidden; }
+.fv__tabs { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: var(--infield); width: fit-content; }
+.fv__tabs span { padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--slate); transition: background 300ms ease, color 300ms ease; }
+.fv__tabs span.is-on { background: var(--ink); color: var(--paper); }
+.fv__foot { display: flex; align-items: center; gap: 8px; margin: auto 0 0; font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.fv__live { width: 8px; height: 8px; border-radius: 50%; background: var(--club); animation: fv-live 1.4s ease-in-out infinite; }
+@keyframes fv-live { 50% { opacity: 0.25; } }
+
+/* 06 Leaderboard: rows slide to their rank; each bar is its share of the leader. */
+.fvb { position: relative; margin: 0; padding: 0; list-style: none; height: calc(5 * 64px); }
+.fvb li { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: 24px 40px minmax(0, 1fr) auto; align-items: center; gap: 12px; height: 56px; transform: translateY(calc(var(--r, 0) * 64px)); transition: transform 700ms var(--ease), opacity 300ms ease; }
+.fvb .fvb__n { font-family: var(--mono); font-size: 13px; color: var(--slate); }
+.fvb .fvb__av { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--infield); font-size: 13px; font-weight: 700; color: var(--ink); }
+.fvb .fvb__name { display: grid; gap: 6px; min-width: 0; font-size: 15px; font-weight: 600; color: var(--ink); }
+.fvb .fvb__name i { display: block; height: 6px; border-radius: 3px; background: var(--infield); overflow: hidden; }
+.fvb .fvb__name i::after { content: ''; display: block; height: 100%; width: calc(var(--w, 0) * 100%); background: var(--rival); border-radius: 3px; transition: width 700ms var(--ease); }
+.fvb li.is-top .fvb__name i::after { background: var(--club); }
+.fvb li.is-top .fvb__av { background: var(--club); color: #fff; }
+.fvb .fvb__v { font-family: var(--mono); font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fvb li.is-up .fvb__v { color: var(--club); }
+.fvb.is-swap li { opacity: 0; }
+
+/* 07 Race: the two fanbases' kilometres, a tug-of-war bar, and lanes of runners. */
+.fvr__head { display: flex; align-items: center; justify-content: space-between; }
+.fvr__side { display: flex; align-items: baseline; gap: 10px; }
+.fvr__side b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(30px, 2.6vw, 42px); color: var(--ink); font-variant-numeric: tabular-nums; }
+.fvr__side small { font-size: 14px; color: var(--slate); }
+.fvr__crest { display: grid; place-items: center; align-self: center; width: 40px; height: 46px; clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); background: var(--club); color: #fff; font-family: var(--display); font-style: normal; font-weight: 800; font-size: 18px; padding-bottom: 6px; box-sizing: border-box; }
+.fvr__side--rv .fvr__crest { background: var(--rival); }
+.fvr__vs { font-family: var(--mono); font-size: 13px; color: var(--slate); }
+.fvr__tug { height: 10px; border-radius: 5px; background: var(--rival); overflow: hidden; }
+.fvr__tug i { display: block; height: 100%; width: calc(var(--a, 0.5) * 100%); background: var(--club); border-right: 3px solid var(--surface); transition: width 900ms var(--ease); }
+.fvr__lanes { display: grid; gap: 12px; }
+.fvr__lane { position: relative; height: 40px; border-radius: 20px; background: var(--infield); }
+.fvr__lane::after { content: ''; position: absolute; right: 16px; top: 9px; bottom: 9px; width: 3px; border-radius: 2px; background: repeating-linear-gradient(var(--ink) 0 3px, transparent 3px 6px); opacity: 0.35; } /* the finish line */
+.fvr__run { position: absolute; top: 5px; left: 5px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--club); color: #fff; font-size: 11px; font-weight: 700; transform: translateX(var(--x, 0px)); }
+.fvr__run--rv { background: var(--rival); }
+:root[data-theme='dark'] .fvr__run--rv { color: #0b0f1a; }
+
+/* 08 Rewards: the count, a bar with the three goals marked, and the rewards unlocking in turn. */
+.fvw__count { display: flex; align-items: baseline; gap: 12px; margin: 0; }
+.fvw__count b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(44px, 4vw, 64px); line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fvw__count span { font-size: 15px; color: var(--slate); }
+.fvw__bar { position: relative; height: 12px; border-radius: 6px; background: var(--infield); }
+.fvw__bar i { position: absolute; inset: 0 auto 0 0; width: calc(var(--p, 0) * 100%); border-radius: 6px; background: var(--club); }
+.fvw__bar u { position: absolute; top: -4px; bottom: -4px; left: calc(var(--at) * 100% - 1px); width: 2px; background: var(--ink); opacity: 0.35; }
+.fvw__list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.fvw__list li { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 16px; background: var(--infield); transition: background 400ms ease, transform 400ms var(--ease), box-shadow 400ms ease; }
+.fvw__logo { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--surface); font-weight: 800; color: var(--ink); }
+.fvw__logo--club { background: var(--club); color: #fff; }
+.fvw__t { display: grid; gap: 3px; min-width: 0; }
+.fvw__t b { font-size: 16px; color: var(--ink); }
+.fvw__t small { font-size: 13px; color: var(--slate); }
+.fvw__list em { font-style: normal; font-size: 13px; font-weight: 700; color: var(--slate); }
+.fvw__list li.is-on { box-shadow: inset 0 0 0 2px var(--ok); transform: translateY(-2px); }
+.fvw__list li.is-on em { color: var(--ok); }
+.fvw__list li.is-redeem { background: var(--ok); box-shadow: none; }
+.fvw__list li.is-redeem b, .fvw__list li.is-redeem small, .fvw__list li.is-redeem em { color: #fff; }
+
+@media (max-width: 900px) {
+  .fv { grid-column: auto; grid-row: auto; width: 100%; }
+  .fv__card { height: auto; padding: 20px; }
+  .fv__tabs span { padding: 7px 11px; font-size: 13px; white-space: nowrap; }
+  .fvr__side { gap: 6px; }
+  .fvr__side b { font-size: 26px; }
+  .fvr__side small { display: none; }
+  .fvr__crest { width: 32px; height: 38px; font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fvb li, .fvb .fvb__name i::after, .fvr__tug i, .fvw__list li { transition: none; }
+  .fv__live { animation: none; }
+}
