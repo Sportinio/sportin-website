@@ -22,3 +22,20 @@
 #formats .game, #pay .pay__step, #fandata .rpt__card { background: var(--surface); }
 #season .ssn__summer { fill: var(--surface); }
 #pay .pay__token { box-shadow: 0 0 0 4px var(--pg-grey); }
+
+/* 01: the live matchday (matchday.css) on the grey block; the heading row back in page colours
+   (it was white over the old video) and centred over the board. */
+#why.block { background: var(--pg-grey); }
+#why .mdx__hero .feat__idx { justify-content: center; margin-bottom: 4px; }
+#why .feat__idx b { color: var(--blue); }
+#why .feat__idx span { color: var(--ink); }
+#why .feat__idx em { color: var(--slate); }
+#why .feat__idx b + span { border-left-color: var(--line); }
+/* Sized to fit one screen without scaling: shorter rows, and once a match is opened the list
+   scrolls inside the card instead of growing the page. */
+#why .mdx { --row-h: 60px; }
+#why .mdx__hero { gap: 10px; margin-bottom: 20px; }
+#why .mdx__head { font-size: clamp(34px, 4vw, 58px); }
+@media (min-width: 900px) {
+  #why .mdx__rows { max-height: calc(6 * 61px); overflow-y: auto; scrollbar-width: thin; }
+}
