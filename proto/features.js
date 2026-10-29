@@ -224,7 +224,7 @@ if (sec) {
   const canvases = [...sec.querySelectorAll('.ios')];
   const fit = () => canvases.forEach((c) => { const box = c.parentElement; const k = box.clientWidth / Number(c.dataset.w); if (!k) return; c.style.setProperty('--k', String(k)); c.style.height = `${box.clientHeight / k}px`; });
   new ResizeObserver(fit).observe(sec); fit();
-  const fmtPt = (n) => Math.round(n).toLocaleString('de-DE'); // the app groups thousands with a dot
+  const fmtPt = (n) => Math.round(n).toLocaleString('en-US'); // thousands with a comma, as on every other page
 
   // Walking (layer 2): the app's steps leaderboard. Steps tick up live; Sofia overtakes Emma, her trend
   // turns green, the rank badges re-number and her steps ring fills.

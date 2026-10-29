@@ -6,33 +6,34 @@ player can scroll to a page, play its clip, and move on when the clip ends.
 
 **Model:** Eleven v3. Audio tags in square brackets set the delivery for the words that follow.
 Ellipses (…) add a pause, and CAPITALS add emphasis. Tags guide the performance but don't force it,
-so generate two or three takes per page and keep the best. Delete the tags if you use a model
+so generate two or three takes per page and keep the best. Use tags sparingly: an untagged line
+carries the voice's own delivery, and fewer tags give more contrast where they matter. Delete the tags if you use a model
 without audio-tag support.
 
 **Voice:** warm, confident, conversational. A storyteller who loves football, not an advertiser.
-Medium pace. Around 3 minutes 20 seconds in all.
+Medium pace. About 555 words, around 3 minutes 35 seconds in all; time the clips once generated.
 
 **Sample club:** Northside FC is made up for the demo. Say "your club" wherever it fits.
 
 ---
 
-## 01 · Hero (about 10 s)
+## 01 · Hero (about 12 s)
 
 [warmly] Every club has fans… millions of them.
 
-[excited] But what if every single one of them had a part to play?
+[curious] But what if every one of them had a part to play?
 
-[confident] SportIn turns fan communities into active ecosystems… that generate new revenue, and real, measurable impact.
+[confident] SportIn turns your fans' everyday movement into games for your club… and new revenue you can measure.
 
-## 02 · The problem (about 12 s)
+## 02 · The problem (about 14 s)
 
-[thoughtful] Here's the truth most clubs know, but rarely say out loud.
+[thoughtful] Every club knows this… but few say it out loud.
 
 [serious] A big fanbase… is not the same as an active one.
 
 Between matches, most fans have no reason to take part. No reason to come back. And no reason to buy.
 
-## 03 · The evidence (about 11 s)
+## 03 · The evidence (about 15 s)
 
 [curious] So what's an engaged fan really worth?
 
@@ -40,81 +41,83 @@ Between matches, most fans have no reason to take part. No reason to come back. 
 
 [warmly] And eighty-eight percent of people trust a friend's word above anything else.
 
-## 04 · The solution (about 40 s)
+## 04 · The solution (about 50 s)
 
-[excited] Meet the engine… three layers, working together, in your club's name and colours.
+[confident] Meet the engine. Three layers, in your club's name and colours.
 
-[confident] Layer one… competition. For the long run, there are two formats. League… where supporters' clubs, cities and countries play a full season, and every kilometre moves the table. And Conquer… where fans run their streets to claim the city for the club, block by block.
+[warmly] First… competition. For the long run, two formats. League… a full season for supporters' clubs, cities and countries, where every kilometre moves the table. And Conquer… fans run their streets to claim the city for the club, block by block.
 
-[warmly] For the short run, there are challenges. A daily step goal. A matchday walk. Three days to hit ten thousand steps… quick wins that bring fans back tomorrow.
+For the short run… challenges. A daily step goal. Ten thousand steps in three days. Quick wins that bring fans back tomorrow.
 
-[confident] Layer two… leaderboards. Walking, running and cycling, ranked live… by fan, by supporters' club, or by country.
+Second… leaderboards. Every walk, run and ride, ranked live.
 
-[excited] Layer three… rewards. Every step earns club points, and points unlock real prizes… a shop discount, a stadium tour, a signed shirt.
+Third… rewards. Every step earns club points, and points unlock real prizes from the club and its partners.
 
-[confident] And it all connects… to Apple Health, Garmin, Fitbit, Strava, and the phones and watches fans already wear. Nothing new to buy… nothing new to learn.
+[confident] And it all connects to the watches and apps fans already use… Apple Health, Garmin, Strava. Nothing new to buy.
 
-## 05 · The games (about 13 s)
+## 05 · The games (about 12 s)
 
-[playful] Fans don't need to learn new games. They already know these.
+[playful] And the games? Fans already know them.
 
-[excited] Derby week… your fans against theirs. Conquer the city, street by street, in your colours. A league for supporters' clubs, from London to Toronto. [warmly] And on matchday… a walk to the stadium that counts.
+[excited] Derby week… your fans against the rival's. Conquer the city. A league for supporters' clubs, from London to Toronto.
 
-## 06 · Every fan on the board (about 8 s)
+[warmly] And on matchday… a walk to the stadium.
+
+## 06 · Every fan on the board (about 9 s)
 
 [confident] Every fan is on the board… wherever they live.
 
-Ranked by fan, by supporters' club, or by country. Because a fan in Toronto is still a fan.
+Ranked by fan, by supporters' club, or by country. Because a fan in Dublin is still a fan.
 
-## 07 · Race the rival's fans (about 6 s)
+## 07 · Race the rival's fans (about 7 s)
 
 [mischievously] And yes… they can race the rival's fans.
 
-[excited] A board for every distance.
+[excited] Three K, five K, ten K… a board for every distance.
 
-## 08 · Rewards (about 9 s)
+## 08 · Rewards (about 10 s)
 
-[warmly] Then come rewards fans will actually run for.
+[warmly] Then come the rewards fans will actually run for.
 
-A stadium tour. Twenty percent off the club shop. A signed shirt. The club and its partners set the prize… [confident] fans earn it, step by step.
+A free coffee. Twenty percent off the club shop. A stadium tour. [confident] You and your partners set the prize… fans earn it, step by step.
 
 ## 09 · Content (about 8 s)
 
 [proud] And every run becomes a post.
 
-Fans share their moments in your club's templates… [confident] so your crest travels with every single one.
+A magazine cover. A route on their photo. [warmly] Shared with friends… with your crest on every one.
 
 ## 10 · Technology (about 9 s)
 
-[excited] We build the technology ourselves.
+[confident] We build the technology ourselves.
 
-AI commentary tells a fan's run like a match. Sportinho coaches every step. [confident] And live tracking means every derby result stands up.
+AI commentary calls each run like a match. Sportinho coaches every step. And live tracking keeps every derby fair.
 
 ## 11 · The season (about 10 s)
 
-[thoughtful] Matchdays come and go… nineteen home games, a few weeks off, a long summer.
+[thoughtful] Matchdays come and go… nineteen home games, an international break, a long summer.
 
-[warmly] But with SportIn… the season never stops. Fans take part every single week of the year.
+[warmly] But with SportIn… the season never stops. Fans take part every week of the year.
 
 ## 12 · Revenue (about 13 s)
 
 [confident] And here's where it pays.
 
-A fan plays… earns club points… unlocks a priority window for season tickets… [excited] and renews.
+A fan plays… earns club points… unlocks early access to season tickets… and renews.
 
-From fans who play… to fans who pay. And for your sponsors? Leagues, rewards and seasons to put their name on.
+From fans who play… to fans who pay. And for your sponsors… leagues, rewards and whole seasons to put their name on.
 
-## 13 · Fan data (about 10 s)
+## 13 · Fan data (about 9 s)
 
-[serious] For the first time, you'll know every fan who plays.
+For the first time… you'll know every fan who plays.
 
-Fans who opt in become real contacts in your CRM. [confident] And at the end of the season, you get one clear report for your board… and your sponsors.
+Fans who opt in join your CRM. [confident] And every season ends with one clear report… for your board, and your sponsors.
 
 ## 14 · Delivery (about 9 s)
 
 [confident] Launch it your way.
 
-Use the SportIn app. Put your crest on top with white label. [warmly] Or bring the engine straight into your own club app… so fans never leave it.
+In the SportIn app. With your crest on top. [warmly] Or inside your own club app… so fans never leave it.
 
 ## 15 · Get started (about 10 s)
 
@@ -126,6 +129,12 @@ Use the SportIn app. Put your crest on top with white label. [warmly] Or bring t
 
 [warmly] Your fans are already moving.
 
-[excited] Let's give every one of them… a part to play.
+Now give every one of them… a part to play.
 
 [confident] SportIn. Let's plan your pilot.
+
+## Pronunciation notes
+
+- "Sportinho": if the take says "sport-in-ho", spell it phonetically in the generation text only, for example "Sport-EEN-yo".
+- Numbers are written as words ("Three K", "forty percent") so the model reads them cleanly.
+- Check "supporters' clubs" (04 to 06) is not read as "supporter's".
