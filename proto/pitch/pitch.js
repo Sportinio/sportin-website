@@ -191,8 +191,28 @@
   // Leaving full screen (the browser's own Esc) during the pitch ends it too.
   document.addEventListener('fullscreenchange', () => { if (on && !document.fullscreenElement && root.requestFullscreen && ui.dataset.state === 'play') stop(); });
 
+  // First visit: a small card offers the guided pitch (voice and auto-scroll) or exploring alone.
+  // Either answer is remembered, so it asks once. Only where the Present button shows (desktop).
+  const KEY = 'sportin-pitch-offer';
+  const asked = () => { try { return localStorage.getItem(KEY); } catch (e) { return '1'; } };
+  function offer() {
+    if (on || asked() || getComputedStyle(btn).display === 'none') return;
+    const card = document.createElement('div'); card.className = 'pitch-offer'; card.setAttribute('role', 'dialog'); card.setAttribute('aria-labelledby', 'pitchOfferH');
+    card.innerHTML = '<p class="pitch-offer__h" id="pitchOfferH">Take the guided tour?</p>'
+      + '<p class="pitch-offer__p">A voice tells the story while the page scrolls itself. About 4 minutes, sound on.</p>'
+      + '<div class="pitch-offer__b"><button type="button" class="pitch-offer__go"><span class="pitch-open__dot" aria-hidden="true"></span>Start the guided tour</button>'
+      + '<button type="button" class="pitch-offer__no">I\'ll explore myself</button></div>';
+    document.body.appendChild(card);
+    const close = (v) => { try { localStorage.setItem(KEY, v); } catch (e) { /* asks again next visit */ } card.classList.remove('is-on'); window.removeEventListener('keydown', esc); setTimeout(() => card.remove(), 400); };
+    const esc = (e) => { if (e.key === 'Escape') close('no'); };
+    card.querySelector('.pitch-offer__go').addEventListener('click', async () => { close('yes'); await open(); play(); });
+    card.querySelector('.pitch-offer__no').addEventListener('click', () => close('no'));
+    window.addEventListener('keydown', esc);
+    requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('is-on')));
+  }
+
   // The Present button sits next to the light/dark switch. A #pitch link opens the intro.
-  const ready = () => { placeBtn(); if (location.hash === '#pitch') open(); };
+  const ready = () => { placeBtn(); if (location.hash === '#pitch') open(); else setTimeout(offer, 1200); };
   if (document.readyState === 'complete') ready(); else window.addEventListener('load', ready);
   window.addEventListener('hashchange', () => { if (location.hash === '#pitch') open(); });
   window.pitch = { open, play, stop, finish, go: (i) => { if (ui.dataset.state !== 'play') { show('play'); setPlaying(true); } loadPage(i); }, seek: (s) => { clock = s; if (hasAudio) audio.currentTime = s; }, state: () => ({ page: pages[k] && pages[k].n, clock, dur, hasAudio, line: cap.textContent, held, state: ui.dataset.state }) }; // debugging
