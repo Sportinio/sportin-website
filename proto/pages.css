@@ -1,13 +1,13 @@
 /* Page blocks: every page sits on its own rounded block in one of three soft tones, so the deck
    reads as a run of cards. Light: grey, pale blue, soft pink. Dark: deep versions of the same.
    On a tinted page the cards inside use the surface colour (white, or deep navy in dark) so they
-   stay distinct. 01 (video), 03 (the blue jelly), 04 (the engine, lit for white) and 10 (dark)
-   keep their own. */
+   stay distinct. 01 (video), 03 (the blue jelly) and 10 (dark) keep their own. */
 :root { --pg-grey: #f2f4f8; --pg-blue: #e8eeff; --pg-pink: #fdecf2; }
 :root[data-theme='dark'] { --pg-grey: #161e2e; --pg-blue: #111a34; --pg-pink: #241622; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) { --pg-grey: #161e2e; --pg-blue: #111a34; --pg-pink: #241622; } }
 
 #problem.block { background: var(--pg-grey); }
+#engine > .engine__stick { background: var(--pg-blue); }
 #formats.block { background: var(--pg-pink); }
 #features > .feat__stick { background: var(--pg-grey); }
 #ugc.block { background: var(--pg-blue); }
