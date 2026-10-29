@@ -29,8 +29,8 @@
   }
   html, body { margin: 0; padding: 0; overflow: hidden; background: #080d1e; }
   :root {
-    --brand-blue: rgb(7, 81, 251);
-    --rule-blue: rgb(126, 163, 255);   /* #7EA3FF */
+    --brand-blue: rgb(215, 25, 45); /* demo club colour (Northside FC) */
+    --rule-blue: rgb(255, 140, 150);   /* light club red (was #7EA3FF) */
     --icon-grey: rgb(152, 160, 181);   /* #98A0B5 */
     --dark-bg: rgb(8, 13, 30);
     --display: "BigShouldersDisplay-ExtraBold", -apple-system, "SF Pro Display", system-ui, sans-serif;
@@ -92,7 +92,7 @@
     font-family: var(--text); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
     color: rgba(255, 255, 255, 0.68); line-height: normal;
   }
-  .stat .rule { width: 98.667px; height: 0.75px; background: rgba(126, 163, 255, 0.4); }   /* 296/3 */
+  .stat .rule { width: 98.667px; height: 0.75px; background: rgba(255, 140, 150, 0.4); }   /* 296/3, light club red */
 
   .quote { text-shadow: 0 0 9.333px rgba(0, 0, 0, 0.5); }
   .quote div {
@@ -111,12 +111,12 @@
 </head>
 <body>
 <div id="card">
-  <img class="layer photo" src="assets/card-photo-back.jpg" alt="">
+  <img class="layer photo" src="assets/card-photo-back-club.jpg" alt="">
   <div class="layer scrim"></div>
 
   <div class="layer content">
     <div class="sp-top"></div>
-    <div class="row"><img class="wordmark" src="assets/card-sportin-wordmark.png" alt="SportIn"></div>
+    <div class="row"><img class="wordmark" src="assets/demo-northside-fc-wordmark.png" alt="Northside FC, a made-up demo club"></div>
     <div class="sp-wm"></div>
     <div class="row masthead">
       <span class="mag">THE MOVEMENT MAGAZINE</span>
@@ -184,7 +184,7 @@
     <div class="sp-footer"></div>
     <div class="row footer">
       <svg viewBox="0 0 7 11" aria-hidden="true">
-        <path d="M5.667 0L1.333 11" stroke="rgb(7,81,251)" stroke-width="1.333" stroke-linecap="round" fill="none"/>
+        <path d="M5.667 0L1.333 11" stroke="rgb(215,25,45)" stroke-width="1.333" stroke-linecap="round" fill="none"/>
       </svg>
       <span>Rise to the challenge.</span>
     </div>
