@@ -86,7 +86,5 @@
 
   const start = () => loops.forEach((l) => { if (!l.id) l.id = setInterval(l.fn, l.ms); });
   const stop = () => loops.forEach((l) => { clearInterval(l.id); l.id = 0; });
-  new IntersectionObserver(([en]) => {
-    if (en.isIntersecting) { sec.classList.add('is-in'); if (!reduced) start(); } else stop();
-  }, { threshold: 0.3 }).observe(sec);
+  window.whenShown(sec, { on: () => { sec.classList.add('is-in'); if (!reduced) start(); }, off: stop });
 })();

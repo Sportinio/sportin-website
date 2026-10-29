@@ -21,12 +21,15 @@
   }
   // One loop at a time: a start is pending or running until the page leaves the screen.
   let on = false; let wait = 0;
-  new IntersectionObserver(([en]) => {
-    if (en.isIntersecting) {
+  window.whenShown(sec, {
+    threshold: 0.2,
+    on: () => {
       sec.classList.add('is-seen');
       if (!on) { on = true; t0 = 0; wait = setTimeout(() => { raf = requestAnimationFrame(frame); }, 150); }
-    } else if (on) {
+    },
+    off: () => {
+      if (!on) return;
       on = false; clearTimeout(wait); cancelAnimationFrame(raf); raf = 0; steps.forEach((s) => s.classList.remove('is-on'));
-    }
-  }, { threshold: 0.2 }).observe(sec);
+    },
+  });
 })();

@@ -3,7 +3,5 @@
 (() => {
   const sec = document.getElementById('season');
   if (!sec) return;
-  new IntersectionObserver(([en], io) => {
-    if (en.isIntersecting) { sec.classList.add('is-in'); io.disconnect(); }
-  }, { threshold: 0.4 }).observe(sec);
+  window.whenShown(sec, { threshold: 0.4, on: () => sec.classList.add('is-in') });
 })();

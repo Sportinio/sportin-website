@@ -15,8 +15,6 @@
     };
     requestAnimationFrame(tick);
   }
-  new IntersectionObserver(([en], io) => {
-    if (!en.isIntersecting) return;
-    sec.classList.add('is-in'); if (!reduced) count(); io.disconnect();
-  }, { threshold: 0.3 }).observe(sec);
+  let done = false;
+  window.whenShown(sec, { on: () => { if (done) return; done = true; sec.classList.add('is-in'); if (!reduced) count(); } });
 })();
