@@ -75,11 +75,13 @@ Ranked by fan, by supporters' club, or by country. Because a fan in Dublin is st
 
 [excited] Three K, five K, ten K… a board for every distance.
 
-## 08 · Rewards (about 10 s)
+## 08 · Rewards (about 12 s)
 
 [warmly] Then come the rewards fans will actually run for.
 
-A free coffee. Twenty percent off the club shop. A stadium tour. [confident] You and your partners set the prize… fans earn it, step by step.
+From the club… money off match tickets. From your sponsors… their best offers. And from the café round the corner… a free coffee.
+
+[confident] You set the prizes… fans earn them, step by step.
 
 ## 09 · Content (about 8 s)
 
