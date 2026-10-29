@@ -1,0 +1,26 @@
+/* Pitch mode (pitch.js): the deck plays itself with a voice. While it runs the menu steps aside and
+   snapping is off, so the player's own scroll is smooth; the captions and the control bar sit at
+   the bottom of the screen, on a dark glass that reads over every page. */
+.pitch-open__dot { width: 8px; height: 8px; border-radius: 50%; background: #d7192d; }
+html.is-pitch, html.is-pitch.is-full { scroll-snap-type: none !important; scroll-behavior: auto !important; }
+html.is-pitch #nav { opacity: 0; pointer-events: none; transition: opacity 300ms ease; }
+
+.pitch { position: fixed; left: 50%; bottom: 28px; z-index: 60; display: grid; justify-items: center; gap: 14px; width: min(980px, calc(100vw - 32px)); transform: translateX(-50%); pointer-events: none; }
+.pitch[hidden] { display: none; }
+.pitch__cap { margin: 0; padding: 14px 24px; border-radius: 18px; background: rgba(8, 11, 20, 0.82); color: #fff; font-size: clamp(18px, 1.6vw, 24px); font-weight: 500; line-height: 1.35; text-align: center; text-wrap: balance; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.pitch__cap:empty { display: none; }
+.pitch__bar { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px; border-radius: 999px; background: rgba(8, 11, 20, 0.82); color: #fff; box-sizing: border-box; pointer-events: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.pitch__b { display: grid; place-items: center; width: 40px; height: 40px; flex: none; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.1); color: #fff; font: inherit; font-size: 24px; line-height: 1; cursor: pointer; }
+.pitch__b:hover { background: rgba(255, 255, 255, 0.18); }
+.pitch__b:focus-visible { outline: 2px solid #9bb8ff; outline-offset: 2px; }
+.pitch__toggle { background: #fff; }
+.pitch__toggle i { width: 12px; height: 14px; border-inline: 4px solid #0b0f1a; box-sizing: border-box; } /* pause */
+.pitch.is-paused .pitch__toggle i { width: 0; height: 0; margin-left: 4px; border-inline: 0; border-left: 12px solid #0b0f1a; border-block: 8px solid transparent; } /* play */
+.pitch__where { display: flex; gap: 10px; align-items: baseline; margin-left: 8px; white-space: nowrap; font-size: 14px; }
+.pitch__where b { font-family: var(--mono); font-weight: 500; color: rgba(255, 255, 255, 0.7); }
+.pitch__prog { flex: 1; height: 4px; margin: 0 10px; border-radius: 2px; background: rgba(255, 255, 255, 0.16); overflow: hidden; }
+.pitch__prog i { display: block; height: 100%; background: #d7192d; transform-origin: left; transform: scaleX(var(--p, 0)); }
+@media (max-width: 700px) {
+  .pitch { bottom: 14px; }
+  .pitch__where span { display: none; }
+}
