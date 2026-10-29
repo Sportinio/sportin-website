@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SportIn · Matchday live</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" />
+  <link rel="stylesheet" href="/proto/matchday.css?v=1" />
+</head>
+<body>
+  <!-- Hero prototype: one fan-league match, live, then the whole matchday and the table.
+       UI only for now; the commentary audio will drive the same timeline (matchday.js). -->
+  <main class="mdx" id="matchday" aria-label="Matchday live">
+    <div class="mdx__bg" aria-hidden="true">
+      <video src="/proto/media/hv-fan.mp4?v=3" poster="/proto/media/hv-fan.jpg?v=3" muted playsinline loop autoplay></video>
+      <div class="mdx__lines"></div><div class="mdx__shade"></div>
+    </div>
+
+    <header class="mdx__top">
+      <img class="mdx__logo" src="/assets/site/logo/sportin-wordmark-white.svg" alt="SportIn" />
+      <div class="mdx__title">
+        <p class="mdx__league">Northside FC Fan League</p>
+        <p class="mdx__day">Matchday 3 &middot; Saturday, 3 October</p>
+        <span class="mdx__rule"><i></i></span>
+      </div>
+      <span class="mdx__live"><i></i><b>Live</b><em>Full time</em></span>
+    </header>
+
+    <section class="mdx__match" aria-live="off">
+      <div class="mdx__side mdx__side--a" data-team="eagles"><span class="mdx__crest"></span><b class="mdx__name">Riverside Eagles</b><small><span class="mdx__fans">0</span> fans running</small></div>
+      <div class="mdx__mid">
+        <p class="mdx__score"><span class="mdx__s mdx__s--a">0.0</span><i>&ndash;</i><span class="mdx__s mdx__s--b">0.0</span></p>
+        <p class="mdx__clock">0&prime;</p>
+        <span class="mdx__mo" aria-hidden="true"><i></i></span>
+      </div>
+      <div class="mdx__side mdx__side--b" data-team="wolves"><span class="mdx__crest"></span><b class="mdx__name">Valley Wolves</b><small><span class="mdx__fans">0</span> fans running</small></div>
+      <span class="mdx__ft" aria-hidden="true">FT</span>
+      <span class="mdx__sweep" aria-hidden="true"></span>
+    </section>
+    <p class="mdx__cap" aria-live="polite"></p>
+
+    <section class="mdx__round" aria-label="Matchday 3 results and table">
+      <div class="mdx__list">
+        <p class="mdx__h"><b>Matchday 3</b><span>6 matches</span></p>
+        <ol class="mdx__fx"></ol>
+      </div>
+      <div class="mdx__table">
+        <p class="mdx__h"><b>Table</b><span>Top 6</span></p>
+        <div class="mdx__th"><span>#</span><span>Team</span><span>P</span><span>Pts</span></div>
+        <ol class="mdx__tb"></ol>
+      </div>
+    </section>
+
+    <div class="mdx__end">
+      <p class="mdx__tag">Every week. All season. <em>Team against team.</em></p>
+      <h1 class="mdx__head">Give every fan a part to&nbsp;<em>play</em>.</h1>
+      <p class="mdx__sub">SportIn turns fan communities into active ecosystems that generate new revenue and measurable impact by gamifying real-world movement.</p>
+    </div>
+
+    <div class="mdx__ctl">
+      <span class="mdx__note">UI preview &middot; commentary next</span>
+      <button type="button" class="mdx__btn mdx__replay">Replay</button>
+    </div>
+  </main>
+  <script src="/proto/matchday.js?v=1" defer></script>
+</body>
+</html>
