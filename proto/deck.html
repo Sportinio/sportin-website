@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="/proto/app-screens.css?v=7" />
   <link rel="stylesheet" href="/proto/ugc.css?v=10" />
   <link rel="stylesheet" href="/proto/season.css?v=1" />
+  <link rel="stylesheet" href="/proto/pay.css?v=1" />
   <link rel="stylesheet" href="/proto/delivery.css?v=8" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
   <meta name="color-scheme" content="light dark" />
@@ -599,12 +600,29 @@
     </div>
   </section>
 
+  <!-- 12 Revenue: the path from a fan who plays to a fan who pays (pay.css / pay.js), then what
+       sponsors can buy. A token runs the four steps and lights each one in turn. -->
+  <section class="sec block pay" id="pay" aria-labelledby="payTitle">
+    <div class="wrap">
+      <p class="pay__idx feat__idx"><b>12</b><span>Revenue</span><em>Tickets, memberships, sponsors</em></p>
+      <h2 class="pay__title" id="payTitle">From fans who play to <em>fans who pay</em>.</h2>
+      <ol class="pay__path">
+        <li class="pay__step"><span class="pay__k">Plays</span><b class="pay__big">8,000</b><span class="pay__s">steps today</span></li>
+        <li class="pay__step"><span class="pay__k">Earns</span><b class="pay__big">+120</b><span class="pay__s">club points</span></li>
+        <li class="pay__step"><span class="pay__k">Unlocks</span><b class="pay__big pay__big--sm">Priority window</b><span class="pay__s">season tickets</span></li>
+        <li class="pay__step pay__step--ticket"><span class="pay__k">Pays</span><span class="pay__ticket"><b>Northside FC</b><span>Season 26/27</span><i class="pay__stamp">Renewed</i></span></li>
+        <i class="pay__track" aria-hidden="true"><i class="pay__token"></i></i>
+      </ol>
+      <p class="pay__sponsors"><span>Sponsors buy</span><b>Sponsored leagues</b><b>Branded rewards</b><b>Premium seasons</b></p>
+    </div>
+  </section>
+
   <!-- 10 Delivery: a pinned scroll scene (delivery.css / delivery.js). One phone, three ways to launch:
        the SportIn app, white label (the same app in a demo brand), and the engine inside the client's own app. -->
   <section class="dl" id="delivery" data-steps="2" aria-labelledby="dlTitle">
     <div class="dl__stick"><div class="wrap dl__grid">
       <div class="dl__copy">
-        <p class="dl__idx feat__idx"><b>12</b><span>Delivery</span><em>Three ways to launch</em></p>
+        <p class="dl__idx feat__idx"><b>13</b><span>Delivery</span><em>Three ways to launch</em></p>
         <h2 class="dl__title" id="dlTitle">Launch it <em>your way</em>.</h2>
         <ol class="dl__list">
           <li class="dl__row"><p class="dl__name">The SportIn app</p><p class="dl__line">Members join the SportIn app and play from day one.</p><p class="dl__effort" aria-label="Effort: low"><i class="is-on"></i><i></i><i></i><span>Fastest start</span></p></li>
@@ -668,7 +686,7 @@
     <!-- Three lanes drawn around the content by closing-track.js, so every oval stays whole at any size. -->
     <svg class="closing__lanes" aria-hidden="true"><rect /><rect /><rect /></svg>
     <div class="wrap closing__inner">
-      <p class="feat__idx" data-reveal style="--d:.03s"><b>13</b><span>Get started</span><em>Pilot</em></p>
+      <p class="feat__idx" data-reveal style="--d:.03s"><b>14</b><span>Get started</span><em>Pilot</em></p>
       <h2 class="display display--xl" id="closingTitle" data-reveal style="--d:.06s">Start with <em>a pilot</em>.</h2>
       <div class="closing__actions" data-reveal style="--d:.12s"><a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Plan your pilot <span class="btn__arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="https://apps.apple.com/us/app/sportin-rise-to-the-challenge/id6762152651" target="_blank" rel="noopener">Try for Free<span class="sr-only"> (opens the App Store)</span></a></div>
     </div>
@@ -677,7 +695,7 @@
   <!-- 14 The film: the SportIn product film, 16:9, with a big play button (film.css / film.js). -->
   <section class="sec block film" id="film" aria-labelledby="filmTitle">
     <div class="wrap film__inner">
-      <div class="film__head"><p class="film__idx feat__idx"><b>14</b><span>The product</span><em>The film</em></p><h2 class="film__title" id="filmTitle">See SportIn <em>in action</em>.</h2></div>
+      <div class="film__head"><p class="film__idx feat__idx"><b>15</b><span>The product</span><em>The film</em></p><h2 class="film__title" id="filmTitle">See SportIn <em>in action</em>.</h2></div>
       <figure class="film__frame">
         <video class="film__video" src="/proto/media/film/sportin-film.mp4" poster="/proto/media/film/poster.jpg" playsinline preload="none"></video>
         <button class="film__play" type="button" aria-label="Play the SportIn film"><svg width="34" height="34" viewBox="0 0 30 30" aria-hidden="true"><path d="M10 6.5v17l14-8.5z" fill="currentColor"/></svg></button>
@@ -731,6 +749,7 @@
 <script type="module" src="/proto/ugc.js?v=4"></script>
 <script type="module" src="/proto/tech-b.js?v=4"></script>
 <script src="/proto/season.js?v=1" defer></script>
+<script src="/proto/pay.js?v=1" defer></script>
 <script type="module" src="/proto/delivery.js?v=10"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
