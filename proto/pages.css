@@ -33,3 +33,17 @@
 @media (min-width: 900px) {
   #live .mdx__rows { max-height: calc(6 * 61px); overflow-y: auto; scrollbar-width: thin; }
 }
+/* 06 League of Brands, the clean board: no line under the title, no caption bar, and each row only
+   the teams, crests and score (status, flags, members and likes stay on the standalone page). */
+#live .mdx__hero { margin-bottom: 28px; }
+#live .mdx__cap, #live .mdx__t small, #live .mdx__t b img { display: none; }
+#live .mdx__st { visibility: hidden; }
+#live .mdx__rw { grid-template-columns: 40px minmax(0, 1fr) 40px; }
+#live .mdx__t b { font-size: 16px; }
+#live .mdx__sc { font-size: 22px; }
+#live .mdx__xi { padding-left: 40px; }
+@media (max-width: 760px) {
+  #live .mdx__rw { grid-template-columns: 8px minmax(0, 1fr) 16px; }
+  #live .mdx__t b { font-size: 13px; }
+  #live .mdx__xi { padding-left: 10px; }
+}

@@ -1,0 +1,48 @@
+/* 07 Game of Run (gor.js): the territory format on a dark page. The realm map from game-of-run.com
+   plays behind a territory table and a feed of live claims. Flat panels, no glows. */
+#gameofrun.block { background: #0a0d16; color: #fff; }
+.gor__in { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr); align-items: center; gap: clamp(28px, 4vw, 64px); }
+#gameofrun .feat__idx { display: flex; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--body); font-size: 14px; letter-spacing: 0; text-transform: none; }
+#gameofrun .feat__idx b { color: #e3b860; }
+#gameofrun .feat__idx span { color: #fff; }
+#gameofrun .feat__idx em { color: rgba(255, 255, 255, 0.7); }
+#gameofrun .feat__idx b + span { border-left-color: rgba(255, 255, 255, 0.25); }
+.gor__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(34px, 3.6vw, 56px); line-height: 1.02; letter-spacing: -0.02em; color: #fff; }
+.gor__title em { display: block; font-style: normal; color: #e3b860; }
+.gor__lede { margin: 18px 0 0; max-width: 34em; font-size: 18px; line-height: 1.5; color: rgba(255, 255, 255, 0.75); }
+.gor__steps { display: grid; gap: 14px; margin: 28px 0 0; padding: 0; list-style: none; counter-reset: gor; }
+.gor__steps li { display: grid; grid-template-columns: 34px 72px minmax(0, 1fr); align-items: baseline; gap: 10px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.12); counter-increment: gor; }
+.gor__steps li::before { content: counter(gor, decimal-leading-zero); font-family: var(--mono); font-size: 12px; color: rgba(255, 255, 255, 0.45); }
+.gor__steps b { font-family: var(--display); font-weight: 800; font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase; color: #e3b860; }
+.gor__steps span { font-size: 15px; color: rgba(255, 255, 255, 0.8); }
+
+.gor__map { position: relative; margin: 0; aspect-ratio: 1804 / 1148; border-radius: 24px; overflow: hidden; background: #05070d url('/proto/media/gor/map-poster.webp?v=1') center / cover; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.gor__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* The territory table: four teams, re-ranked as they claim. */
+.gor__board { position: absolute; top: 16px; right: 16px; width: min(270px, 46%); padding: 14px 14px 8px; border-radius: 16px; background: rgba(8, 10, 18, 0.82); box-shadow: inset 0 0 0 1px rgba(227, 184, 96, 0.28); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.gor__bh { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 8px; }
+.gor__bh b { font-family: var(--display); font-weight: 800; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #e3b860; }
+.gor__bh span { font-family: var(--mono); font-size: 10px; color: rgba(255, 255, 255, 0.55); }
+.gor__teams { position: relative; height: calc(4 * 46px); margin: 0; padding: 0; list-style: none; }
+.gor__teams li { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: 10px; height: 42px; transform: translateY(calc(var(--r, 0) * 46px)); transition: transform 700ms var(--ease); }
+.gor__teams img { width: 30px; height: 36px; object-fit: contain; }
+.gor__teams b { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gor__teams span { font-family: var(--mono); font-size: 13px; color: #e3b860; font-variant-numeric: tabular-nums; }
+.gor__teams li.is-up span { color: #fff; }
+/* The latest claim, bottom left. */
+.gor__feed { position: absolute; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 10px; max-width: calc(100% - 32px); margin: 0; padding: 8px 14px 8px 8px; border-radius: 14px; background: rgba(8, 10, 18, 0.82); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: opacity 300ms ease, transform 300ms var(--ease); }
+.gor__feed.is-swap { opacity: 0; transform: translateY(6px); }
+.gor__crest { width: 34px; height: 34px; object-fit: contain; }
+.gor__ev { font-size: 14px; color: rgba(255, 255, 255, 0.9); }
+.gor__ev b { color: #e3b860; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .gor__in { grid-template-columns: 1fr; }
+  /* On a phone the map comes first, the table and the latest claim stack under it. */
+  .gor__map { display: grid; gap: 12px; aspect-ratio: auto; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
+  .gor__video { position: relative; inset: auto; height: auto; aspect-ratio: 1804 / 1148; border-radius: 20px; background: #05070d; }
+  .gor__board, .gor__feed { position: static; width: auto; max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gor__teams li, .gor__feed { transition: none; }
+}

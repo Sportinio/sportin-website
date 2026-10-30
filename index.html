@@ -35,9 +35,10 @@
   <link rel="stylesheet" href="/proto/report.css?v=1" />
   <link rel="stylesheet" href="/proto/pilot.css?v=2" />
   <link rel="stylesheet" href="/proto/pitch/pitch.css?v=7" />
-  <link rel="stylesheet" href="/proto/pages.css?v=5" />
+  <link rel="stylesheet" href="/proto/pages.css?v=8" />
   <link rel="stylesheet" href="/proto/features-viz.css?v=5" />
-  <link rel="stylesheet" href="/proto/matchday.css?v=5" />
+  <link rel="stylesheet" href="/proto/matchday.css?v=6" />
+  <link rel="stylesheet" href="/proto/gor.css?v=2" />
   <link rel="stylesheet" href="/proto/delivery.css?v=8" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
   <meta name="color-scheme" content="light dark" />
@@ -209,12 +210,53 @@
     </div>
   </section>
 
+  <!-- 06: League of Brands, the league format: a live matchday as in the app, with commentary (matchday.js) -->
+  <section class="sec block live-day" id="live" aria-labelledby="liveTitle">
+    <div class="wrap mdx" id="matchday">
+      <header class="mdx__hero">
+        <p class="feat__idx"><b>06</b><span>Format</span><em>League of Brands</em></p>
+        <h2 class="mdx__head" id="liveTitle">A league, every <em>Saturday</em>.</h2>
+      </header>
+      <section class="mdx__day is-open" aria-label="Matchday 3 matches">
+        <div class="mdx__dh mdx__dh--ctl"><b class="mdx__dn">03</b><span class="mdx__dd">Matchday 3</span><span class="mdx__ctl"><button type="button" class="mdx__play" aria-label="Listen to Matchday 3 live"><i class="mdx__ico" aria-hidden="true"></i><span class="mdx__sr">Listen live</span></button><button type="button" class="mdx__stop" aria-label="Stop" hidden><i aria-hidden="true"></i><span class="mdx__sr">Stop</span></button><span class="mdx__time">3:50</span></span><span class="mdx__live"><i></i>Live</span><span class="mdx__dc">6</span><span class="mdx__chev mdx__chev--up" aria-hidden="true"></span></div>
+        <span class="mdx__prog" aria-hidden="true"><i></i></span>
+        <p class="mdx__cap" aria-live="polite"><span class="mdx__mic" aria-hidden="true"><i></i><i></i><i></i></span><span class="mdx__line">Press play to hear Matchday 3, called live.</span></p>
+        <ol class="mdx__rows"></ol>
+      </section>
+      <audio class="mdx__audio" src="/proto/media/matchday/commentary.mp3?v=1" preload="none"></audio>
+    </div>
+  </section>
+
+  <!-- 07: Game of Run, the territory format: the realm map (from game-of-run.com) with live claims (gor.js) -->
+  <section class="sec block gor" id="gameofrun" aria-labelledby="gorTitle">
+    <div class="wrap gor__in">
+      <div class="gor__text">
+        <p class="feat__idx"><b>07</b><span>Format</span><em>Game of Run</em></p>
+        <h2 class="gor__title" id="gorTitle">Run the city. <em>Claim the map.</em></h2>
+        <p class="gor__lede">Our second format. Teams of ten fans claim real landmarks by walking and running, hold them together, and take the city&rsquo;s House.</p>
+        <ol class="gor__steps">
+          <li><b>Run</b><span>Every validated kilometre counts.</span></li>
+          <li><b>Claim</b><span>Landmarks turn your team&rsquo;s colour.</span></li>
+          <li><b>Reign</b><span>Hold the most and your team becomes the House.</span></li>
+        </ol>
+      </div>
+      <figure class="gor__map">
+        <video class="gor__video" src="/proto/media/gor/map.mp4?v=1" poster="/proto/media/gor/map-poster.webp?v=1" muted loop playsinline preload="metadata" aria-hidden="true"></video>
+        <div class="gor__board">
+          <p class="gor__bh"><b>Territory</b><span>Season 1 &middot; Week 6</span></p>
+          <ol class="gor__teams"></ol>
+        </div>
+        <p class="gor__feed"><img class="gor__crest" src="/proto/media/gor/house-brasov.webp?v=1" alt="" /><span class="gor__ev"></span></p>
+      </figure>
+    </div>
+  </section>
+
   <!-- COMPETITIONS: one big format per scroll, moving sideways -->
   <section class="feat" id="features" data-steps="2" aria-label="The engine, layer by layer">
     <div class="feat__stick">
       <div class="feat__track">
         <article class="feat__panel feat__panel--app" aria-labelledby="featRankTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>06</b><span>Leaderboard</span><em>Walking</em></p><h2 class="feat__title" id="featRankTitle">Every fan, <em>on the board</em>.</h2><p class="feat__lede">By fan, supporters&rsquo; club or country.</p></div>
+          <div class="feat__intro"><p class="eng-k feat__idx"><b>08</b><span>Leaderboard</span><em>Walking</em></p><h2 class="feat__title" id="featRankTitle">Every fan, <em>on the board</em>.</h2><p class="feat__lede">By fan, supporters&rsquo; club or country.</p></div>
           <div class="big fv fv--board" data-demo="fv-board" aria-hidden="true">
             <div class="fv__card">
               <div class="fv__tabs"><span class="is-on">Individuals</span><span>Supporters&rsquo; clubs</span><span>Countries</span></div>
@@ -225,7 +267,7 @@
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRunTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>07</b><span>Leaderboard</span><em>Running</em></p><h2 class="feat__title" id="featRunTitle">Fans racing <em>fans</em>.</h2><p class="feat__lede">A board for every distance.</p></div>
+          <div class="feat__intro"><p class="eng-k feat__idx"><b>09</b><span>Leaderboard</span><em>Running</em></p><h2 class="feat__title" id="featRunTitle">Fans racing <em>fans</em>.</h2><p class="feat__lede">A board for every distance.</p></div>
           <div class="big fv fv--race" data-demo="fv-race" aria-hidden="true">
             <div class="fv__card">
               <div class="md"><div class="md__c" data-d="0"><img src="/proto/media/app/race_3k.png" alt="" /><b>3K</b></div><div class="md__c" data-d="1"><img src="/proto/media/app/race_5k.png" alt="" /><b>5K</b></div><div class="md__c" data-d="2"><img src="/proto/media/app/race_10k.png" alt="" /><b>10K</b></div><div class="md__c" data-d="3"><img src="/proto/media/app/race_15k.png" alt="" /><b>15K</b></div><div class="md__c" data-d="4"><img src="/proto/media/app/race_half.png" alt="" /><b>21K</b></div><div class="md__c" data-d="5"><img src="/proto/media/app/race_full.png" alt="" /><b>42K</b></div></div>
@@ -236,7 +278,7 @@
           </div>
         </article>
         <article class="feat__panel feat__panel--app" aria-labelledby="featRewTitle">
-          <div class="feat__intro"><p class="eng-k feat__idx"><b>08</b><span>Reward</span><em>Club rewards</em></p><h2 class="feat__title" id="featRewTitle">Rewards fans <em>run for</em>.</h2><p class="feat__lede">From the club, its sponsors and local businesses.</p></div>
+          <div class="feat__intro"><p class="eng-k feat__idx"><b>10</b><span>Reward</span><em>Club rewards</em></p><h2 class="feat__title" id="featRewTitle">Rewards fans <em>run for</em>.</h2><p class="feat__lede">From the club, its sponsors and local businesses.</p></div>
           <div class="big fv fv--rewards" data-demo="fv-rewards" aria-hidden="true">
             <div class="fv__card">
               <p class="fvw__count"><b>0</b><span>steps today</span></p>
@@ -259,7 +301,7 @@
     <div class="wrap">
       <div class="ugc__head">
         <div>
-          <p class="ugc__kicker feat__idx"><b>09</b><span>Content</span><em>Made by fans</em></p>
+          <p class="ugc__kicker feat__idx"><b>11</b><span>Content</span><em>Made by fans</em></p>
           <h2 class="ugc__title" id="ugcTitle">Your crest on <em>every post</em>.</h2>
         </div>
       </div>
@@ -272,7 +314,7 @@
   <section class="sec block tb" id="technology" aria-labelledby="techTitle">
     <div class="tb__inner">
     <div class="tb__head">
-      <p class="tb__idx"><b>10</b><span>Technology</span><em>Built in-house</em></p>
+      <p class="tb__idx"><b>12</b><span>Technology</span><em>Built in-house</em></p>
       <h2 class="tb__title" id="techTitle">Every run, <em>told like a match</em>.</h2>
     </div>
 
@@ -586,7 +628,7 @@
        line through every week, summer included (season.css / season.js). Illustrative figures. -->
   <section class="sec block ssn" id="season" aria-labelledby="ssnTitle">
     <div class="wrap">
-      <p class="ssn__idx feat__idx"><b>11</b><span>Season</span><em>Every week of the year</em></p>
+      <p class="ssn__idx feat__idx"><b>13</b><span>Season</span><em>Every week of the year</em></p>
       <h2 class="ssn__title" id="ssnTitle">The season <em>never stops</em>.</h2>
       <div class="ssn__stage"><svg class="ssn__chart" viewBox="0 0 1040 300" role="img" aria-label="Illustrative season: about 19 home matches between August and May, while fans take part in SportIn games every week of the year, summer included."><rect class="ssn__summer" x="880.0" y="20" width="160.0" height="230" rx="10"/><text class="ssn__tag" x="894.0" y="44">Summer</text><line class="ssn__base" x1="0" y1="250" x2="1040" y2="250"/><rect class="ssn__bar" x="26.0" y="40" width="8" height="210" rx="4" style="--i:0"/><rect class="ssn__bar" x="66.0" y="40" width="8" height="210" rx="4" style="--i:1"/><rect class="ssn__bar" x="106.0" y="40" width="8" height="210" rx="4" style="--i:2"/><rect class="ssn__bar" x="146.0" y="40" width="8" height="210" rx="4" style="--i:3"/><rect class="ssn__bar" x="186.0" y="40" width="8" height="210" rx="4" style="--i:4"/><rect class="ssn__bar" x="226.0" y="40" width="8" height="210" rx="4" style="--i:5"/><rect class="ssn__bar" x="266.0" y="40" width="8" height="210" rx="4" style="--i:6"/><rect class="ssn__bar" x="346.0" y="40" width="8" height="210" rx="4" style="--i:7"/><rect class="ssn__bar" x="386.0" y="40" width="8" height="210" rx="4" style="--i:8"/><rect class="ssn__bar" x="426.0" y="40" width="8" height="210" rx="4" style="--i:9"/><rect class="ssn__bar" x="466.0" y="40" width="8" height="210" rx="4" style="--i:10"/><rect class="ssn__bar" x="506.0" y="40" width="8" height="210" rx="4" style="--i:11"/><rect class="ssn__bar" x="546.0" y="40" width="8" height="210" rx="4" style="--i:12"/><rect class="ssn__bar" x="586.0" y="40" width="8" height="210" rx="4" style="--i:13"/><rect class="ssn__bar" x="626.0" y="40" width="8" height="210" rx="4" style="--i:14"/><rect class="ssn__bar" x="706.0" y="40" width="8" height="210" rx="4" style="--i:15"/><rect class="ssn__bar" x="746.0" y="40" width="8" height="210" rx="4" style="--i:16"/><rect class="ssn__bar" x="786.0" y="40" width="8" height="210" rx="4" style="--i:17"/><rect class="ssn__bar" x="826.0" y="40" width="8" height="210" rx="4" style="--i:18"/><path class="ssn__line" d="M10.0 131.2 C13.3 130.7 23.3 129.3 30.0 128.5 C36.7 127.7 43.3 127.0 50.0 126.4 C56.7 125.7 63.3 125.2 70.0 124.9 C76.7 124.5 83.3 124.3 90.0 124.2 C96.7 124.2 103.3 124.3 110.0 124.5 C116.7 124.7 123.3 125.1 130.0 125.5 C136.7 126.0 143.3 126.5 150.0 127.1 C156.7 127.7 163.3 128.4 170.0 129.0 C176.7 129.6 183.3 130.3 190.0 130.8 C196.7 131.4 203.3 131.9 210.0 132.3 C216.7 132.8 223.3 133.1 230.0 133.4 C236.7 133.6 243.3 133.8 250.0 133.8 C256.7 133.9 263.3 133.9 270.0 133.8 C276.7 133.8 283.3 133.6 290.0 133.5 C296.7 133.4 303.3 133.2 310.0 133.1 C316.7 133.0 323.3 132.9 330.0 132.9 C336.7 133.0 343.3 133.0 350.0 133.2 C356.7 133.4 363.3 133.7 370.0 134.1 C376.7 134.5 383.3 135.1 390.0 135.7 C396.7 136.3 403.3 137.1 410.0 137.8 C416.7 138.6 423.3 139.5 430.0 140.3 C436.7 141.2 443.3 142.1 450.0 142.9 C456.7 143.7 463.3 144.6 470.0 145.2 C476.7 145.9 483.3 146.6 490.0 147.0 C496.7 147.5 503.3 147.8 510.0 148.0 C516.7 148.2 523.3 148.2 530.0 148.1 C536.7 148.0 543.3 147.7 550.0 147.3 C556.7 147.0 563.3 146.4 570.0 145.8 C576.7 145.3 583.3 144.6 590.0 143.9 C596.7 143.2 603.3 142.4 610.0 141.7 C616.7 141.1 623.3 140.4 630.0 139.8 C636.7 139.2 643.3 138.6 650.0 138.2 C656.7 137.8 663.3 137.4 670.0 137.2 C676.7 136.9 683.3 136.8 690.0 136.7 C696.7 136.6 703.3 136.7 710.0 136.7 C716.7 136.8 723.3 136.9 730.0 137.0 C736.7 137.1 743.3 137.3 750.0 137.3 C756.7 137.4 763.3 137.4 770.0 137.4 C776.7 137.3 783.3 137.2 790.0 136.9 C796.7 136.7 803.3 136.3 810.0 135.9 C816.7 135.4 823.3 134.9 830.0 134.2 C836.7 133.6 843.3 132.9 850.0 132.1 C856.7 131.4 863.3 129.6 870.0 129.7 C876.7 129.9 883.3 132.8 890.0 133.1 C896.7 133.3 903.3 131.7 910.0 131.1 C916.7 130.6 923.3 130.1 930.0 129.8 C936.7 129.5 943.3 129.4 950.0 129.4 C956.7 129.4 963.3 129.5 970.0 129.8 C976.7 130.1 983.3 130.5 990.0 131.1 C996.7 131.6 1003.3 132.3 1010.0 133.0 C1016.7 133.7 1026.7 134.9 1030.0 135.3" pathLength="1"/><circle class="ssn__dot" r="7" cx="1030.0" cy="135.3"/><text class="ssn__m" x="43.3" y="284">Aug</text><text class="ssn__m" x="130.0" y="284">Sep</text><text class="ssn__m" x="216.7" y="284">Oct</text><text class="ssn__m" x="303.3" y="284">Nov</text><text class="ssn__m" x="390.0" y="284">Dec</text><text class="ssn__m" x="476.7" y="284">Jan</text><text class="ssn__m" x="563.3" y="284">Feb</text><text class="ssn__m" x="650.0" y="284">Mar</text><text class="ssn__m" x="736.7" y="284">Apr</text><text class="ssn__m" x="823.3" y="284">May</text><text class="ssn__m" x="910.0" y="284">Jun</text><text class="ssn__m" x="996.7" y="284">Jul</text></svg></div>
       <p class="ssn__legend"><span class="ssn__key ssn__key--bar">Home matches</span><span class="ssn__key ssn__key--line">Fans taking part</span><span class="ssn__note">Illustrative</span></p>
@@ -597,7 +639,7 @@
        sponsors can buy. A token runs the four steps and lights each one in turn. -->
   <section class="sec block pay" id="pay" aria-labelledby="payTitle">
     <div class="wrap">
-      <p class="pay__idx feat__idx"><b>12</b><span>Revenue</span><em>Tickets, memberships, sponsors</em></p>
+      <p class="pay__idx feat__idx"><b>14</b><span>Revenue</span><em>Tickets, memberships, sponsors</em></p>
       <h2 class="pay__title" id="payTitle">From fans who play to <em>fans who pay</em>.</h2>
       <ol class="pay__path">
         <li class="pay__step"><span class="pay__k">Plays</span><b class="pay__big">8,000</b><span class="pay__s">steps today</span></li>
@@ -614,7 +656,7 @@
        (report.css / report.js). Sample figures, labelled as such. -->
   <section class="sec block rpt" id="fandata" aria-labelledby="rptTitle">
     <div class="wrap">
-      <p class="rpt__idx feat__idx"><b>13</b><span>Fan data</span><em>The season report</em></p>
+      <p class="rpt__idx feat__idx"><b>15</b><span>Fan data</span><em>The season report</em></p>
       <h2 class="rpt__title" id="rptTitle">Know every fan <em>who plays</em>.</h2>
       <div class="rpt__card">
         <div class="rpt__bar"><span class="rpt__club"><i aria-hidden="true">N</i>Northside FC</span><span class="rpt__meta">Season report &middot; weeks 1&ndash;12</span><span class="rpt__note">Sample figures</span></div>
@@ -631,7 +673,7 @@
   <section class="dl" id="delivery" data-steps="2" aria-labelledby="dlTitle">
     <div class="dl__stick"><div class="wrap dl__grid">
       <div class="dl__copy">
-        <p class="dl__idx feat__idx"><b>14</b><span>Delivery</span><em>Three ways to launch</em></p>
+        <p class="dl__idx feat__idx"><b>16</b><span>Delivery</span><em>Three ways to launch</em></p>
         <h2 class="dl__title" id="dlTitle">Launch it <em>your way</em>.</h2>
         <ol class="dl__list">
           <li class="dl__row"><p class="dl__name">The SportIn app</p><p class="dl__line">Fans join the SportIn app and play from day one.</p><p class="dl__effort" aria-label="Effort: low"><i class="is-on"></i><i></i><i></i><span>Fastest start</span></p></li>
@@ -695,7 +737,7 @@
     <!-- Three lanes drawn around the content by closing-track.js, so every oval stays whole at any size. -->
     <svg class="closing__lanes" aria-hidden="true"><rect /><rect /><rect /></svg>
     <div class="wrap closing__inner">
-      <p class="feat__idx" data-reveal style="--d:.03s"><b>15</b><span>Get started</span><em>Eight weeks</em></p>
+      <p class="feat__idx" data-reveal style="--d:.03s"><b>17</b><span>Get started</span><em>Eight weeks</em></p>
       <h2 class="display display--xl" id="closingTitle" data-reveal style="--d:.06s">An 8-week pilot, <em>between seasons</em>.</h2>
       <div class="plt" data-reveal style="--d:.1s" aria-label="Pilot plan: week 1 launch, weeks 2 to 7 the game is live, week 8 the season report."><div class="plt__weeks" aria-hidden="true"><span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span><span>W6</span><span>W7</span><span>W8</span></div><div class="plt__row"><span class="plt__b plt__b--1">Launch</span><span class="plt__b plt__b--2">Game live</span><span class="plt__b plt__b--3">Report</span></div><p class="plt__kpis"><span>We measure</span>Active fans &middot; Back every week &middot; New CRM contacts &middot; Offers redeemed</p></div>
       <div class="closing__actions" data-reveal style="--d:.12s"><a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Plan your pilot <span class="btn__arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="https://apps.apple.com/us/app/sportin-rise-to-the-challenge/id6762152651" target="_blank" rel="noopener">Try it free<span class="sr-only"> (opens the App Store)</span></a></div>
@@ -703,28 +745,6 @@
   </section>
 
   <!-- 16 The film: the SportIn fan film (made with tools/fan-film.html), 16:9, with a big play button (film.css / film.js). -->
-  <!-- 16: a live matchday of the club's fan league, as in the app, with commentary (matchday.js) -->
-  <section class="sec block live-day" id="live" aria-labelledby="liveTitle">
-    <div class="wrap mdx" id="matchday">
-      <header class="mdx__hero">
-        <p class="feat__idx"><b>16</b><span>Live</span><em>Northside FC Fan League &middot; Matchday 3</em></p>
-        <h2 class="mdx__head" id="liveTitle">Your fans are already <em>moving</em>.</h2>
-        <p class="mdx__sub">A Saturday in the Northside FC Fan League, called live. Open any match to see its fans.</p>
-        <div class="mdx__ctl">
-          <button type="button" class="mdx__play" aria-label="Listen to Matchday 3 live"><i class="mdx__ico" aria-hidden="true"></i><span>Listen live</span></button>
-          <button type="button" class="mdx__stop" aria-label="Stop" hidden><i aria-hidden="true"></i>Stop</button>
-          <span class="mdx__time">3:50</span>
-        </div>
-      </header>
-      <section class="mdx__day is-open" aria-label="Matchday 3 matches">
-        <div class="mdx__dh"><b class="mdx__dn">03</b><span class="mdx__dd">Saturday, 3 October 2026</span><span class="mdx__live"><i></i>Live</span><span class="mdx__dc">6</span><span class="mdx__chev mdx__chev--up" aria-hidden="true"></span></div>
-        <span class="mdx__prog" aria-hidden="true"><i></i></span>
-        <p class="mdx__cap" aria-live="polite"><span class="mdx__mic" aria-hidden="true"><i></i><i></i><i></i></span><span class="mdx__line">Press Listen live for the commentary.</span></p>
-        <ol class="mdx__rows"></ol>
-      </section>
-      <audio class="mdx__audio" src="/proto/media/matchday/commentary.mp3?v=1" preload="none"></audio>
-    </div>
-  </section>
 </main>
 <dialog class="film-modal" id="filmModal" aria-label="The SportIn film">
   <button class="film-modal__close" type="button" aria-label="Close the film"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -772,14 +792,15 @@
 <script type="module" src="/proto/features.js?v=32"></script>
 <script src="/proto/features-viz.js?v=5" defer></script>
 <script src="/proto/matchday-lines.js?v=1" defer></script>
-<script src="/proto/matchday.js?v=5" defer></script>
+<script src="/proto/matchday.js?v=6" defer></script>
+<script src="/proto/gor.js?v=1" defer></script>
 <script type="module" src="/proto/ugc.js?v=4"></script>
 <script type="module" src="/proto/tech-b.js?v=4"></script>
 <script src="/proto/season.js?v=2" defer></script>
 <script src="/proto/pay.js?v=2" defer></script>
 <script src="/proto/report.js?v=2" defer></script>
 <script src="/proto/pilot.js?v=2" defer></script>
-<script src="/proto/pitch/pitch.js?v=21" defer></script>
+<script src="/proto/pitch/pitch.js?v=22" defer></script>
 <script type="module" src="/proto/delivery.js?v=10"></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
