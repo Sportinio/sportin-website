@@ -25,7 +25,7 @@ html.is-full #why.tifo.page { margin: 0 !important; height: 100vh; border-radius
 .tifo__grain { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-image: radial-gradient(120% 90% at 50% 45%, rgba(4, 6, 13, 0) 55%, rgba(4, 6, 13, 0.7) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: auto, 220px 220px; }
 
 /* Crowd sound, on request only. */
-.tifo__sound { position: absolute; z-index: 3; left: clamp(16px, 3vw, 48px); bottom: clamp(20px, 4vh, 40px); display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 10px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 999px; background: rgba(4, 6, 13, 0.45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: rgba(255, 255, 255, 0.85); font-family: var(--display); font-stretch: var(--narrow); font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+.tifo__sound { position: absolute; z-index: 3; left: clamp(16px, 3vw, 48px); bottom: clamp(20px, 4vh, 40px); display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 10px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 999px; background: rgba(4, 6, 13, 0.45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: rgba(255, 255, 255, 0.85); font-family: var(--mono); font-weight: 500; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
 .tifo__sound:hover { border-color: rgba(255, 255, 255, 0.6); color: #fff; }
 .tifo__sound svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tifo__sound[aria-pressed='true'] { border-color: #3d74ff; color: #fff; background: rgba(47, 107, 255, 0.25); }
@@ -42,30 +42,30 @@ html.is-full .problem-pin > #problem.p2.page { top: 0 !important; margin: 0 !imp
 .p2__grain { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-image: linear-gradient(to bottom, rgba(4, 6, 13, 0.55) 0%, rgba(4, 6, 13, 0) 28%, rgba(4, 6, 13, 0) 60%, rgba(4, 6, 13, 0.72) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: auto, 220px 220px; }
 /* Painted letters, top left. */
 .p2__head { position: absolute; z-index: 2; left: clamp(20px, 3vw, 48px); right: clamp(20px, 3vw, 48px); top: calc(var(--nav-h) + clamp(28px, 5vh, 56px)); max-width: 980px; }
-.p2__idx { display: flex; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--display); font-stretch: var(--narrow); font-weight: 800; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
-.p2__idx b { font-size: 20px; letter-spacing: 0; color: #fff; line-height: 1; }
+.p2__idx { display: flex; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
+.p2__idx b { font-size: 20px; font-weight: 500; letter-spacing: 0; color: #fff; line-height: 1; }
 .p2__idx span { color: #fff; }
 .p2__idx em { font-style: normal; font-weight: 600; padding-left: 12px; border-left: 1px solid rgba(255, 255, 255, 0.3); }
-.p2__title { margin: 0; font-family: var(--display); font-stretch: var(--narrow); font-weight: 900; font-size: clamp(40px, 5.6vw, 84px); line-height: 0.96; letter-spacing: -0.005em; text-transform: uppercase; max-width: 14ch; text-shadow: 0 4px 40px rgba(0, 0, 0, 0.7); }
+.p2__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(38px, 5.2vw, 78px); line-height: 1.02; letter-spacing: -0.02em; max-width: 15ch; text-shadow: 0 4px 40px rgba(0, 0, 0, 0.7); }
 .p2__title em { font-style: normal; color: #4f86ff; }
-.p2__lede { margin: 22px 0 0; max-width: 40em; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.5; color: rgba(255, 255, 255, 0.9); text-shadow: 0 2px 20px rgba(0, 0, 0, 0.7); opacity: 0; transform: translateY(10px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+.p2__lede { margin: 22px 0 0; max-width: 40em; font-family: var(--body); font-size: clamp(17px, 1.35vw, 20px); line-height: 1.5; color: rgba(255, 255, 255, 0.9); text-shadow: 0 2px 20px rgba(0, 0, 0, 0.7); opacity: 0; transform: translateY(10px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
 .p2.is-late .p2__lede { opacity: 1; transform: none; }
 /* The four stages along the front rail; the one on screen is lit. */
 .p2__stages { position: absolute; z-index: 2; left: clamp(20px, 3vw, 48px); right: clamp(20px, 3vw, 48px); bottom: clamp(24px, 5vh, 56px); margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2.6vw, 40px); }
 .p2__stage { padding-top: 14px; border-top: 2px solid rgba(255, 255, 255, 0.22); color: rgba(255, 255, 255, 0.38); transition: color 400ms var(--ease), border-color 400ms var(--ease); }
 .p2__stage.is-on { color: #fff; border-top-color: #fff; }
-.p2__pct { display: block; font-family: var(--display); font-stretch: var(--narrow); font-weight: 900; font-size: clamp(34px, 4vw, 64px); line-height: 1; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
-.p2__n { display: inline-block; margin-top: 10px; font-family: var(--display); font-stretch: var(--narrow); font-weight: 700; font-size: 12px; letter-spacing: 0.1em; margin-right: 10px; opacity: 0.7; }
-.p2__label { display: inline-block; margin-top: 10px; font-family: var(--display); font-stretch: var(--narrow); font-weight: 800; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; }
+.p2__pct { display: block; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(34px, 4vw, 64px); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.p2__n { display: inline-block; margin-top: 10px; font-family: var(--mono); font-weight: 500; font-size: 12px; letter-spacing: 0.04em; margin-right: 10px; opacity: 0.7; }
+.p2__label { display: inline-block; margin-top: 10px; font-family: var(--mono); font-weight: 500; font-size: 14px; letter-spacing: 0.04em; }
 .p2__legacy { display: none; }
 .p2 .tifo__sound { left: auto; bottom: auto; right: clamp(16px, 3vw, 48px); top: calc(var(--nav-h) + 36px); }
 @media (max-width: 900px) {
   .p2__head { left: 16px; right: 16px; top: calc(var(--nav-h) + 20px); }
-  .p2__title { font-size: clamp(34px, 10.5vw, 48px); }
+  .p2__title { font-size: clamp(32px, 9.5vw, 44px); }
   .p2__lede { margin-top: 14px; font-size: 15px; }
   .p2__stages { left: 16px; right: 16px; bottom: 20px; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
   .p2__pct { font-size: 32px; }
-  .p2__label { font-size: 12px; }
+  .p2__label { font-size: 12.5px; }
   .p2 .tifo__sound { right: 12px; top: calc(var(--nav-h) + 24px); }
 }
 @media (prefers-reduced-motion: reduce) { .p2__lede { opacity: 1; transform: none; transition: none; } }
