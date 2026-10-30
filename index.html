@@ -40,7 +40,7 @@
   <link rel="stylesheet" href="/proto/gor.css?v=2" />
   <link rel="stylesheet" href="/proto/delivery.css?v=8" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
-  <link rel="stylesheet" href="/assets/site/tifo.css?v=1" />
+  <link rel="stylesheet" href="/assets/site/tifo.css?v=2" />
   <meta name="color-scheme" content="dark" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -77,11 +77,10 @@
     <p class="sr-only">More engagement, belonging, retention and revenue.</p>
   </section>
 
-  <!-- 02 The problem (city.js / tifo.css): the night city from above, in real 3D. A drone lifts off the stadium roof;
-       the windows around the ground are lit club blue, every fan at home. The page holds still for three
-       scroll steps; at each one the windows cool to amber, the far ones first, until six in a hundred are
-       left near the ground, and the drone drops toward one still blue. The old dot grids stay, hidden,
-       because site.js still fills them. -->
+  <!-- 02 The problem (tifo.js / tifo.css): the empty seat. The same stand, in the real footage; the tifo
+       comes down and the crowd is back. The page holds still for three scroll steps; at each one more
+       fans get up and leave, back rows and edges first, their seats left dim, until six in a hundred are
+       left near the front. The old dot grids stay, hidden, because site.js still fills them. -->
   <div class="problem-pin" id="problemPin">
   <section class="problem p2" id="problem" aria-labelledby="problemTitle">
     <canvas class="p2__wall" aria-hidden="true"></canvas>
@@ -788,7 +787,6 @@
 <script src="/proto/closing-track.js?v=8" defer></script>
 <script src="/proto/deck-menu.js?v=4" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="/assets/site/city.js?v=1"></script>
 <script type="module" src="/proto/engine3d.js?v=51"></script>
 <script type="module" src="/proto/integrate3d.js?v=33"></script>
 <script src="/proto/film.js?v=1" defer></script>
@@ -807,7 +805,7 @@
 <script src="/proto/pilot.js?v=2" defer></script>
 <script src="/proto/pitch/pitch.js?v=22" defer></script>
 <script type="module" src="/proto/delivery.js?v=10"></script>
-<script src="/assets/site/tifo.js?v=1" defer></script>
+<script src="/assets/site/tifo.js?v=2" defer></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>

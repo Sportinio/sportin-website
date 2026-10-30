@@ -2,7 +2,8 @@
 // cards held in hands. One engine (a "stand") draws a section's cards; each page runs its own
 // programme on it.
 //   01 Hero: one card flips, the wave runs through the stand and the raised cards spell the title.
-//   02 Problem lives in city.js (three.js) and shares the crowd sound below.
+//   02 Problem: the empty seat. The same stand; as you scroll, fans get up and leave, back rows
+//      and edges first, their seats left dim, until six in a hundred are left near the front.
 // Reduced motion gets finished pictures on the crowd still.
 (() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -45,8 +46,8 @@
       const gc = g.getContext('2d'); gc.fillStyle = '#04060d'; gc.fillRect(0, 0, g.width, g.height); gc.globalCompositeOperation = 'destination-out';
       S.cards.forEach((k) => { const cs = Math.cos(k.rot), sn = Math.sin(k.rot); gc.setTransform(DPR * cs, DPR * sn, -DPR * sn, DPR * cs, k.x * DPR, k.y * DPR); gc.fillRect(-k.w / 2, -k.h / 2, k.w, k.h); });
     };
-    S.source = () => {
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    S.source = (dy = 0) => {
+      ctx.setTransform(DPR, 0, 0, DPR, 0, dy * DPR);
       const s = src; if (!s) { ctx.fillStyle = '#0a0d16'; ctx.fillRect(0, 0, S.W, S.H); return; }
       const sw = s.videoWidth || s.naturalWidth, sh = s.videoHeight || s.naturalHeight; if (!sw) return;
       const k = Math.max(S.W / sw, S.H / sh), dw = sw * k, dh = sh * k;
@@ -174,7 +175,93 @@
     });
   })();
 
-  // ---------- 02 Problem: the night city from above, in city.js (three.js). ----------
+  // ---------- 02 Problem: the empty seat ----------
+  // The same stand, in the real footage. The tifo comes down and the full crowd is back. The page
+  // holds still for three scroll steps; at each one more fans get up and leave, back rows and the
+  // edges first, their seats left dim and empty, until six in a hundred are left near the front.
+  // The camera pushes in slowly as the stand empties, so the last fans fill more of the frame.
+  (() => {
+    const pin = document.getElementById('problemPin'); const section = document.getElementById('problem');
+    const canvas = section && section.querySelector('.p2__wall');
+    if (!pin || !section || !canvas) return;
+    const stages = [...section.querySelectorAll('.p2__stage')];
+    const shares = stages.map((s) => Number(s.dataset.share));
+    const S = makeStand(section, canvas, mobile ? 56 : 124);
+    const ctx = S.ctx;
+    const seg = () => Math.max(360, window.innerHeight * 0.7);
+    const SEAT = '#1f2740';
+    let seats = [], enteredAt = 0, lastP = -1;
+    const measure = () => { section.style.top = '0px'; pin.style.height = `${section.offsetHeight + seg() * 3}px`; };
+    function build() {
+      S.build(null);
+      // Who leaves first: back rows and the edges, with some luck in it, so the six percent gather
+      // near the front and centre.
+      const scored = S.cards.map((k) => ({ k, s: (1 - k.y / S.H) * 0.8 + Math.abs(k.x - S.W / 2) / (S.W / 2) * 0.5 + k.n * 0.55 }));
+      scored.sort((a, b) => a.s - b.s); scored.forEach((o, i) => { o.k.rank = i / scored.length; });
+      S.cards.forEach((k) => {
+        k.leaves = 0; for (let st = 1; st < shares.length; st++) if (k.rank >= shares[st]) { k.leaves = st; break; }
+        k.off = (1 - k.y / S.H) * 0.3 + k.n * 0.25;        // within a stage, the back rows go first
+        k.dropAt = 0.2 + (k.y / S.H) * 1.1 + k.n * 0.15;   // the tifo comes down from the top
+      });
+      // The empty stand at each stage, painted once: a dim seat where a fan has gone. Seats are whole
+      // cells (no card gap), each its own shade of worn plastic, with a darker seat back.
+      seats = shares.map((_, st) => {
+        const L = document.createElement('canvas'); L.width = canvas.width; L.height = canvas.height; const g = L.getContext('2d'); g.setTransform(DPR, 0, 0, DPR, 0, 0);
+        S.cards.forEach((k) => { if (!(k.leaves && k.leaves <= st)) return; paintSeat(g, k, 1); });
+        return L;
+      });
+    }
+    const progress = () => (typeof window.problemStep === 'number' ? window.problemStep : Math.max(0, Math.min(3, (section.getBoundingClientRect().top - pin.getBoundingClientRect().top) / seg())));
+    const litShare = (p) => { const a = Math.floor(p), b = Math.min(3, a + 1); return shares[a] + (shares[b] - shares[a]) * (p - a); };
+    // An empty seat: the whole cell in dim plastic, a shade of its own, a darker seat back and a thin
+    // dark seam below it, so an emptied block reads as rows of seats.
+    function paintSeat(g, k, a) {
+      const x = k.c * S.pitch, y = k.r * S.pitch, w = S.pitch, h = S.pitch;
+      const t = 0.85 + k.n * 0.3;
+      g.globalAlpha = a; g.fillStyle = `rgb(${Math.round(31 * t)}, ${Math.round(39 * t)}, ${Math.round(64 * t)})`; g.fillRect(x, y, w, h);
+      g.globalAlpha = a * 0.55; g.fillStyle = '#34406a'; g.fillRect(x + w * 0.1, y + h * 0.08, w * 0.8, h * 0.34);
+      g.globalAlpha = a * 0.6; g.fillStyle = '#0a0e1c'; g.fillRect(x, y + h - 1.2, w, 1.2);
+      g.globalAlpha = 1;
+    }
+    function seat(k, a) { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); paintSeat(ctx, k, a); }
+    function frame() {
+      const now = performance.now() / 1000, te = enteredAt ? now - enteredAt : 0;
+      const p = progress(); const st = Math.floor(p), f = p - st;
+      const cur = Math.min(3, Math.floor(p + 0.35));
+      if (cur !== lastP) { stages.forEach((s, i) => s.classList.toggle('is-on', i === cur)); section.classList.toggle('is-late', cur === 3); lastP = cur; }
+      if (window.tifoCrowd) window.tifoCrowd.level(litShare(p));
+      // Push in over the four stages: the camera closes on the front of the stand.
+      const zoom = 1 + 0.22 * (reduced ? Math.round(p) / 3 : p / 3);
+      const ox = S.W / 2, oy = S.H * 0.6;
+      canvas.style.transform = `scale(${zoom.toFixed(4)})`; canvas.style.transformOrigin = `${ox}px ${oy}px`;
+      S.source();
+      if (reduced) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(seats[Math.round(p)], 0, 0); return; }
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(seats[st], 0, 0);
+      for (let i = 0; i < S.cards.length; i++) {
+        const k = S.cards[i];
+        // The tifo coming down when the page arrives: blue cards lowered row by row from the top.
+        const blueUp = 1 - clamp((te - k.dropAt) / 0.45);
+        if (blueUp > 0.01 && !(k.leaves && k.leaves <= st)) { S.card(k, blueUp, NAVY, 0.84, 0); continue; }
+        // Fans leaving during the stage on screen: the fan rises out of the frame, the seat is left dim.
+        if (k.leaves === st + 1) {
+          const u = clamp((f - k.off) / 0.45); if (u <= 0.01) continue;
+          const e = easeIO(u);
+          // The seat first: it shows as the fan stands up.
+          seat(k, e);
+          // The fan: the piece of footage lifts and fades, like someone standing and walking out.
+          if (e < 1) { const lift = e * S.pitch * 0.9; ctx.save(); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.beginPath(); ctx.rect(k.c * S.pitch, k.r * S.pitch - lift, S.pitch, S.pitch); ctx.clip(); ctx.globalAlpha = 1 - e; S.source(-lift); ctx.restore(); }
+        }
+      }
+    }
+    window.problemMeasure = measure; window.problemRedraw = () => {};
+    new IntersectionObserver(([e]) => { if (e.isIntersecting && !enteredAt) enteredAt = performance.now() / 1000; }, { threshold: 0.3 }).observe(section);
+    fontsReady.then(() => {
+      measure(); build();
+      if (reduced) { const paint = () => frame(); src ? paint() : onSrc.push(paint); window.addEventListener('scroll', frame, { passive: true }); }
+      S.run(frame, () => { measure(); build(); if (reduced) frame(); });
+      window.addEventListener('resize', measure);
+    });
+  })();
 
   // ---------- Crowd sound, on request. The real stadium recording, as full as the stand. ----------
   // One recording, nothing synthesised. A full stand is the roar as recorded. As fans leave, the
