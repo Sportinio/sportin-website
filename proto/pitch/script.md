@@ -89,11 +89,11 @@ From the club… money off match tickets. From your sponsors… their best offer
 
 A magazine cover. A route on their photo. [warmly] Shared with friends… with your crest on every one.
 
-## 10 · Technology (about 9 s)
+## 10 · Technology (about 10 s)
 
-[confident] We build the technology ourselves.
+[confident] And under the hood… technology we built ourselves.
 
-AI commentary calls each run like a match. Sportinho coaches every step. And live tracking keeps every result fair.
+AI commentary calls every run like a match. Sportinho, our AI coach, is with fans every step. And live tracking keeps every result fair.
 
 ## 11 · The season (about 10 s)
 
