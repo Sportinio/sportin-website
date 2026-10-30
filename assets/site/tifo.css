@@ -58,6 +58,7 @@ html.is-full .problem-pin > #problem.p2.page { top: 0 !important; margin: 0 !imp
 .p2__n { display: inline-block; margin-top: 10px; font-family: var(--display); font-stretch: var(--narrow); font-weight: 700; font-size: 12px; letter-spacing: 0.1em; margin-right: 10px; opacity: 0.7; }
 .p2__label { display: inline-block; margin-top: 10px; font-family: var(--display); font-stretch: var(--narrow); font-weight: 800; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; }
 .p2__legacy { display: none; }
+.p2 .tifo__sound { left: auto; bottom: auto; right: clamp(16px, 3vw, 48px); top: calc(var(--nav-h) + 36px); }
 @media (max-width: 900px) {
   .p2__head { left: 16px; right: 16px; top: calc(var(--nav-h) + 20px); }
   .p2__title { font-size: clamp(34px, 10.5vw, 48px); }
@@ -65,5 +66,6 @@ html.is-full .problem-pin > #problem.p2.page { top: 0 !important; margin: 0 !imp
   .p2__stages { left: 16px; right: 16px; bottom: 20px; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
   .p2__pct { font-size: 32px; }
   .p2__label { font-size: 12px; }
+  .p2 .tifo__sound { right: 12px; top: calc(var(--nav-h) + 24px); }
 }
 @media (prefers-reduced-motion: reduce) { .p2__lede { opacity: 1; transform: none; transition: none; } }

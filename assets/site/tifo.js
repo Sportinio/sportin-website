@@ -143,6 +143,7 @@
       S.cards.forEach((k) => { k.delay = 0.9 + (Math.hypot(k.x - ox, k.y - oy) / far) * 2.4 + k.n * 0.22 + (k.kind && k.r > S.rows / 2 ? 0.55 : 0); if (k.delay + 0.55 > settledAt) settledAt = k.delay + 0.55; });
     }
     function frame(t) {
+      if (window.tifoCrowd) window.tifoCrowd.level(1);
       S.base();
       const done = reduced || t >= settledAt;
       if (done && !raised) raised = S.layer(NAVY, 0.84, (k) => !k.kind);
@@ -214,7 +215,7 @@
       // The rail: the stage on screen lights; the line lands with the last stage.
       const cur = Math.min(3, Math.floor(p + 0.35));
       if (cur !== lastP) { stages.forEach((s, i) => s.classList.toggle('is-on', i === cur)); section.classList.toggle('is-late', cur === 3); lastP = cur; }
-      if (window.tifoCrowd) window.tifoCrowd.level(0.2 + 0.8 * litShare(p));
+      if (window.tifoCrowd) window.tifoCrowd.level(litShare(p));
       S.base();
       if (reduced) { S.ctx.drawImage(layers[Math.round(p)], 0, 0); return; }
       const te = enteredAt ? now - enteredAt : 0;
@@ -239,21 +240,65 @@
     });
   })();
 
-  // ---------- Crowd sound, on request. Thins out with the stand. ----------
+  // ---------- Crowd sound, on request. Three textures, by how full the stand is. ----------
+  // A full stand roars (the crowd loop). As fans leave, the roar falls back to a crowd heard from
+  // a distance with scattered clapping near you; with only a few left there is no crowd at all,
+  // just a couple of fans clapping and the odd whistle. Everything is driven by `level`, the share
+  // of the stand still lit, which the pages set every frame.
   (() => {
-    const btn = document.querySelector('.tifo__sound'), audio = document.querySelector('.tifo__audio');
-    if (!btn || !audio) return;
-    let on = false, level = 1, fade = 0;
-    const target = () => (on ? 0.55 * level : 0);
-    const tick = () => { const v = target(), d = v - audio.volume; if (Math.abs(d) < 0.01) { audio.volume = v; if (!on && v === 0) audio.pause(); clearInterval(fade); fade = 0; return; } audio.volume += d * 0.2; };
-    const go = () => { if (!fade) fade = setInterval(tick, 60); };
-    window.tifoCrowd = { level(l) { if (Math.abs(l - level) > 0.02) { level = l; if (on) go(); } } };
-    btn.addEventListener('click', () => {
+    const btns = [...document.querySelectorAll('.tifo__sound')];
+    if (!btns.length) return;
+    let ac = null, master = null, near = null, far = null, on = false, level = 1, ready = false, tick = 0;
+    const clappers = []; let whistleAt = 0;
+    const ramp = (g, v, t) => { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(v, ac.currentTime, t); };
+    async function setup() {
+      ac = new (window.AudioContext || window.webkitAudioContext)();
+      master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+      near = ac.createGain(); near.gain.value = 0; near.connect(master);
+      const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 520;
+      far = ac.createGain(); far.gain.value = 0; far.connect(lp).connect(master);
+      const buf = await ac.decodeAudioData(await (await fetch('/assets/site/crowd-loop.mp3?v=1')).arrayBuffer());
+      const bed = ac.createBufferSource(); bed.buffer = buf; bed.loop = true; bed.loopStart = 1.5; bed.loopEnd = buf.duration - 1.5;
+      bed.connect(near); bed.connect(far); bed.start();
+      // A short burst of noise is a clap; each clapper has their own rhythm and place in the stand.
+      const nb = ac.createBuffer(1, ac.sampleRate * 0.12, ac.sampleRate); const d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.2);
+      for (let i = 0; i < 8; i++) { const pan = ac.createStereoPanner(); pan.pan.value = (i / 7) * 1.6 - 0.8; pan.connect(master); clappers.push({ pan, next: 0, every: 0.42 + Math.random() * 0.4, nb }); }
+      ready = true;
+    }
+    function clap(c) {
+      const src = ac.createBufferSource(); src.buffer = c.nb;
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1300 + Math.random() * 900; bp.Q.value = 1.1;
+      const g = ac.createGain(); g.gain.value = 0.16 + Math.random() * 0.12;
+      src.connect(bp).connect(g).connect(c.pan); src.start();
+    }
+    function whistle() {
+      const o = ac.createOscillator(); const g = ac.createGain(); const t = ac.currentTime;
+      o.type = 'sine'; o.frequency.setValueAtTime(2100, t); o.frequency.linearRampToValueAtTime(2700, t + 0.18); o.frequency.linearRampToValueAtTime(2300, t + 0.55);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.06, t + 0.05); g.gain.setTargetAtTime(0, t + 0.4, 0.12);
+      o.connect(g).connect(master); o.start(t); o.stop(t + 0.9);
+    }
+    function apply() {
+      if (!ready) return;
+      // Full stand: the roar. Fewer fans: the roar steps back into the distance. Very few: silence but for them.
+      const roar = Math.pow(clamp((level - 0.35) / 0.65), 1.3);
+      const distant = level < 0.5 ? clamp((level - 0.1) / 0.35) * 0.45 : (1 - roar) * 0.45;
+      ramp(near, roar * 0.9, 0.4); ramp(far, distant, 0.4);
+    }
+    function loop() {
+      tick = setTimeout(loop, 90);
+      if (!ready || !on) return;
+      const n = level > 0.9 ? 0 : level > 0.3 ? 7 : level > 0.1 ? 4 : 2;
+      const now = ac.currentTime;
+      clappers.forEach((c, i) => { if (i >= n) return; if (now >= c.next) { clap(c); c.next = now + c.every * (0.7 + Math.random() * 0.8); } });
+      if (level < 0.1 && now > whistleAt) { whistle(); whistleAt = now + 5 + Math.random() * 8; }
+    }
+    window.tifoCrowd = { level(l) { if (Math.abs(l - level) > 0.01) { level = l; if (on) apply(); } }, debug: () => ({ on, level: +level.toFixed(2), roar: ready ? +near.gain.value.toFixed(2) : null, distant: ready ? +far.gain.value.toFixed(2) : null, clappers: level > 0.9 ? 0 : level > 0.3 ? 7 : level > 0.1 ? 4 : 2, whistles: level < 0.1 }) };
+    btns.forEach((btn) => btn.addEventListener('click', async () => {
       on = !on;
-      btn.setAttribute('aria-pressed', String(on)); btn.setAttribute('aria-label', on ? 'Stop the crowd sound' : 'Play the crowd sound');
-      if (on) { audio.volume = 0; audio.play().catch(() => {}); }
-      go();
-    });
-    document.addEventListener('visibilitychange', () => { if (document.hidden && on) btn.click(); });
+      btns.forEach((b) => { b.setAttribute('aria-pressed', String(on)); b.setAttribute('aria-label', on ? 'Stop the crowd sound' : 'Play the crowd sound'); });
+      if (on) { if (!ac) { await setup(); apply(); loop(); } else { if (ac.state === 'suspended') ac.resume(); apply(); } ramp(master, 0.8, 0.5); }
+      else if (ac) ramp(master, 0, 0.4);
+    }));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && on) btns[0].click(); });
   })();
 })();
