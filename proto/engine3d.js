@@ -93,40 +93,34 @@ function drawGlass(s) {
   const g = ctx.createLinearGradient(0, 0, SW, SH); g.addColorStop(0, 'rgba(255,255,255,0.97)'); g.addColorStop(1, 'rgba(240,244,252,0.94)');
   card(ctx, 0, 0, SW, SH, 28, g, 'rgba(7,81,251,0.16)');
   head(ctx, 'L1 · Competition');
-  // Competitions: a knockout, four supporters' clubs abroad to one champion.
+  // Competitions, the long game: a season of weeks filling up, team and individual. The formats
+  // themselves (League, Conquer) are page 05's to show.
   ctx.globalAlpha = s.za; card(ctx, 40, 80, 600, 560);
-  title(ctx, 'Fan Cup', 'knockout', 68, 132);
-  const X0 = 68; const Y0 = 172; const BW = 544; const BH = 440;
-  const pill = (x, w, cy, label, on, alpha, solid) => {
-    if (alpha <= 0.01) return; ctx.save(); ctx.globalAlpha *= alpha;
-    card(ctx, x, cy - 32, w, 64, 14, solid ? CLUB : '#fff', solid ? null : (on ? CLUB : 'rgba(10,16,32,0.12)'), on ? 3 : 2);
-    font(ctx, solid ? 700 : 600, 28); ctx.fillStyle = solid ? '#fff' : (on ? CLUB : SLATE); ctx.fillText(label, x + 18, cy + 10); ctx.restore();
-  };
-  ctx.strokeStyle = CLUB; ctx.lineWidth = 3; ctx.lineJoin = 'round';
-  const r1x = X0; const r1w = BW * 0.33; const r2x = X0 + BW * 0.41; const r2w = BW * 0.28; const r3x = X0 + BW * 0.72; const r3w = BW * 0.28;
-  const y = (f) => Y0 + BH * f; const jx = X0 + BW * 0.37; const kx = X0 + BW * 0.70;
-  polyline(ctx, [[r1x + r1w, y(0.12)], [jx, y(0.12)], [jx, y(0.23)], [r2x, y(0.23)]], s.k1);
-  polyline(ctx, [[r1x + r1w, y(0.34)], [jx, y(0.34)], [jx, y(0.23)]], s.k1);
-  polyline(ctx, [[r1x + r1w, y(0.66)], [jx, y(0.66)], [jx, y(0.77)], [r2x, y(0.77)]], s.k1);
-  polyline(ctx, [[r1x + r1w, y(0.88)], [jx, y(0.88)], [jx, y(0.77)]], s.k1);
-  polyline(ctx, [[r2x + r2w, y(0.23)], [kx, y(0.23)], [kx, y(0.5)], [r3x, y(0.5)]], s.k2);
-  polyline(ctx, [[r2x + r2w, y(0.77)], [kx, y(0.77)], [kx, y(0.5)]], s.k2);
-  pill(r1x, r1w, y(0.12), 'London', s.r1, s.o1); pill(r1x, r1w, y(0.34), 'Dublin', false, s.o1);
-  pill(r1x, r1w, y(0.66), 'Madrid', s.r1, s.o1); pill(r1x, r1w, y(0.88), 'Toronto', false, s.o1);
-  pill(r2x, r2w, y(0.23), 'London', s.r2, s.o2); pill(r2x, r2w, y(0.77), 'Madrid', false, s.o2);
-  pill(r3x, r3w, y(0.5), 'London', false, s.o3, true);
-  if (s.o3 > 0.01) { ctx.save(); ctx.globalAlpha *= s.o3; font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = CLUB; ctx.fillText('Champion', r3x, y(0.5) - 46); ctx.restore(); }
+  title(ctx, 'Competitions', 'long term', 68, 132);
+  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('Season 2026/27', 68, 172);
+  const p = s.o1 * 0.15 + s.k1 * 0.3 + s.o2 * 0.1 + s.k2 * 0.3 + s.o3 * 0.15; // 0 to 1 as the scene plays
+  const WEEKS = 38; const NOW = 24; const done = Math.round(NOW * p);
+  const GX = 68; const GY = 220; const CW = 24; const CH = 64; const GAP = (544 - 19 * CW) / 18;
+  for (let w = 0; w < WEEKS; w++) {
+    const x = GX + (w % 19) * (CW + GAP); const yy = GY + Math.floor(w / 19) * (CH + 18);
+    const on = w < done; card(ctx, x, yy, CW, CH, 6, on ? CLUB : '#eef1f6', null);
+    if (w === done - 1 && p < 0.999) { ctx.save(); ctx.globalAlpha *= 0.35; card(ctx, x - 4, yy - 4, CW + 8, CH + 8, 9, 'rgba(0,0,0,0)', CLUB, 2); ctx.restore(); }
+  }
+  font(ctx, 800, 58, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK;
+  ctx.fillText(`Week ${Math.max(1, done)}`, 68, 468);
+  const ww = ctx.measureText(`Week ${Math.max(1, done)}`).width; font(ctx, 500, 30); ctx.fillStyle = MUTE; ctx.fillText(` of ${WEEKS}`, 68 + ww, 468);
+  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('Teams and individuals,', 68, 548); ctx.fillText('every week counts.', 68, 584);
   ctx.globalAlpha = 1;
-  // Challenges: a short goal, the ring fills fast.
+  // Challenges, the short game: a goal for the next few days, the ring fills fast.
   ctx.globalAlpha = s.zb; card(ctx, 660, 80, 340, 560);
-  title(ctx, 'Matchday walk', null, 688, 132);
-  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('Home game', 688, 172);
+  title(ctx, 'Challenges', 'short term', 688, 132);
+  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('10,000 steps · 3 days', 688, 172);
   const cx = 830; const cy = 370; ctx.lineWidth = 22; ctx.lineCap = 'round';
   ctx.strokeStyle = '#e9edf4'; ctx.beginPath(); ctx.arc(cx, cy, 100, 0, Math.PI * 2); ctx.stroke();
-  if (s.rp > 0.001) { ctx.strokeStyle = CLUB; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (7412 / 8000) * s.rp); ctx.stroke(); } // the matchday goal, as on 05
+  if (s.rp > 0.001) { ctx.strokeStyle = CLUB; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (7412 / 10000) * s.rp); ctx.stroke(); } // a three-day step goal
   font(ctx, 800, 58, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; ctx.textAlign = 'center';
   ctx.fillText(Math.round(7412 * s.rp).toLocaleString('en-US'), cx, cy + 20);
-  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 8,000 steps', cx, 560); ctx.textAlign = 'left';
+  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 10,000 · 2 days left', cx, 560); ctx.textAlign = 'left';
   ctx.globalAlpha = 1; ctx.lineCap = 'butt';
 }
 
