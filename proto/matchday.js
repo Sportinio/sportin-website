@@ -108,7 +108,7 @@
     root.classList.toggle('is-live', live);
     const [clock] = lerp(DAY, t);
     let cur = null; let said = ''; LINES.forEach(([s, f, txt]) => { if (t >= s) { cur = f; said = txt; } });
-    if (!started) said = 'Press Listen live for the commentary.'; else if (!said) said = 'Live from Matchday 3…';
+    if (!started) said = playBtn.closest('.mdx__dh') ? 'Press play to hear Matchday 3, called live.' : 'Press Listen live for the commentary.'; else if (!said) said = 'Live from Matchday 3…';
     rows.forEach(({ m, li, sa, sb, st, lk, people }) => {
       const [a, b] = lerp(m.k, t); const A = a.toFixed(1); const B = b.toFixed(1);
       setText(sa, A, started); setText(sb, B, started);

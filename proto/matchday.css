@@ -137,3 +137,18 @@ body.mdx-page { margin: 0; background: #f3f4f8; -webkit-font-smoothing: antialia
   .mdx__live i, .mdx.is-playing .mdx__mic i { animation: none; }
   .mdx__sc b.is-tick { animation: none; }
 }
+
+/* Controls inside the matchday header (the deck's 06): a round play button, stop when started, the
+   time; the "Listen live" words stay for screen readers only. */
+.mdx__sr { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.mdx__dh--ctl { grid-template-columns: 84px minmax(0, 1fr) auto auto 32px 40px; }
+.mdx__dh .mdx__ctl { display: flex; align-items: center; gap: 8px; margin: 0 14px 0 0; }
+.mdx__dh .mdx__play, .mdx__dh .mdx__stop { justify-content: center; width: 36px; height: 36px; padding: 0; gap: 0; }
+.mdx__dh .mdx__ico { margin-left: 3px; }
+.mdx.is-playing .mdx__dh .mdx__ico { margin-left: 0; }
+.mdx__dh .mdx__time { min-width: 0; font-size: 12px; }
+@media (max-width: 760px) {
+  .mdx__dh--ctl { grid-template-columns: 56px minmax(0, 1fr) auto auto 32px 28px; }
+  .mdx__dh--ctl .mdx__time, .mdx__dh--ctl .mdx__live { display: none; }
+  .mdx__dh .mdx__ctl { margin-right: 8px; }
+}
