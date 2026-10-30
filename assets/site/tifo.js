@@ -2,8 +2,7 @@
 // cards held in hands. One engine (a "stand") draws a section's cards; each page runs its own
 // programme on it.
 //   01 Hero: one card flips, the wave runs through the stand and the raised cards spell the title.
-//   02 Problem: the stand is full; as you scroll, fans go home, back rows and edges first, until
-//      six in a hundred are left near the front. The four stages light in turn on the rail.
+//   02 Problem lives in city.js (three.js) and shares the crowd sound below.
 // Reduced motion gets finished pictures on the crowd still.
 (() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -175,70 +174,7 @@
     });
   })();
 
-  // ---------- 02 Problem ----------
-  (() => {
-    const pin = document.getElementById('problemPin'); const section = document.getElementById('problem');
-    const canvas = section && section.querySelector('.p2__wall');
-    if (!pin || !section || !canvas) return;
-    const stages = [...section.querySelectorAll('.p2__stage')];
-    const shares = stages.map((s) => Number(s.dataset.share));
-    const S = makeStand(section, canvas, mobile ? 56 : 124);
-    const seg = () => Math.max(360, window.innerHeight * 0.7);
-    let layers = [], enteredAt = 0, lastP = -1;
-    function measure() {
-      section.style.top = '0px';
-      pin.style.height = `${section.offsetHeight + seg() * 3}px`;
-    }
-    function build() {
-      S.build(null);
-      // Who stays: a fan's place in the queue to leave. Back rows and the edges go first, the
-      // front and centre last, with some luck in it, so the six percent gather near the front.
-      const scored = S.cards.map((k) => ({ k, s: (1 - k.y / S.H) * 0.8 + Math.abs(k.x - S.W / 2) / (S.W / 2) * 0.5 + k.n * 0.55 }));
-      scored.sort((a, b) => a.s - b.s);
-      scored.forEach((o, i) => { o.k.rank = i / scored.length; });
-      S.cards.forEach((k) => {
-        k.leaves = 0; for (let st = 1; st < shares.length; st++) if (k.rank >= shares[st]) { k.leaves = st; break; }
-        k.off = (1 - k.y / S.H) * 0.25 + k.n * 0.12;             // within a stage, back rows go first
-        k.dropAt = 0.2 + (k.y / S.H) * 1.1 + k.n * 0.15;        // the tifo comes down from the top
-      });
-      // Four pictures of the stand, one per stage: the seats already empty at that stage.
-      layers = shares.map((_, st) => S.layer(DARK, 0.94, (k) => k.leaves && k.leaves <= st));
-    }
-    function progress() {
-      if (typeof window.problemStep === 'number') return window.problemStep;
-      return Math.max(0, Math.min(3, (section.getBoundingClientRect().top - pin.getBoundingClientRect().top) / seg()));
-    }
-    function litShare(p) { const a = Math.floor(p), b = Math.min(3, a + 1); return shares[a] + (shares[b] - shares[a]) * (p - a); }
-    function frame() {
-      const now = performance.now() / 1000;
-      const p = progress(); const st = Math.floor(p), f = p - st;
-      // The rail: the stage on screen lights; the line lands with the last stage.
-      const cur = Math.min(3, Math.floor(p + 0.35));
-      if (cur !== lastP) { stages.forEach((s, i) => s.classList.toggle('is-on', i === cur)); section.classList.toggle('is-late', cur === 3); lastP = cur; }
-      if (window.tifoCrowd) window.tifoCrowd.level(litShare(p));
-      S.base();
-      if (reduced) { S.ctx.drawImage(layers[Math.round(p)], 0, 0); return; }
-      const te = enteredAt ? now - enteredAt : 0;
-      S.ctx.drawImage(layers[st], 0, 0);
-      for (let i = 0; i < S.cards.length; i++) {
-        const k = S.cards[i];
-        // The tifo coming down when the page arrives: blue cards drop row by row.
-        const blueUp = 1 - clamp((te - k.dropAt) / 0.45);
-        if (blueUp > 0.01 && !(k.leaves && k.leaves <= st)) { S.card(k, blueUp, NAVY, 0.84, 0); continue; }
-        // Fans leaving during the stage on screen.
-        if (k.leaves === st + 1) { const u = clamp((f - k.off) / 0.6); if (u > 0.01) S.card(k, easeIO(u), DARK, 0.94, 0); }
-      }
-    }
-    window.problemMeasure = () => { measure(); };
-    window.problemRedraw = () => {};
-    new IntersectionObserver(([e]) => { if (e.isIntersecting && !enteredAt) enteredAt = performance.now() / 1000; }, { threshold: 0.3 }).observe(section);
-    fontsReady.then(() => {
-      measure(); build();
-      if (reduced) { const paint = () => frame(); src ? paint() : onSrc.push(paint); }
-      S.run(frame, () => { measure(); build(); if (reduced) frame(); });
-      window.addEventListener('resize', measure);
-    });
-  })();
+  // ---------- 02 Problem: the night city from above, in city.js (three.js). ----------
 
   // ---------- Crowd sound, on request. The real stadium recording, as full as the stand. ----------
   // One recording, nothing synthesised. A full stand is the roar as recorded. As fans leave, the
