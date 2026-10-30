@@ -1,0 +1,114 @@
+/* Stadium at Night: the SportIn homepage redesigned from scratch, one page at a time.
+   The site lives inside a night stadium drawn live in the browser (stadium.js).
+   This file carries the foundation (tokens, menu bar, buttons) and page 01, the hero.
+   Later pages are added below, one block per page. Loaded last. */
+
+/* ---------- Foundation ---------- */
+:root[data-theme='dark'] {
+  --paper: #04060d;
+  --surface: #0b1020;
+  --infield: #0c1222;
+  --line: #1c2742;
+  --cyan: #4ff0ff;
+  --warm: #ffd9a3;
+  --glow: rgba(61, 123, 255, 0.5);
+  color-scheme: dark;
+}
+html { color-scheme: dark; }
+
+/* Menu bar: a broadcast bar across the top. Transparent over the hero, glass once the page scrolls. */
+.nav, html.is-full .nav, html.is-deck .nav {
+  top: 0 !important; left: 0 !important; right: 0 !important;
+  max-width: none; margin: 0; height: 64px; border-radius: 0; border-bottom: 0;
+  background: linear-gradient(180deg, rgba(4, 6, 13, 0.72) 0%, rgba(4, 6, 13, 0) 100%);
+  box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+  transition: background-color 0.4s, box-shadow 0.4s, backdrop-filter 0.4s;
+}
+.nav.is-scrolled { background: rgba(4, 6, 13, 0.76); -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%); box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.07); }
+.nav__inner, html.is-full .nav .nav__inner, html.is-deck .nav .nav__inner { max-width: 1440px; padding: 0 clamp(20px, 3vw, 40px); gap: 28px; }
+.nav__links { gap: 30px; }
+.nav__link { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(238, 241, 247, 0.62); }
+.nav__link:hover, .nav__link.is-active { color: #fff; }
+.nav__link::after { height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.deck-nav-btn { border-color: rgba(255, 255, 255, 0.18); background: transparent; color: rgba(255, 255, 255, 0.85); font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+.deck-nav-btn:hover { border-color: rgba(255, 255, 255, 0.45); }
+.nav__toggle span { background: #fff; }
+@media (max-width: 960px) {
+  .nav__links { top: 64px !important; left: 0 !important; right: 0 !important; border-radius: 0; background: rgba(4, 6, 13, 0.92); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.07); }
+  .nav__link { font-size: 14px; border-bottom-color: rgba(255, 255, 255, 0.08); }
+}
+
+/* Primary button: a pill that glows like a stadium screen; a light sweeps across it on hover. */
+.btn--primary { position: relative; overflow: hidden; background: #2f6bff; box-shadow: inset 0 0 0 1px rgba(170, 196, 255, 0.4), 0 0 28px rgba(47, 107, 255, 0.45), 0 12px 32px rgba(0, 0, 0, 0.45); }
+.btn--primary:hover { background: #3d78ff; box-shadow: inset 0 0 0 1px rgba(190, 210, 255, 0.6), 0 0 40px rgba(61, 120, 255, 0.65), 0 12px 32px rgba(0, 0, 0, 0.45); }
+.btn--primary::after { content: ''; position: absolute; top: -40%; bottom: -40%; left: -30%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: translateX(-120%) skewX(-18deg); pointer-events: none; }
+.btn--primary:hover::after { animation: st-sheen 900ms var(--ease) forwards; }
+@keyframes st-sheen { to { transform: translateX(420%) skewX(-18deg); } }
+
+/* The guided-tour offer card: glass. */
+.pitch-offer { background: rgba(8, 12, 24, 0.72); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5); }
+
+/* ---------- Page 01: the hero. Darkness, then the stands light up. ---------- */
+.arena { --display-stretch: 125%; position: relative; isolation: isolate; min-height: 100svh; margin: 0; border-radius: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: calc(var(--nav-h) + 24px) 0 clamp(44px, 7vh, 84px); overflow: clip; color: #fff; background: #04060d radial-gradient(90% 55% at 50% 58%, #101a3a 0%, #080d1d 45%, rgba(4, 6, 13, 0) 100%); }
+html.is-full #why.arena.page { margin: 0 !important; height: 100vh; border-radius: 0; padding: calc(var(--nav-h) + 20px) 0 clamp(40px, 6vh, 72px) !important; justify-content: flex-end; }
+.arena__scene { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; }
+/* If WebGL cannot start, a still of the stands stays behind the copy. */
+.arena.is-flat .arena__scene { display: none; }
+.arena.is-flat { background: #04060d url('/proto/media/hv-fan.jpg') center / cover no-repeat; }
+.arena.is-flat .arena__veil { background: rgba(4, 6, 13, 0.72); }
+/* Shade that keeps the copy readable: darker at the foot, clear in the middle where the stands are. */
+.arena__veil { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(to bottom, rgba(4, 6, 13, 0.5) 0%, rgba(4, 6, 13, 0) 22%, rgba(4, 6, 13, 0) 48%, rgba(4, 6, 13, 0.62) 76%, rgba(4, 6, 13, 0.9) 100%); }
+
+/* HUD frame: corner brackets and a ruler along the foot of the frame. */
+.arena__hud { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.arena__corner { position: absolute; width: 30px; height: 30px; border: 1px solid rgba(255, 255, 255, 0.38); opacity: 0; animation: st-fade 900ms var(--ease) 400ms forwards; }
+.arena__corner--tl { top: 84px; left: 28px; border-right: 0; border-bottom: 0; }
+.arena__corner--tr { top: 84px; right: 28px; border-left: 0; border-bottom: 0; }
+.arena__corner--bl { bottom: 28px; left: 28px; border-right: 0; border-top: 0; }
+.arena__corner--br { bottom: 28px; right: 28px; border-left: 0; border-top: 0; }
+.arena__ruler { position: absolute; left: 80px; right: 80px; bottom: 28px; height: 8px; background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 48px); -webkit-mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent); mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent); opacity: 0; animation: st-fade 900ms var(--ease) 600ms forwards; }
+
+/* Copy: centred, like the message on the big screen. */
+.arena__copy { position: relative; z-index: 3; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp(20px, 3vw, 40px); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.arena__idx { display: flex; align-items: center; gap: 14px; margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(238, 241, 247, 0.72); opacity: 0; animation: st-fade 900ms var(--ease) 600ms forwards; }
+.arena__idx::before, .arena__idx::after { content: ''; width: 48px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45)); }
+.arena__idx::after { background: linear-gradient(90deg, rgba(255, 255, 255, 0.45), transparent); }
+.arena__idx b { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: 14px; letter-spacing: 0.04em; color: var(--cyan); text-shadow: 0 0 14px rgba(79, 240, 255, 0.7); }
+.arena__idx span { color: #fff; }
+.arena__idx em { font-style: normal; padding-left: 14px; border-left: 1px solid rgba(255, 255, 255, 0.25); }
+.arena__title { margin: 22px 0 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 900; font-size: clamp(44px, 8.6vw, 136px); line-height: 0.92; letter-spacing: -0.012em; text-transform: uppercase; text-shadow: 0 4px 48px rgba(0, 0, 0, 0.65); }
+.arena__line { display: block; overflow: hidden; padding: 0.04em 0.1em; margin: -0.04em -0.1em; }
+.arena__line > span { display: inline-block; transform: translateY(112%); opacity: 0; animation: st-rise 1100ms var(--ease) forwards; animation-delay: calc(1000ms + var(--i) * 180ms); }
+.arena__title em { font-style: normal; color: transparent; background: linear-gradient(100deg, #6ea2ff 0%, #4ff0ff 55%, #9dd8ff 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 22px rgba(79, 200, 255, 0.55)); }
+.arena__lede { margin: 26px 0 0; max-width: 46ch; font-size: clamp(17px, 1.4vw, 21px); line-height: 1.5; color: rgba(238, 241, 247, 0.8); opacity: 0; animation: st-up 900ms var(--ease) 1900ms forwards; }
+.arena__actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px; margin-top: 34px; opacity: 0; animation: st-up 900ms var(--ease) 2150ms forwards; }
+.arena .btn--ghost { padding: 0 22px; border: 1px solid rgba(255, 255, 255, 0.22); color: #fff; background: rgba(255, 255, 255, 0.04); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.arena .btn--ghost:hover { color: #fff; border-color: rgba(255, 255, 255, 0.55); background: rgba(255, 255, 255, 0.09); }
+.arena__more { display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(238, 241, 247, 0.7); text-decoration: none; transition: color 0.25s; }
+.arena__more:hover { color: #fff; }
+.arena__more span { display: inline-block; animation: st-bob 1.8s ease-in-out infinite; }
+
+@keyframes st-fade { to { opacity: 1; } }
+@keyframes st-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+/* A line rises in, then flickers once like a screen switching on. */
+@keyframes st-rise { 0% { transform: translateY(112%); opacity: 0; } 55% { transform: none; opacity: 1; } 64% { opacity: 0.45; } 70% { opacity: 1; } 76% { opacity: 0.7; } 82%, 100% { transform: none; opacity: 1; } }
+@keyframes st-bob { 50% { transform: translateY(3px); } }
+
+@media (max-width: 760px) {
+  .arena { justify-content: flex-end; padding-bottom: clamp(36px, 8vh, 64px); }
+  .arena__corner--tl, .arena__corner--tr { top: 76px; }
+  .arena__corner, .arena__ruler { left: 16px; right: 16px; }
+  .arena__corner--tl, .arena__corner--bl { right: auto; } .arena__corner--tr, .arena__corner--br { left: auto; }
+  .arena__ruler { left: 60px; right: 60px; }
+  .arena__idx { font-size: 11px; letter-spacing: 0.12em; gap: 10px; }
+  .arena__idx::before, .arena__idx::after { width: 20px; }
+  .arena__idx em { padding-left: 10px; }
+  .arena__title { font-size: clamp(36px, 11vw, 64px); }
+  .arena__actions { flex-direction: column; gap: 12px; }
+  .arena__more { margin: 6px 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arena__corner, .arena__ruler, .arena__idx, .arena__lede, .arena__actions { animation: none; opacity: 1; }
+  .arena__line > span { animation: none; transform: none; opacity: 1; }
+  .arena__more span { animation: none; }
+}

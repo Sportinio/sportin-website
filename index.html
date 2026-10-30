@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="/proto/gor.css?v=2" />
   <link rel="stylesheet" href="/proto/delivery.css?v=8" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
-  <link rel="stylesheet" href="/assets/site/fandom.css?v=1" />
+  <link rel="stylesheet" href="/assets/site/stadium.css?v=1" />
   <meta name="color-scheme" content="dark" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -66,22 +66,22 @@
 
 <main id="top">
 
-  <!-- WHY: the opening belief -->
-  <section class="hero block hero--video" id="why" aria-labelledby="heroTitle">
-    <div class="hv" aria-hidden="true"><div class="hv__scene is-active" data-word="fan"><video class="hv__clip" data-word="fan" src="/proto/media/hv-fan.mp4?v=3" poster="/proto/media/hv-fan.jpg?v=3" muted playsinline loop preload="auto"></video><div class="hv__tint"></div></div><div class="hv__dots"></div><div class="hv__shade"></div></div>
-    <div class="fx" aria-hidden="true"><i class="fx__beam fx__beam--l"></i><i class="fx__beam fx__beam--r"></i><i class="fx__grid"></i><canvas class="fx__flash"></canvas><i class="fx__scan"></i><i class="fx__corner fx__corner--tl"></i><i class="fx__corner fx__corner--tr"></i><i class="fx__corner fx__corner--bl"></i><i class="fx__corner fx__corner--br"></i></div>
-    <button class="hv__pause" id="hvPause" type="button" aria-label="Pause background video"><span class="hv__pause-i" aria-hidden="true"></span></button>
-    <div class="wrap">
-      <p class="feat__idx" data-reveal><b>01</b><span>What we do</span><em>For football clubs</em></p>
-      <h1 class="display display--xl hero__title" id="heroTitle" data-reveal style="--d:.08s">Give every <span class="rot" aria-hidden="true"><span class="rot__word">fan</span></span><span class="sr-only">fan</span><br class="hero__br" /> a part to <em>play</em>.</h1>
-      <p class="lede hero__lede" data-reveal style="--d:.16s">We turn fan communities into active ecosystems that generate new revenue and measurable impact by gamifying real-world movement.</p>
-      <div class="hero__actions" data-reveal style="--d:.24s">
+  <!-- 01 The hero: a night stadium drawn live (stadium.js / stadium.css). The stands light up,
+       then the copy lands, line by line, like the message on the big screen. -->
+  <section class="hero arena" id="why" aria-labelledby="heroTitle">
+    <canvas class="arena__scene" id="stadium" aria-hidden="true"></canvas>
+    <div class="arena__veil" aria-hidden="true"></div>
+    <div class="arena__hud" aria-hidden="true"><i class="arena__corner arena__corner--tl"></i><i class="arena__corner arena__corner--tr"></i><i class="arena__corner arena__corner--bl"></i><i class="arena__corner arena__corner--br"></i><i class="arena__ruler"></i></div>
+    <div class="arena__copy">
+      <p class="arena__idx"><b>01</b><span>What we do</span><em>For football clubs</em></p>
+      <h1 class="arena__title" id="heroTitle"><span class="arena__line" style="--i:0"><span>Give every fan</span></span><span class="arena__line" style="--i:1"><span>a part to <em>play</em>.</span></span></h1>
+      <p class="arena__lede">We turn fan communities into active ecosystems that generate new revenue and measurable impact by gamifying real-world movement.</p>
+      <div class="arena__actions">
         <a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo <span class="btn__arrow" aria-hidden="true">→</span></a>
         <button class="btn btn--ghost film-open" type="button" data-film><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 2v10l8.5-5z" fill="currentColor"/></svg>Watch the film</button>
-        <a class="btn btn--ghost" href="#engine">See how it works ↓</a>
+        <a class="arena__more" href="#engine">See how it works <span aria-hidden="true">↓</span></a>
       </div>
       <p class="sr-only">More engagement, belonging, retention and revenue.</p>
-
     </div>
   </section>
 
@@ -785,6 +785,7 @@
 <script src="/proto/closing-track.js?v=8" defer></script>
 <script src="/proto/deck-menu.js?v=4" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="/assets/site/stadium.js?v=1"></script>
 <script type="module" src="/proto/engine3d.js?v=51"></script>
 <script type="module" src="/proto/integrate3d.js?v=33"></script>
 <script src="/proto/film.js?v=1" defer></script>
@@ -803,7 +804,6 @@
 <script src="/proto/pilot.js?v=2" defer></script>
 <script src="/proto/pitch/pitch.js?v=22" defer></script>
 <script type="module" src="/proto/delivery.js?v=10"></script>
-<script src="/assets/site/fandom.js?v=1" defer></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
