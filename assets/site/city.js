@@ -27,9 +27,9 @@ if (pin && section && canvas) {
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' }); }
   catch (e) { section.classList.add('is-flat'); }
   if (renderer) {
-    const PR = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.5);
+    let PR = Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.25);
     renderer.setPixelRatio(PR); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
-    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x04060d); scene.fog = new THREE.FogExp2(0x05070f, 0.00105);
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x04060d); scene.fog = new THREE.FogExp2(0x05070f, 0.0014);
     const camera = new THREE.PerspectiveCamera(mobile ? 52 : 38, 1, 1, 4000);
     let seed = 5; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
 
@@ -73,11 +73,11 @@ if (pin && section && canvas) {
       const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.6, 62, 8), new THREE.MeshStandardMaterial({ color: 0x8a8f9c, roughness: 0.5, metalness: 0.6 })); mast.position.set(x, 31, z); stadium.add(mast);
       const head = new THREE.Mesh(new THREE.BoxGeometry(10, 5, 2), new THREE.MeshBasicMaterial({ color: 0xfff4dc })); head.position.set(x, 63, z); head.lookAt(0, 20, 0); stadium.add(head);
       const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glare, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); sp.position.set(x, 63, z); sp.scale.setScalar(glareScale); stadium.add(sp);
-      const light = new THREE.SpotLight(0xfff0d2, 2200, 420, 0.62, 0.5, 1.4); light.position.set(x, 63, z); light.target.position.set(0, 0, 0); stadium.add(light, light.target);
+      if (a === b) { const light = new THREE.SpotLight(0xfff0d2, 2600, 420, 0.66, 0.5, 1.4); light.position.set(x, 63, z); light.target.position.set(0, 0, 0); stadium.add(light, light.target); }
     });
 
     // ---- The city: blocks of buildings around the ground, and every window a point of light. ----
-    const BLK = 56, ST = 14, R = 1500;
+    const BLK = 56, ST = 14, R = mobile ? 900 : 1150;
     const boxes = [];
     const win = [], winRank = [], winSeed = [], lamps = [];
     const angC = Math.cos(-0.18), angS = Math.sin(-0.18);
@@ -109,7 +109,7 @@ if (pin && section && canvas) {
       // Street lamps along one side of the block.
       for (let i = 0; i < 3; i++) if (rnd() < 0.7) { const [lx, lz] = turn(gx + ST / 4, gz + (i + 0.5) * BLK / 3); lamps.push(lx, 5, lz); }
     }
-    const bMat = new THREE.MeshStandardMaterial({ color: 0x232838, roughness: 0.85, metalness: 0.05 });
+    const bMat = new THREE.MeshLambertMaterial({ color: 0x232838 });
     const inst = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), bMat, boxes.length);
     const M = new THREE.Matrix4(), Q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -0.18), P = new THREE.Vector3(), Sc = new THREE.Vector3();
     boxes.forEach((b, i) => { P.set(b.x, b.h / 2, b.z); Sc.set(b.w, b.h, b.d); M.compose(P, Q, Sc); inst.setMatrixAt(i, M); });
@@ -158,10 +158,13 @@ if (pin && section && canvas) {
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
     const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), mobile ? 0.45 : 0.6, 0.45, 0.82); composer.addPass(bloom);
+    // Quality guard: the first two seconds on screen are timed; a slow machine loses bloom, then resolution.
+    let frames = 0, timing0 = 0, quality = 2;
+    const degrade = () => { quality--; if (quality === 1) { bloom.enabled = false; } else if (quality <= 0) { PR = 1; renderer.setPixelRatio(PR); wu.uPR.value = PR; size(); } };
     let W = 0, H = 0;
     const size = () => {
       const r = section.getBoundingClientRect(); W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height));
-      renderer.setSize(W, H, false); composer.setSize(W, H); bloom.setSize(W / 2, H / 2);
+      renderer.setSize(W, H, false); composer.setSize(W, H); bloom.setSize(W / 3, H / 3);
       camera.aspect = W / H;
       // The title sits left: push the ground right of centre (and down on phones, under the title).
       if (mobile) camera.setViewOffset(W, H, 0, -H * 0.18, W, H); else camera.setViewOffset(W, H, -W * 0.17, -H * 0.04, W, H);
@@ -191,7 +194,8 @@ if (pin && section && canvas) {
       }
       camera.position.copy(eye); camera.lookAt(look);
       her.visible = drop > 0.02 || p > 2.2;
-      composer.render();
+      if (bloom.enabled) composer.render(); else renderer.render(scene, camera);
+      if (quality > 0 && !reduced && te > 0.8) { if (!timing0) timing0 = now; frames++; if (now - timing0 > 2) { const fps = frames / (now - timing0); if (fps < 38) degrade(); frames = 0; timing0 = now; } }
       // Arrival from the hero: out of black as the drone lifts.
       canvas.style.opacity = reduced ? '1' : String(clamp(te / 0.8));
     }
