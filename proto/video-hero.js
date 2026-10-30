@@ -81,7 +81,8 @@
 
   let i = 0; let paused = reduced; let timer = 0;
   const tick = () => { i = (i + 1) % AUDIENCE.length; setAudience(AUDIENCE[i]); show(i, true); };
-  const run = () => { clearInterval(timer); timer = setInterval(tick, CYCLE); };
+  // One clip (the fan hero): it just loops, nothing to rotate.
+  const run = () => { clearInterval(timer); if (clips.length > 1) timer = setInterval(tick, CYCLE); };
 
   function setPaused(p) {
     paused = p;

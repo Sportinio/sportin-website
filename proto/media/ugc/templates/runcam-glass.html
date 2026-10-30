@@ -1,0 +1,261 @@
+<!doctype html>
+<!--
+  Run Cam "Glass HUD" template, ported from the SportIn iOS app (rork-sportin-io, origin/testing-ios):
+    Views/RunCam/RunCamHUDView.swift            layout, paint order, run-kind card slots
+    Views/RunCam/RunCamHUDMetrics.swift         1080x1920 canvas, hudScale 0.7, palette, fonts
+    Views/RunCam/RunCamGlassBackground.swift    chamfer shape, tint, sheen, shade, strokes, shadow
+    Views/RunCam/RunCamFramePainter.swift       border breaks, outer edge, notches, brackets, ruler
+    Views/RunCam/RunCamContentPainter.swift     stat card, Live frame, location frame
+    Views/RunCam/RunCamLocationFit.swift        location text shrink-to-fit
+    Views/RunCam/RunCamBarMetrics.swift + RunCamBarPainter.swift   distance + activity bars
+    Views/RunCam/RunCamActivityZoneColors.swift, Models/RunCamActivityLevel.swift, RunCamDistanceLevel.swift
+    Views/RunCam/RunCamRouteLine.swift          north-up auto-fit route line
+    Views/RunCam/RunCamElevationStripMetrics.swift + Painter, Models/RunCamElevationStripText.swift, RunCamElevationGain.swift
+    Models/RunCamHUDModel.swift, Utilities/RunFormatters.swift   text formats
+  Deliberate differences: no glow on the bar fill or the elevation line (site rule: no glows).
+  All run data is fictional.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Cam Glass HUD</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+  #view { position: fixed; inset: 0; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; }
+  #stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .layer { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  .glass {
+    position: absolute;
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    backdrop-filter: blur(24px) saturate(1.5);
+    /* tint 46% + sheen (white 14% -> 0 over top 55%) + shade (black 0 -> 30% over bottom 45%) */
+    background:
+      linear-gradient(to bottom, rgba(255,255,255,.14) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,0) 55%, rgba(0,0,0,.30) 100%),
+      rgba(20,22,34,.46);
+  }
+  svg text { font-family: -apple-system, "SF Pro Text", "SF Pro Display", system-ui, sans-serif; }
+  svg .mono { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace; }
+</style>
+</head>
+<body>
+<div id="view"><div id="stage">
+  <video autoplay muted loop playsinline preload="auto" poster="/assets/site/media/clip-run1.jpg" src="/assets/site/media/clip-run1.mp4"></video>
+  <svg class="layer" id="shadows" viewBox="0 0 1080 1920"></svg>
+  <div class="layer" id="glass"></div>
+  <svg class="layer" id="paint" viewBox="0 0 1080 1920" xml:space="preserve"></svg>
+</div>
+</div>
+<script>
+(() => {
+  // ---- RunCamHUDMetrics -------------------------------------------------------
+  const W = 1080, H = 1920, S = 0.7, PAD = 48, CH = 22;
+  const BLUE = '#0751FB', BLUE2 = '#7EA3FF', DANGER = '#E74C3C';
+  const INK = 'rgba(255,255,255,.96)', T2 = 'rgba(255,255,255,.68)', T3 = 'rgba(255,255,255,.46)';
+  const SAFE = W * 0.07;
+  const colL = SAFE + 420 * S / 2, colR = W - SAFE - 420 * S / 2;
+  const rightBorder = colR + 420 * S / 2;
+  const LABEL = 39, VALUE = 34 * 3 * 0.8, UNIT = 39 * 0.85, LIVE = 45 * 0.85;
+  const barH = H * (0.83 - 0.43) / S, barY = H * (0.43 + 0.83) / 2;
+  const EL = [
+    { id: 'live', w: 400, h: 110, x: rightBorder - 400 * S / 2, y: H * 0.065 },
+    { id: 'loc',  w: 400, h: 110, x: (W - rightBorder) + 400 * S / 2, y: H * 0.065 },
+    { id: 'dist', w: 120, h: barH, x: SAFE + 120 * S / 2 + 8 * S, y: barY },
+    { id: 'act',  w: 120, h: barH, x: W - SAFE - 120 * S / 2, y: barY },
+    { id: 'c0', w: 420, h: 250, x: colL, y: H * 0.20,  label: 'Pace',     unit: '/km' },
+    { id: 'c1', w: 420, h: 250, x: colR, y: H * 0.20,  label: 'Distance', unit: 'km' },
+    { id: 'c2', w: 420, h: 250, x: colL, y: H * 0.325, label: 'Time' },
+    { id: 'c3', w: 420, h: 250, x: colR, y: H * 0.325, label: 'Steps' }
+  ];
+  const CITY = 'Riverside Park';
+
+  const chamfer = (w, h, c, i = 0) => {
+    const x0 = i, y0 = i, x1 = w - i, y1 = h - i, k = Math.max(0, c - i / 2);
+    return `M${x0 + k} ${y0}L${x1} ${y0}L${x1} ${y1 - k}L${x1 - k} ${y1}L${x0} ${y1}L${x0} ${y0 + k}Z`;
+  };
+  const local = e => `translate(${e.x} ${e.y}) scale(${S}) translate(${-e.w / 2} ${-e.h / 2})`;
+
+  // ---- Glass (RunCamGlassBackground) ------------------------------------------
+  const glass = document.getElementById('glass');
+  let shadowSvg = `<defs><filter id="sh" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"/></filter>
+    <mask id="cut" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fff"/>`;
+  let shadowShapes = '';
+  EL.forEach(e => {
+    const vw = e.w * S, vh = e.h * S, c = CH * S;
+    const d = document.createElement('div');
+    d.className = 'glass';
+    Object.assign(d.style, { left: (e.x - vw / 2) + 'px', top: (e.y - vh / 2) + 'px', width: vw + 'px', height: vh + 'px',
+      clipPath: `polygon(${c}px 0, 100% 0, 100% calc(100% - ${c}px), calc(100% - ${c}px) 100%, 0 100%, 0 ${c}px)` });
+    glass.appendChild(d);
+    shadowSvg += `<path transform="${local(e)}" d="${chamfer(e.w, e.h, CH)}" fill="#000"/>`;
+    shadowShapes += `<path transform="translate(0 14) ${local(e)}" d="${chamfer(e.w, e.h, CH)}"/>`;
+  });
+  document.getElementById('shadows').innerHTML = shadowSvg +
+    `</mask></defs><g mask="url(#cut)"><g filter="url(#sh)" fill="rgba(0,0,0,.45)">${shadowShapes}</g></g>`;
+
+  // ---- Frame (RunCamFramePainter) ---------------------------------------------
+  function frame(w, h) {
+    const ts = w * 0.30, te = w * 0.36, bs = w * 0.56, be = w * 0.62, c = CH, o = 8;
+    let s = `<path d="M${c} 0L${ts} 0M${te} 0L${w} 0M${w} 0L${w} ${h - c}M${w} ${h - c}L${w - c} ${h}M${w - c} ${h}L${be} ${h}M${bs} ${h}L0 ${h}M0 ${h}L0 ${c}M0 ${c}L${c} 0" stroke="${BLUE2}" stroke-width="2" fill="none"/>`;
+    s += `<path d="M${c + o} ${-o}L${ts} ${-o}M${-o} ${c + o}L${-o} ${h * 0.55}" stroke="rgba(126,163,255,.45)" stroke-width="2" fill="none"/>`;
+    [[ts + 4, -3], [te - 10, -3], [bs - 10, h - 3], [be + 4, h - 3]].forEach(([x, y]) => { s += `<rect x="${x}" y="${y}" width="6" height="6" fill="${BLUE2}"/>`; });
+    s += `<path d="M${w - 36} 0L${w} 0L${w} 36M0 ${h - 36}L0 ${h}L36 ${h}" stroke="rgba(255,255,255,.70)" stroke-width="3" fill="none"/>`;
+    for (let i = 0; i <= 24; i++) {
+      const x = PAD + (w - 2 * PAD) * i / 24, tall = i % 6 === 0;
+      s += `<line x1="${x}" y1="${h - 8}" x2="${x}" y2="${h - 8 - (tall ? 12 : 6)}" stroke="rgba(255,255,255,${tall ? .35 : .16})" stroke-width="2"/>`;
+    }
+    return s;
+  }
+  const glassStrokes = (w, h) =>
+    `<path d="${chamfer(w, h, CH, 2)}" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="2"/>` +
+    `<path d="${chamfer(w, h, CH)}" fill="none" stroke="url(#rim)" stroke-width="2.5"/>`;
+
+  // ---- Location fit (RunCamLocationFit) ---------------------------------------
+  const ctx = document.createElement('canvas').getContext('2d');
+  const MONO = 'ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace';
+  function fitted(text, size, max) {
+    ctx.font = `700 ${size}px ${MONO}`;
+    const m = ctx.measureText(text).width;
+    return m > max ? Math.floor(size * max / m) : size;
+  }
+  let city = CITY, citySize = fitted(CITY, LIVE, 400 - 2 * PAD);
+  if (citySize < LIVE * 0.9) { city = CITY.split(', ')[0]; citySize = Math.max(fitted(city, LIVE, 304), LIVE * 0.7); }
+
+  // ---- Static paint + dynamic hooks --------------------------------------------
+  const gradActivity = [['0.125', '#2ECC71'], ['0.375', '#4A8FE8'], ['0.625', '#F5A623'], ['0.875', '#E84A4A']];
+  const ix = PAD * 0.6, top = PAD * 0.6, bottom = barH - PAD * 0.9, tw = 120 - 2 * ix;
+  let p = `<defs>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".60"/><stop offset=".45" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".32"/></linearGradient>
+    <linearGradient id="gDist" gradientUnits="userSpaceOnUse" x1="60" y1="${bottom}" x2="60" y2="${top}"><stop offset="0" stop-color="${BLUE}"/><stop offset="1" stop-color="${BLUE2}"/></linearGradient>
+    <linearGradient id="gAct" gradientUnits="userSpaceOnUse" x1="60" y1="${bottom}" x2="60" y2="${top}">${gradActivity.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>
+    <linearGradient id="gElev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${BLUE}" stop-opacity=".4"/><stop offset="1" stop-color="${BLUE}" stop-opacity=".05"/></linearGradient>
+    <clipPath id="clipDist"><rect id="clipDistR" x="${ix - 10}" width="${tw + 20}" y="${bottom}" height="0"/></clipPath>
+    <clipPath id="clipAct"><rect id="clipActR" x="${ix - 10}" width="${tw + 20}" y="${bottom}" height="0"/></clipPath>
+  </defs>`;
+  EL.forEach(e => { p += `<g transform="${local(e)}">${glassStrokes(e.w, e.h)}</g>`; });
+  p += `<image href="assets/runcam-logo-s.png" x="${540 - 77 * 298 / 316 / 2}" y="${H * 0.065 - 38.5}" width="${77 * 298 / 316}" height="77"/>`;
+  EL.forEach(e => {
+    p += `<g transform="${local(e)}">${frame(e.w, e.h)}`;
+    if (e.id === 'live') {
+      p += `<circle id="dot" cx="${PAD + 2}" cy="${e.h / 2 - 2}" r="9" fill="${DANGER}"/>` +
+           `<text id="liveT" class="mono" x="${PAD + 26}" y="${e.h / 2 + 12}" font-size="${LIVE}" font-weight="700" fill="${INK}"></text>`;
+    } else if (e.id === 'loc') {
+      p += `<text class="mono" x="${PAD}" y="${e.h / 2 + 12}" font-size="${citySize}" font-weight="700" fill="${INK}">${city}</text>`;
+    } else if (e.id === 'dist' || e.id === 'act') {
+      const g = e.id === 'dist' ? 'gDist' : 'gAct', cl = e.id === 'dist' ? 'clipDist' : 'clipAct';
+      const track = `<rect x="${ix}" y="${top}" width="${tw}" height="${bottom - top}" rx="10" fill="url(#${g})"`;
+      p += `${track} opacity=".18"/>${track} clip-path="url(#${cl})"/>` +
+           `<line id="${e.id}Head" x1="${ix - 6}" x2="${ix + tw + 6}" y1="${bottom}" y2="${bottom}" stroke="#fff" stroke-width="3"/>`;
+    } else {
+      const lb = PAD + LABEL * 0.8, rule = lb + 14, vb = rule + (e.h - PAD - rule) / 2 + VALUE * 0.36;
+      p += `<text x="${PAD}" y="${lb}" font-size="${LABEL}" font-weight="600" fill="${T2}">${e.label}</text>` +
+           `<rect x="${PAD}" y="${rule}" width="${e.w - 2 * PAD}" height="1" fill="rgba(126,163,255,.35)"/>` +
+           `<text x="${PAD}" y="${vb}"><tspan id="${e.id}V" class="mono" font-size="${VALUE}" font-weight="700" fill="${INK}"></tspan>` +
+           (e.unit ? `<tspan dx="12" font-size="${UNIT}" font-weight="600" fill="${T3}">${e.unit}</tspan>` : '') + `</text>`;
+    }
+    p += `</g>`;
+  });
+  // Route line (RunCamRouteLinePainter): centre 0.80 H, box 430 at hudScale.
+  p += `<g transform="translate(540 ${H * 0.80}) scale(${S})" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path id="rHalo" stroke="rgba(0,0,0,.35)" stroke-width="15"/><path id="rLine" stroke="${BLUE2}" stroke-width="9"/>
+    <circle id="rDot" r="${9 * 1.6 / 2}" fill="#fff" stroke="none"/></g>`;
+  // Elevation strip.
+  const eTop = H * 0.905, eH = H * 0.065, eL = W * 0.04, eW = W * 0.92, eLab = eTop - 28;
+  p += `<text x="${eL}" y="${eLab}"><tspan font-size="${LABEL}" font-weight="600" fill="${T3}">Elevation</tspan><tspan id="eVal" dx="12" class="mono" font-size="${LABEL}" font-weight="700" fill="${INK}"></tspan></text>` +
+       `<text id="eGain" class="mono" x="${eL + eW}" y="${eLab}" text-anchor="end" font-size="${LABEL}" font-weight="600" fill="${T2}"></text>` +
+       `<path id="eArea" fill="url(#gElev)"/><path id="eBase" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>` +
+       `<path id="eLine" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>` +
+       `<circle id="eDot" r="11" fill="#fff" stroke="${BLUE}" stroke-width="4"/>`;
+  document.getElementById('paint').innerHTML = p;
+  const $ = id => document.getElementById(id);
+
+  // ---- Fictional run (time-lapse of a 5 km loop) --------------------------------
+  const RUN = 13, HOLD = 1.5, LOOP = RUN + HOLD, TOTAL_S = 1530, TOTAL_M = 5000;
+  const V0 = TOTAL_M / TOTAL_S, A = 0.25, WV = 2 * Math.PI * 3 / TOTAL_S;
+  const ROUTE = [[0,0],[120,40],[260,60],[400,30],[520,-20],[640,-10],[760,50],[850,150],[900,280],[880,420],[820,540],[720,620],[600,660],[470,650],[350,690],[230,700],[120,650],[40,560],[-20,450],[-60,330],[-40,210],[10,120],[70,70]];
+  const cum = [0]; for (let i = 1; i < ROUTE.length; i++) cum.push(cum[i - 1] + Math.hypot(ROUTE[i][0] - ROUTE[i - 1][0], ROUTE[i][1] - ROUTE[i - 1][1]));
+  const LEN = cum[cum.length - 1];
+  function routeTo(f) {
+    const m = f * LEN, out = [ROUTE[0]];
+    for (let i = 1; i < ROUTE.length; i++) {
+      if (cum[i] < m) { out.push(ROUTE[i]); continue; }
+      const k = (m - cum[i - 1]) / (cum[i] - cum[i - 1] || 1), a = ROUTE[i - 1], b = ROUTE[i];
+      out.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]); break;
+    }
+    return out;
+  }
+  const alt = f => 21 + 9 * Math.sin(2 * Math.PI * f * 1.5 - 0.6) + 4 * Math.sin(2 * Math.PI * f * 4.3);
+  function gain(alts) { let tot = 0, last = null; for (const a of alts) { if (last === null) { last = a; continue; } const d = a - last; if (d > 3) { tot += d; last = a; } else if (d < -3) last = a; } return tot; }
+  function project(pts, box, padF) {
+    const xs = pts.map(q => q[0]), ys = pts.map(q => -q[1]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    const span = Math.max(maxX - minX, maxY - minY), sc = span > 0 ? box * (1 - 2 * padF) / span : 0;
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    return pts.map(q => [(q[0] - cx) * sc, (-q[1] - cy) * sc]);
+  }
+  const pad2 = n => String(n).padStart(2, '0');
+  const elapsedText = s => { const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${pad2(m)}:${pad2(x)}` : `${m}:${pad2(x)}`; };
+  const stepsText = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const paceText = s => s == null ? '-' : `${Math.floor(s / 60)}:${pad2(s % 60)}`;
+  const zones = [[0, 4], [4, 6], [6, 9], [9, 16]];
+  const activityLevel = k => { if (k <= 0) return 0; const z = k < 4 ? 0 : k < 6 ? 1 : k < 9 ? 2 : 3; const [lo, hi] = zones[z]; return (z + Math.min(1, Math.max(0, (k - lo) / (hi - lo)))) / 4; };
+  const poly = pts => pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('');
+
+  function setBar(id, level) {
+    const y = bottom - (bottom - top) * Math.max(0, Math.min(1, level));
+    $(id === 'dist' ? 'clipDistR' : 'clipActR').setAttribute('y', y);
+    $(id === 'dist' ? 'clipDistR' : 'clipActR').setAttribute('height', bottom - y);
+    $(id + 'Head').setAttribute('y1', y); $(id + 'Head').setAttribute('y2', y);
+  }
+
+  function render(t) {
+    const pr = Math.min(t / RUN, 1), E = Math.round(pr * TOTAL_S);
+    const d = V0 * pr * TOTAL_S + (A / WV) * (1 - Math.cos(WV * pr * TOTAL_S));
+    const kmh = (V0 + A * Math.sin(WV * pr * TOTAL_S)) * 3.6 * (pr > 0 ? 1 : 0);
+    const pace = d > 20 ? Math.round(E / (d / 1000)) : null;
+    const clip = Math.floor(t);
+    $('liveT').textContent = `Live  ${pad2(Math.floor(clip / 60))}:${pad2(clip % 60)}`;
+    $('dot').style.visibility = Math.floor(t * 2) % 2 === 0 ? 'visible' : 'hidden';
+    $('c0V').textContent = paceText(pace);
+    $('c1V').textContent = (d / 1000).toFixed(2);
+    $('c2V').textContent = elapsedText(E);
+    $('c3V').textContent = stepsText(Math.round(E * 2.85));
+    setBar('dist', d / 1000 / 5);
+    setBar('act', activityLevel(kmh));
+    // Route line: whole route so far, refitted every frame.
+    const f = d / TOTAL_M, pts = project(routeTo(f), 430, 0.08), path = pts.length > 1 ? poly(pts) : '';
+    $('rHalo').setAttribute('d', path); $('rLine').setAttribute('d', path);
+    const last = pts[pts.length - 1] || [0, 0];
+    $('rDot').setAttribute('cx', last[0]); $('rDot').setAttribute('cy', last[1]);
+    // Elevation strip: one sample every 1% of the route, plus the current position.
+    const alts = []; for (let i = 0; i / 100 < f; i++) alts.push(alt(i / 100)); alts.push(alt(f));
+    $('eVal').textContent = `${Math.round(alts[alts.length - 1])} m`;
+    $('eGain').textContent = `+${Math.round(gain(alts))} m gain`;
+    if (alts.length > 1) {
+      const mn = Math.min(...alts), rg = Math.max(Math.max(...alts) - mn, 1), n = alts.length;
+      const ep = alts.map((a, i) => [eL + eW * i / (n - 1), eTop + eH * (0.9 - 0.8 * (a - mn) / rg)]);
+      const line = poly(ep);
+      $('eBase').setAttribute('d', line); $('eLine').setAttribute('d', line);
+      $('eArea').setAttribute('d', `${line}L${ep[n - 1][0]} ${eTop + eH}L${ep[0][0]} ${eTop + eH}Z`);
+      $('eDot').setAttribute('cx', ep[n - 1][0]); $('eDot').setAttribute('cy', ep[n - 1][1]);
+      $('eDot').style.visibility = 'visible';
+    } else { ['eBase', 'eLine', 'eArea'].forEach(id => $(id).setAttribute('d', '')); $('eDot').style.visibility = 'hidden'; }
+  }
+
+  // ---- Scale + loop ------------------------------------------------------------
+  const stage = $('stage');
+  const fit = () => { stage.style.transform = `scale(${innerWidth / W})`; };
+  addEventListener('resize', fit); fit();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches) { stage.querySelector('video').removeAttribute('autoplay'); stage.querySelector('video').pause(); render(RUN); return; }
+  // ?capture: the page is painted frame by frame by the render script instead of the clock.
+  window.__render = (t) => render(t % LOOP); window.__loop = LOOP;
+  if (!location.search.includes('capture')) {
+    const t0 = performance.now();
+    (function tick(now) { render(((now - t0) / 1000) % LOOP); requestAnimationFrame(tick); })(t0);
+  } else { render(0); }
+})();
+</script>
+</body>
+</html>

@@ -41,4 +41,9 @@ html.is-deck .aud { display: none; } /* Present mode does not include the scroll
 
 @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .aud__panel { background: var(--paper); } }
 :root[data-theme='dark'] .aud__panel { background: var(--paper); }
+@media (max-width: 900px) {
+  .aud { height: auto; }
+  .aud__stick { position: static; height: auto; }
+  .aud__grid { grid-template-columns: 1fr; row-gap: 32px; }
+}
 @media (prefers-reduced-motion: reduce) { .aud__line, .aud__support { transform: none; filter: none; } }

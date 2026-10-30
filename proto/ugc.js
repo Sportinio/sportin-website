@@ -30,12 +30,8 @@ if (ugc) {
 
   let pageOn = false;
   const videos = [...ugc.querySelectorAll('video')];
-  // Phones play only the video most in view, so the strip keeps a smooth frame rate.
-  const narrow = window.matchMedia('(max-width: 700px)');
-  const ratio = new Map();
-  const best = () => { let top = null; let r = 0; ratio.forEach((v, el) => { if (v > r) { r = v; top = el; } }); return top; };
-  const sync = (v) => { const want = pageOn && v.dataset.seen === '1' && !reduce && !stage.classList.contains('is-paused') && (!narrow.matches || v === best()); if (want) v.play().catch(() => {}); else v.pause(); };
-  const seen = new IntersectionObserver((entries) => { entries.forEach((en) => { en.target.dataset.seen = en.isIntersecting ? '1' : '0'; ratio.set(en.target, en.intersectionRatio); }); videos.forEach(sync); }, { root: strip, threshold: [0, 0.25, 0.5, 0.75, 1] });
+  const sync = (v) => { const want = pageOn && v.dataset.seen === '1' && !reduce && !stage.classList.contains('is-paused'); if (want) v.play().catch(() => {}); else v.pause(); };
+  const seen = new IntersectionObserver((entries) => entries.forEach((en) => { en.target.dataset.seen = en.isIntersecting ? '1' : '0'; sync(en.target); }), { root: strip });
   videos.forEach((v) => seen.observe(v));
   new IntersectionObserver(([en]) => { pageOn = en.isIntersecting; ugc.classList.toggle('is-off', !pageOn); videos.forEach(sync); }, { threshold: 0.15 }).observe(ugc);
 }

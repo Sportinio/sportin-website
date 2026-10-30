@@ -1,0 +1,52 @@
+/* 13 Fan data: the title and one season report card for the sample club. Four KPI tiles count up
+   and the weekly active fans line draws when the page arrives (report.js adds .is-in). The card is
+   marked Sample figures. */
+.rpt { --club: #d7192d; background: var(--paper); }
+.rpt__idx.feat__idx { display: flex; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--body); font-size: 14px; color: var(--slate); }
+.rpt__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(40px, 4vw, 60px); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); }
+.rpt__title em { font-style: normal; color: var(--blue); }
+
+.rpt__card { margin-top: clamp(28px, 5vh, 52px); border-radius: var(--r-card, 24px); background: var(--infield); overflow: hidden; }
+.rpt__bar { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--line); }
+.rpt__club { display: inline-flex; align-items: center; gap: 10px; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 700; font-size: 16px; color: var(--ink); }
+.rpt__club i { display: grid; place-items: center; width: 24px; height: 28px; clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); background: var(--club); color: #fff; font-style: normal; font-size: 13px; font-weight: 800; }
+.rpt__meta { font-size: 14px; color: var(--slate); }
+.rpt__note { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--slate); }
+
+.rpt__body { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr); }
+.rpt__kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-right: 1px solid var(--line); }
+.rpt__kpi { display: grid; align-content: space-between; gap: 18px; min-height: 130px; padding: 22px 24px; }
+.rpt__kpi:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+.rpt__kpi:nth-child(odd) { border-right: 1px solid var(--line); }
+.rpt__k { font-size: 14px; color: var(--slate); }
+.rpt__v { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(30px, 2.8vw, 44px); line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.rpt__plot { padding: 22px 24px 14px; }
+.rpt__pk { margin: 0 0 6px; font-size: 14px; color: var(--slate); }
+.rpt__chart { display: block; width: 100%; height: auto; max-height: calc(100vh - var(--nav-h) - 420px); min-height: 160px; overflow: visible; }
+.rpt__grid { stroke: var(--line); stroke-width: 1; }
+.rpt__ax, .rpt__wk { font-family: var(--mono); font-size: 12px; fill: var(--slate); }
+.rpt__ax { text-anchor: end; }
+.rpt__wk { text-anchor: middle; }
+.rpt__line { fill: none; stroke: var(--club); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; }
+.rpt__dot { fill: var(--infield); stroke: var(--club); stroke-width: 4; }
+
+.js .rpt .rpt__line { stroke-dashoffset: 1; transition: stroke-dashoffset 1800ms cubic-bezier(0.45, 0, 0.25, 1) 300ms; }
+.js .rpt .rpt__area, .js .rpt .rpt__dot { opacity: 0; transition: opacity 600ms ease 1700ms; }
+.js .rpt.is-in .rpt__line { stroke-dashoffset: 0; }
+.js .rpt.is-in .rpt__area, .js .rpt.is-in .rpt__dot { opacity: 1; }
+
+@media (max-width: 900px) {
+  .rpt__body { grid-template-columns: minmax(0, 1fr); }
+  .rpt__kpis { border-right: 0; border-bottom: 1px solid var(--line); }
+  .rpt__kpi { min-height: 104px; padding: 18px; }
+  .rpt__bar { flex-wrap: wrap; gap: 6px 14px; }
+  .rpt__note { margin-left: 0; }
+  .rpt__chart { max-height: none; }
+  /* The chart shrinks to about half on a phone: labels and strokes scale up to stay readable. */
+  .rpt__ax, .rpt__wk { font-size: 24px; }
+  .rpt__line { stroke-width: 7; }
+  .rpt__dot { stroke-width: 6; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .rpt .rpt__line, .js .rpt .rpt__area, .js .rpt .rpt__dot { stroke-dashoffset: 0; opacity: 1; transition: none; }
+}

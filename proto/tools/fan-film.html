@@ -1,0 +1,319 @@
+<!doctype html>
+<!--
+  The SportIn fan film: a 56 s motion piece at 1920x1080 built from the fan website's own pages.
+  Every frame is a pure function of time: renderAt(t) paints the film at t seconds (and seeks the
+  crowd clip), so a recorder can step through it frame by frame. Render it with
+  tools/render-fan-film.js; open this page alone to play it in the browser (?play).
+  Northside FC is a made-up demo club; figures are samples.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SportIn fan film</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root { --ink: #eef1f7; --slate: #9aa3b5; --bg: #0b0f1a; --card: #131a28; --line: #263044; --blue: #3d74ff; --club: #d7192d; --rival: #8ea2e0; --empty: #222b3d;
+    --display: 'Archivo', 'Arial Black', sans-serif; --body: 'Instrument Sans', Arial, sans-serif; --mono: 'IBM Plex Mono', monospace; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--ink); font-family: var(--body); }
+  .sc { position: absolute; inset: 0; opacity: 0; }
+  .title { position: absolute; left: 140px; top: 168px; margin: 0; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 92px; line-height: 1.02; letter-spacing: -0.025em; max-width: 1500px; }
+  .title em { font-style: normal; color: var(--blue); }
+  .idx { position: absolute; left: 140px; top: 84px; display: flex; gap: 14px; align-items: baseline; font-size: 24px; color: var(--slate); }
+  .idx b { font-family: var(--display); font-weight: 800; font-size: 34px; color: var(--blue); }
+  .idx span { color: var(--ink); font-weight: 600; padding-left: 14px; border-left: 2px solid var(--line); }
+  .rise { will-change: transform, opacity; }
+
+  /* Crowd scenes */
+  .crowd video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(1.25) contrast(1.12); }
+  .crowd .tint { position: absolute; inset: 0; background: linear-gradient(118deg, #e3132c 0%, #e3132c 38%, #ffb000 100%); mix-blend-mode: multiply; opacity: 0.82; }
+  .crowd .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5, 8, 16, 0.72), rgba(5, 8, 16, 0.15) 70%); }
+  .crowd .big { position: absolute; left: 140px; bottom: 210px; margin: 0; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 150px; line-height: 0.98; letter-spacing: -0.03em; color: #fff; }
+  .crowd .big em { font-style: normal; color: #9bb8ff; }
+  .crowd .lede { position: absolute; left: 144px; bottom: 140px; margin: 0; font-size: 34px; color: rgba(255, 255, 255, 0.9); }
+  .mark { position: absolute; left: 140px; top: 90px; width: 250px; }
+
+  /* Problem grids */
+  .grids { position: absolute; left: 140px; right: 140px; top: 520px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 60px; }
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+  .grid i { aspect-ratio: 1; border-radius: 50%; background: var(--empty); }
+  .grid i.on { background: var(--blue); }
+  .glabel { margin-top: 26px; padding-top: 18px; border-top: 2px solid var(--line); font-size: 30px; font-weight: 600; }
+  .glabel b { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--slate); }
+
+  /* Season chart */
+  .ssn { position: absolute; left: 140px; right: 140px; top: 400px; height: 520px; }
+  .ssn svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* Game cards */
+  .cards { position: absolute; left: 140px; right: 140px; top: 400px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .card { height: 540px; border-radius: 32px; background: var(--card); padding: 34px; box-sizing: border-box; display: flex; flex-direction: column; }
+  .card h3 { margin: 0; font-family: var(--display); font-stretch: 112%; font-size: 30px; font-weight: 700; }
+  .card .viz { flex: 1; display: grid; place-items: center; }
+  .derby { width: 100%; display: grid; gap: 26px; justify-items: center; }
+  .teams { display: flex; justify-content: space-between; width: 100%; font-size: 22px; color: var(--slate); font-weight: 600; }
+  .teams span { display: grid; justify-items: center; gap: 12px; }
+  .crest { width: 74px; height: 84px; display: grid; place-items: center; clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); background: var(--club); color: #fff; font-family: var(--display); font-weight: 800; font-size: 34px; padding-bottom: 12px; box-sizing: border-box; }
+  .crest.rv { background: var(--rival); color: var(--bg); }
+  .score { white-space: nowrap; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 64px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .score span { color: var(--slate); font-weight: 500; margin: 0 8px; }
+  .tug { width: 100%; height: 12px; border-radius: 6px; background: var(--rival); overflow: hidden; }
+  .tug i { display: block; height: 100%; background: var(--club); border-right: 3px solid var(--card); }
+  .tbl { position: relative; width: 100%; height: 330px; }
+  .tbl div { position: absolute; left: 0; right: 0; height: 66px; display: flex; align-items: center; gap: 18px; padding: 0 22px; border-radius: 16px; background: #1b2436; font-size: 26px; font-weight: 600; box-sizing: border-box; }
+  .tbl div b { margin-left: auto; font-family: var(--mono); font-weight: 500; color: var(--slate); }
+  .tbl div i { font-style: normal; font-family: var(--mono); font-size: 20px; color: var(--slate); width: 20px; }
+  .tbl div.top { box-shadow: inset 0 0 0 3px var(--club); }
+  .tbl div.top b { color: var(--club); }
+  .ring { position: relative; width: 300px; height: 300px; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring p { position: absolute; inset: 0; margin: 0; display: grid; place-content: center; text-align: center; }
+  .ring p b { font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 54px; font-variant-numeric: tabular-nums; }
+  .ring p span { font-size: 20px; color: var(--slate); }
+  .ko { margin-top: 18px; font-family: var(--mono); font-size: 22px; color: var(--slate); text-align: center; }
+  .ko b { color: var(--ink); font-weight: 500; }
+
+  /* Phone */
+  .phone { position: absolute; right: 300px; top: 70px; width: 460px; aspect-ratio: 871 / 1771; }
+  .phone .scr { position: absolute; left: 5.1%; top: 2.1%; width: 89.83%; height: 95.81%; border-radius: 12.9% / 5.94%; overflow: hidden; background: #141520; }
+  .phone .scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .phone > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ptitle { top: 430px; max-width: 900px; }
+  .pline { position: absolute; left: 144px; top: 640px; margin: 0; font-size: 34px; color: var(--slate); }
+
+  /* Share cards */
+  .fan { position: absolute; left: 0; right: 0; top: 330px; height: 700px; }
+  .fan img { position: absolute; left: 50%; top: 0; width: 360px; height: 640px; margin-left: -180px; border-radius: 26px; object-fit: cover; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45); transform-origin: 50% 120%; }
+
+  /* Pay path */
+  .path { position: absolute; left: 140px; right: 140px; top: 470px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .step { height: 320px; border-radius: 32px; background: var(--card); padding: 34px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; }
+  .step.on { box-shadow: inset 0 0 0 3px var(--club); }
+  .step small { font-family: var(--mono); font-size: 20px; color: var(--slate); }
+  .step.on small { color: #ff6b7a; }
+  .step b { margin-top: auto; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 70px; line-height: 1; letter-spacing: -0.02em; }
+  .step b.sm { font-size: 48px; line-height: 1.05; }
+  .step span { font-size: 24px; color: var(--slate); }
+  .ticket { position: relative; margin-top: auto; padding: 28px 28px 34px; border-radius: 20px; background: var(--club); display: grid; gap: 8px; }
+  .ticket strong { font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 36px; }
+  .ticket em { font-style: normal; font-family: var(--mono); font-size: 20px; opacity: 0.85; }
+  .stamp { justify-self: start; margin-top: 10px; padding: 6px 14px; border: 3px solid #fff; border-radius: 8px; font-family: var(--mono); font-size: 18px; font-weight: 600; letter-spacing: 0.05em; }
+  .rail { position: absolute; left: calc(140px + (100% - 280px) / 8); right: calc(140px + (100% - 280px) / 8); top: 830px; height: 4px; border-radius: 2px; background: var(--line); }
+  .rail i { position: absolute; left: 0; top: 0; height: 100%; background: var(--club); border-radius: 2px; }
+  .rail u { position: absolute; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: var(--club); box-shadow: 0 0 0 7px var(--bg); }
+
+  /* Report */
+  .rpt { position: absolute; left: 140px; right: 140px; top: 400px; height: 560px; border-radius: 32px; background: var(--card); display: grid; grid-template-columns: 0.9fr 1.3fr; overflow: hidden; }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; border-right: 2px solid var(--line); }
+  .kpis div { padding: 40px; display: grid; align-content: space-between; border-bottom: 2px solid var(--line); }
+  .kpis div:nth-child(odd) { border-right: 2px solid var(--line); }
+  .kpis span { font-size: 26px; color: var(--slate); }
+  .kpis b { font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 72px; font-variant-numeric: tabular-nums; }
+  .plot { padding: 40px; }
+  .plot p { margin: 0; font-size: 26px; color: var(--slate); }
+  .plot svg { width: 100%; height: 420px; overflow: visible; }
+  .sample { position: absolute; right: 150px; top: 350px; font-family: var(--mono); font-size: 20px; color: var(--slate); }
+
+  /* End card */
+  .end .big { bottom: 330px; }
+  .end .cta { position: absolute; left: 144px; bottom: 170px; display: flex; gap: 22px; align-items: center; }
+  .end .cta b { padding: 22px 38px; border-radius: 999px; background: #0751fb; color: #fff; font-size: 34px; font-weight: 700; }
+  .end .cta span { font-size: 34px; color: #fff; }
+</style>
+</head>
+<body>
+<!-- 1 Hero -->
+<section class="sc crowd" id="s1">
+  <video src="/proto/media/hv-fan.mp4?v=3" muted playsinline preload="auto"></video><div class="tint"></div><div class="shade"></div>
+  <img class="mark" src="/assets/site/logo/sportin-wordmark-white.svg" alt="">
+  <h1 class="big"><span class="rise" id="h1a">Give every fan</span><br><span class="rise" id="h1b" style="display:inline-block">a part to <em>play</em>.</span></h1>
+</section>
+<!-- 2 Problem -->
+<section class="sc" id="s2">
+  <p class="idx"><b>02</b><span>The problem</span></p>
+  <h2 class="title" style="max-width:1300px">A big fanbase is not the same as <em>an active one</em>.</h2>
+  <div class="grids" id="grids"></div>
+</section>
+<!-- 3 Season -->
+<section class="sc" id="s3">
+  <p class="idx"><b>11</b><span>The season</span></p>
+  <h2 class="title">The season <em>never stops</em>.</h2>
+  <div class="ssn"><svg id="ssn" viewBox="0 0 1640 520"></svg></div>
+</section>
+<!-- 4 Games -->
+<section class="sc" id="s4">
+  <p class="idx"><b>05</b><span>The games</span></p>
+  <h2 class="title">Games fans <em>already know</em>.</h2>
+  <div class="cards">
+    <div class="card rise"><h3>Derby week</h3><div class="viz"><div class="derby">
+      <div class="teams"><span><i class="crest">N</i>Northside</span><span><i class="crest rv">R</i>Riverside</span></div>
+      <div class="score"><b id="da">5.4</b><span>&ndash;</span><b id="db">4.9</b></div>
+      <div class="tug"><i id="dtug"></i></div></div></div></div>
+    <div class="card rise"><h3>Conquer the city</h3><div class="viz"><svg id="city" viewBox="0 0 160 160" width="330" height="330"></svg></div></div>
+    <div class="card rise"><h3>Supporters&rsquo; clubs</h3><div class="viz"><div class="tbl" id="tbl"></div></div></div>
+    <div class="card rise"><h3>Walk to the stadium</h3><div class="viz"><div>
+      <div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#222b3d" stroke-width="10"/><circle id="ringf" cx="60" cy="60" r="50" fill="none" stroke="#d7192d" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="100"/></svg>
+        <p><b id="steps">6,820</b><span>of 8,000 steps</span></p></div>
+      <p class="ko">Kick-off <b id="ko">02:14:09</b></p></div></div></div>
+  </div>
+</section>
+<!-- 5 Board and rewards -->
+<section class="sc" id="s5">
+  <p class="idx"><b id="pidx">06</b><span id="pname">Leaderboard</span></p>
+  <h2 class="title ptitle" id="ptitle"></h2>
+  <p class="pline" id="pline"></p>
+  <div class="phone rise" id="phone"><div class="scr"><img id="scrA" src="/proto/media/features/screen-walking.jpg?v=3" alt=""><img id="scrB" src="/proto/media/features/screen-rewards.jpg?v=3" alt=""></div><img src="/proto/media/frames/phone-frame-3d.png" alt=""></div>
+</section>
+<!-- 6 Crest -->
+<section class="sc" id="s6">
+  <p class="idx"><b>09</b><span>Content</span></p>
+  <h2 class="title">Your crest on <em>every post</em>.</h2>
+  <div class="fan" id="fan">
+    <img src="/proto/media/ugc/club-t11-bike.jpg?v=2" alt=""><img src="/proto/media/ugc/card-t10.jpg?v=2" alt=""><img src="/proto/media/ugc/club-t12-group.jpg?v=2" alt="">
+    <img src="/proto/media/ugc/card-t11.jpg?v=2" alt=""><img src="/proto/media/ugc/card-t12.jpg?v=2" alt="">
+  </div>
+</section>
+<!-- 7 Pay -->
+<section class="sc" id="s7">
+  <p class="idx"><b>12</b><span>Revenue</span></p>
+  <h2 class="title">From fans who play to <em>fans who pay</em>.</h2>
+  <div class="path">
+    <div class="step rise"><small>Plays</small><b>8,000</b><span>steps today</span></div>
+    <div class="step rise"><small>Earns</small><b>+120</b><span>club points</span></div>
+    <div class="step rise"><small>Unlocks</small><b class="sm">Priority window</b><span>season tickets</span></div>
+    <div class="step rise"><small>Pays</small><div class="ticket"><strong>Northside FC</strong><em>Season 26/27</em><span class="stamp" id="stamp">RENEWED</span></div></div>
+  </div>
+  <div class="rail"><i id="railf"></i><u id="token"></u></div>
+</section>
+<!-- 8 Report -->
+<section class="sc" id="s8">
+  <p class="idx"><b>13</b><span>Fan data</span></p>
+  <h2 class="title">Know every fan <em>who plays</em>.</h2>
+  <p class="sample">Sample figures</p>
+  <div class="rpt rise">
+    <div class="kpis"><div><span>Active fans</span><b data-to="48200">0</b></div><div><span>Back every week</span><b data-to="61" data-p>0%</b></div><div><span>New CRM contacts</span><b data-to="12900">0</b></div><div><span>Offers redeemed</span><b data-to="3400">0</b></div></div>
+    <div class="plot"><p>Weekly active fans</p><svg id="rptsvg" viewBox="0 0 900 420"></svg></div>
+  </div>
+</section>
+<!-- 9 End -->
+<section class="sc crowd end" id="s9">
+  <video src="/proto/media/hv-fan.mp4?v=3" muted playsinline preload="auto"></video><div class="tint"></div><div class="shade"></div>
+  <img class="mark" src="/assets/site/logo/sportin-wordmark-white.svg" alt="">
+  <h2 class="big">Give every fan<br>a part to <em>play</em>.</h2>
+  <div class="cta rise" id="cta"><b>Start with an 8-week pilot</b><span>sportin.io</span></div>
+</section>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const win = (t, a, b) => clamp((t - a) / (b - a));
+const ease = (u) => 1 - (1 - u) ** 3;
+const inout = (u) => (u < 0.5 ? 4 * u * u * u : 1 - (-2 * u + 2) ** 3 / 2);
+const fmt = (v) => Math.round(v).toLocaleString('en-US');
+const SVGNS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, parent) => { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+function rand(seed) { return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+// A rise: slides up and fades in from start time a.
+function rise(node, t, a, dist = 40, dur = 0.7) { const u = ease(win(t, a, a + dur)); node.style.opacity = u; node.style.transform = `translateY(${(1 - u) * dist}px)`; }
+
+// Scenes: [id, start, end]. Each fades in and out over FADE seconds.
+const SC = [['s1', 0, 6.5], ['s2', 6.5, 12], ['s3', 12, 17.5], ['s4', 17.5, 28], ['s5', 28, 33.5], ['s6', 33.5, 38.5], ['s7', 38.5, 45], ['s8', 45, 50.5], ['s9', 50.5, 56]];
+const FADE = 0.45; const DURATION = 56;
+
+// ---- Build ----
+const SHARES = [1, 0.42, 0.16, 0.06]; const LABELS = ['Fans you reach', 'Fans you know', 'Fans who return', 'Fans who pay'];
+const grids = $('#grids'); const gridDots = [];
+SHARES.forEach((sh, g) => {
+  const col = document.createElement('div'); const grid = document.createElement('div'); grid.className = 'grid';
+  const order = [...Array(108).keys()]; const r = rand(17 + g); order.sort(() => r() - 0.5);
+  const dots = [...Array(108)].map(() => { const i = document.createElement('i'); grid.appendChild(i); return i; });
+  gridDots.push({ dots, order, n: Math.round(108 * sh) });
+  const lab = document.createElement('div'); lab.className = 'glabel'; lab.innerHTML = `<b>0${g + 1}</b>${LABELS[g]}`;
+  col.append(grid, lab); grids.appendChild(col);
+});
+
+const ssn = $('#ssn'); const W = 1640, BASE = 440, N = 52, step = W / N;
+const breaks = new Set([6, 10, 15, 28, 33]); const match = []; for (let w = 1; w < 42 && match.length < 19; w += 2) if (!breaks.has(w)) match.push(w);
+el('rect', { x: 44 * step, y: 20, width: W - 44 * step, height: BASE - 20, rx: 18, fill: '#161e2e' }, ssn);
+el('text', { x: 44 * step + 22, y: 62, fill: '#9aa3b5', 'font-family': 'IBM Plex Mono', 'font-size': 24 }, ssn).textContent = 'Summer';
+el('line', { x1: 0, x2: W, y1: BASE, y2: BASE, stroke: '#263044', 'stroke-width': 2 }, ssn);
+const bars = match.map((w) => el('rect', { x: (w + 0.5) * step - 7, y: BASE - 380, width: 14, height: 380, rx: 7, fill: '#222b3d' }, ssn));
+const pts = [...Array(N).keys()].map((w) => { let v = 0.6 + 0.045 * Math.sin(w / 6.5 + 0.6) + 0.02 * Math.sin(w / 2.3); if (w >= 44) v -= 0.03; return [(w + 0.5) * step, BASE - v * 340]; });
+const smooth = (P) => { let d = `M${P[0][0]} ${P[0][1]}`; for (let i = 0; i < P.length - 1; i++) { const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)]; d += ` C${p1[0] + (p2[0] - p0[0]) / 6} ${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6} ${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]} ${p2[1]}`; } return d; };
+const sline = el('path', { d: smooth(pts), fill: 'none', stroke: '#d7192d', 'stroke-width': 9, 'stroke-linecap': 'round', pathLength: 1, 'stroke-dasharray': 1 }, ssn);
+const sdot = el('circle', { cx: pts[N - 1][0], cy: pts[N - 1][1], r: 13, fill: '#0b0f1a', stroke: '#d7192d', 'stroke-width': 7 }, ssn);
+['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'].forEach((m, k) => { el('text', { x: (k * N / 12 + N / 24) * step, y: BASE + 50, fill: '#9aa3b5', 'font-family': 'IBM Plex Mono', 'font-size': 24, 'text-anchor': 'middle' }, ssn).textContent = m; });
+
+const city = $('#city'); const CN = 8; const own = [];
+for (let r = 0; r < CN; r++) for (let c = 0; c < CN; c++) { let o = 0; if (r + c <= 3) o = 1; if ((CN - 1 - r) + (CN - 1 - c) <= 4 && !(r === 7 && c < 5)) o = 2; own.push(o); }
+const cells = own.map((o, i) => el('rect', { x: (i % CN) * 20 + 2, y: Math.floor(i / CN) * 20 + 2, width: 16, height: 16, rx: 3 }, city));
+const runner = el('circle', { r: 5, fill: '#fff', stroke: '#0b0f1a', 'stroke-width': 2.5 }, city);
+const cpath = []; for (let c = 1; c <= 6; c++) cpath.push([2, c]); for (let r = 3; r <= 5; r++) cpath.push([r, 6]); for (let c = 5; c >= 1; c--) cpath.push([5, c]); cpath.push([4, 1], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [4, 5], [4, 4], [4, 3], [4, 2]);
+
+const CLUBS = [['London', 6.1], ['Dublin', 5.8], ['Madrid', 5.5], ['Toronto', 5.2]];
+const tbl = $('#tbl'); const rowsEl = CLUBS.map(([n]) => { const d = document.createElement('div'); d.innerHTML = `<i></i>${n}<b></b>`; tbl.appendChild(d); return d; });
+// Score script for the table: [time into scene, club, new score].
+const TBL = [[2.2, 1, 6.3], [4.4, 2, 6.0], [6.6, 3, 5.9], [8.2, 0, 6.6]];
+
+const rsvg = $('#rptsvg'); const RV = [9.1, 13.4, 17.2, 20.1, 22.6, 24.0, 25.8, 26.4, 27.9, 28.3, 29.0, 29.4];
+const rp = RV.map((v, i) => [20 + i * 860 / 11, 380 - v / 32 * 340]);
+[10, 20, 30].forEach((g) => { const y = 380 - g / 32 * 340; el('line', { x1: 20, x2: 880, y1: y, y2: y, stroke: '#263044', 'stroke-width': 2 }, rsvg); el('text', { x: 880, y: y - 8, fill: '#9aa3b5', 'font-family': 'IBM Plex Mono', 'font-size': 20, 'text-anchor': 'end' }, rsvg).textContent = g + 'k'; });
+const rarea = el('path', { d: smooth(rp) + ` L${rp[11][0]} 380 L${rp[0][0]} 380 Z`, fill: 'rgba(215,25,45,0.18)' }, rsvg);
+const rline = el('path', { d: smooth(rp), fill: 'none', stroke: '#d7192d', 'stroke-width': 7, 'stroke-linecap': 'round', pathLength: 1, 'stroke-dasharray': 1 }, rsvg);
+const rdot = el('circle', { cx: rp[11][0], cy: rp[11][1], r: 10, fill: '#131a28', stroke: '#d7192d', 'stroke-width': 6 }, rsvg);
+
+// ---- Paint at time t ----
+const videos = [['#s1 video', 0], ['#s9 video', 50.5]];
+async function renderAt(t) {
+  SC.forEach(([id, a, b]) => { const o = Math.min(win(t, a - 0.001, a + FADE), 1 - win(t, b - FADE, b + 0.001)); const s = document.getElementById(id); s.style.opacity = id === 's1' && t < FADE ? 1 : o; s.style.visibility = o > 0 || (id === 's1' && t < FADE) ? 'visible' : 'hidden'; });
+  // 1 Hero
+  { const l = t; rise($('#h1a'), l, 0.5, 60, 0.9); rise($('#h1b'), l, 1.3, 60, 0.9); }
+  // 2 Problem: the first grid fills, then each later grid keeps its share, in turn.
+  { const l = t - 6.5; gridDots.forEach((g, k) => { const f = k === 0 ? ease(win(l, 0.6, 1.6)) : ease(win(l, 1.6 + k * 0.9, 2.4 + k * 0.9)); const on = Math.round(g.n * f); g.dots.forEach((d) => d.classList.remove('on')); for (let i = 0; i < on; i++) g.dots[g.order[i]].classList.add('on'); }); }
+  // 3 Season: bars rise, the line draws, the dot appears.
+  { const l = t - 12; bars.forEach((b, k) => { const u = ease(win(l, 0.5 + k * 0.04, 1.1 + k * 0.04)); b.setAttribute('transform', `translate(0 ${BASE * (1 - u)}) scale(1 ${u})`); }); sline.setAttribute('stroke-dashoffset', 1 - inout(win(l, 1.4, 4.2))); sdot.setAttribute('opacity', win(l, 4.1, 4.4)); }
+  // 4 Games
+  { const l = t - 17.5; document.querySelectorAll('#s4 .card').forEach((c, k) => rise(c, l, 0.5 + k * 0.15, 50));
+    const tick = Math.max(0, Math.floor((l - 1.2) / 1.1)); const r = rand(5); let a = 5.4, b = 4.9;
+    for (let i = 0; i < tick; i++) { if (r() < 0.58) a = Math.min(6.2, a + 0.1); else b = Math.min(6.2, b + 0.1); }
+    $('#da').textContent = a.toFixed(1); $('#db').textContent = b.toFixed(1); $('#dtug').style.width = `${(a / (a + b)) * 100}%`;
+    const steps = Math.max(0, Math.floor((l - 1) / 0.32)); const o = own.slice();
+    for (let i = 0; i < Math.min(steps, cpath.length); i++) { const [rr, cc] = cpath[i]; o[rr * CN + cc] = 1; }
+    cells.forEach((c, i) => c.setAttribute('fill', o[i] === 1 ? '#d7192d' : o[i] === 2 ? '#8ea2e0' : '#222b3d'));
+    const fpos = clamp((l - 1) / 0.32, 0, cpath.length - 1); const i0 = Math.floor(fpos), i1 = Math.min(cpath.length - 1, i0 + 1), u = fpos - i0;
+    runner.setAttribute('cx', (cpath[i0][1] * (1 - u) + cpath[i1][1] * u) * 20 + 10); runner.setAttribute('cy', (cpath[i0][0] * (1 - u) + cpath[i1][0] * u) * 20 + 10);
+    const sc = CLUBS.map(([, s]) => s); TBL.forEach(([at, k, v]) => { if (l >= at) sc[k] = v; });
+    // Rows slide from their order before the latest score change to the order after it.
+    const ranks = (n) => { const v = CLUBS.map(([, x]) => x); TBL.slice(0, n).forEach(([, k, x]) => { v[k] = x; }); return v.map((x, k) => [x, k]).sort((p, q) => q[0] - p[0]).map(([, k]) => k); };
+    const done = TBL.filter(([at]) => l >= at).length; const before = ranks(Math.max(0, done - 1)); const after = ranks(done);
+    const su = done ? ease(win(l, TBL[done - 1][0], TBL[done - 1][0] + 0.7)) : 1;
+    rowsEl.forEach((row, k) => { const a0 = before.indexOf(k), a1 = after.indexOf(k); row.style.top = `${(a0 + (a1 - a0) * su) * 88}px`; row.querySelector('i').textContent = a1 + 1; row.querySelector('b').textContent = sc[k].toFixed(1); row.classList.toggle('top', a1 === 0); row.style.zIndex = a1 === 0 ? 2 : 1; });
+    const s = 6820 + Math.min(1180, Math.max(0, l - 1) * 150); $('#steps').textContent = fmt(Math.min(8000, s)); $('#ringf').setAttribute('stroke-dashoffset', 100 - Math.min(8000, s) / 80);
+    const left = 2 * 3600 + 14 * 60 + 9 - Math.floor(Math.max(0, l)); const p = (v) => String(v).padStart(2, '0'); $('#ko').textContent = `${p(Math.floor(left / 3600))}:${p(Math.floor(left / 60) % 60)}:${p(left % 60)}`; }
+  // 5 Board, then rewards
+  { const l = t - 28; const second = l >= 2.9; rise($('#phone'), l, 0.3, 120, 0.9);
+    $('#pidx').textContent = second ? '08' : '06'; $('#pname').textContent = second ? 'Reward' : 'Leaderboard';
+    $('#ptitle').innerHTML = second ? 'Rewards fans <em>run for</em>.' : 'Every fan, <em>on the board</em>.';
+    $('#pline').textContent = second ? 'The club and its partners set the reward.' : 'By fan, supporters’ club or country.';
+    const sw = ease(win(l, 2.6, 3.2)); $('#scrB').style.opacity = sw; [$('#ptitle'), $('#pline')].forEach((n) => { const k = second ? win(l, 2.9, 3.4) : 1 - win(l, 2.4, 2.9); n.style.opacity = Math.min(win(l, 0.6, 1.1) || 0, 1) * (second ? k : (l < 2.4 ? 1 : k)); });
+    $('#scrA').style.transform = `translateY(${-Math.min(1, Math.max(0, l - 0.8) / 1.8) * 6}%)`; }
+  // 6 Crest: five share cards fan out.
+  { const l = t - 33.5; const u = inout(win(l, 0.4, 1.8)); document.querySelectorAll('#fan img').forEach((im, k) => { const off = k - 2; im.style.transform = `translateX(${off * 300 * u}px) rotate(${off * 7 * u}deg)`; im.style.zIndex = 10 - Math.abs(off); im.style.opacity = win(l, 0.1 + Math.abs(off) * 0.12, 0.5 + Math.abs(off) * 0.12); }); }
+  // 7 Pay: the token runs the rail and lights each step; the ticket is stamped.
+  { const l = t - 38.5; const stepsEl = document.querySelectorAll('#s7 .step'); stepsEl.forEach((s, k) => rise(s, l, 0.4 + k * 0.12, 40));
+    const run = inout(win(l, 1.4, 4.8)); $('#railf').style.width = `${run * 100}%`; $('#token').style.left = `${run * 100}%`; stepsEl.forEach((s, k) => s.classList.toggle('on', l > 1.3 && run >= k / 3 - 0.001));
+    const st = win(l, 4.85, 5.15); $('#stamp').style.opacity = st; $('#stamp').style.transform = `rotate(-8deg) scale(${1.7 - 0.7 * ease(st)})`; }
+  // 8 Report: the numbers count up, the line draws.
+  { const l = t - 45; rise($('#s8 .rpt'), l, 0.3, 50); const e = ease(win(l, 0.9, 2.6)); document.querySelectorAll('.kpis b').forEach((b) => { const v = Number(b.dataset.to) * e; b.textContent = b.hasAttribute('data-p') ? `${Math.round(v)}%` : fmt(v); });
+    rline.setAttribute('stroke-dashoffset', 1 - inout(win(l, 0.9, 3.4))); rarea.setAttribute('opacity', win(l, 3.0, 3.6)); rdot.setAttribute('opacity', win(l, 3.3, 3.6)); }
+  // 9 End
+  { const l = t - 50.5; rise($('#cta'), l, 1.0, 30); }
+  // The crowd clips play at 0.6x, as on the site's hero.
+  await Promise.all(videos.map(([sel, a]) => { const v = $(sel); const want = clamp((t - a) * 0.6 + (a ? 3 : 0), 0, v.duration ? v.duration - 0.05 : 9.9); if (Math.abs(v.currentTime - want) < 0.001) return null; return new Promise((res) => { v.addEventListener('seeked', res, { once: true }); v.currentTime = want; }); }));
+}
+window.renderAt = renderAt; window.DURATION = DURATION;
+window.filmReady = Promise.all([document.fonts.ready, ...[...document.querySelectorAll('video')].map((v) => (v.readyState >= 2 ? null : new Promise((r) => v.addEventListener('loadeddata', r, { once: true })))), ...[...document.images].map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; })))]);
+if (location.search.includes('play')) filmReady.then(() => { const t0 = performance.now(); const loop = async () => { await renderAt(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); }; loop(); });
+else filmReady.then(() => renderAt(0));
+</script>
+</body>
+</html>

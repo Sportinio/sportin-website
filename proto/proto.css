@@ -1,0 +1,216 @@
+/* Hero options A, B and C. Builds on /assets/site/site.css tokens. Local prototypes only. */
+.proto-switch { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; gap: 6px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 999px; box-shadow: var(--shadow-sm); font-size: 14px; }
+.proto-switch a { padding: 6px 14px; border-radius: 999px; text-decoration: none; color: var(--slate); }
+.proto-switch a.is-on { background: var(--ink); color: #fff; }
+
+.phone { position: relative; aspect-ratio: 9 / 19.5; border-radius: 34px; padding: 9px; background: #0b0d14; box-shadow: var(--shadow-sm); }
+.phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 26px; display: block; }
+
+/* ---------- A: photo card with a live card ---------- */
+.ha { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 clamp(56px, 7vw, 96px); }
+.ha__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+.ha__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 12ch; }
+.ha__media { position: relative; }
+.ha__photo { width: 100%; aspect-ratio: 1 / 1; max-height: calc(100vh - var(--nav-h) - 120px); object-fit: cover; object-position: center 35%; border-radius: 28px; display: block; }
+.ha__card { position: absolute; left: -36px; bottom: 36px; width: 290px; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-sm); }
+.ha__cardhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-weight: 700; font-size: 15px; }
+.ha__row { margin-top: 12px; }
+.ha__rowtop { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.ha__bar { height: 8px; border-radius: 999px; background: var(--infield); overflow: hidden; }
+.ha__fill { height: 100%; width: 0; border-radius: 999px; background: var(--blue); transition: width 1.6s var(--ease); }
+.ha__fill--b { background: var(--ink); }
+.ha__chip { position: absolute; right: 22px; top: 22px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; background: #fff; border-radius: 999px; box-shadow: var(--shadow-sm); font-size: 14px; font-weight: 700; }
+.ha__chip img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+
+/* ---------- B: centred title over a strip of real moments ---------- */
+.hb { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 clamp(48px, 6vw, 80px); overflow: hidden; text-align: center; }
+.hb__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 17ch; margin: 0 auto; }
+.hb .lede { margin-left: auto; margin-right: auto; }
+.hb .hero__actions { justify-content: center; }
+.hb__strip { margin-top: clamp(48px, 6vw, 72px); display: flex; justify-content: center; align-items: flex-start; gap: 18px; will-change: transform; }
+.hb__tile { flex: none; width: clamp(150px, 15vw, 220px); aspect-ratio: 9 / 16; border-radius: 26px; overflow: hidden; background: var(--infield); }
+.hb__tile video, .hb__tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hb__tile:nth-child(odd) { margin-top: 44px; }
+.hb__tile--phone { padding: 8px; background: #0b0d14; border-radius: 30px; }
+.hb__tile--phone img { border-radius: 22px; object-position: top; }
+
+/* ---------- C: product stage with three phones ---------- */
+.hc { padding: calc(var(--nav-h) + clamp(32px, 5vw, 64px)) 0 0; text-align: center; }
+.hc__title { font-size: clamp(44px, 5.6vw, 84px); max-width: 17ch; margin: 0 auto; }
+.hc .lede { margin-left: auto; margin-right: auto; }
+.hc .hero__actions { justify-content: center; }
+.hc__stage { margin: clamp(48px, 6vw, 72px) auto 0; width: var(--stage-w, min(1144px, calc(100% - 2 * var(--gutter)))); border-radius: var(--stage-r, 32px); background: linear-gradient(180deg, #e8eeff 0%, #f3f6ff 55%, #ffffff 100%); padding: 64px 24px 0; overflow: hidden; display: flex; justify-content: center; align-items: flex-end; gap: clamp(16px, 3vw, 40px); height: 560px; transition: border-radius 0.2s linear; }
+.hc__stage .phone { width: clamp(170px, 18vw, 250px); transform: translateY(var(--rise, 0)); }
+.hc__stage .phone:nth-child(1) { transform: translateY(calc(var(--rise, 0px) + 60px)) rotate(-6deg); }
+.hc__stage .phone:nth-child(2) { width: clamp(200px, 21vw, 290px); z-index: 1; }
+.hc__stage .phone:nth-child(3) { transform: translateY(calc(var(--rise, 0px) + 60px)) rotate(6deg); }
+
+@media (max-width: 900px) {
+  .ha__grid { grid-template-columns: 1fr; }
+  .ha__card { left: 12px; bottom: 12px; width: 250px; }
+  .hb__tile:nth-child(n + 4) { display: none; }
+  .hc__stage { height: 420px; }
+  .hc__stage .phone:nth-child(1), .hc__stage .phone:nth-child(3) { display: none; }
+}
+
+/* ---------- D: full-screen film with a live kilometres counter ---------- */
+.nav--over { background: transparent; border-bottom-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; transition: background-color 0.3s, border-color 0.3s; }
+.nav--over .nav__link { color: rgba(255, 255, 255, 0.82); }
+.nav--over .nav__link:hover { color: #fff; }
+.nav--over .brand__word--dark { display: none; }
+.nav--over .nav__toggle span { background: #fff; }
+.nav .brand__word--light { display: none; }
+.nav--over .brand__word--light { display: block; }
+.nav--over.is-solid { background: rgba(255, 255, 255, 0.9); backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px); border-bottom-color: var(--line); }
+.nav--over.is-solid .nav__link { color: var(--slate); }
+.nav--over.is-solid .brand__word--dark { display: block; }
+.nav--over.is-solid .brand__word--light { display: none; }
+.nav--over.is-solid .nav__toggle span { background: var(--ink); }
+
+.hd { position: relative; height: 100vh; min-height: 640px; overflow: hidden; background: #0a1020; color: #fff; }
+.hd__wall { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+.hd__cell { position: relative; overflow: hidden; }
+.hd__cell video { position: absolute; inset: -6% 0; width: 100%; height: 112%; object-fit: cover; transform: translateY(var(--drift, 0)); }
+/* Brand colour wash, multiplied into the footage: SportIn blue to violet. */
+.hd__tint { position: absolute; inset: 0; mix-blend-mode: multiply; background: linear-gradient(115deg, #0751fb 0%, #3b6bff 38%, #6b4eff 72%, #c45cff 100%); opacity: 0.85; pointer-events: none; }
+/* A plain dark scrim so white text reads on any frame; no glow. */
+.hd__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 16, 32, 0.35) 0%, rgba(10, 16, 32, 0) 22%, rgba(10, 16, 32, 0) 50%, rgba(10, 16, 32, 0.6) 100%); }
+.hd__content { position: absolute; left: 0; right: 0; bottom: clamp(40px, 7vh, 88px); }
+.hd__title { font-size: clamp(44px, 6vw, 96px); max-width: 15ch; color: #fff; }
+.hd__title em { color: #fff; }
+.hd__lede { color: rgba(255, 255, 255, 0.86); max-width: 36em; }
+.hd .btn--ghost { color: #fff; }
+.hd .btn--ghost:hover { color: #fff; opacity: 0.8; }
+.hd__counter { margin-top: 36px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, 0.22); display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; }
+.hd__num { font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(32px, 3.4vw, 48px); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.hd__label { font-size: 16px; color: rgba(255, 255, 255, 0.86); }
+.hd__demo { font-family: var(--mono); font-size: 12px; padding: 3px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.14); color: rgba(255, 255, 255, 0.9); }
+.hd__labels { position: absolute; top: calc(var(--nav-h) + 20px); left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr); pointer-events: none; }
+.hd__tag { justify-self: start; margin-left: 20px; font-family: var(--mono); font-size: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(10, 16, 32, 0.45); color: #fff; }
+
+@media (max-width: 900px) {
+  .hd__wall, .hd__labels { grid-template-columns: repeat(2, 1fr); }
+  .hd__cell:nth-child(n + 3), .hd__tag:nth-child(n + 3) { display: none; }
+  .hd__scrim { background: linear-gradient(180deg, rgba(10, 16, 32, 0.55) 0%, rgba(10, 16, 32, 0.45) 30%, rgba(10, 16, 32, 0.8) 60%, rgba(10, 16, 32, 0.92) 100%); }
+}
+
+/* ---------- E: a row of iPhones that are windows onto one wide film ----------
+   Spec: design lead audit 2026-10-21. In-screen sizes are the app's SwiftUI points
+   (rork-sportin-io/ios/SportInIo/Views/Explore/*), drawn at 402 x 874 and scaled. */
+.he { padding: calc(var(--nav-h) + 40px) 0 clamp(56px, 7vw, 96px); text-align: center; overflow: hidden; }
+.he__title { font-size: clamp(44px, 5vw, 76px); max-width: 17ch; margin: 0 auto; }
+.he__lede { font-size: 18px; max-width: 56ch; margin: 20px auto 0; color: var(--slate); }
+.he .hero__actions { justify-content: center; margin-top: 28px; }
+.he__row { position: relative; margin-top: 40px; display: flex; justify-content: center; align-items: flex-start; gap: clamp(16px, 1.8vw, 28px); }
+
+/* Device: solid rim with a hairline, black bezel, no side buttons (design lead's CSS fallback). */
+.iphone { --pw: min(15vw, 236px); position: relative; flex: none; width: var(--pw); aspect-ratio: 71.5 / 149.6; padding: calc(var(--pw) * 0.012); border-radius: calc(var(--pw) * 0.185); background: #1d1d1f; box-shadow: inset 0 0 0 1px #3a3a3c, var(--shadow-sm); }
+.iphone__bezel { width: 100%; height: 100%; padding: calc(var(--pw) * 0.032); border-radius: calc(var(--pw) * 0.173); background: #000; }
+.iphone__screen { position: relative; width: 100%; height: 100%; border-radius: calc(var(--pw) * 0.137); overflow: hidden; background: #0d0d14; }
+.iphone__screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* The app screen at its own size; JS sets --s = screen width / 402. */
+.app { position: absolute; top: 0; left: 0; width: 402px; height: 874px; transform: scale(var(--s, 0.5)); transform-origin: top left; color: #fff; text-align: left; font-family: ui-rounded, -apple-system, 'SF Pro Rounded', 'SF Pro Text', system-ui, sans-serif; }
+.app__island { position: absolute; top: 11px; left: 50%; width: 126px; height: 37px; transform: translateX(-50%); border-radius: 20px; background: #000; }
+.app__status { position: absolute; top: 19px; left: 34px; right: 30px; display: flex; justify-content: space-between; align-items: center; font: 600 17px/1 -apple-system, 'SF Pro Text', system-ui, sans-serif; }
+.app__status svg { display: block; }
+/* Bottom sheet (LeaderboardBottomSheet.swift:22-26,169-189), without its shadow. */
+.sheet { position: absolute; left: 6px; right: 6px; top: 437px; bottom: 0; padding: 26px 12px 0; background: #151515; border: 1px solid rgba(255, 255, 255, 0.08); border-bottom: 0; border-radius: 12px 12px 0 0; }
+.sheet::before { content: ''; position: absolute; top: 8px; left: 50%; width: 36px; height: 5px; transform: translateX(-50%); border-radius: 3px; background: #0751fb; }
+.sheet__head { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 12px; }
+.sheet__title { font-size: 17px; font-weight: 600; }
+.sheet__live { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.5); }
+.sheet__live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #34c759; }
+.sheet__list { position: relative; }
+
+/* Row (LeaderboardRowView.swift:63-121, GlassStyle.swift:97): 70 high, 8 apart. */
+.row { position: absolute; left: 0; right: 0; top: 0; height: 70px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.6s cubic-bezier(0.25, 1.1, 0.5, 1); }
+.row.is-climbing { z-index: 2; }
+/* Top 3: a fading 1.5px line on the top edge (LeaderboardSupportingRows.swift:99-113). */
+.row[data-podium]::before { content: ''; position: absolute; top: -1px; left: 16px; right: 16px; height: 1.5px; background: linear-gradient(90deg, transparent, var(--podium), transparent); }
+.row[data-podium='1'] { --podium: #ffd700; }
+.row[data-podium='2'] { --podium: #c0c0c0; }
+.row[data-podium='3'] { --podium: #cd7f32; }
+/* Rank badge (RankBadgeView.swift:16-50). */
+.rank { position: relative; width: 32px; height: 46px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.rank svg { position: absolute; inset: 0; }
+.rank b { position: relative; font-size: 13px; font-weight: 600; }
+.rank i { position: relative; font-style: normal; font-size: 8px; font-weight: 700; line-height: 1; color: rgba(255, 255, 255, 0.2); }
+.rank i.up { color: #2ecc71; }
+.rank i.down { color: #e74c3c; }
+/* Avatar (GlassAvatar.swift:34-37). */
+.ava { position: relative; width: 44px; height: 44px; flex: none; }
+.ava img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1); }
+.ava .tier { position: absolute; left: 50%; bottom: -8px; width: 20px; height: 20px; border-radius: 0; box-shadow: none; transform: translateX(-50%); }
+.ava--team img { border-radius: 7px; }
+.ava--team { width: 50px; height: 50px; }
+.ava__crest { width: 50px; height: 50px; border-radius: 7px; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.who { flex: 1; min-width: 0; }
+.who__name { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.flag { width: 14.4px; height: 14.4px; flex: none; border-radius: 50%; overflow: hidden; display: grid; place-items: center; font-size: 17px; line-height: 1; }
+.who__sub { margin-top: 3px; font-size: 12px; color: rgba(255, 255, 255, 0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Value (LeaderboardRowView+Value.swift:22-41). */
+.val2 { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.val2 sup { font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.5); margin-left: 2px; vertical-align: baseline; }
+.val2 small { font-size: 11px; font-weight: 700; }
+.val2 small.up { color: #34c759; }
+.val2 small.down { color: #e24b4a; }
+.val2 small.muted { font-weight: 600; color: rgba(255, 255, 255, 0.3); }
+
+/* Next reward card (NextRewardHeroCard.swift:28-88), tier colours from Profile.swift:458-466. */
+.reward { padding: 16px; border-radius: 18px; background: rgba(255, 255, 255, 0.07); border: 1.5px solid color-mix(in srgb, var(--tier) 40%, transparent); }
+.reward__top { display: flex; align-items: center; gap: 12px; }
+.reward__icon { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--tier) 12%, transparent); }
+.reward__icon img { width: 32px; height: 32px; }
+.reward.is-unlocked .reward__icon img { animation: medal-pop 0.3s ease-out; }
+@keyframes medal-pop { from { transform: scale(0.9); } to { transform: scale(1); } }
+.reward__text { flex: 1; min-width: 0; }
+.reward__label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--tier); }
+.reward__title { margin-top: 2px; font-size: 15px; font-weight: 500; }
+.reward__pct { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.reward__bar { margin-top: 12px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.reward__fill { height: 100%; width: 0; border-radius: 2px; background: var(--tier); transition: width 0.6s ease-out; }
+.mrow { display: flex; align-items: center; gap: 12px; height: 58px; margin-top: 8px; padding: 0 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.08); font-size: 15px; font-weight: 600; }
+.mrow img { width: 30px; height: 30px; }
+.mrow span { flex: 1; }
+.mrow b { font-variant-numeric: tabular-nums; }
+
+/* Watermark mode (founder, 2026-10-21): the app UI as white, see-through marks over the film,
+   no filled sheet or cards. The film fills the whole screen. */
+.sheet { background: none; border: 0; }
+.sheet::before { background: rgba(255, 255, 255, 0.55); }
+.sheet__title { color: rgba(255, 255, 255, 0.92); }
+.sheet__live { color: rgba(255, 255, 255, 0.7); }
+.sheet__live::before { background: rgba(255, 255, 255, 0.85); }
+.row { background: none; border: 0; border-radius: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.22); color: rgba(255, 255, 255, 0.92); }
+.row[data-podium]::before { display: none; }
+.rank b { color: #fff; }
+.rank i, .rank i.up, .rank i.down { color: rgba(255, 255, 255, 0.75); }
+.ava img { filter: grayscale(1) contrast(1.05); opacity: 0.82; box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.6); }
+.ava .tier { filter: grayscale(1) brightness(1.6); opacity: 0.9; box-shadow: none; }
+.ava__crest { background: none !important; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.7); color: #fff; }
+.who__sub { color: rgba(255, 255, 255, 0.62); }
+.flag { filter: grayscale(1); opacity: 0.85; }
+.val2 { color: #fff; }
+.val2 sup, .val2 small.muted { color: rgba(255, 255, 255, 0.62); }
+.val2 small.up, .val2 small.down { color: rgba(255, 255, 255, 0.8); }
+.reward { background: none; border: 1.5px solid rgba(255, 255, 255, 0.35); }
+.reward__icon { background: rgba(255, 255, 255, 0.1); }
+.reward__icon img, .mrow img { filter: grayscale(1) brightness(1.6); }
+.reward__label { color: rgba(255, 255, 255, 0.75); }
+.reward__bar { background: rgba(255, 255, 255, 0.2); }
+.reward__fill { background: #fff; }
+.mrow { background: none; border: 0; border-radius: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.22); color: rgba(255, 255, 255, 0.92); }
+/* A soft dark floor so white marks read over bright frames; a shade, not a glow. */
+.iphone__screen::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 62%; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.28) 40%, rgba(0, 0, 0, 0.5) 100%); pointer-events: none; }
+.app { z-index: 1; }
+
+/* Tablet: three phones. Phone: three phones, the middle one leading, the sides cut by the edge. */
+@media (max-width: 1199px) {
+  .iphone { --pw: 26vw; }
+  .iphone:nth-child(n + 4) { display: none; }
+}
+@media (max-width: 700px) {
+  .iphone { --pw: 62vw; }
+  .he__row { gap: 14px; }
+}

@@ -13,7 +13,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createChip } from '/proto/chip3d.js?v=2';
 import { PHONE, buildPhone, plate } from '/proto/phone3d.js?v=2';
-import { followScroll } from '/proto/scroll-follow.js?v=5';
+import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 // It runs on its own page (integrate3d.html) or, in the deck, inside the engine's section right
 // after the engine's last step (data-int-from), so the chip carries straight on.
@@ -39,7 +39,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
 scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(renderer), 0.04).texture;
-const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
+const camera = new THREE.PerspectiveCamera(26, 1, 1, 100); // near at 1: the scene is 15+ units away, and depth precision keeps the phone's screen off its body
 const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(2.5, 14, 5); scene.add(key);
 const fill = new THREE.DirectionalLight(0xffffff, 0.45); fill.position.set(-6, 4, 8); scene.add(fill); // same lights as the engine, for a seamless handover
 const rig = new THREE.Group(); scene.add(rig); // everything turns together for a little depth
@@ -98,7 +98,7 @@ const bodyMats = new Set();
 body.traverse((o) => { if (o.material && o.material.colorWrite !== false) bodyMats.add(o.material); });
 phone.add(body);
 const pScreen = new THREE.Mesh(plate(PHONE.SW * MM, PHONE.SH * MM, PHONE.SR * MM, 32), pm(new THREE.MeshBasicMaterial({ map: PS.tex, toneMapped: false, depthWrite: false })));
-pScreen.position.z = 0.05 * MM; phone.add(pScreen);
+pScreen.position.z = 0.3 * MM; phone.add(pScreen); // far enough in front of the body that depth never mixes them
 function composePhone() { PS.tex.needsUpdate = true; }
 // The body is drawn opaque at rest and only blends while it fades in.
 function fadePhone(o) {
@@ -322,12 +322,12 @@ sw.addEventListener('click', (ev) => {
   sw.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
   follow.kick();
 });
-const copyBox = sec.querySelector('.engine__copy');
+const copyBox = sec.querySelector('.eng-a') || sec.querySelector('.engine__copy');
 function placeSwitch(o) {
   sw.style.opacity = String(o); sw.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
-  // Tabs sit centred just below the title block.
+  // Tabs sit under the verbs, left aligned with them.
   const cr = copyBox.getBoundingClientRect(); const f = stick.getBoundingClientRect();
-  sw.style.transform = `translate(${Math.round(cr.left - f.left + cr.width / 2 - sw.offsetWidth / 2)}px, ${Math.round(cr.bottom - f.top + 6)}px)`;
+  sw.style.transform = `translate(${Math.round(cr.left - f.left)}px, ${Math.round(cr.bottom - f.top + 28)}px)`;
 }
 
 // ---------- Layout ----------
@@ -336,7 +336,9 @@ function resize() {
   const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
   W = Math.max(1, r.width); H = Math.max(1, r.height); view = { w: f.width, h: f.height };
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
-  viewBase = { x: f.left - r.left, y: f.top - r.top + H * 0.07, w: f.width, h: f.height };
+  // Same framing as the engine scene: centred in the space right of the words (engine3d.js).
+  const shift = window.sportinSceneShiftX ? window.sportinSceneShiftX(sec, f) : 0.22 * f.width;
+  viewBase = { x: f.left - r.left - shift, y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
   camera.setViewOffset(W, H, viewBase.x, viewBase.y, viewBase.w, viewBase.h);
   camera.updateProjectionMatrix();
 }
@@ -456,7 +458,7 @@ function paint(t, now = performance.now()) {
   // One camera for both views, so the phone never jumps when the view changes. At step 2 the
   // camera pans to centre the phone and watch under the title, then settles on the grid as the
   // brands arrive. look.y drops the scene into the middle of the space between tabs and caption.
-  const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK;
+  const dist = lerp(lerp(11, 14.5, a), 18, side) * aspectK * 1.6; // smaller, beside the verbs column, matching the engine
   // eMotion fills its columns one step later, so its pan settles over steps 2 to 4.
   const pan = lerp(lerp(-3.0, 0, win(t, 2.0, 2.6)), lerp(-3.0, 0, win(t, 2.0, 3.6)), emo);
   const look = new THREE.Vector3(lerp(0, pan, side), lerp(lerp(0, 0.45, a), 0.6, side), 0);
@@ -481,13 +483,12 @@ function paintAt(T, now) {
   if (!on) { placeSwitch(0); chipTitle.style.opacity = '0'; return; }
   paint(Math.max(0, t), now);
 }
-const CHAPTERS = sec.dataset.chapters ? sec.dataset.chapters.split(',').map(Number) : null; // played as one scroll each, like engine3d.js
-const follow = followScroll(sec, { steps: STEPS_ALL, reduced: RM, chapters: CHAPTERS, onFrame: paintAt, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t - FROM >= 2 || (mode > 0 && follow.t > FROM)))) });
+const follow = followScroll(sec, { steps: STEPS_ALL, reduced: RM, onFrame: paintAt, keepAlive: () => visible && (modeAt !== modeTarget || (!RM && (follow.t - FROM >= 2 || (mode > 0 && follow.t > FROM)))) });
 new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) follow.kick(); }).observe(sec);
 window.addEventListener('resize', () => { resize(); paintAt(follow.t); });
 resize();
 drawWatchScreen();
-document.fonts.ready.then(() => { engine.drawEngraving(); emotion.drawEngraving(); drawWatchScreen(); follow.sync(); });
+document.fonts.ready.then(() => { resize(); engine.drawEngraving(); emotion.drawEngraving(); drawWatchScreen(); follow.sync(); });
 follow.sync();
 window.integrateAt = (v) => follow.jump(v + FROM);
 window.integrateMode = (m) => sw.querySelector(`button[data-mode="${m}"]`).click();

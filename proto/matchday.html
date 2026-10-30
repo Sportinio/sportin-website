@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SportIn · Matchday live</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" />
+  <link rel="stylesheet" href="/proto/matchday.css?v=5" />
+</head>
+<body class="mdx-page">
+  <!-- Hero prototype: the app's Matches screen (try.sportin.io league page), played live with the
+       commentary. Play, pause, stop; scrolling away pauses it. -->
+  <main class="mdx" id="matchday">
+    <header class="mdx__hero">
+      <p class="mdx__kicker">Northside FC Fan League &middot; Matchday 3</p>
+      <h1 class="mdx__head">Give every fan a part to&nbsp;<em>play</em>.</h1>
+      <p class="mdx__sub">We turn fan communities into active ecosystems that generate new revenue and measurable impact by gamifying real-world movement.</p>
+      <div class="mdx__ctl">
+        <button type="button" class="mdx__play" aria-label="Listen to Matchday 3 live"><i class="mdx__ico" aria-hidden="true"></i><span>Listen live</span></button>
+        <button type="button" class="mdx__stop" aria-label="Stop" hidden><i aria-hidden="true"></i>Stop</button>
+        <span class="mdx__time">3:50</span>
+      </div>
+    </header>
+
+    <section class="mdx__day is-open" aria-label="Matchday 3 matches">
+      <div class="mdx__dh"><b class="mdx__dn">03</b><span class="mdx__dd">Saturday, 3 October 2026</span><span class="mdx__live"><i></i>Live</span><span class="mdx__dc">6</span><span class="mdx__chev mdx__chev--up" aria-hidden="true"></span></div>
+      <span class="mdx__prog" aria-hidden="true"><i></i></span>
+      <p class="mdx__cap" aria-live="polite"><span class="mdx__mic" aria-hidden="true"><i></i><i></i><i></i></span><span class="mdx__line">Press Listen live for the commentary.</span></p>
+      <ol class="mdx__rows"></ol>
+    </section>
+    <section class="mdx__day" aria-hidden="true"><div class="mdx__dh"><b class="mdx__dn">19</b><span class="mdx__dd">Saturday, 19 September 2026</span><span class="mdx__dc">6</span><span class="mdx__chev" aria-hidden="true"></span></div></section>
+    <section class="mdx__day" aria-hidden="true"><div class="mdx__dh"><b class="mdx__dn">12</b><span class="mdx__dd">Saturday, 12 September 2026</span><span class="mdx__dc">6</span><span class="mdx__chev" aria-hidden="true"></span></div></section>
+  </main>
+  <audio class="mdx__audio" src="/proto/media/matchday/commentary.mp3?v=1" preload="none"></audio>
+  <script src="/proto/matchday-lines.js?v=1" defer></script>
+  <script src="/proto/matchday.js?v=5" defer></script>
+</body>
+</html>

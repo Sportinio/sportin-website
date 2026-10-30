@@ -7,9 +7,9 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { createEngineSound } from '/proto/engine-sound.js?v=3';
+import { createEngineSound } from '/proto/engine-sound.js?v=2';
 import { createChip } from '/proto/chip3d.js?v=2';
-import { followScroll } from '/proto/scroll-follow.js?v=5';
+import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 const root = document.documentElement;
 const sec = document.getElementById('engine');
@@ -27,7 +27,8 @@ const sc = (u) => u * u * (3 - 2 * u); // cubic: gentler, used for the flips
 const win = (t, a, b) => sm(clamp((t - a) / (b - a)));
 const winC = (t, a, b) => sc(clamp((t - a) / (b - a)));
 const lerp = (a, b, u) => a + (b - a) * u;
-const BLUE = '#0751fb'; const INK = '#0a1020'; const SLATE = '#5a6377'; const MUTE = '#8a93a6';
+const CLUB = '#d7192d'; // the club's colour (sample club, Northside FC): the engine wears it
+const INK = '#0a1020'; const SLATE = '#5a6377'; const MUTE = '#8a93a6';
 const GREEN = '#0f9f6e'; const GREEN_SOFT = '#effaf5'; // unlocked rewards
 
 // ---------- Renderer, camera, light ----------
@@ -38,7 +39,6 @@ try {
   root.classList.add('eng3d-failed'); // the page shows a still chip instead
   throw e;
 }
-root.classList.remove('eng3d-failed'); // a slow load may have shown the still chip first
 root.classList.add('eng3d-ready');
 renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -75,12 +75,12 @@ function polyline(ctx, pts, f) {
   }
   ctx.stroke();
 }
-// Layer label on the left, the client's brand on the right: the engine runs in their brand.
+// Layer label on the left, the club on the right: the engine runs in the club's name and colour.
 function head(ctx, label) {
   font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText(label, 44, 56);
-  ctx.textAlign = 'right'; ctx.fillStyle = SLATE; ctx.fillText('Your brand', SW - 44, 56);
-  const w = ctx.measureText('Your brand').width; ctx.textAlign = 'left';
-  ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(SW - 44 - w - 16, 48, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.textAlign = 'right'; ctx.fillStyle = SLATE; ctx.fillText('Northside FC', SW - 44, 56);
+  const w = ctx.measureText('Northside FC').width; ctx.textAlign = 'left';
+  ctx.fillStyle = CLUB; ctx.beginPath(); ctx.arc(SW - 44 - w - 16, 48, 6, 0, Math.PI * 2); ctx.fill();
 }
 function title(ctx, text, meta, x, y) {
   font(ctx, 700, 30); ctx.fillStyle = INK; ctx.fillText(text, x, y);
@@ -93,40 +93,34 @@ function drawGlass(s) {
   const g = ctx.createLinearGradient(0, 0, SW, SH); g.addColorStop(0, 'rgba(255,255,255,0.97)'); g.addColorStop(1, 'rgba(240,244,252,0.94)');
   card(ctx, 0, 0, SW, SH, 28, g, 'rgba(7,81,251,0.16)');
   head(ctx, 'L1 · Competition');
-  // Competitions: a knockout, four teams to one champion.
+  // Competitions, the long game: a season of weeks filling up, team and individual. The formats
+  // themselves (League, Conquer) are page 05's to show.
   ctx.globalAlpha = s.za; card(ctx, 40, 80, 600, 560);
-  title(ctx, 'Competitions', 'knockout', 68, 132);
-  const X0 = 68; const Y0 = 172; const BW = 544; const BH = 440;
-  const pill = (x, w, cy, label, on, alpha, solid) => {
-    if (alpha <= 0.01) return; ctx.save(); ctx.globalAlpha *= alpha;
-    card(ctx, x, cy - 32, w, 64, 14, solid ? BLUE : '#fff', solid ? null : (on ? BLUE : 'rgba(10,16,32,0.12)'), on ? 3 : 2);
-    font(ctx, solid ? 700 : 600, 28); ctx.fillStyle = solid ? '#fff' : (on ? BLUE : SLATE); ctx.fillText(label, x + 18, cy + 10); ctx.restore();
-  };
-  ctx.strokeStyle = BLUE; ctx.lineWidth = 3; ctx.lineJoin = 'round';
-  const r1x = X0; const r1w = BW * 0.33; const r2x = X0 + BW * 0.41; const r2w = BW * 0.28; const r3x = X0 + BW * 0.72; const r3w = BW * 0.28;
-  const y = (f) => Y0 + BH * f; const jx = X0 + BW * 0.37; const kx = X0 + BW * 0.70;
-  polyline(ctx, [[r1x + r1w, y(0.12)], [jx, y(0.12)], [jx, y(0.23)], [r2x, y(0.23)]], s.k1);
-  polyline(ctx, [[r1x + r1w, y(0.34)], [jx, y(0.34)], [jx, y(0.23)]], s.k1);
-  polyline(ctx, [[r1x + r1w, y(0.66)], [jx, y(0.66)], [jx, y(0.77)], [r2x, y(0.77)]], s.k1);
-  polyline(ctx, [[r1x + r1w, y(0.88)], [jx, y(0.88)], [jx, y(0.77)]], s.k1);
-  polyline(ctx, [[r2x + r2w, y(0.23)], [kx, y(0.23)], [kx, y(0.5)], [r3x, y(0.5)]], s.k2);
-  polyline(ctx, [[r2x + r2w, y(0.77)], [kx, y(0.77)], [kx, y(0.5)]], s.k2);
-  pill(r1x, r1w, y(0.12), 'Team A', s.r1, s.o1); pill(r1x, r1w, y(0.34), 'Team B', false, s.o1);
-  pill(r1x, r1w, y(0.66), 'Team C', s.r1, s.o1); pill(r1x, r1w, y(0.88), 'Team D', false, s.o1);
-  pill(r2x, r2w, y(0.23), 'Team A', s.r2, s.o2); pill(r2x, r2w, y(0.77), 'Team C', false, s.o2);
-  pill(r3x, r3w, y(0.5), 'Team A', false, s.o3, true);
-  if (s.o3 > 0.01) { ctx.save(); ctx.globalAlpha *= s.o3; font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('Champion', r3x, y(0.5) - 46); ctx.restore(); }
+  title(ctx, 'Competitions', 'long term', 68, 132);
+  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('Season 2026/27', 68, 172);
+  const p = s.o1 * 0.15 + s.k1 * 0.3 + s.o2 * 0.1 + s.k2 * 0.3 + s.o3 * 0.15; // 0 to 1 as the scene plays
+  const WEEKS = 38; const NOW = 24; const done = Math.round(NOW * p);
+  const GX = 68; const GY = 220; const CW = 24; const CH = 64; const GAP = (544 - 19 * CW) / 18;
+  for (let w = 0; w < WEEKS; w++) {
+    const x = GX + (w % 19) * (CW + GAP); const yy = GY + Math.floor(w / 19) * (CH + 18);
+    const on = w < done; card(ctx, x, yy, CW, CH, 6, on ? CLUB : '#eef1f6', null);
+    if (w === done - 1 && p < 0.999) { ctx.save(); ctx.globalAlpha *= 0.35; card(ctx, x - 4, yy - 4, CW + 8, CH + 8, 9, 'rgba(0,0,0,0)', CLUB, 2); ctx.restore(); }
+  }
+  font(ctx, 800, 58, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK;
+  ctx.fillText(`Week ${Math.max(1, done)}`, 68, 468);
+  const ww = ctx.measureText(`Week ${Math.max(1, done)}`).width; font(ctx, 500, 30); ctx.fillStyle = MUTE; ctx.fillText(` of ${WEEKS}`, 68 + ww, 468);
+  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('Teams and individuals,', 68, 548); ctx.fillText('every week counts.', 68, 584);
   ctx.globalAlpha = 1;
-  // Challenges: a short goal, the ring fills fast.
+  // Challenges, the short game: a goal for the next few days, the ring fills fast.
   ctx.globalAlpha = s.zb; card(ctx, 660, 80, 340, 560);
-  title(ctx, 'Challenges', null, 688, 132);
-  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('3 days', 688, 172);
+  title(ctx, 'Challenges', 'short term', 688, 132);
+  font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText('10,000 steps · 3 days', 688, 172);
   const cx = 830; const cy = 370; ctx.lineWidth = 22; ctx.lineCap = 'round';
   ctx.strokeStyle = '#e9edf4'; ctx.beginPath(); ctx.arc(cx, cy, 100, 0, Math.PI * 2); ctx.stroke();
-  if (s.rp > 0.001) { ctx.strokeStyle = BLUE; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * 0.74 * s.rp); ctx.stroke(); }
+  if (s.rp > 0.001) { ctx.strokeStyle = CLUB; ctx.beginPath(); ctx.arc(cx, cy, 100, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (7412 / 10000) * s.rp); ctx.stroke(); } // a three-day step goal
   font(ctx, 800, 58, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; ctx.textAlign = 'center';
   ctx.fillText(Math.round(7412 * s.rp).toLocaleString('en-US'), cx, cy + 20);
-  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 10,000 steps', cx, 560); ctx.textAlign = 'left';
+  font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('of 10,000 · 2 days left', cx, 560); ctx.textAlign = 'left';
   ctx.globalAlpha = 1; ctx.lineCap = 'butt';
 }
 
@@ -148,7 +142,7 @@ function drawBoard(s) {
   head(ctx, 'L2 · Leaderboard');
   card(ctx, 40, 80, 960, 72, 16);
   const lw = (960 - 12) / 3;
-  if (s.lo > 0.01) { ctx.save(); ctx.globalAlpha = s.lo; card(ctx, 46 + s.ln * lw, 86, lw, 60, 12, BLUE, null); ctx.restore(); }
+  if (s.lo > 0.01) { ctx.save(); ctx.globalAlpha = s.lo; card(ctx, 46 + s.ln * lw, 86, lw, 60, 12, CLUB, null); ctx.restore(); }
   ['Walking', 'Running', 'Cycling'].forEach((l, k) => { font(ctx, 600, 28); ctx.textAlign = 'center'; ctx.fillStyle = s.lo > 0.5 && Math.round(s.ln) === k ? '#fff' : MUTE; ctx.fillText(l, 46 + lw * k + lw / 2, 126); });
   ctx.textAlign = 'left';
   // Values roll like an odometer between lanes instead of jumping.
@@ -157,12 +151,12 @@ function drawBoard(s) {
     const [ini, name, vals, from, to] = ROWS[i];
     const slot = lerp(from, to, s.ov); const y = 176 + slot * 116; const rank = Math.round(slot);
     const mover = i === MOVER && s.ov > 0.001;
-    card(ctx, 40, y, 960, 96, 16, mover ? '#f2f6ff' : '#fff', rank === 0 ? BLUE : (mover ? 'rgba(7,81,251,0.35)' : 'rgba(10,16,32,0.07)'), rank === 0 ? 3 : 2);
+    card(ctx, 40, y, 960, 96, 16, mover ? '#fff4f5' : '#fff', rank === 0 ? CLUB : (mover ? 'rgba(215,25,45,0.35)' : 'rgba(10,16,32,0.07)'), rank === 0 ? 3 : 2);
     font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.fillText(String(rank + 1), 72, y + 58);
-    ctx.fillStyle = '#e8eeff'; ctx.beginPath(); ctx.arc(144, y + 48, 28, 0, Math.PI * 2); ctx.fill();
-    font(ctx, 700, 22); ctx.fillStyle = BLUE; ctx.textAlign = 'center'; ctx.fillText(ini, 144, y + 56); ctx.textAlign = 'left';
+    ctx.fillStyle = '#fdeaec'; ctx.beginPath(); ctx.arc(144, y + 48, 28, 0, Math.PI * 2); ctx.fill();
+    font(ctx, 700, 22); ctx.fillStyle = CLUB; ctx.textAlign = 'center'; ctx.fillText(ini, 144, y + 56); ctx.textAlign = 'left';
     font(ctx, 600, 30); ctx.fillStyle = INK; ctx.fillText(name, 196, y + 59);
-    if (mover && s.ov > 0.5) { const nw = ctx.measureText(name).width; ctx.save(); ctx.globalAlpha = clamp((s.ov - 0.5) * 4); font(ctx, 600, 24, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('▲ 2', 196 + nw + 18, y + 58); ctx.restore(); }
+    if (mover && s.ov > 0.5) { const nw = ctx.measureText(name).width; ctx.save(); ctx.globalAlpha = clamp((s.ov - 0.5) * 4); font(ctx, 600, 24, 'IBM Plex Mono'); ctx.fillStyle = CLUB; ctx.fillText('▲ 2', 196 + nw + 18, y + 58); ctx.restore(); }
     ctx.save(); rr(ctx, 700, y + 8, 290, 80, 10); ctx.clip();
     font(ctx, 500, 28, 'IBM Plex Mono'); ctx.fillStyle = SLATE; ctx.textAlign = 'right';
     if (u < 0.001) ctx.fillText(vals[a], 968, y + 58);
@@ -174,7 +168,7 @@ function drawBoard(s) {
   });
 }
 
-const PERKS = [['Free coffee', 500], ['20% off running gear', 1500], ['Spa day pass', 2500]];
+const PERKS = [['10% off club shop', 500], ['Stadium tour', 1500], ['Signed shirt', 2500]];
 function drawReward(s) {
   const { ctx } = scr.reward;
   ctx.clearRect(0, 0, SW, SH);
@@ -183,12 +177,12 @@ function drawReward(s) {
   card(ctx, 40, 80, 440, 560);
   title(ctx, 'Earned', 'this week', 68, 132);
   font(ctx, 800, 104, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; const pts = Math.round(2500 * s.pr).toLocaleString('en-US'); ctx.fillText(pts, 64, 290);
-  const pw = ctx.measureText(pts).width; font(ctx, 500, 30, 'IBM Plex Mono'); ctx.fillStyle = BLUE; ctx.fillText('pts', 78 + pw, 288);
+  const pw = ctx.measureText(pts).width; font(ctx, 500, 30, 'IBM Plex Mono'); ctx.fillStyle = CLUB; ctx.fillText('pts', 78 + pw, 288);
   const tx = 72; const tw = 376; const ty = 500;
   card(ctx, tx, ty - 6, tw, 12, 6, '#e9edf4', null);
-  if (s.pr > 0.001) card(ctx, tx, ty - 6, tw * s.pr, 12, 6, BLUE, null);
+  if (s.pr > 0.001) card(ctx, tx, ty - 6, tw * s.pr, 12, 6, CLUB, null);
   [[0.2, '500'], [0.6, '1,500'], [1, '2,500']].forEach(([f, l]) => {
-    ctx.beginPath(); ctx.arc(tx + tw * f, ty, 12, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = s.pr >= f - 0.001 ? BLUE : '#cfd6e2'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(tx + tw * f, ty, 12, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = s.pr >= f - 0.001 ? CLUB : '#cfd6e2'; ctx.stroke();
     font(ctx, 500, 24, 'IBM Plex Mono'); ctx.fillStyle = MUTE; ctx.textAlign = f === 1 ? 'right' : 'center'; ctx.fillText(l, tx + tw * f + (f === 1 ? 12 : 0), ty + 54); ctx.textAlign = 'left';
   });
   PERKS.forEach(([name, cost], k) => {
@@ -251,6 +245,18 @@ const chipKit = createChip(renderer, { PW, PD });
 const chip = chipKit.group; scene.add(chip);
 
 // ---------- Layout ----------
+// How far right of the frame's centre the 3D scene goes: half-way between the widest word in the
+// column and the right edge of the content (the same edge as the menu). Shared with integrate3d.js.
+export function sceneShiftX(section, frameRect) {
+  const words = [...section.querySelectorAll('.eng-verbs [data-v]')];
+  const grid = section.querySelector('.engine__grid');
+  if (!words.length || !grid) return 0;
+  const left = Math.max(...words.map((w) => w.getBoundingClientRect().right));
+  const g = grid.getBoundingClientRect(); const right = g.right - parseFloat(getComputedStyle(grid).paddingRight || 0);
+  return (left + right) / 2 - (frameRect.left + frameRect.width / 2);
+}
+window.sportinSceneShiftX = sceneShiftX;
+const DIST_K = 1.38; // beside the verbs the scene is smaller
 // The canvas covers the whole pinned screen, so nothing can ever be cut off at its edge. The camera
 // is still framed on the stage area below the text: the projection is widened to the full canvas.
 let W = 1; let H = 1;
@@ -262,8 +268,10 @@ function resize() {
   const r = stage.getBoundingClientRect(); const f = stick.getBoundingClientRect();
   W = Math.max(1, r.width); H = Math.max(1, r.height);
   renderer.setSize(f.width, f.height, false); camera.aspect = W / H;
+  stickW = f.width; stickH = f.height; if (coSvg) coSvg.setAttribute('viewBox', `0 0 ${stickW} ${stickH}`);
   // Framed a little above the stage centre, so the near edge of a tilted layer never reaches the screen bottom.
-  view = { x: f.left - r.left, y: f.top - r.top + H * 0.07, w: f.width, h: f.height };
+  // The scene is centred in the space between the words and the content's right edge.
+  view = { x: f.left - r.left - sceneShiftX(sec, f), y: f.top - r.top + H * 0.02, w: f.width, h: f.height };
   frame(0);
   measureChip();
 }
@@ -280,7 +288,7 @@ function measureChip() {
   const textBottom = copy.getBoundingClientRect().top + last.offsetTop + last.offsetHeight - f.top;
   const capTop = capEl.getBoundingClientRect().top - f.top;
   const targetY = (textBottom + capTop) / 2;
-  const aspectK = Math.max(1, 1.45 / (W / H)) ** 0.8; const dist = 11 * aspectK; const ey = 0.1; // on tall phone screens the board may fill more of the width
+  const aspectK = Math.max(1, 1.45 / (W / H)); const dist = 11 * aspectK; const ey = 0.1;
   chip.position.set(0, 0.55, 0); chip.rotation.set(Math.PI / 2, 0, 0, 'YXZ'); chip.updateMatrixWorld(true);
   camera.position.set(0, 0.55 + dist * ey, dist * Math.sqrt(1 - ey * ey)); camera.lookAt(0, 0.55, 0); camera.updateMatrixWorld(true);
   frame(0);
@@ -293,6 +301,88 @@ function measureChip() {
   window.sportinChipShift = chipShift; // the integrations scene starts from the same framing
 }
 
+// ---------- Callouts ----------
+// Steps 1 to 5 explain the plate with callouts instead of a title: a card beside the plate and a
+// thin line from it to a dot on the feature. The dot is projected from the 3D scene on every frame,
+// so it stays on its feature while the plate moves. A callout comes in (dot, then the line draws,
+// then the card) once the scene rests near its step, and fades out when the scene moves on.
+const HOLD = 5; // the 04 eyebrow stays on screen through the callout steps
+const coLayer = sec.querySelector('.eng-callouts');
+const NS = 'http://www.w3.org/2000/svg';
+const coSvg = coLayer ? coLayer.querySelector('svg') : null;
+const callouts = coLayer ? [...coLayer.querySelectorAll('.eng-co')].map((el) => {
+  const at = el.dataset.at ? el.dataset.at.split(',').map(Number) : null;
+  const line = document.createElementNS(NS, 'path'); line.setAttribute('class', 'eng-co__line'); line.setAttribute('pathLength', '1'); coSvg.appendChild(line);
+  const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('class', 'eng-co__dot'); dot.setAttribute('r', '3'); coSvg.appendChild(dot);
+  return { el, step: Number(el.dataset.step), screen: el.dataset.screen, at, rod: Number(el.dataset.rod || 0), dy: Number(el.dataset.dy || 0), side: el.dataset.side, line, dot, on: false };
+}) : [];
+// The second callout of a step follows the first by 80 ms.
+callouts.forEach((c) => { const n = callouts.filter((o) => o.step === c.step).indexOf(c); [c.el, c.line, c.dot].forEach((e) => e.style.setProperty('--co-d', `${n * 80}ms`)); });
+let stickW = 1; let stickH = 1;
+const FW = PW - 0.16; const FD = PD - 0.16; const _p = new THREE.Vector3();
+// The mesh that shows a screen at time t: the single flipping plate until the split, then the stack.
+function faceOf(screen, t) {
+  if (t >= 4.05) return { mesh: { glass: pGlass, board: pBoard, reward: pReward }[screen].userData.face, back: false };
+  return screen === 'board' ? { mesh: fBot, back: true } : { mesh: fTop, back: false };
+}
+const toPx = (v) => [((v.x + 1) / 2) * stickW, ((1 - v.y) / 2) * stickH];
+// A point on a screen canvas (SW × SH) to pixels in the pinned frame.
+function project(face, cx, cy) {
+  _p.set((cx / SW - 0.5) * FW, 0, (cy / SH - 0.5) * FD * (face.back ? -1 : 1)).applyMatrix4(face.mesh.matrixWorld).project(camera);
+  return toPx(_p);
+}
+// The middle of a rod (1: between Competition and Leaderboard, 2: between Leaderboard and Reward)
+// at the stack's left or right tip, whichever is on the callout's side.
+function rodPoint(rod, side) {
+  const pts = links.map((L) => { const r = rod === 1 ? L.r1 : L.r2; _p.set(0, -0.5, 0).applyMatrix4(r.matrixWorld).project(camera); return toPx(_p); });
+  pts.sort((p, q) => p[0] - q[0]);
+  return side === 'left' ? pts[0] : pts[pts.length - 1];
+}
+function plateBox(t) {
+  const faces = t >= 4.05 ? ['glass', 'board', 'reward'].map((s) => faceOf(s, t)) : [faceOf('glass', t)];
+  let minX = Infinity; let maxX = -Infinity;
+  faces.forEach((fc) => [[0, 0], [SW, 0], [0, SH], [SW, SH]].forEach(([u, v]) => { const [px] = project(fc, u, v); minX = Math.min(minX, px); maxX = Math.max(maxX, px); }));
+  return [minX, maxX];
+}
+function placeCallouts(T, t) {
+  if (!callouts.length) return;
+  const [minX, maxX] = plateBox(t);
+  const top = stickH * 0.14; const EDGE = 32; const BOTTOM = 76; const GAP = 24; // BOTTOM clears the sound button
+  const used = { left: [], right: [] };
+  callouts.forEach((c) => {
+    const on = T < 6 && Math.abs(T - c.step) < 0.22;
+    if (on !== c.on) { c.on = on; [c.el, c.line, c.dot].forEach((e) => e.classList.toggle('is-on', on)); }
+    if (!on) return; // a leaving callout keeps its last place while it fades
+    const [ax, ay] = c.rod ? rodPoint(c.rod, c.side) : project(faceOf(c.screen, t), c.at[0], c.at[1]);
+    // The card is centred on its dot's height, just outside the plate on its side, inside the frame.
+    const w = c.el.offsetWidth; const h = c.el.offsetHeight;
+    const x = c.side === 'left' ? Math.max(EDGE, minX - GAP - w) : Math.min(stickW - EDGE - w, maxX + GAP);
+    // dy drops a card below its dot, so its line can reach the feature through empty plate.
+    let y = Math.max(top, Math.min(stickH - BOTTOM - h, ay - h / 2 + c.dy));
+    used[c.side].forEach(([y0, h0]) => { if (y < y0 + h0 + 120 && y + h > y0 - 120) y = y0 + h0 + 120; });
+    used[c.side].push([y, h]);
+    c.el.style.left = `${x.toFixed(1)}px`; c.el.style.top = `${y.toFixed(1)}px`;
+    // A 20 px level stub off the card's inner edge at the title's height, then straight to the dot,
+    // ending 4 px short of it.
+    const ex = c.side === 'left' ? x + w : x; const ey = y + 24; const kx = c.side === 'left' ? ex + 20 : ex - 20;
+    const dx = ax - kx; const dy = ay - ey; const len = Math.hypot(dx, dy) || 1; const k = Math.max(0, len - 4) / len;
+    c.line.setAttribute('d', `M${ex.toFixed(1)} ${ey.toFixed(1)}H${kx.toFixed(1)}L${(kx + dx * k).toFixed(1)} ${(ey + dy * k).toFixed(1)}`);
+    c.dot.setAttribute('cx', ax.toFixed(1)); c.dot.setAttribute('cy', ay.toFixed(1));
+    c.dot.style.transformOrigin = `${ax.toFixed(1)}px ${ay.toFixed(1)}px`;
+  });
+}
+
+// ---------- The verbs ----------
+// Compete, Rank, Rewards, Connect stand on the left for the whole section; the one for the step on
+// screen is ink, the rest are pale. The opening, the split stack and the chip light the engine's
+// three layers; Connect lights for the integration.
+const verbs = [...sec.querySelectorAll('.eng-verbs [data-v]')];
+const verbRanges = [[0.6, 2.5], [2.5, 3.5], [3.5, 4.6], [6.5, 99]];
+function paintVerbs(T) {
+  const all = T < 0.6 || (T >= 4.6 && T < 6.5);
+  verbs.forEach((el, k) => el.classList.toggle('is-on', (all && k < 3) || (T >= verbRanges[k][0] && T < verbRanges[k][1])));
+}
+
 // ---------- Choreography ----------
 const GAP = 2.4;
 function setOpacity(g, o) { g.userData.body.material.opacity = o; g.userData.face.material.opacity = o; g.visible = o > 0.004; }
@@ -303,10 +393,17 @@ function paint(T) {
   // integrations scene, which starts from this exact finished chip.
   const t = Math.min(T, 6);
   // Copy: one block at a time. Reduced motion: a plain cross-fade, no blur or slide.
-  texts.forEach((el, k) => {
-    const d = Math.abs(T - k); const o = 1 - sm(clamp((d - 0.28) / 0.22));
+  texts.forEach((el) => {
+    const k = Number(el.dataset.c);
+    // The opening heading stays on screen through the callout steps (1 to HOLD); the callouts on
+    // the plate explain each step instead of a title of its own.
+    const d = k === 0 ? Math.max(0, T - HOLD) : Math.abs(T - k); const o = 1 - sm(clamp((d - 0.28) / 0.22));
+    if (k === 0) { // the display title and its line give way to the callouts after step 0
+      const ot = 1 - sm(clamp((T - 0.28) / 0.22));
+      [...el.children].forEach((ch) => { if (!ch.classList.contains('eng-eyebrow')) ch.style.opacity = String(ot); });
+    }
     el.style.opacity = String(o);
-    el.style.transform = RM ? 'none' : `translateY(${((T - k) * -18).toFixed(1)}px)`;
+    el.style.transform = RM ? 'none' : `translateY(${((k === 0 ? Math.max(0, T - HOLD) : T - k) * -18).toFixed(1)}px)`;
     el.style.filter = !RM && o < 0.98 ? `blur(${((1 - o) * 6).toFixed(2)}px)` : 'none';
   });
 
@@ -366,13 +463,15 @@ function paint(T) {
 
   // Camera: close on the single plate (pulling back a little mid-flip), out for the split stack,
   // and at eye level for the standing chip, so it reads truly vertical.
-  const aspectK = Math.max(1, 1.45 / (W / H)) ** 0.8; // on tall phone screens the board may fill more of the width
-  const dist = (lerp(lerp(10.4, 18, split), 11, up) + 1.4 * bob) * aspectK;
+  const aspectK = Math.max(1, 1.45 / (W / H));
+  const dist = (lerp(lerp(10.4, 18, split), 11, up) + 1.4 * bob) * aspectK * DIST_K;
   const look = new THREE.Vector3(0, lerp(lerp(0, 0.05, split), chip.position.y, up), 0);
   const ey = lerp(0.62, 0.1, up); const ez = Math.sqrt(1 - ey * ey);
   camera.position.set(look.x + dist * 0.05 * (1 - up), look.y + dist * ey, look.z + dist * ez);
   camera.lookAt(look);
-  frame(chipShift * up); // the standing chip settles exactly mid-way between title and caption
+  // With the display title gone after step 0, the plate rises into its space until the chip stands up.
+  const lift = 0; // no title above the scene any more, so nothing to rise into
+  frame(chipShift * up + lift); // the standing chip settles exactly mid-way between title and caption
 
   // Screens: redraw only when their state changes.
   const za = t < 0.4 ? 1 : 0.4 + 0.6 * Math.max(win(t, 0.4, 0.55) * (1 - win(t, 1.1, 1.3)), t > 4.05 ? 1 : 0);
@@ -385,12 +484,15 @@ function paint(T) {
     if (k !== s.key) { s.key = k; fn(st); s.tex.needsUpdate = true; }
   });
 
+  paintVerbs(T);
   // Caption and the demo button arrive with the finished chip.
   const cap = win(t, 5.8, 6);
   sec.style.setProperty('--cap', String(cap * (1 - win(T, 6.1, 6.4)))); // gone once the integrations begin
   if (cta) cta.classList.toggle('is-on', cap > 0.5 && T < 6.5);
   canvas.style.visibility = T > 6.02 ? 'hidden' : 'visible';
-  if (T > 6.02) return; // the integrations scene has taken over
+  if (T > 6.02) { placeCallouts(T, t); return; } // the integrations scene has taken over (the verbs are painted above)
+  scene.updateMatrixWorld(); camera.updateMatrixWorld();
+  placeCallouts(T, t);
   renderer.render(scene, camera);
 }
 
@@ -407,12 +509,11 @@ if (sound) {
 }
 
 // ---------- Scroll ----------
-// The scene plays by chapters (scroll-follow.js): one scroll plays the engine building up to the
-// finished chip, the next plays the integrations (data-chapters on the section).
-const CHAPTERS = sec.dataset.chapters ? sec.dataset.chapters.split(',').map(Number) : null;
-const follow = followScroll(sec, { steps: STEPS, reduced: RM, chapters: CHAPTERS, onFrame: (t) => { paint(t); if (sound) { const r = sec.getBoundingClientRect(); sound.update(t, r.bottom <= 0 || r.top >= window.innerHeight); } } });
+// The scene follows the scroll at a steady, eased pace (scroll-follow.js); the last part of the
+// scroll holds the finished chip.
+const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: (t) => { paint(t); if (sound) sound.update(t); } });
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
-document.fonts.ready.then(() => { measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });
+document.fonts.ready.then(() => { resize(); measureChip(); chipKit.drawEngraving(); [scr.glass, scr.board, scr.reward].forEach((s) => { s.key = ''; }); follow.sync(); });
 follow.sync();
 window.engineAt = (v) => follow.jump(v);
