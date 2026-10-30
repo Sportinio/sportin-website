@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="/proto/gor.css?v=2" />
   <link rel="stylesheet" href="/proto/delivery.css?v=8" />
   <link rel="stylesheet" href="/proto/tech-b.css?v=3" />
+  <link rel="stylesheet" href="/assets/site/fandom.css?v=1" />
   <meta name="color-scheme" content="dark" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -68,6 +69,7 @@
   <!-- WHY: the opening belief -->
   <section class="hero block hero--video" id="why" aria-labelledby="heroTitle">
     <div class="hv" aria-hidden="true"><div class="hv__scene is-active" data-word="fan"><video class="hv__clip" data-word="fan" src="/proto/media/hv-fan.mp4?v=3" poster="/proto/media/hv-fan.jpg?v=3" muted playsinline loop preload="auto"></video><div class="hv__tint"></div></div><div class="hv__dots"></div><div class="hv__shade"></div></div>
+    <div class="fx" aria-hidden="true"><i class="fx__beam fx__beam--l"></i><i class="fx__beam fx__beam--r"></i><i class="fx__grid"></i><canvas class="fx__flash"></canvas><i class="fx__scan"></i><i class="fx__corner fx__corner--tl"></i><i class="fx__corner fx__corner--tr"></i><i class="fx__corner fx__corner--bl"></i><i class="fx__corner fx__corner--br"></i></div>
     <button class="hv__pause" id="hvPause" type="button" aria-label="Pause background video"><span class="hv__pause-i" aria-hidden="true"></span></button>
     <div class="wrap">
       <p class="feat__idx" data-reveal><b>01</b><span>What we do</span><em>For football clubs</em></p>
@@ -801,6 +803,7 @@
 <script src="/proto/pilot.js?v=2" defer></script>
 <script src="/proto/pitch/pitch.js?v=22" defer></script>
 <script type="module" src="/proto/delivery.js?v=10"></script>
+<script src="/assets/site/fandom.js?v=1" defer></script>
 <script>/* If the 3D cannot start, show the still chip. */ setTimeout(function(){var r=document.documentElement;if(!r.classList.contains('eng3d-ready'))r.classList.add('eng3d-failed');},5000);</script>
 </body>
 </html>
