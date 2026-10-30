@@ -39,7 +39,7 @@
     // 14: "Launch it your way. In the SportIn app. With your crest on top. Or inside your own app…"
     '14': () => { const s = $('#delivery'); return { sent: [0, 0, 1, 2].map((k) => stepAt(s, k)) }; },
     '15': () => ({ to: centre($('#demo')) }),
-    '16': () => ({ to: centre($('#film')) }),
+    '16': () => ({ to: centre($('#live')) }),
   };
 
   // ---- The script: "## NN · Title (about X s)" blocks; [tags] are for the voice, not the captions.
