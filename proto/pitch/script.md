@@ -41,13 +41,13 @@ Between matches, most fans have no reason to take part. No reason to come back. 
 
 [warmly] And eighty-eight percent of people trust a friend's word above anything else.
 
-## 04 · The solution (about 50 s)
+## 04 · The solution (about 42 s)
 
 [confident] Meet the engine. Three layers, in your club's name and colours.
 
-[warmly] First… competition. For the long run, two formats. League… a full season for supporters' clubs, cities and countries, where every kilometre moves the table. And Conquer… fans run their streets to claim the city for the club, block by block.
+[warmly] First… competitions, for the long run. A whole season of games, for teams and for individual fans… where every week counts.
 
-For the short run… challenges. A daily step goal. Ten thousand steps in three days. Quick wins that bring fans back tomorrow.
+For the short run… challenges. Ten thousand steps in three days. Quick wins that bring fans back tomorrow.
 
 Second… leaderboards. Every walk, run and ride, ranked live.
 
