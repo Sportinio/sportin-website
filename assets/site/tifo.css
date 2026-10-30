@@ -1,0 +1,105 @@
+/* The Tifo: the SportIn homepage redesigned from scratch, one page at a time (Galadriel, 2026-10-30).
+   The whole site is a stadium choreography: every piece of content is a card a fan holds up, and
+   the picture only exists when everyone takes part. Three rules on every page: no card grids;
+   light means participation; motion is choreography. This file carries the foundation (tokens,
+   menu bar, buttons) and page 01, the hero (tifo.js). Loaded last. */
+
+/* ---------- Foundation ---------- */
+:root[data-theme='dark'] {
+  --paper: #04060d;
+  --surface: #0b1020;
+  --infield: #0c1222;
+  --line: #1c2742;
+  --blue: #2f6bff;           /* SportIn blue, lifted for a dark page */
+  --blue-deep: #0751fb;
+  --cloth: #f1ebdd;          /* the bedsheet a banner is painted on */
+  --cloth-ink: #0a1020;
+  --narrow: 75%;             /* Archivo at its narrow end: letters painted on bedsheets */
+  color-scheme: dark;
+}
+html { color-scheme: dark; }
+
+/* Menu bar: a strip across the top, lettered like a banner. Transparent over the hero, glass once the page scrolls. */
+.nav, html.is-full .nav, html.is-deck .nav {
+  top: 0 !important; left: 0 !important; right: 0 !important;
+  max-width: none; margin: 0; height: 64px; border-radius: 0; border-bottom: 0;
+  background: linear-gradient(180deg, rgba(4, 6, 13, 0.7) 0%, rgba(4, 6, 13, 0) 100%);
+  box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+  transition: background-color 0.4s, box-shadow 0.4s;
+}
+.nav.is-scrolled { background: rgba(4, 6, 13, 0.78); -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%); box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.08); }
+.nav__inner, html.is-full .nav .nav__inner, html.is-deck .nav .nav__inner { max-width: 1440px; padding: 0 clamp(20px, 3vw, 40px); gap: 28px; }
+.nav__links { gap: 28px; }
+.nav__link { font-family: var(--display); font-stretch: var(--narrow); font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(238, 241, 247, 0.66); }
+.nav__link:hover, .nav__link.is-active { color: #fff; }
+.nav__link::after { height: 2px; background: #fff; }
+.deck-nav-btn { border-color: rgba(255, 255, 255, 0.2); background: transparent; color: rgba(255, 255, 255, 0.88); font-family: var(--display); font-stretch: var(--narrow); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+.deck-nav-btn:hover { border-color: rgba(255, 255, 255, 0.5); }
+.nav__toggle span { background: #fff; }
+@media (max-width: 960px) {
+  .nav__links { top: 64px !important; left: 0 !important; right: 0 !important; border-radius: 0; background: rgba(4, 6, 13, 0.94); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.07); }
+  .nav__link { font-size: 16px; border-bottom-color: rgba(255, 255, 255, 0.08); }
+}
+
+/* Buttons: the blue one is the only glow on the page. */
+.btn--primary { background: var(--blue); box-shadow: inset 0 0 0 1px rgba(170, 196, 255, 0.35), 0 0 26px rgba(47, 107, 255, 0.4), 0 10px 28px rgba(0, 0, 0, 0.35); }
+.btn--primary:hover { background: #3d78ff; box-shadow: inset 0 0 0 1px rgba(190, 210, 255, 0.55), 0 0 36px rgba(61, 120, 255, 0.6), 0 10px 28px rgba(0, 0, 0, 0.35); }
+
+/* The guided-tour offer card: glass, bottom right just above the rail (tifo.js measures the rail). */
+.pitch-offer { bottom: calc(var(--rail-h, 130px) + 44px); right: clamp(16px, 3vw, 48px); width: min(400px, calc(100vw - 32px)); background: rgba(8, 12, 24, 0.74); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5); }
+
+/* ---------- Page 01: the hero. A stand, in the dark. Then the tifo goes up. ---------- */
+.tifo { position: relative; isolation: isolate; min-height: 100svh; margin: 0; padding: 0; border-radius: 0; overflow: clip; background: #04060d; color: #fff; }
+html.is-full #why.tifo.page { margin: 0 !important; height: 100vh; border-radius: 0; padding: 0 !important; }
+/* The footage is only a source for the cards; the canvas is the stand. */
+.tifo__crowd { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.tifo__wall { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; }
+/* Grain of a stand seen from the pitch, and darker edges. */
+.tifo__grain { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-image: radial-gradient(120% 90% at 50% 45%, rgba(4, 6, 13, 0) 55%, rgba(4, 6, 13, 0.7) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: auto, 220px 220px; }
+
+/* The banner along the front rail: a bedsheet with the message painted on it. It unfurls once the tifo is up. */
+.tifo__rail { position: absolute; z-index: 3; left: clamp(16px, 3vw, 48px); right: clamp(16px, 3vw, 48px); bottom: clamp(20px, 4.5vh, 48px); display: flex; align-items: center; gap: clamp(18px, 2.6vw, 40px); padding: clamp(16px, 1.8vw, 24px) clamp(22px, 2.6vw, 40px); color: var(--cloth-ink); background: linear-gradient(180deg, #f6f1e5 0%, var(--cloth) 55%, #e6dfcf 100%); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.7); transform: rotate(-0.4deg); clip-path: inset(0 100% 0 0); animation: tifo-unfurl 1100ms var(--ease) 4700ms forwards; }
+.tifo__rail::before, .tifo__rail::after { content: ''; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: #2a2a2a; box-shadow: inset 0 0 0 2px #8a8578, 0 0 0 3px var(--cloth); }
+.tifo__rail::before { left: 8px; }
+.tifo__rail::after { right: 8px; }
+.tifo__idx { display: flex; flex-direction: column; gap: 2px; margin: 0; padding-right: clamp(18px, 2.6vw, 40px); border-right: 1px solid rgba(10, 16, 32, 0.18); font-family: var(--display); font-stretch: var(--narrow); font-weight: 900; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.2; white-space: nowrap; }
+.tifo__idx b { font-size: 26px; letter-spacing: 0; color: var(--blue-deep); line-height: 1; margin-bottom: 4px; }
+.tifo__idx em { font-style: normal; font-weight: 600; color: rgba(10, 16, 32, 0.6); }
+.tifo__lede { flex: 1; margin: 0; font-size: clamp(15px, 1.25vw, 18px); line-height: 1.45; color: var(--cloth-ink); max-width: 46em; }
+.tifo__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.tifo__rail .btn { height: 46px; padding: 0 22px; font-size: 15px; }
+.tifo__rail .btn--primary { background: var(--blue-deep); box-shadow: 0 6px 18px rgba(7, 81, 251, 0.35); }
+.tifo__rail .btn--primary:hover { background: #1a5dff; box-shadow: 0 8px 24px rgba(7, 81, 251, 0.5); }
+.tifo__rail .btn--ghost { color: var(--cloth-ink); border: 1.5px solid rgba(10, 16, 32, 0.35); background: transparent; }
+.tifo__rail .btn--ghost:hover { color: var(--cloth-ink); border-color: var(--cloth-ink); background: rgba(10, 16, 32, 0.05); }
+.tifo__more { display: inline-flex; align-items: center; gap: 8px; margin-left: 4px; font-family: var(--display); font-stretch: var(--narrow); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cloth-ink); text-decoration: none; white-space: nowrap; }
+.tifo__more:hover { color: var(--blue-deep); }
+.tifo__more span { display: inline-block; animation: tifo-bob 1.8s ease-in-out infinite; }
+
+/* Crowd sound, on request only. */
+.tifo__sound { position: absolute; z-index: 3; left: clamp(16px, 3vw, 48px); top: 84px; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 10px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 999px; background: rgba(4, 6, 13, 0.45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: rgba(255, 255, 255, 0.85); font-family: var(--display); font-stretch: var(--narrow); font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+.tifo__sound:hover { border-color: rgba(255, 255, 255, 0.6); color: #fff; }
+.tifo__sound svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tifo__sound[aria-pressed='true'] { border-color: var(--blue); color: #fff; background: rgba(47, 107, 255, 0.25); }
+.tifo__sound .i-on { display: none; }
+.tifo__sound[aria-pressed='true'] .i-on { display: block; }
+.tifo__sound[aria-pressed='true'] .i-off { display: none; }
+
+@keyframes tifo-unfurl { to { clip-path: inset(0 0 0 0); } }
+@keyframes tifo-bob { 50% { transform: translateY(3px); } }
+
+@media (max-width: 900px) {
+  .tifo__rail { flex-direction: column; align-items: stretch; gap: 14px; left: 12px; right: 12px; bottom: 12px; padding: 18px 18px 16px; transform: rotate(-0.3deg); }
+  .tifo__idx { flex-direction: row; align-items: baseline; gap: 10px; padding: 0 0 12px; border-right: 0; border-bottom: 1px solid rgba(10, 16, 32, 0.18); }
+  .tifo__idx b { font-size: 20px; margin: 0; }
+  .tifo__lede { font-size: 15px; max-width: none; }
+  .tifo__rail .btn { height: 44px; }
+  .tifo__more { margin: 0; }
+  .tifo__sound { top: 76px; left: 12px; }
+}
+/* On phones the offer would cover the title or the rail; the tour is a desktop feature. */
+@media (max-width: 900px) { .pitch-offer { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .tifo__rail { animation: none; clip-path: none; }
+  .tifo__more span { animation: none; }
+}
