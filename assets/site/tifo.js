@@ -240,64 +240,38 @@
     });
   })();
 
-  // ---------- Crowd sound, on request. Three textures, by how full the stand is. ----------
-  // A full stand roars (the crowd loop). As fans leave, the roar falls back to a crowd heard from
-  // a distance with scattered clapping near you; with only a few left there is no crowd at all,
-  // just a couple of fans clapping and the odd whistle. Everything is driven by `level`, the share
-  // of the stand still lit, which the pages set every frame.
+  // ---------- Crowd sound, on request. The real stadium recording, as full as the stand. ----------
+  // One recording, nothing synthesised. A full stand is the roar as recorded. As fans leave, the
+  // same crowd steps back: quieter, muffled, as if heard from outside the ground. With only a few
+  // left it is a faint murmur in the distance. `level` is the share of the stand still lit.
   (() => {
     const btns = [...document.querySelectorAll('.tifo__sound')];
     if (!btns.length) return;
-    let ac = null, master = null, near = null, far = null, on = false, level = 1, ready = false, tick = 0;
-    const clappers = []; let whistleAt = 0;
-    const ramp = (g, v, t) => { g.gain.cancelScheduledValues(ac.currentTime); g.gain.setTargetAtTime(v, ac.currentTime, t); };
+    let ac = null, master = null, gain = null, lp = null, on = false, level = 1, ready = false;
+    const ramp = (p, v, t) => { p.cancelScheduledValues(ac.currentTime); p.setTargetAtTime(v, ac.currentTime, t); };
     async function setup() {
       ac = new (window.AudioContext || window.webkitAudioContext)();
       master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
-      near = ac.createGain(); near.gain.value = 0; near.connect(master);
-      const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 520;
-      far = ac.createGain(); far.gain.value = 0; far.connect(lp).connect(master);
+      lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 18000; lp.Q.value = 0.5;
+      gain = ac.createGain(); gain.gain.value = 1; gain.connect(lp).connect(master);
       const buf = await ac.decodeAudioData(await (await fetch('/assets/site/crowd-loop.mp3?v=1')).arrayBuffer());
       const bed = ac.createBufferSource(); bed.buffer = buf; bed.loop = true; bed.loopStart = 1.5; bed.loopEnd = buf.duration - 1.5;
-      bed.connect(near); bed.connect(far); bed.start();
-      // A short burst of noise is a clap; each clapper has their own rhythm and place in the stand.
-      const nb = ac.createBuffer(1, ac.sampleRate * 0.12, ac.sampleRate); const d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2.2);
-      for (let i = 0; i < 8; i++) { const pan = ac.createStereoPanner(); pan.pan.value = (i / 7) * 1.6 - 0.8; pan.connect(master); clappers.push({ pan, next: 0, every: 0.42 + Math.random() * 0.4, nb }); }
+      bed.connect(gain); bed.start();
       ready = true;
-    }
-    function clap(c) {
-      const src = ac.createBufferSource(); src.buffer = c.nb;
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1300 + Math.random() * 900; bp.Q.value = 1.1;
-      const g = ac.createGain(); g.gain.value = 0.16 + Math.random() * 0.12;
-      src.connect(bp).connect(g).connect(c.pan); src.start();
-    }
-    function whistle() {
-      const o = ac.createOscillator(); const g = ac.createGain(); const t = ac.currentTime;
-      o.type = 'sine'; o.frequency.setValueAtTime(2100, t); o.frequency.linearRampToValueAtTime(2700, t + 0.18); o.frequency.linearRampToValueAtTime(2300, t + 0.55);
-      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.06, t + 0.05); g.gain.setTargetAtTime(0, t + 0.4, 0.12);
-      o.connect(g).connect(master); o.start(t); o.stop(t + 0.9);
     }
     function apply() {
       if (!ready) return;
-      // Full stand: the roar. Fewer fans: the roar steps back into the distance. Very few: silence but for them.
-      const roar = Math.pow(clamp((level - 0.35) / 0.65), 1.3);
-      const distant = level < 0.5 ? clamp((level - 0.1) / 0.35) * 0.45 : (1 - roar) * 0.45;
-      ramp(near, roar * 0.9, 0.4); ramp(far, distant, 0.4);
+      // Loudness falls with the crowd, and the top end goes first, the way a stadium sounds from far away.
+      const l = clamp(level);
+      ramp(gain.gain, 0.08 + 0.92 * Math.pow(l, 0.8), 0.5);
+      ramp(lp.frequency, 300 + 17700 * Math.pow(l, 1.6), 0.5);
     }
-    function loop() {
-      tick = setTimeout(loop, 90);
-      if (!ready || !on) return;
-      const n = level > 0.9 ? 0 : level > 0.3 ? 7 : level > 0.1 ? 4 : 2;
-      const now = ac.currentTime;
-      clappers.forEach((c, i) => { if (i >= n) return; if (now >= c.next) { clap(c); c.next = now + c.every * (0.7 + Math.random() * 0.8); } });
-      if (level < 0.1 && now > whistleAt) { whistle(); whistleAt = now + 5 + Math.random() * 8; }
-    }
-    window.tifoCrowd = { level(l) { if (Math.abs(l - level) > 0.01) { level = l; if (on) apply(); } }, debug: () => ({ on, level: +level.toFixed(2), roar: ready ? +near.gain.value.toFixed(2) : null, distant: ready ? +far.gain.value.toFixed(2) : null, clappers: level > 0.9 ? 0 : level > 0.3 ? 7 : level > 0.1 ? 4 : 2, whistles: level < 0.1 }) };
+    window.tifoCrowd = { level(v) { if (Math.abs(v - level) > 0.01) { level = v; if (on) apply(); } }, debug: () => ({ on, level: +level.toFixed(2), gain: ready ? +gain.gain.value.toFixed(2) : null, cutoff: ready ? Math.round(lp.frequency.value) : null }) };
     btns.forEach((btn) => btn.addEventListener('click', async () => {
       on = !on;
       btns.forEach((b) => { b.setAttribute('aria-pressed', String(on)); b.setAttribute('aria-label', on ? 'Stop the crowd sound' : 'Play the crowd sound'); });
-      if (on) { if (!ac) { await setup(); apply(); loop(); } else { if (ac.state === 'suspended') ac.resume(); apply(); } ramp(master, 0.8, 0.5); }
-      else if (ac) ramp(master, 0, 0.4);
+      if (on) { if (!ac) { await setup(); } else if (ac.state === 'suspended') ac.resume(); apply(); ramp(master.gain, 0.8, 0.5); }
+      else if (ac) ramp(master.gain, 0, 0.4);
     }));
     document.addEventListener('visibilitychange', () => { if (document.hidden && on) btns[0].click(); });
   })();
