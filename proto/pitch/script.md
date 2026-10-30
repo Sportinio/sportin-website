@@ -91,7 +91,7 @@ A magazine cover. A route on their photo. [warmly] Shared with friends… with y
 
 ## 10 · Technology (about 10 s)
 
-[confident] And under the hood… technology we built ourselves.
+[confident] And under the hood… SportIn’s own proprietary technology.
 
 AI commentary calls every run like a match. Sportinho, our AI coach, is with fans every step. And live tracking keeps every result fair.
 

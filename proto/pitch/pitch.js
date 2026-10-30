@@ -44,7 +44,7 @@
 
   // ---- The script: "## NN · Title (about X s)" blocks; [tags] are for the voice, not the captions.
   async function loadScript() {
-    const md = await (await fetch('/proto/pitch/script.md?v=10')).text();
+    const md = await (await fetch('/proto/pitch/script.md?v=11')).text();
     const pages = [];
     md.split(/^## /m).slice(1).forEach((block) => {
       const m = block.match(/^(\d\d) · (.+?) \(about (\d+) s\)\s*\n([\s\S]*)$/);
