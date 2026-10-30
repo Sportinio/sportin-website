@@ -23,7 +23,6 @@
   <link rel="stylesheet" href="/proto/deck.css?v=15" />
   <link rel="stylesheet" href="/proto/film.css?v=1" />
   <link rel="stylesheet" href="/proto/evidence.css?v=5" />
-  <link rel="stylesheet" href="/proto/jelly.css?v=13" />
   <link rel="stylesheet" href="/proto/engine-deck.css?v=3" />
   <link rel="stylesheet" href="/proto/engine3d.css?v=24" />
   <link rel="stylesheet" href="/proto/formats.css?v=4" />
@@ -79,15 +78,26 @@
     <p class="sr-only">More engagement, belonging, retention and revenue.</p>
   </section>
 
-  <!-- THE PROBLEM: its own block, straight after the hero -->
+  <!-- 02 The problem (tifo.js / tifo.css): the same stand, full. The page holds still for three scroll
+       steps; at each one more fans go home, back rows and edges first, until six in a hundred are
+       left near the front. The four stages light in turn on the rail. The old dot grids stay, hidden,
+       because site.js still fills them. -->
   <div class="problem-pin" id="problemPin">
-  <section class="sec block problem" id="problem" aria-labelledby="problemTitle">
-    <div class="wrap">
-      <p class="feat__idx"><b>02</b><span>Problem</span><em>Between matches</em></p>
-      <h2 class="display problem__title" id="problemTitle">A big fanbase is not the same as <em>an active one</em>.</h2>
-      <p class="problem__lede">Between matches, most fans have no reason to take part, come back or buy.</p>
-      <div class="problem__steps"><div class="problem__step" data-share="1" style="--d:0.00s"><div class="dots" aria-hidden="true"></div><span class="problem__n">01</span><span class="problem__label">Fans you reach</span></div><span class="problem__arrow" aria-hidden="true">→</span><div class="problem__step" data-share="0.42" style="--d:0.35s"><div class="dots" aria-hidden="true"></div><span class="problem__n">02</span><span class="problem__label">Fans you know</span></div><span class="problem__arrow" aria-hidden="true">→</span><div class="problem__step" data-share="0.16" style="--d:0.70s"><div class="dots" aria-hidden="true"></div><span class="problem__n">03</span><span class="problem__label">Fans who return</span></div><span class="problem__arrow" aria-hidden="true">→</span><div class="problem__step problem__step--last" data-share="0.06" style="--d:1.05s"><div class="dots" aria-hidden="true"></div><span class="problem__n">04</span><span class="problem__label">Fans who pay</span></div></div>
+  <section class="problem p2" id="problem" aria-labelledby="problemTitle">
+    <canvas class="p2__wall" aria-hidden="true"></canvas>
+    <div class="p2__grain" aria-hidden="true"></div>
+    <div class="p2__head">
+      <p class="p2__idx"><b>02</b><span>Problem</span><em>Between matches</em></p>
+      <h2 class="p2__title" id="problemTitle">A big fanbase is not the same as <em>an active one</em>.</h2>
+      <p class="p2__lede">Between matches, most fans have no reason to take part, come back or buy.</p>
     </div>
+    <ol class="p2__stages" aria-label="Of the fans a club reaches, how many it knows, how many return and how many pay">
+      <li class="p2__stage is-on" data-share="1"><b class="p2__pct">100%</b><span class="p2__n">01</span><span class="p2__label">Fans you reach</span></li>
+      <li class="p2__stage" data-share="0.42"><b class="p2__pct">42%</b><span class="p2__n">02</span><span class="p2__label">Fans you know</span></li>
+      <li class="p2__stage" data-share="0.16"><b class="p2__pct">16%</b><span class="p2__n">03</span><span class="p2__label">Fans who return</span></li>
+      <li class="p2__stage" data-share="0.06"><b class="p2__pct">6%</b><span class="p2__n">04</span><span class="p2__label">Fans who pay</span></li>
+    </ol>
+    <div class="p2__legacy" hidden aria-hidden="true"><div class="problem__steps"><div class="problem__step" data-share="1"><div class="dots"></div></div><div class="problem__step" data-share="0.42"><div class="dots"></div></div><div class="problem__step" data-share="0.16"><div class="dots"></div></div><div class="problem__step" data-share="0.06"><div class="dots"></div></div></div></div>
   </section>
   </div>
   <section class="sec block evidence" id="evidence" aria-labelledby="evidenceTitle">
@@ -773,8 +783,6 @@
 
 <script src="/assets/site/site.js?v=teams1" defer></script>
 <script src="/proto/video-hero.js?v=6" defer></script>
-<script src="/proto/problem-scroll.js?v=3" defer></script>
-<script src="/proto/jelly.js?v=16" defer></script>
 <script src="/proto/deck.js?v=17" defer></script>
 <script src="/proto/closing-track.js?v=8" defer></script>
 <script src="/proto/deck-menu.js?v=4" defer></script>
