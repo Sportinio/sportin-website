@@ -63,19 +63,31 @@ Third… rewards. Every step earns club points, and points unlock real prizes fr
 
 [warmly] And on matchday… the whole fanbase walks to one goal, together.
 
-## 06 · Every fan on the board (about 9 s)
+## 06 · League of Brands (about 12 s)
+
+[confident] And two formats are our own. The first… League of Brands.
+
+[excited] Teams of fans play a fixture every matchday… and every step moves the table, all season long.
+
+## 07 · Game of Run (about 12 s)
+
+[intrigued] The second… Game of Run.
+
+[excited] Teams of ten run the city and claim real landmarks. Hold the most… and your team becomes the House.
+
+## 08 · Every fan on the board (about 9 s)
 
 [confident] Every fan is on the board… wherever they live.
 
 Ranked by fan, by supporters' club, or by country. Because a fan in Dublin is still a fan.
 
-## 07 · Fans racing fans (about 7 s)
+## 09 · Fans racing fans (about 7 s)
 
 [mischievously] And yes… fans can race each other.
 
 [excited] Three K, five K, ten K… a board for every distance.
 
-## 08 · Rewards (about 12 s)
+## 10 · Rewards (about 12 s)
 
 [warmly] Then come the rewards fans will actually run for.
 
@@ -83,25 +95,25 @@ From the club… money off match tickets. From your sponsors… their best offer
 
 [confident] You set the prizes… fans earn them, step by step.
 
-## 09 · Content (about 8 s)
+## 11 · Content (about 8 s)
 
 [proud] And every run becomes a post.
 
 A magazine cover. A route on their photo. [warmly] Shared with friends… with your crest on every one.
 
-## 10 · Technology (about 10 s)
+## 12 · Technology (about 10 s)
 
 [confident] And under the hood… SportIn’s own proprietary technology.
 
 AI commentary calls every run like a match. Sportinho, our AI coach, is with fans every step. And live tracking keeps every result fair.
 
-## 11 · The season (about 10 s)
+## 13 · The season (about 10 s)
 
 [thoughtful] Matchdays come and go… nineteen home games, an international break, a long summer.
 
 [warmly] But with SportIn… the season never stops. Fans take part every week of the year.
 
-## 12 · Revenue (about 13 s)
+## 14 · Revenue (about 13 s)
 
 [confident] And here's where it pays.
 
@@ -109,25 +121,25 @@ A fan plays… earns club points… unlocks early access to season tickets… an
 
 From fans who play… to fans who pay. And for your sponsors… leagues, rewards and whole seasons to put their name on.
 
-## 13 · Fan data (about 9 s)
+## 15 · Fan data (about 9 s)
 
 For the first time… you'll know every fan who plays.
 
 Fans who opt in join your CRM. [confident] And every season ends with one clear report… for your board, and your sponsors.
 
-## 14 · Delivery (about 9 s)
+## 16 · Delivery (about 9 s)
 
 [confident] Launch it your way.
 
 In the SportIn app. With your crest on top. [warmly] Or inside your own club app… so fans never leave it.
 
-## 15 · Get started (about 10 s)
+## 17 · Get started (about 10 s)
 
 [warmly] Starting is simple.
 
 [confident] An eight-week pilot, between seasons. Week one, we launch. Six weeks of live games. And in week eight… your season report.
 
-## 16 · Close (about 8 s)
+## 18 · Close (about 8 s)
 
 [warmly] Your fans are already moving.
 
@@ -139,4 +151,4 @@ Now give every one of them… a part to play.
 
 - "Sportinho": if the take says "sport-in-ho", spell it phonetically in the generation text only, for example "Sport-EEN-yo".
 - Numbers are written as words ("Three K", "forty percent") so the model reads them cleanly.
-- Check "supporters' clubs" (04 to 06) is not read as "supporter's".
+- Check "supporters' clubs" (04 to 08) is not read as "supporter's".
