@@ -86,7 +86,7 @@
   function loadPage(i) {
     k = i; const pg = pages[k];
     if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); }
-    audio = new Audio(`/proto/pitch/audio/${pg.n}.mp3?v=2`); audio.preload = 'auto';
+    audio = new Audio(`/proto/pitch/audio/${pg.n}.mp3?v=3`); audio.preload = 'auto';
     hasAudio = false; dur = pg.est; clock = 0; ending = 0; held = false;
     place = PLACES[pg.n]();
     glideFrom = window.scrollY; glideTo = targetFor(0); glideAt = 0;
