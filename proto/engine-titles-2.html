@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex" />
+<title>Engine titles, round 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" />
+<link rel="stylesheet" href="/assets/site/site.css?v=teams1" />
+<link rel="stylesheet" href="/proto/features.css?v=31" />
+<style>
+body { background: var(--infield); margin: 0; }
+.mk { max-width: 1400px; margin: 0 auto; padding: 40px 24px 80px; }
+.mk > h1 { margin: 0; font-family: var(--display); font-stretch: 112%; font-size: 36px; letter-spacing: -0.02em; color: var(--ink); }
+.mk > p { margin: 8px 0 0; color: var(--slate); max-width: 72ch; }
+.mk-ver { margin-top: 48px; padding: 28px; border-radius: 16px; background: var(--paper); }
+.mk-head h2 { margin: 0 0 8px; font-family: var(--display); font-stretch: 112%; font-size: 24px; color: var(--ink); }
+.mk-head p { margin: 4px 0 0; color: var(--slate); font-size: 15px; max-width: 90ch; }
+.mk-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
+.mk-frame { margin: 0; }
+.mk-frame figcaption { margin-top: 8px; font-family: var(--mono); font-size: 12px; color: var(--slate); }
+.shot { position: relative; aspect-ratio: 16 / 10; border-radius: 10px; border: 1px solid var(--line); background: #fff; container-type: inline-size; overflow: hidden; isolation: isolate; }
+.mk-row.feat__idx { display: flex; align-items: baseline; gap: 0.8cqw; margin: 0; font-family: var(--body); font-size: 1cqw; color: var(--slate); }
+.mk-row.feat__idx b { font-size: 1.55cqw; }
+.mk-row.feat__idx b + span { padding-left: 0.8cqw; }
+.mk-cta { display: inline-block; margin-top: 1.4cqw; padding: 0.7cqw 1.5cqw; border-radius: 999px; background: var(--blue); color: #fff; font-size: 1cqw; font-weight: 600; }
+/* A: verbs as the index */
+.a-scene { position: absolute; inset: 0 -4% 0 34%; background: 50% 52% / 165% no-repeat; }
+.a-copy { position: absolute; left: 6cqw; top: 0; bottom: 0; width: 34cqw; display: flex; flex-direction: column; justify-content: center; }
+.a-verbs { list-style: none; margin: 1.6cqw 0 0; padding: 0; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 4.6cqw; line-height: 1.02; letter-spacing: -0.025em; }
+.a-verbs li { color: #d9dee8; }
+.a-verbs li.on { color: var(--ink); }
+.a-verbs li.on:only-of-type, .a-verbs li.on { }
+.a-line { margin: 1.6cqw 0 0; max-width: 30ch; font-size: 1.25cqw; line-height: 1.45; color: var(--slate); }
+/* B: subtitles */
+.b-scene { position: absolute; inset: -14% -10% 6% -10%; background: 50% 50% / 112% no-repeat; }
+.b-scene[style*=chip] { inset: -6% 10% 30% 10%; background-size: 78%; background-position: 50% 70%; }
+.b-sub { position: absolute; left: 0; right: 0; bottom: 4.5cqw; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.b-title { margin: 0 0 1.4cqw; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 3.4cqw; letter-spacing: -0.02em; color: var(--ink); }
+.b-title em { font-style: normal; color: var(--blue); }
+.b-k { display: flex; align-items: center; gap: 1cqw; margin: 0; font-family: var(--mono); font-size: 0.95cqw; color: var(--slate); }
+.b-segs { display: inline-flex; gap: 0.3cqw; }
+.b-segs i { width: 2.2cqw; height: 0.25cqw; border-radius: 1px; background: #dfe3ec; }
+.b-segs i.on { background: var(--blue); }
+.b-line { margin: 0.7cqw 0 0; font-size: 1.55cqw; font-weight: 500; color: var(--ink); }
+/* C: one big word behind the scene */
+.c-word { position: absolute; left: 0; right: 0; top: 5.5cqw; text-align: center; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: 15cqw; line-height: 1; letter-spacing: -0.04em; color: #e8ecf4; white-space: nowrap; z-index: 2; }
+.c-scene { position: absolute; inset: 8% -10% 2% -10%; background: 50% 60% / 104% no-repeat; z-index: 1; }
+.c-scene[style*=chip] { inset: 14% 0 12% 0; background-size: 92%; background-position: 50% 78%; }
+.c-row { position: absolute; left: 5cqw; top: 3cqw; z-index: 3; }
+.c-foot { position: absolute; left: 0; right: 0; bottom: 3cqw; z-index: 3; text-align: center; }
+.c-line { margin: 0; font-size: 1.5cqw; font-weight: 500; color: var(--ink); }
+@media (max-width: 900px) { .mk-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body><main class="mk">
+<h1>Engine and integration titles: round 2</h1>
+<p>Three new directions. Instead of tuning the centred title, each one changes how the text and the 3D scene share the page. Each shows Competition, Leaderboard, Integration and the finished engine. Mockup only, not in the deck.</p>
+<section class="mk-ver"><header class="mk-head"><h2>Version A: Verbs as the index</h2><p><b>Idea:</b> Four verbs stacked on the left: Compete, Climb, Claim, Connect. The one on screen is ink, the rest are pale, so the title is also the progress. The scene moves right, like 11 Who it's for and 12 Delivery.</p><p><b>Trade-off:</b> The page reads like one sentence and shows where you are. The scene gets about 60% of the width.</p></header><div class="mk-grid"><figure class="mk-frame"><div class="shot a"><div class="a-scene" style="background-image:url(/proto/media/mock-engine/plate1.jpg)"></div><div class="a-copy"><p class="mk-row feat__idx"><b>04</b><span>The solution</span><em>One engine</em></p><ul class="a-verbs"><li class="on">Compete.</li><li class="">Climb.</li><li class="">Claim.</li><li class="">Connect.</li></ul><p class="a-line">Leagues, knockouts and weekend challenges, all season long.</p></div></div><figcaption>Competition</figcaption></figure><figure class="mk-frame"><div class="shot a"><div class="a-scene" style="background-image:url(/proto/media/mock-engine/plate3.jpg)"></div><div class="a-copy"><p class="mk-row feat__idx"><b>04</b><span>The solution</span><em>One engine</em></p><ul class="a-verbs"><li class="">Compete.</li><li class="on">Climb.</li><li class="">Claim.</li><li class="">Connect.</li></ul><p class="a-line">Every walk, run and ride moves members up one live board.</p></div></div><figcaption>Leaderboard</figcaption></figure><figure class="mk-frame"><div class="shot a"><div class="a-scene" style="background-image:url(/proto/media/mock-engine/int4.jpg)"></div><div class="a-copy"><p class="mk-row feat__idx"><b>04</b><span>The solution</span><em>One engine</em></p><ul class="a-verbs"><li class="">Compete.</li><li class="">Climb.</li><li class="">Claim.</li><li class="on">Connect.</li></ul><p class="a-line">Their phone, watch and apps all feed one score.</p></div></div><figcaption>Integration</figcaption></figure><figure class="mk-frame"><div class="shot a"><div class="a-scene" style="background-image:url(/proto/media/mock-engine/chip.jpg)"></div><div class="a-copy"><p class="mk-row feat__idx"><b>04</b><span>The solution</span><em>One engine</em></p><ul class="a-verbs"><li class="on">Compete.</li><li class="on">Climb.</li><li class="on">Claim.</li><li class="on">Connect.</li></ul><p class="a-line">Members keep moving. Your brand gets the credit.</p><span class="mk-cta">Book a demo</span></div></div><figcaption>The engine</figcaption></figure></div></section><section class="mk-ver"><header class="mk-head"><h2>Version B: Subtitles</h2><p><b>Idea:</b> No title over the scene. One quiet line at the bottom, like film subtitles: a 4-part progress bar, the step name and one sentence. The big title only opens and closes the section.</p><p><b>Trade-off:</b> The scene gets the whole page and the text never competes with it. The least "designed": the plate does the talking.</p></header><div class="mk-grid"><figure class="mk-frame"><div class="shot b"><div class="b-scene" style="background-image:url(/proto/media/mock-engine/plate1.jpg)"></div><div class="b-sub"><p class="b-k"><span class="b-segs"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i></span>01 · Competition</p><p class="b-line">Leagues, knockouts and weekend challenges, all season long.</p></div></div><figcaption>Competition</figcaption></figure><figure class="mk-frame"><div class="shot b"><div class="b-scene" style="background-image:url(/proto/media/mock-engine/plate3.jpg)"></div><div class="b-sub"><p class="b-k"><span class="b-segs"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span>02 · Leaderboard</p><p class="b-line">Every walk, run and ride moves members up one live board.</p></div></div><figcaption>Leaderboard</figcaption></figure><figure class="mk-frame"><div class="shot b"><div class="b-scene" style="background-image:url(/proto/media/mock-engine/int4.jpg)"></div><div class="b-sub"><p class="b-k"><span class="b-segs"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>04 · Integration</p><p class="b-line">Their phone, watch and apps all feed one score.</p></div></div><figcaption>Integration</figcaption></figure><figure class="mk-frame"><div class="shot b"><div class="b-scene" style="background-image:url(/proto/media/mock-engine/chip.jpg)"></div><div class="b-sub"><p class="b-title">One engine. <em>Your name</em>.</p><p class="b-k"><span class="b-segs"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Compete · Climb · Claim · Connect</p><p class="b-line">Members keep moving. Your brand gets the credit.</p><span class="mk-cta">Book a demo</span></div></div><figcaption>The engine</figcaption></figure></div></section><section class="mk-ver"><header class="mk-head"><h2>Version C: One big word</h2><p><b>Idea:</b> The step's verb, very large and very pale, sits behind the scene: Compete, Climb, Connect. One small line in front, at the bottom. The 04 row stays top left.</p><p><b>Trade-off:</b> The most memorable, with a poster feel. The verb has to stay pale, or it fights the plate.</p></header><div class="mk-grid"><figure class="mk-frame"><div class="shot c"><div class="c-word">Compete.</div><div class="c-scene" style="background-image:url(/proto/media/mock-engine/plate1.jpg)"></div><p class="mk-row feat__idx c-row"><b>04</b><span>The solution</span><em>Competition</em></p><div class="c-foot"><p class="c-line">Leagues, knockouts and weekend challenges, all season long.</p></div></div><figcaption>Competition</figcaption></figure><figure class="mk-frame"><div class="shot c"><div class="c-word">Climb.</div><div class="c-scene" style="background-image:url(/proto/media/mock-engine/plate3.jpg)"></div><p class="mk-row feat__idx c-row"><b>04</b><span>The solution</span><em>Leaderboard</em></p><div class="c-foot"><p class="c-line">Every walk, run and ride moves members up one live board.</p></div></div><figcaption>Leaderboard</figcaption></figure><figure class="mk-frame"><div class="shot c"><div class="c-word">Connect.</div><div class="c-scene" style="background-image:url(/proto/media/mock-engine/int4.jpg)"></div><p class="mk-row feat__idx c-row"><b>04</b><span>The solution</span><em>Integration</em></p><div class="c-foot"><p class="c-line">Their phone, watch and apps all feed one score.</p></div></div><figcaption>Integration</figcaption></figure><figure class="mk-frame"><div class="shot c"><div class="c-word">Move.</div><div class="c-scene" style="background-image:url(/proto/media/mock-engine/chip.jpg)"></div><p class="mk-row feat__idx c-row"><b>04</b><span>The solution</span><em>The engine</em></p><div class="c-foot"><p class="c-line">Members keep moving. Your brand gets the credit.</p><span class="mk-cta">Book a demo</span></div></div><figcaption>The engine</figcaption></figure></div></section>
+</main></body></html>

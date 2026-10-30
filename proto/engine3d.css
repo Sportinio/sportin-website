@@ -66,6 +66,39 @@ html.eng3d-failed .eng-cta { pointer-events: auto; }
 
 /* The engine with the integrations after it, as one continuous scene (deck): eleven steps. */
 .engine[data-steps="10"] { height: calc(100vh + 10 * 80vh); }
-/* In chapters (data-chapters), each scroll plays a whole chapter, so the scene needs only one
-   screen of scroll per chapter after the first; deck.js snaps to each. */
-.engine[data-chapters] { height: 200vh; }
+
+/* Callouts on the plate (steps 1 to 5): a small card beside the plate, a thin line and a dot on the
+   feature. engine3d.js places them every frame and toggles .is-on; the entrance is timed, not scrubbed. */
+.eng-callouts { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.eng-callouts__lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.eng-co { position: absolute; left: 0; top: 0; box-sizing: border-box; width: 232px; padding: 14px 16px; border-radius: 10px; background: #fff; border: 1px solid rgba(10, 16, 32, 0.09); box-shadow: 0 1px 2px rgba(10, 16, 32, 0.06); opacity: 0; transition: opacity 140ms ease-in, translate 140ms ease-in; }
+.eng-co[data-side="left"] { translate: -4px 0; }
+.eng-co[data-side="right"] { translate: 4px 0; }
+.eng-co.is-on { opacity: 1; translate: 0 0; transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1) calc(240ms + var(--co-d, 0ms)), translate 220ms cubic-bezier(0.23, 1, 0.32, 1) calc(240ms + var(--co-d, 0ms)); }
+.eng-co[data-side="left"]:not(.is-on) { translate: -8px 0; }
+.eng-co[data-side="right"]:not(.is-on) { translate: 8px 0; }
+.eng-co__t { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch, 112%); font-weight: 600; font-size: 15px; line-height: 1.25; letter-spacing: -0.01em; color: #0a1020; }
+.eng-co__p { margin: 4px 0 0; font-family: var(--body); font-size: 13px; line-height: 1.45; color: #5a6478; }
+.eng-co__line { fill: none; stroke: rgba(7, 81, 251, 0.45); stroke-width: 1; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; transition: opacity 140ms ease-in; }
+.eng-co__line.is-on { opacity: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 260ms cubic-bezier(0.23, 1, 0.32, 1) calc(80ms + var(--co-d, 0ms)), opacity 1ms linear calc(80ms + var(--co-d, 0ms)); }
+.eng-co__dot { fill: #0751fb; stroke: #fff; stroke-width: 4; paint-order: stroke; opacity: 0; transform: scale(0.4); transition: opacity 140ms ease-in; }
+.eng-co__dot.is-on { opacity: 1; transform: scale(1); transition: opacity 160ms ease-out var(--co-d, 0ms), transform 160ms ease-out var(--co-d, 0ms); }
+@media (max-width: 1320px) { .eng-co { width: 208px; } }
+@media (prefers-reduced-motion: reduce) {
+  .eng-co, .eng-co.is-on, .eng-co__dot, .eng-co__dot.is-on { translate: none; transform: none; transition: opacity 120ms linear; }
+  .eng-co__line, .eng-co__line.is-on { stroke-dashoffset: 0; transition: opacity 120ms linear; }
+}
+
+/* 04 One engine: Compete, Rank, Rewards, Connect stand in a column on the left for the whole
+   section, the one for the step on screen in ink; the 3D scene is centred in the space to their right
+   (engine3d.js and integrate3d.js measure the words). */
+.engine__grid { grid-template-rows: 1fr; }
+.engine__copy { position: absolute; left: var(--gutter); top: 0; bottom: 0; z-index: 2; width: min(36%, 470px); height: auto; max-width: none; display: flex; align-items: center; text-align: left; pointer-events: none; }
+.eng-a { position: relative; pointer-events: auto; }
+#engine .eng-a .eng-eyebrow.feat__idx { display: flex; justify-content: flex-start; align-items: baseline; gap: 12px; margin: 0 0 22px; font-family: var(--body); font-size: 14px; color: var(--slate); }
+.eng-verbs { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch, 112%); font-weight: 800; font-size: clamp(48px, 4.8vw, 74px); line-height: 1.02; letter-spacing: -0.03em; }
+.eng-verbs span { display: block; width: fit-content; color: color-mix(in srgb, var(--ink) 15%, transparent); transition: color 420ms cubic-bezier(0.23, 1, 0.32, 1); }
+.eng-verbs span.is-on { color: var(--ink); }
+.eng-a .eng-cta { position: absolute; left: 0; top: calc(100% + 28px); margin: 0; align-self: auto; white-space: nowrap; }
+.eng-caption { left: 70%; }
+@media (prefers-reduced-motion: reduce) { .eng-verbs span { transition: none; } }

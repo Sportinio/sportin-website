@@ -1,0 +1,47 @@
+/* 11 The season: the title and one chart of a year, August to July. Bars are home matches; the red
+   line is fans taking part, every week. When the page arrives the bars rise, then the line draws
+   across the year (season.js adds .is-in). Illustrative figures, labelled as such. */
+.ssn { --club: #d7192d; background: var(--paper); }
+.ssn__idx.feat__idx { display: flex; align-items: baseline; gap: 12px; margin: 0 0 18px; font-family: var(--body); font-size: 14px; color: var(--slate); }
+.ssn__title { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch); font-weight: 800; font-size: clamp(40px, 4vw, 60px); line-height: 1.02; letter-spacing: -0.025em; color: var(--ink); }
+.ssn__title em { font-style: normal; color: var(--blue); }
+.ssn__stage { margin-top: clamp(28px, 5vh, 56px); }
+.ssn__chart { display: block; width: 100%; height: auto; max-height: calc(100vh - var(--nav-h) - 300px); overflow: visible; }
+.ssn__summer { fill: var(--infield); }
+.ssn__tag { font-family: var(--mono); font-size: 13px; fill: var(--slate); }
+.ssn__base { stroke: var(--line); stroke-width: 1.5; }
+.ssn__bar { fill: var(--hex-empty); transform-box: fill-box; transform-origin: 50% 100%; }
+.ssn__line { fill: none; stroke: var(--club); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; }
+.ssn__dot { fill: var(--paper); stroke: var(--club); stroke-width: 4; }
+.ssn__m { font-family: var(--mono); font-size: 13px; fill: var(--slate); text-anchor: middle; }
+.ssn__legend { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 26px; margin: clamp(18px, 3vh, 28px) 0 0; font-size: 14px; color: var(--slate); }
+.ssn__key { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; }
+.ssn__key::before { content: ''; display: block; }
+.ssn__key--bar::before { width: 8px; height: 18px; border-radius: 4px; background: var(--hex-empty); }
+.ssn__key--line::before { width: 22px; height: 5px; border-radius: 3px; background: var(--club); }
+.ssn__note { margin-left: auto; font-family: var(--mono); font-size: 12px; }
+
+/* Motion: bars rise one after another, then the line draws from August to July. */
+.js .ssn .ssn__bar { transform: scaleY(0); transition: transform 600ms var(--ease); transition-delay: calc(var(--i) * 35ms); }
+.js .ssn .ssn__line { stroke-dashoffset: 1; transition: stroke-dashoffset 2400ms cubic-bezier(0.45, 0, 0.25, 1) 700ms; }
+.js .ssn .ssn__dot, .js .ssn .ssn__tag { opacity: 0; transition: opacity 400ms ease 3000ms; }
+.js .ssn.is-in .ssn__bar { transform: none; }
+.js .ssn.is-in .ssn__line { stroke-dashoffset: 0; }
+.js .ssn.is-in .ssn__dot, .js .ssn.is-in .ssn__tag { opacity: 1; }
+/* After the draw, the dot keeps a slow pulse: the line is live. */
+.ssn.is-in .ssn__dot { animation: ssn-pulse 1800ms ease-in-out 3400ms infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes ssn-pulse { 50% { transform: scale(1.35); } }
+
+/* Phones: the chart shrinks to about a third, so its labels and strokes scale up to stay readable. */
+@media (max-width: 700px) {
+  .ssn__m:nth-of-type(even) { display: none; }
+  .ssn__m, .ssn__tag { font-size: 34px; }
+  .ssn__m { transform: translateY(14px); }
+  .ssn__line { stroke-width: 11; }
+  .ssn__dot { stroke-width: 9; }
+  .ssn__note { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .ssn .ssn__bar, .js .ssn .ssn__line, .js .ssn .ssn__dot, .js .ssn .ssn__tag { transform: none; stroke-dashoffset: 0; opacity: 1; transition: none; }
+  .ssn.is-in .ssn__dot { animation: none; }
+}

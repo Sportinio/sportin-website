@@ -110,10 +110,9 @@ export function createEngineSound() {
       if (on) blip(ctx.currentTime + 0.02, 1568, 0.08); // a small confirmation
       return on;
     },
-    // Called every frame with the scene's position on its timeline. Silent while the scene is off
-    // screen, so jumping past it does not play every cue at once.
-    update(t, silent = false) {
-      if (prev === null || silent) { prev = t; return; }
+    // Called every frame with the scene's position on its timeline.
+    update(t) {
+      if (prev === null) { prev = t; return; }
       if (on && ctx && ctx.state === 'running' && t !== prev) {
         const now = ctx.currentTime;
         CUES.forEach(([at, cue, arg]) => {

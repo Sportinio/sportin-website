@@ -1,0 +1,139 @@
+/* Matchday live (matchday.html): the SportIn app's Matches screen, as on try.sportin.io: a grey page,
+   white matchday cards with the date header and its match count, and one row per match with
+   flag, name, members and likes, crest, the blue and red score, crest, and a chevron.
+   What it adds: the matchday plays live with the commentary, and the match being called lights up. */
+/* Scoped to .mdx so it sits inside the deck (page 01) as well as on its own page. */
+.mdx {
+  --page: #f3f4f8; --card: #fff; --ink: #0f1830; --slate: #8a92a6; --sub: #5a6377; --line: #e7e9ef; --chip: #f1f2f6; --cap: #fafbfd;
+  --blue: #2563eb; --red: #d63a3a; --focus: #f3f6ff;
+  --display: 'Archivo', 'Arial Black', Arial, sans-serif; --body: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif; --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-theme='dark'] .mdx { --page: #161e2e; --card: #131a28; --ink: #eef1f7; --slate: #9aa3b5; --sub: #b4bccb; --line: #263044; --chip: #1c2538; --cap: #172033; --blue: #5b8cff; --red: #ff5f5f; --focus: #1a2650; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .mdx { --page: #161e2e; --card: #131a28; --ink: #eef1f7; --slate: #9aa3b5; --sub: #b4bccb; --line: #263044; --chip: #1c2538; --cap: #172033; --blue: #5b8cff; --red: #ff5f5f; --focus: #1a2650; } }
+.mdx { color: var(--ink); font-family: var(--body); }
+.mdx *, .mdx *::before, .mdx *::after { box-sizing: border-box; }
+.mdx button { font: inherit; }
+/* The page on its own (matchday.html). */
+body.mdx-page { margin: 0; background: #f3f4f8; -webkit-font-smoothing: antialiased; }
+:root[data-theme='dark'] body.mdx-page { background: #0b0f1a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) body.mdx-page { background: #0b0f1a; } }
+.mdx-page .mdx { width: min(1120px, calc(100vw - 32px)); margin: 0 auto; padding: 40px 0 48px; }
+
+/* ---- Hero text and the player ---- */
+.mdx__hero { display: grid; justify-items: center; gap: 12px; margin-bottom: 28px; text-align: center; }
+.mdx__kicker { margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate); }
+.mdx__head { margin: 0; font-family: var(--display); font-stretch: 112%; font-weight: 800; font-size: clamp(36px, 4.6vw, 64px); line-height: 1; letter-spacing: -0.02em; }
+.mdx__head em { font-style: normal; color: var(--blue); }
+.mdx__sub { margin: 0; max-width: 60ch; font-size: 16px; line-height: 1.5; color: var(--sub); }
+.mdx__ctl { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.mdx__play, .mdx__stop { display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 20px 0 16px; border: 0; border-radius: 999px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.mdx__play { background: var(--blue); color: #fff; }
+.mdx__stop { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.mdx__stop[hidden] { display: none; }
+.mdx__stop i { width: 10px; height: 10px; border-radius: 2px; background: currentColor; }
+.mdx__ico { width: 0; height: 0; border-left: 11px solid #fff; border-block: 7px solid transparent; }
+.mdx.is-playing .mdx__ico { width: 11px; height: 13px; border: 0; background: linear-gradient(90deg, #fff 0 4px, transparent 4px 7px, #fff 7px); }
+.mdx__play:focus-visible, .mdx__stop:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.mdx__time { min-width: 86px; font-family: var(--mono); font-size: 13px; color: var(--slate); font-variant-numeric: tabular-nums; }
+
+/* ---- Matchday card, as in the app ---- */
+.mdx__day { margin-bottom: 14px; border-radius: 16px; background: var(--card); box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+.mdx__dh { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto 32px 40px; align-items: center; height: 64px; }
+.mdx__dn { align-self: stretch; display: grid; place-items: center; border-right: 1px solid var(--line); font-size: 26px; font-weight: 700; }
+.mdx__dd { padding-left: 20px; font-size: 16px; font-weight: 700; }
+.mdx__dc { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 6px; background: var(--chip); font-size: 14px; font-weight: 700; }
+.mdx__chev { justify-self: center; width: 8px; height: 8px; border-right: 1.6px solid var(--ink); border-bottom: 1.6px solid var(--ink); transform: translateY(-2px) rotate(45deg); }
+.mdx__chev--up { transform: translateY(2px) rotate(-135deg); }
+.mdx__live { display: inline-flex; align-items: center; gap: 6px; margin-right: 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--red); opacity: 0; transition: opacity 300ms ease; }
+.mdx__live i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: mdx-pulse 1.2s ease-in-out infinite; }
+@keyframes mdx-pulse { 50% { opacity: 0.25; } }
+.mdx.is-live .mdx__live { opacity: 1; }
+.mdx__prog { display: block; height: 2px; background: var(--line); }
+.mdx__prog i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--blue); }
+
+/* The line being said, under the header. */
+.mdx__cap { display: flex; align-items: center; gap: 10px; min-height: 44px; margin: 0; padding: 8px 20px; border-bottom: 1px solid var(--line); background: var(--cap); font-size: 14px; font-weight: 600; color: var(--ink); }
+.mdx__mic { flex: none; display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+.mdx__mic i { width: 3px; height: 5px; border-radius: 1px; background: var(--slate); }
+.mdx.is-playing .mdx__mic i { background: var(--blue); animation: mdx-eq 900ms ease-in-out infinite; }
+.mdx.is-playing .mdx__mic i:nth-child(2) { animation-delay: -300ms; }
+.mdx.is-playing .mdx__mic i:nth-child(3) { animation-delay: -600ms; }
+@keyframes mdx-eq { 50% { height: 14px; } }
+.mdx__line { transition: opacity 200ms ease; }
+.mdx__line.is-swap { opacity: 0; }
+
+/* Rows */
+.mdx__rows { margin: 0; padding: 0; list-style: none; }
+.mdx__rows { position: relative; }
+.mdx__rows > li { position: relative; border-top: 1px solid var(--line); transition: background 400ms ease; }
+.mdx__rows > li:first-child { border-top: 0; }
+.mdx__rw { display: grid; grid-template-columns: 96px minmax(0, 1fr) 40px; align-items: center; height: var(--row-h, 76px); cursor: pointer; }
+.mdx__rw:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.mdx__rows > li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--blue); transform: scaleY(0); transition: transform 400ms var(--ease); }
+.mdx__rows > li.is-focus { background: var(--focus); }
+.mdx__rows > li.is-focus::before { transform: none; }
+.mdx__st { justify-self: center; display: grid; justify-items: center; gap: 2px; font-size: 11px; font-weight: 700; color: var(--slate); }
+.mdx__st b { font-weight: 700; color: var(--red); letter-spacing: 0.06em; }
+.mdx__st span { font-family: var(--mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.mdx__m { display: grid; grid-template-columns: minmax(0, 1fr) 44px 108px 44px minmax(0, 1fr); align-items: center; gap: 14px; }
+.mdx__t { display: grid; gap: 4px; min-width: 0; }
+.mdx__t--a { justify-items: end; text-align: right; }
+.mdx__t b { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; font-size: 15px; font-weight: 600; white-space: nowrap; }
+.mdx__t b img { flex: none; width: 15px; height: 15px; border-radius: 50%; object-fit: cover; }
+.mdx__t small { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--slate); }
+.mdx__t small svg { width: 11px; height: 11px; }
+.mdx__t small span + svg { margin-left: 6px; }
+.mdx__cr { width: 44px; height: 44px; }
+.mdx__cr svg { display: block; width: 100%; height: 100%; }
+.mdx__sc { display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mdx__sc i { font-style: normal; font-size: 13px; color: var(--slate); }
+.mdx__sc b { display: inline-block; min-width: 2.2ch; color: var(--ink); transition: color 300ms ease; }
+.mdx__sc b:first-child { text-align: right; }
+.mdx__sc b.w { color: var(--blue); }
+.mdx__sc b.l { color: var(--red); }
+.mdx__sc b.is-tick { animation: mdx-tick 500ms var(--ease); }
+@keyframes mdx-tick { 0% { transform: scale(1.25); } 100% { transform: none; } }
+.mdx__rows .mdx__chev { border-color: var(--slate); transition: transform 300ms var(--ease); }
+.mdx__rows > li.is-open .mdx__chev { transform: translateY(2px) rotate(-135deg); }
+
+/* An open match: both squads under the row, steps counting live, players re-ranking. */
+.mdx__x { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 450ms var(--ease); }
+.mdx__rows > li.is-open .mdx__x { grid-template-rows: 1fr; }
+.mdx__xi { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; min-height: 0; overflow: hidden; padding: 0 56px 0 96px; }
+.mdx__rows > li.is-open .mdx__xi { padding-bottom: 16px; }
+.mdx__tm { min-width: 0; padding: 12px 14px 6px; border-radius: 12px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
+.mdx__tmh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 6px; }
+.mdx__tmh b { font-size: 13px; font-weight: 700; }
+.mdx__tmh span { font-size: 11px; color: var(--slate); white-space: nowrap; }
+.mdx__ml { position: relative; height: calc(5 * 40px); margin: 0; padding: 0; list-style: none; }
+.mdx__ml li { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: 18px 28px minmax(0, 1fr) auto; align-items: center; gap: 10px; height: 36px; padding: 0 6px; border-radius: 8px; transform: translateY(calc(var(--r, 0) * 40px)); transition: transform 700ms var(--ease), background 300ms ease; }
+.mdx__mr { font-size: 12px; font-weight: 700; color: var(--slate); text-align: center; }
+.mdx__ml img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: var(--chip); }
+.mdx__ml b { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mdx__ms { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mdx__ml li.is-called { background: var(--focus); }
+.mdx__ml li.is-called b { color: var(--blue); }
+
+@media (max-width: 760px) {
+  .mdx { padding-top: 24px; }
+  .mdx__dh { grid-template-columns: 56px minmax(0, 1fr) auto 32px 28px; height: 56px; }
+  .mdx__dn { font-size: 20px; }
+  .mdx__dd { padding-left: 12px; font-size: 14px; }
+  .mdx__live { margin-right: 8px; }
+  .mdx__cap { padding: 8px 12px; font-size: 13px; }
+  .mdx__rw { grid-template-columns: 44px minmax(0, 1fr) 16px; height: 68px; }
+  .mdx__xi { grid-template-columns: 1fr; gap: 10px; padding: 0 10px; }
+  .mdx__m { grid-template-columns: minmax(0, 1fr) 28px auto 28px minmax(0, 1fr); gap: 6px; }
+  .mdx__cr { width: 28px; height: 28px; }
+  .mdx__t b { font-size: 12px; gap: 4px; white-space: normal; line-height: 1.15; }
+  .mdx__t b img { width: 12px; height: 12px; }
+  .mdx__t small { display: none; }
+  .mdx__sc { gap: 4px; font-size: 15px; }
+  .mdx__st span { display: none; }
+  .mdx__rows .mdx__chev { width: 6px; height: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mdx__live i, .mdx.is-playing .mdx__mic i { animation: none; }
+  .mdx__sc b.is-tick { animation: none; }
+}

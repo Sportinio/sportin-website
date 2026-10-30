@@ -34,3 +34,13 @@ html.is-deck .dl { display: none; } /* Present mode does not include the scroll 
 .dl__cap { position: relative; height: 20px; margin: 0; width: 100%; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); }
 .dl__cap span { position: absolute; inset: 0; opacity: var(--o, 0); }
 
+@media (max-width: 900px) {
+  .dl { height: auto; }
+  .dl__stick { position: static; height: auto; }
+  .dl__grid { grid-template-columns: 1fr; row-gap: 32px; }
+  /* All three options are listed; delivery.js turns the phone to the one tapped. */
+  .dl__list { row-gap: 20px; }
+  .dl__row { grid-area: auto; opacity: 0.5; transform: none; border-top-color: var(--line); cursor: pointer; transition: opacity 200ms ease-out, border-color 200ms ease-out; }
+  .dl__row.is-on { opacity: 1; border-top-color: var(--blue); }
+  .dl__row:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+}
