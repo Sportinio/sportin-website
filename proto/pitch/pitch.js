@@ -28,23 +28,25 @@
     // then the connections (the integration steps start at the scene's data-int-from).
     '04': () => { const s = $('#engine'); const i = Number(s.dataset.intFrom || 6); return { para: [0.2, 1, 2, 3, 4, i + 1.6].map((k) => stepAt(s, k)) }; },
     '05': () => ({ to: centre($('#formats')) }),
-    '06': () => ({ to: stepAt($('#features'), 0) }),
-    '07': () => ({ to: stepAt($('#features'), 1) }),
-    '08': () => ({ to: stepAt($('#features'), 2) }),
-    '09': () => ({ to: centre($('#ugc')) }),
-    '10': () => ({ to: centre($('#technology')) }),
-    '11': () => ({ to: centre($('#season')) }),
-    '12': () => ({ to: centre($('#pay')) }),
-    '13': () => ({ to: centre($('#fandata')) }),
-    // 14: "Launch it your way. In the SportIn app. With your crest on top. Or inside your own app…"
-    '14': () => { const s = $('#delivery'); return { sent: [0, 0, 1, 2].map((k) => stepAt(s, k)) }; },
-    '15': () => ({ to: centre($('#demo')) }),
-    '16': () => ({ to: centre($('#live')) }),
+    '06': () => ({ to: centre($('#live')) }), // League of Brands
+    '07': () => ({ to: centre($('#gameofrun')) }), // Game of Run
+    '08': () => ({ to: stepAt($('#features'), 0) }),
+    '09': () => ({ to: stepAt($('#features'), 1) }),
+    '10': () => ({ to: stepAt($('#features'), 2) }),
+    '11': () => ({ to: centre($('#ugc')) }),
+    '12': () => ({ to: centre($('#technology')) }),
+    '13': () => ({ to: centre($('#season')) }),
+    '14': () => ({ to: centre($('#pay')) }),
+    '15': () => ({ to: centre($('#fandata')) }),
+    // 16: "Launch it your way. In the SportIn app. With your crest on top. Or inside your own app…"
+    '16': () => { const s = $('#delivery'); return { sent: [0, 0, 1, 2].map((k) => stepAt(s, k)) }; },
+    '17': () => ({ to: centre($('#demo')) }),
+    '18': () => ({ to: centre($('#demo')) }), // the close, over the last page
   };
 
   // ---- The script: "## NN · Title (about X s)" blocks; [tags] are for the voice, not the captions.
   async function loadScript() {
-    const md = await (await fetch('/proto/pitch/script.md?v=11')).text();
+    const md = await (await fetch('/proto/pitch/script.md?v=12')).text();
     const pages = [];
     md.split(/^## /m).slice(1).forEach((block) => {
       const m = block.match(/^(\d\d) · (.+?) \(about (\d+) s\)\s*\n([\s\S]*)$/);
@@ -86,7 +88,7 @@
   function loadPage(i) {
     k = i; const pg = pages[k];
     if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); }
-    audio = new Audio(`/proto/pitch/audio/${pg.n}.mp3?v=3`); audio.preload = 'auto';
+    audio = new Audio(`/proto/pitch/audio/${pg.n}.mp3?v=4`); audio.preload = 'auto';
     hasAudio = false; dur = pg.est; clock = 0; ending = 0; held = false;
     place = PLACES[pg.n]();
     glideFrom = window.scrollY; glideTo = targetFor(0); glideAt = 0;
