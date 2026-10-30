@@ -1,0 +1,35 @@
+/* The Tifo: the SportIn homepage redesigned from scratch, one page at a time (Galadriel, 2026-10-30).
+   The whole site is a stadium choreography: every piece of content is a card a fan holds up, and
+   the picture only exists when everyone takes part. Three rules on every page: no card grids;
+   light means participation; motion is choreography. This file carries page 01, the hero (tifo.js).
+   The menu bar keeps its previous design. Loaded last. */
+
+:root[data-theme='dark'] {
+  --paper: #04060d;
+  --narrow: 75%;             /* Archivo at its narrow end: letters painted on bedsheets */
+  color-scheme: dark;
+}
+html { color-scheme: dark; }
+
+/* The guided-tour offer card: glass; hidden on phones, where it would cover the title. */
+.pitch-offer { background: rgba(8, 12, 24, 0.74); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5); }
+@media (max-width: 900px) { .pitch-offer { display: none; } }
+
+/* ---------- Page 01: the hero. A stand, in the dark. Then the tifo goes up. ---------- */
+.tifo { position: relative; isolation: isolate; min-height: 100svh; margin: 0; padding: 0; border-radius: 0; overflow: clip; background: #04060d; color: #fff; }
+html.is-full #why.tifo.page { margin: 0 !important; height: 100vh; border-radius: 0; padding: 0 !important; }
+/* The footage is only a source for the cards; the canvas is the stand. */
+.tifo__crowd { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.tifo__wall { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; }
+/* Grain of a stand seen from the pitch, and darker edges. */
+.tifo__grain { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-image: radial-gradient(120% 90% at 50% 45%, rgba(4, 6, 13, 0) 55%, rgba(4, 6, 13, 0.7) 100%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: auto, 220px 220px; }
+
+/* Crowd sound, on request only. */
+.tifo__sound { position: absolute; z-index: 3; left: clamp(16px, 3vw, 48px); bottom: clamp(20px, 4vh, 40px); display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 10px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 999px; background: rgba(4, 6, 13, 0.45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: rgba(255, 255, 255, 0.85); font-family: var(--mono); font-weight: 500; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+.tifo__sound:hover { border-color: rgba(255, 255, 255, 0.6); color: #fff; }
+.tifo__sound svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tifo__sound[aria-pressed='true'] { border-color: #3d74ff; color: #fff; background: rgba(47, 107, 255, 0.25); }
+.tifo__sound .i-on { display: none; }
+.tifo__sound[aria-pressed='true'] .i-on { display: block; }
+.tifo__sound[aria-pressed='true'] .i-off { display: none; }
+@media (max-width: 900px) { .tifo__sound { left: 12px; bottom: 16px; } }
