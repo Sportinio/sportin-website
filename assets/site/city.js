@@ -37,44 +37,69 @@ if (pin && section && canvas) {
     scene.add(new THREE.HemisphereLight(0x2a3d6e, 0x0a0c14, 1.1));
     const moon = new THREE.DirectionalLight(0x8aa2e0, 0.9); moon.position.set(-300, 500, 200); scene.add(moon);
     // The glow of the ground itself: a warm light over the pitch that fills the bowl and spills onto the roof.
-    const bowlLight = new THREE.PointLight(0xffe2b4, 6000, 520, 1.5); bowlLight.position.set(0, 50, 0); scene.add(bowlLight);
+    const bowlLight = new THREE.PointLight(0xffe2b4, 9000, 460, 1.5); bowlLight.position.set(0, 44, 0); scene.add(bowlLight);
 
     // ---- Ground. ----
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), new THREE.MeshStandardMaterial({ color: 0x0a0c14, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2; ground.position.y = -0.2; scene.add(ground);
 
-    // ---- The stadium: a lathed bowl, scaled to an oval, with tiers, a roof ring and four masts. ----
+    const M = new THREE.Matrix4(), Q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -0.18), P = new THREE.Vector3(), Sc = new THREE.Vector3();
+    // ---- The stadium: an oval bowl of three tiers of seats, a ribbed facade with a club-blue LED
+    // band, a roof of trusses and translucent panels you can see the stands through, and four
+    // floodlight masts. Lathe profiles, scaled 1.28 : 1 into an oval. ----
     const stadium = new THREE.Group(); stadium.rotation.y = -0.32; scene.add(stadium);
-    const profile = [[44, 0], [50, 0], [52, 6], [62, 6], [64, 14], [76, 14], [78, 24], [92, 24], [94, 36], [96, 36], [96, 40], [60, 43], [58, 43], [58, 40]].map(([r, y]) => new THREE.Vector2(r, y));
-    const bowlMat = new THREE.MeshStandardMaterial({ color: 0x4a5062, roughness: 0.8, metalness: 0.15, side: THREE.DoubleSide });
-    const bowl = new THREE.Mesh(new THREE.LatheGeometry(profile, 96), bowlMat); bowl.scale.set(1.28, 1, 1); stadium.add(bowl);
-    // Seats: a lighter, subtly striped band on each tier, lit from the pitch.
-    const seatMat = new THREE.MeshStandardMaterial({ color: 0x5a6378, roughness: 0.9, side: THREE.DoubleSide, emissive: 0x2a3b66, emissiveIntensity: 0.6 });
-    [[52, 6, 62, 6.4], [64, 14, 76, 14.4], [78, 24, 92, 24.4]].forEach(([r0, y0, r1, y1]) => { const m = new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(r0, y0 + 0.3), new THREE.Vector2(r1, y1 + 0.3)], 96), seatMat); m.scale.set(1.28, 1, 1); stadium.add(m); });
-    // The lit inner edge of the roof.
-    const rim = new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(58, 42.6), new THREE.Vector2(62, 42.6)], 96), new THREE.MeshBasicMaterial({ color: 0xffe9c4, side: THREE.DoubleSide }));
-    rim.scale.set(1.28, 1, 1); stadium.add(rim);
-    // Roof top, dark.
-    const roof = new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(60, 43.2), new THREE.Vector2(96, 40.4)], 96), new THREE.MeshStandardMaterial({ color: 0x3a3f4d, roughness: 0.55, metalness: 0.4, side: THREE.DoubleSide }));
-    roof.scale.set(1.28, 1, 1); stadium.add(roof);
-    // The pitch, with its lines drawn on a canvas.
+    const OV = 1.28;
+    const lathe = (pts, mat, segs = 128) => { const m = new THREE.Mesh(new THREE.LatheGeometry(pts.map(([r, y]) => new THREE.Vector2(r, y)), segs), mat); m.scale.set(OV, 1, 1); stadium.add(m); return m; };
+    // Seat rows: a texture of narrow rows with aisles, so the tiers read as seating from the air.
+    const seatTex = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#5f6f94'; x.fillRect(0, 0, 256, 64); x.fillStyle = '#3f4b6a'; for (let i = 0; i < 64; i += 4) x.fillRect(0, i, 256, 1.5); x.fillStyle = '#9aa6c4'; for (let i = 0; i < 256; i += 32) x.fillRect(i, 0, 2.5, 64); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(56, 1); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+    const seatMat = new THREE.MeshStandardMaterial({ map: seatTex, roughness: 0.9, side: THREE.DoubleSide, emissive: 0x3a4d80, emissiveIntensity: 0.9, emissiveMap: seatTex });
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x3b4152, roughness: 0.7, metalness: 0.2, side: THREE.DoubleSide });
+    // Lower tier, middle tier, upper tier: each a sloped band of seats with a vertical wall below it.
+    lathe([[44, 0], [50, 0], [50, 2]], wallMat); lathe([[50, 2], [62, 9]], seatMat);
+    lathe([[62, 9], [62, 13]], wallMat); lathe([[62, 13], [77, 23]], seatMat);
+    lathe([[77, 23], [77, 27]], wallMat); lathe([[77, 27], [94, 39]], seatMat);
+    // The facade: a dark outer wall, vertical ribs, and the LED band in club blue.
+    lathe([[94, 39], [96, 39], [96, 0], [94, 0]], new THREE.MeshStandardMaterial({ color: 0x262b38, roughness: 0.6, metalness: 0.3, side: THREE.DoubleSide }));
+    const ribs = new THREE.InstancedMesh(new THREE.BoxGeometry(0.9, 40, 1.8), new THREE.MeshStandardMaterial({ color: 0x7a8294, roughness: 0.5, metalness: 0.5 }), 96);
+    for (let i = 0; i < 96; i++) { const a = (i / 96) * Math.PI * 2; P.set(Math.cos(a) * 97.2 * OV, 20, Math.sin(a) * 97.2); const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -a); Sc.set(1, 1, 1); M.compose(P, q, Sc); ribs.setMatrixAt(i, M); }
+    stadium.add(ribs);
+    lathe([[96.6, 28], [96.6, 31.5]], new THREE.MeshBasicMaterial({ color: 0x3d7bff, side: THREE.DoubleSide }));
+    // The roof: trusses from the facade in over the upper tier, translucent panels between them, and a
+    // bright inner rim where the lights sit.
+    const truss = new THREE.InstancedMesh(new THREE.BoxGeometry(28, 1.4, 1.2), new THREE.MeshStandardMaterial({ color: 0xb8bfd0, roughness: 0.4, metalness: 0.6 }), 64);
+    for (let i = 0; i < 64; i++) { const a = (i / 64) * Math.PI * 2; const r = 83; P.set(Math.cos(a) * r * OV, 42.6, Math.sin(a) * r); const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -a); Sc.set(OV, 1, 1); M.compose(P, q, Sc); truss.setMatrixAt(i, M); }
+    stadium.add(truss);
+    lathe([[70, 41.8], [96, 41.8]], new THREE.MeshStandardMaterial({ color: 0x2b303e, roughness: 0.55, metalness: 0.35, side: THREE.DoubleSide }));
+    lathe([[69.5, 41.4], [71.5, 41.4]], new THREE.MeshBasicMaterial({ color: 0xffe9c4, side: THREE.DoubleSide }));
+    // Lamps along the roof edge, the ring of light a ground has from the air.
+    const roofLamps = []; for (let i = 0; i < 96; i++) { const a = (i / 96) * Math.PI * 2; roofLamps.push(Math.cos(a) * 70.5 * OV, 41.2, Math.sin(a) * 70.5); }
+    const rlg = new THREE.BufferGeometry(); rlg.setAttribute('position', new THREE.Float32BufferAttribute(roofLamps, 3));
+    stadium.add(new THREE.Points(rlg, new THREE.PointsMaterial({ color: 0xfff1d6, size: 4.5, sizeAttenuation: true, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending })));
+    // The pitch, floodlit: its own light so it is the brightest thing in the city.
     const pc = document.createElement('canvas'); pc.width = 1050; pc.height = 680; const pq = pc.getContext('2d');
-    pq.fillStyle = '#1d5a33'; pq.fillRect(0, 0, 1050, 680);
-    for (let i = 0; i < 10; i++) { pq.fillStyle = i % 2 ? '#1f6238' : '#1d5a33'; pq.fillRect(i * 105, 0, 105, 680); }
-    pq.strokeStyle = 'rgba(255,255,255,0.9)'; pq.lineWidth = 5; pq.strokeRect(20, 20, 1010, 640); pq.beginPath(); pq.moveTo(525, 20); pq.lineTo(525, 660); pq.stroke();
+    for (let i = 0; i < 10; i++) { pq.fillStyle = i % 2 ? '#2e8a4e' : '#287b45'; pq.fillRect(i * 105, 0, 105, 680); }
+    pq.strokeStyle = 'rgba(255,255,255,0.95)'; pq.lineWidth = 5; pq.strokeRect(20, 20, 1010, 640); pq.beginPath(); pq.moveTo(525, 20); pq.lineTo(525, 660); pq.stroke();
     pq.beginPath(); pq.arc(525, 340, 91, 0, Math.PI * 2); pq.stroke(); pq.strokeRect(20, 138, 165, 403); pq.strokeRect(865, 138, 165, 403); pq.strokeRect(20, 248, 55, 183); pq.strokeRect(975, 248, 55, 183);
     const pitchTex = new THREE.CanvasTexture(pc); pitchTex.colorSpace = THREE.SRGBColorSpace;
-    const pitch = new THREE.Mesh(new THREE.PlaneGeometry(105, 68), new THREE.MeshStandardMaterial({ map: pitchTex, roughness: 0.95 }));
+    const pitch = new THREE.Mesh(new THREE.PlaneGeometry(105, 68), new THREE.MeshStandardMaterial({ map: pitchTex, emissive: 0xffffff, emissiveMap: pitchTex, emissiveIntensity: 1.0, roughness: 0.95 }));
     pitch.rotation.x = -Math.PI / 2; pitch.position.y = 0.05; stadium.add(pitch);
-    // Floodlights: four masts outside the corners, a glare and a spotlight on the pitch.
+    const apron = new THREE.Mesh(new THREE.RingGeometry(0, 44, 64), new THREE.MeshStandardMaterial({ color: 0x2c5a3c, roughness: 1 })); apron.rotation.x = -Math.PI / 2; apron.scale.set(OV, 1, 1); apron.position.y = 0.02; stadium.add(apron);
+    // Floodlights: four masts outside the corners with a glare; two of them carry spotlights on the pitch.
     const glareScale = 26; const glare = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); const g = x.createRadialGradient(64, 64, 0, 64, 64, 64); g.addColorStop(0, 'rgba(255,252,240,1)'); g.addColorStop(0.12, 'rgba(255,246,220,0.85)'); g.addColorStop(0.4, 'rgba(255,236,200,0.18)'); g.addColorStop(1, 'rgba(255,230,190,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
     [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => {
-      const x = a * 118, z = b * 86;
-      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.6, 62, 8), new THREE.MeshStandardMaterial({ color: 0x8a8f9c, roughness: 0.5, metalness: 0.6 })); mast.position.set(x, 31, z); stadium.add(mast);
-      const head = new THREE.Mesh(new THREE.BoxGeometry(10, 5, 2), new THREE.MeshBasicMaterial({ color: 0xfff4dc })); head.position.set(x, 63, z); head.lookAt(0, 20, 0); stadium.add(head);
-      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glare, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); sp.position.set(x, 63, z); sp.scale.setScalar(glareScale); stadium.add(sp);
-      if (a === b) { const light = new THREE.SpotLight(0xfff0d2, 2600, 420, 0.66, 0.5, 1.4); light.position.set(x, 63, z); light.target.position.set(0, 0, 0); stadium.add(light, light.target); }
+      const x = a * 122, z = b * 90;
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.6, 64, 8), new THREE.MeshStandardMaterial({ color: 0x8a8f9c, roughness: 0.5, metalness: 0.6 })); mast.position.set(x, 32, z); stadium.add(mast);
+      const head = new THREE.Mesh(new THREE.BoxGeometry(12, 6, 2), new THREE.MeshBasicMaterial({ color: 0xfff4dc })); head.position.set(x, 65, z); head.lookAt(0, 20, 0); stadium.add(head);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glare, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); sp.position.set(x, 65, z); sp.scale.setScalar(glareScale); stadium.add(sp);
+      if (a === b) { const light = new THREE.SpotLight(0xfff0d2, 2600, 420, 0.66, 0.5, 1.4); light.position.set(x, 65, z); light.target.position.set(0, 0, 0); stadium.add(light, light.target); }
     });
+
+    // The forecourt: a paved plaza around the ground, with a ring of lamps and the roads out.
+    const plaza = new THREE.Mesh(new THREE.CircleGeometry(148, 96), new THREE.MeshStandardMaterial({ color: 0x2e3447, roughness: 1 })); plaza.rotation.x = -Math.PI / 2; plaza.scale.set(OV, 1, 1); plaza.position.y = 0.01; stadium.add(plaza);
+    const plazaLamps = []; for (let i = 0; i < 48; i++) { const a = (i / 48) * Math.PI * 2; plazaLamps.push(Math.cos(a) * 140 * OV, 6, Math.sin(a) * 140); if (i % 2 === 0) plazaLamps.push(Math.cos(a) * 112 * OV, 5, Math.sin(a) * 112); }
+    const plg = new THREE.BufferGeometry(); plg.setAttribute('position', new THREE.Float32BufferAttribute(plazaLamps, 3));
+    stadium.add(new THREE.Points(plg, new THREE.PointsMaterial({ color: 0xffd9a0, size: 5.5, sizeAttenuation: true, transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending })));
+    const plazaLight = new THREE.PointLight(0xffd0a0, 1800, 330, 1.6); plazaLight.position.set(0, 24, 0); stadium.add(plazaLight);
 
     // ---- The city: blocks of buildings around the ground, and every window a point of light. ----
     const BLK = 56, ST = 14, R = mobile ? 900 : 1150;
@@ -84,14 +109,14 @@ if (pin && section && canvas) {
     const turn = (x, z) => [x * angC - z * angS, x * angS + z * angC];
     for (let gx = -R; gx < R; gx += BLK) for (let gz = -R; gz < R; gz += BLK) {
       const [cx, cz] = turn(gx + BLK / 2, gz + BLK / 2);
-      const d = Math.hypot(cx / 1.28, cz); if (d < 190) continue; // the stadium forecourt
+      const d = Math.hypot(cx / 1.28, cz); if (d < 150) continue; // the stadium forecourt
       if (Math.hypot(cx, cz) > R) continue;
       if (rnd() < 0.08) { if (rnd() < 0.5) { const [lx, lz] = turn(gx + 4, gz + 4); lamps.push(lx, 4, lz); } continue; } // parks, water, gaps
       // One to three buildings per block.
       const n = 1 + (rnd() * 3 | 0); const slots = n === 1 ? [[0, 0, 1, 1]] : n === 2 ? [[0, 0, 0.5, 1], [0.5, 0, 0.5, 1]] : [[0, 0, 0.5, 0.5], [0.5, 0, 0.5, 1], [0, 0.5, 0.5, 0.5]];
       slots.forEach(([u, v, w, h]) => {
         const inner = BLK - ST; const bw = inner * w - (w < 1 ? 3 : 0), bd = inner * h - (h < 1 ? 3 : 0);
-        const near = clamp(1 - (d - 190) / 900);
+        const near = clamp(1 - (d - 150) / 900);
         const bh = 9 + rnd() * rnd() * (8 + 14 * near) + (rnd() < 0.025 ? 24 + rnd() * 30 : 0);
         const lx0 = gx + ST / 2 + inner * u + bw / 2, lz0 = gz + ST / 2 + inner * v + bd / 2;
         const [bx, bz] = turn(lx0, lz0);
@@ -109,9 +134,8 @@ if (pin && section && canvas) {
       // Street lamps along one side of the block.
       for (let i = 0; i < 3; i++) if (rnd() < 0.7) { const [lx, lz] = turn(gx + ST / 4, gz + (i + 0.5) * BLK / 3); lamps.push(lx, 5, lz); }
     }
-    const bMat = new THREE.MeshLambertMaterial({ color: 0x232838 });
+    const bMat = new THREE.MeshLambertMaterial({ color: 0x303750 });
     const inst = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), bMat, boxes.length);
-    const M = new THREE.Matrix4(), Q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -0.18), P = new THREE.Vector3(), Sc = new THREE.Vector3();
     boxes.forEach((b, i) => { P.set(b.x, b.h / 2, b.z); Sc.set(b.w, b.h, b.d); M.compose(P, Q, Sc); inst.setMatrixAt(i, M); });
     scene.add(inst);
     // Who goes quiet first: the far windows, with some luck in it. rank in [0,1): lit while rank < share.
@@ -125,8 +149,8 @@ if (pin && section && canvas) {
       vertexShader: `attribute float aRank, aSeed; uniform float uShare, uTime, uPR; varying vec3 vC; varying float vA;
         void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); float lit = 1.0 - smoothstep(uShare - 0.02, uShare + 0.01, aRank);
           float tw = 0.8 + 0.2 * sin(uTime * (0.7 + aSeed * 1.5) + aSeed * 6.2832);
-          vC = mix(vec3(1.0, 0.62, 0.28) * 0.6, vec3(0.32, 0.56, 1.0) * 1.05, lit); vA = tw * (0.5 + 0.5 * lit);
-          gl_PointSize = clamp((2.0 + 1.0 * lit) * uPR * 300.0 / -mv.z, 1.0, 7.0 * uPR); gl_Position = projectionMatrix * mv; }`,
+          vC = mix(vec3(1.0, 0.62, 0.28) * 0.75, vec3(0.34, 0.58, 1.0) * 1.35, lit); vA = tw * (0.55 + 0.45 * lit);
+          gl_PointSize = clamp((2.8 + 1.2 * lit) * uPR * 330.0 / -mv.z, 1.2, 8.0 * uPR); gl_Position = projectionMatrix * mv; }`,
       fragmentShader: `varying vec3 vC; varying float vA; void main(){ float r = length(gl_PointCoord - 0.5) * 2.0; float a = (1.0 - smoothstep(0.55, 1.0, r)) * vA; gl_FragColor = vec4(vC * a, a); }` }));
     scene.add(windows);
     const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(lamps, 3));
@@ -136,7 +160,7 @@ if (pin && section && canvas) {
     const video = document.querySelector('.tifo__crowd');
     const vt = video ? new THREE.VideoTexture(video) : null; if (vt) { vt.colorSpace = THREE.SRGBColorSpace; vt.repeat.set(0.1, 0.17); vt.offset.set(0.44, 0.26); }
     const wantX = 300, wantZ = 170;
-    const herB = boxes.filter((b) => Math.hypot(b.x / 1.28, b.z) > 220).sort((a, b) => Math.hypot(a.x - wantX, a.z - wantZ) - Math.hypot(b.x - wantX, b.z - wantZ))[0];
+    const herB = boxes.filter((b) => Math.hypot(b.x / 1.28, b.z) > 175).sort((a, b) => Math.hypot(a.x - wantX, a.z - wantZ) - Math.hypot(b.x - wantX, b.z - wantZ))[0];
     const her = new THREE.Group();
     const toward = new THREE.Vector3(-170, 0, 400).normalize(); // the side the drone comes from
     if (herB) {
@@ -150,7 +174,7 @@ if (pin && section && canvas) {
 
     // ---- Camera: the drone. ----
     const look = new THREE.Vector3(), eye = new THREE.Vector3(), tmpL = new THREE.Vector3();
-    const A0 = new THREE.Vector3(-160, 60, 440), A1 = new THREE.Vector3(-230, 190, 520); // lift-off to cruising height
+    const A0 = new THREE.Vector3(-150, 80, 400), A1 = new THREE.Vector3(-210, 330, 470); // lift-off to cruising height, high enough to see into the bowl
     let px = 0, py = 0, vx = 0, vy = 0, enteredAt = 0, lastP = -1;
     if (!mobile && !reduced) section.addEventListener('pointermove', (e) => { px = e.clientX / window.innerWidth - 0.5; py = e.clientY / window.innerHeight - 0.5; }, { passive: true });
 
@@ -189,7 +213,7 @@ if (pin && section && canvas) {
       look.set(0, 12, 0);
       if (herB && drop > 0) {
         her.getWorldPosition(tmpL);
-        const herEye = tmpL.clone().addScaledVector(toward, 95).add(new THREE.Vector3(0, 34, 0));
+        const herEye = tmpL.clone().addScaledVector(toward, 90).add(new THREE.Vector3(0, 30, 0));
         eye.lerp(herEye, drop); look.lerp(tmpL, drop);
       }
       camera.position.copy(eye); camera.lookAt(look);
