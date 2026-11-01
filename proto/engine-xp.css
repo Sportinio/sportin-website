@@ -1,0 +1,69 @@
+/* 04 Solution: the exploded phone (engine-xp.js). Loaded after engine-deck.css, which pins the stage
+   and gives it its white card; this file lays out the words on the left, the scene to their right,
+   the labels beside the three sheets, and the still phone shown if the 3D cannot start. */
+.engine__stage { perspective: none; }
+/* The canvas fills the whole pinned screen behind the text, so the scene is never clipped. */
+#eng3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
+.engine__grid { position: relative; z-index: 1; grid-template-columns: 1fr; grid-template-rows: 1fr; align-items: stretch; justify-items: center; }
+.engine__stage { width: 100%; min-height: 0; }
+/* Six steps: whole, Competitions, Leaderboards, Rewards, whole again, connected. */
+.engine[data-steps="5"] { height: calc(100vh + 5 * 80vh); }
+
+/* The words: Compete, Rank, Reward, Connect stand in a column on the left for the whole section,
+   the one for the step on screen in ink. Below them, one line for the step. */
+.engine__copy { position: absolute; left: var(--gutter); top: 0; bottom: 0; z-index: 2; width: min(36%, 470px); height: auto; max-width: none; display: flex; align-items: center; text-align: left; pointer-events: none; }
+.eng-a { position: relative; pointer-events: auto; }
+#engine .eng-a .eng-eyebrow.feat__idx { display: flex; justify-content: flex-start; align-items: baseline; gap: 12px; margin: 0 0 22px; font-family: var(--body); font-size: 14px; color: var(--slate); }
+.eng-verbs { margin: 0; font-family: var(--display); font-stretch: var(--display-stretch, 112%); font-weight: 800; font-size: clamp(48px, 4.8vw, 74px); line-height: 1.02; letter-spacing: -0.03em; color: var(--ink); }
+.eng-verbs span { display: block; width: fit-content; color: color-mix(in srgb, var(--ink) 18%, transparent); transition: color 420ms cubic-bezier(0.23, 1, 0.32, 1); }
+.eng-verbs span.is-on { color: var(--ink); }
+.xp-cap { position: relative; margin: 22px 0 0; height: 3.2em; font-family: var(--body); font-size: clamp(16px, 1.25vw, 19px); line-height: 1.5; color: var(--slate); max-width: 30ch; }
+.xp-cap span { position: absolute; left: 0; top: 0; opacity: 0; translate: 0 6px; transition: opacity 320ms ease-out, translate 320ms cubic-bezier(0.23, 1, 0.32, 1); }
+.xp-cap span.is-on { opacity: 1; translate: 0 0; transition-delay: 120ms; }
+.eng-a .eng-cta { margin: 26px 0 0; align-self: auto; white-space: nowrap; opacity: 0; translate: 0 6px; pointer-events: none; transition: opacity 320ms ease-out 160ms, translate 320ms cubic-bezier(0.23, 1, 0.32, 1) 160ms; }
+.eng-a .eng-cta.is-on { opacity: 1; translate: 0 0; pointer-events: auto; }
+
+/* Labels for the three sheets: a column beside the exploded stack, each with a thin leader line to
+   its sheet (an SVG engine-xp.js draws every frame). The one for the step on screen is in ink. */
+.xp-labels { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.xp-leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.xp-leaders line { stroke: color-mix(in srgb, var(--slate) 55%, transparent); stroke-width: 1; opacity: 0; transition: opacity 260ms ease-out, stroke 260ms ease-out; }
+.xp-leaders circle { fill: var(--slate); opacity: 0; transition: opacity 260ms ease-out, fill 260ms ease-out; }
+.xp-leaders line.is-on, .xp-leaders circle.is-on { opacity: 1; }
+.xp-leaders line.is-focus { stroke: var(--blue); }
+.xp-leaders circle.is-focus { fill: var(--blue); }
+.xp-label { position: absolute; left: 0; top: 0; width: 230px; opacity: 0; transition: opacity 260ms ease-out, color 260ms ease-out; color: color-mix(in srgb, var(--ink) 45%, transparent); }
+.xp-label b { display: block; margin-bottom: 4px; font-family: var(--mono); font-size: 12px; font-weight: 500; }
+.xp-label strong { display: block; font-family: var(--display); font-stretch: var(--display-stretch, 112%); font-weight: 700; font-size: 18px; line-height: 1.15; letter-spacing: -0.01em; }
+.xp-label span { display: block; max-height: 0; margin-top: 0; overflow: hidden; font-family: var(--body); font-size: 13px; line-height: 1.45; color: var(--slate); opacity: 0; transition: opacity 260ms ease-out, max-height 260ms ease-out, margin-top 260ms ease-out; }
+.xp-label.is-on { opacity: 1; }
+.xp-label.is-focus { color: var(--ink); }
+.xp-label.is-focus b { color: var(--blue); }
+.xp-label.is-focus span { max-height: 4em; margin-top: 6px; opacity: 1; }
+
+/* Still phone, shown only if the 3D cannot start. */
+.eng-fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; }
+.eng-fallback__lid { width: min(520px, 80%); aspect-ratio: 5.2 / 3.4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; border-radius: 14px; background: #f1f3f6; box-shadow: inset 0 0 0 1px rgba(10, 16, 32, 0.08), inset 0 0 0 26px #f7f8fa, inset 0 0 0 27px rgba(10, 16, 32, 0.06); }
+.eng-fallback__lid img { width: 46%; height: auto; opacity: 0.85; }
+.eng-fallback__lid span { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; color: var(--blue); }
+html.eng3d-failed .eng-fallback { display: flex; }
+html.eng3d-failed #eng3d, html.eng3d-failed .xp-labels { display: none; }
+html.eng3d-failed .eng-verbs span { color: var(--ink); }
+html.eng3d-failed .xp-cap span[data-s="4"] { opacity: 1; }
+html.eng3d-failed .eng-a .eng-cta { opacity: 1; pointer-events: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .eng-verbs span, .xp-cap span, .eng-a .eng-cta, .xp-label, .xp-label span, .xp-leaders line, .xp-leaders circle { transition: none; translate: none; }
+}
+
+/* Phones: the words on top, the scene below them, the labels hidden (the words carry the step). */
+@media (max-width: 700px) {
+  .engine__copy { left: var(--gutter); right: var(--gutter); top: calc(var(--nav-h) + 8px); bottom: auto; width: auto; align-items: flex-start; }
+  #engine .eng-a .eng-eyebrow.feat__idx { margin-bottom: 10px; }
+  .eng-verbs { font-size: clamp(26px, 7.4vw, 34px); }
+  .eng-verbs span { display: inline; }
+  .eng-verbs span + span { margin-left: 0.3em; }
+  .xp-cap { margin-top: 10px; height: 3em; font-size: 15px; max-width: none; }
+  .eng-a .eng-cta { margin-top: 10px; }
+  .xp-labels { display: none; }
+}
