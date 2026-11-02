@@ -174,7 +174,7 @@ const LAYERS = {
     { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 7, t: 'shape', plus: [{ cx: 178, cy: 1103, r: 66 }] },
     { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8, t: 'shape', plus: [{ cx: 460, cy: 1050, r: 68 }] },
     { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 7, t: 'shape', plus: [{ cx: 742, cy: 1150, r: 66 }] },
-    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' },
+    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1865, w: 830, h: 135, r: 28, z: 6, t: 'shape' },
     { cx: 820, cy: 1540, r: 58, z: 10, t: 'pic', dx: 30, dy: 26 }, { cx: 820, cy: 1680, r: 58, z: 10, t: 'shape', dx: 30, dy: 26 }, // overlays in the app: they hover beside the rows
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 11, t: 'shape' },
   ],
@@ -457,24 +457,25 @@ function glyph(ctx, name, cx, cy, r) {
   else if (name === 'Oura') { ctx.lineWidth = r * 0.42; ctx.beginPath(); ctx.arc(cx, cy, r * 0.7, 0, Math.PI * 2); ctx.stroke(); }
   else { font(ctx, 800, r * 2.1, 'Archivo', 'semi-expanded'); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name[0], cx, cy + r * 0.08); ctx.textBaseline = 'alphabetic'; }
 }
-function drawBadge(ctx, name, icon) {
+function drawBadge(ctx, name, icon, withName = true) {
   const W = 256; const Hh = 300; ctx.clearRect(0, 0, W, Hh);
   ctx.beginPath(); ctx.arc(128, 100, 90, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,16,32,0.12)'; ctx.stroke();
   if (icon) ctx.drawImage(icon, 128 - 50, 100 - 50, 100, 100); else glyph(ctx, name, 128, 100, 44);
-  font(ctx, 600, 34); ctx.fillStyle = '#c3cad8'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 258); ctx.textAlign = 'left';
+  if (withName) { font(ctx, 600, 34); ctx.fillStyle = '#c3cad8'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 258); ctx.textAlign = 'left'; }
 }
 SOURCES.forEach(([name, slug]) => {
   const { ctx, tex } = canvasTex(256, 300);
+  let icon = null; let withName = true; const redraw = (names) => { withName = names; drawBadge(ctx, name, icon, withName); tex.needsUpdate = true; };
   drawBadge(ctx, name, null);
   if (slug) {
-    const img = new Image(); img.onload = () => { drawBadge(ctx, name, img); tex.needsUpdate = true; };
+    const img = new Image(); img.onload = () => { icon = img; drawBadge(ctx, name, img, withName); tex.needsUpdate = true; };
     fetch(`https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/${slug}.svg`).then((r) => (r.ok ? r.text() : Promise.reject())).then((svg) => {
       img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.replace('<svg ', '<svg fill="#0a1020" '))}`;
     }).catch(() => {});
   }
   const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false, depthWrite: false });
   const sp = new THREE.Sprite(mat); rig.add(sp);
-  sources.push({ obj: sp, mats: [mat], base: [0.8, 0.8 * (300 / 256), 1] });
+  sources.push({ obj: sp, mats: [mat], base: [0.8, 0.8 * (300 / 256), 1], redraw });
 });
 // The watch: a small aluminium case, black glass, a steps ring on its screen.
 function buildWatch() {
@@ -512,8 +513,8 @@ const links = sources.map(() => {
 });
 // The orbit: a ring around the phone, tilted so the far side passes behind it.
 const RX = 2.85; const RY = 2.6; const TILT = 0.5;
-let ringK = 1; let srcK = 1; // smaller ring and sources on a narrow screen (set in resize)
-const ringPoint = (a, r, out) => out.set(Math.cos(a) * RX * ringK * r, Math.sin(a) * RY * ringK * r * Math.cos(TILT), -Math.sin(a) * RY * ringK * r * Math.sin(TILT));
+let ringK = 1; let ringKy = 1; let srcK = 1; // a narrower ring and smaller sources on a narrow screen (set in resize)
+const ringPoint = (a, r, out) => out.set(Math.cos(a) * RX * ringK * r, Math.sin(a) * RY * ringKy * r * Math.cos(TILT), -Math.sin(a) * RY * ringKy * r * Math.sin(TILT));
 // Where a line from a point outside the phone meets its outline, in the phone's plane.
 function edgePoint(p, out) {
   const kx = (PW / 2 + 0.02) / Math.max(1e-4, Math.abs(p.x)); const ky = (PHh / 2 + 0.02) / Math.max(1e-4, Math.abs(p.y));
@@ -554,7 +555,7 @@ const hintEl = document.createElement('div'); hintEl.className = 'xp-hint'; hint
 const CALLOUTS = {
   0: [{ ax: 0.985, ay: 0.17, name: 'Competitions', text: 'Fixture by fixture, team against team, in the club\u2019s name.' }],
   1: [{ ax: 0.985, ay: 0.275, name: 'Levels', text: 'Everyone competes in their own level, from Bronze to Platinum.' },
-      { ax: 0.985, ay: 0.62, name: 'Daily ranking', text: 'Every fan ranked by steps, as they move, every day.' }],
+      { ax: 0.935, ay: 0.62, name: 'Daily ranking', text: 'Every fan ranked by steps, as they move, every day.' }],
   2: [{ ax: 0.985, ay: 0.275, name: 'Rewards', text: 'Earned with steps, from the club, its sponsors and local shops.' }],
 };
 const callouts = []; // { k, c, el, l, dot }
@@ -565,15 +566,16 @@ Object.entries(CALLOUTS).forEach(([k, list]) => list.forEach((c) => {
 }));
 
 // ---------- Framing ----------
-let W = 1; let H = 1; let stacked = false; let shiftX = 0; let shiftY = 0;
+let W = 1; let H = 1; let stacked = false; let wasStacked = null; let shiftX = 0; let shiftY = 0;
 function resize() {
   const f = stick.getBoundingClientRect(); W = Math.max(1, f.width); H = Math.max(1, f.height);
   renderer.setSize(W, H, false); camera.aspect = W / H; leaders.setAttribute('viewBox', `0 0 ${W} ${H}`);
   // The scene is centred in the space to the right of the words; on a phone, below them.
   const c = copy.getBoundingClientRect(); stacked = W < 700;
-  ringK = stacked ? 0.68 : 1; srcK = stacked ? 0.5 : 1;
+  ringK = stacked ? 0.72 : 1; ringKy = stacked ? 1.08 : 1; srcK = stacked ? 0.5 : 1;
+  if (stacked !== wasStacked) { wasStacked = stacked; sources.forEach((src) => src.redraw && src.redraw(!stacked)); } // names only where there is room
   shiftX = stacked ? 0 : (c.right - f.left) / 2;
-  shiftY = stacked ? (c.bottom - f.top) / 2 : 0;
+  shiftY = stacked ? (c.bottom - f.top) / 2 - 60 : 0; // on a phone, a little higher than centred below the words, so the base and the hint clear the fold
   camera.setViewOffset(W, H, -shiftX, -shiftY, W, H); camera.updateProjectionMatrix();
 }
 const TAN = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
@@ -645,7 +647,9 @@ function paint(t, now) {
   sources.forEach((s, i) => {
     const u = win(t, 2 + i * stagger, 2.55 + i * stagger);
     // The watch takes the front of the ring on the right; the apps share the rest of it evenly.
-    const slot = i === 0 ? (stacked ? -0.55 : 0) : 0.62 + ((i - 1) / (N - 2)) * (Math.PI * 2 - 1.24);
+    // The watch at the right (on phones: at the bottom, in front); the apps share the rest of the ring evenly.
+    const w0 = stacked ? -Math.PI / 2 : 0; const gap = stacked ? 0.7 : 0.62;
+    const slot = i === 0 ? w0 : w0 + gap + ((i - 1) / (N - 2)) * (Math.PI * 2 - 2 * gap);
     const a = lerp(slot + 1.6 + s.seed * 1.2, slot, u); const r = lerp(1.9 + s.seed * 0.5, 1, u);
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
     s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
