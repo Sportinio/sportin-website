@@ -1,7 +1,8 @@
 // 04 Solution: the engine as one holographic phone (three.js, from the deck's import map).
-// The phone in the club's colours on a Jarvis-style floor, one real screen inside it. When the
-// page arrives nothing is there: the floor lights, the beam rises, the phone rises into the beam and
-// a fine grain of chips builds the leaderboard from a hologram. Each scroll swaps the screen chip by chip for the next one: Competitions,
+// The phone in the club's colours on a Jarvis-style floor; on its dark screen, the page as a cyan
+// hologram, and the page's real elements as solid blocks standing out of it in relief. When the
+// page arrives nothing is there: the floor lights, the beam rises, the phone rises into the beam,
+// the hologram appears and the blocks rise out of it. Each scroll swaps the screen chip by chip for the next one: Competitions,
 // then Rewards. Then the watches and apps fans already use orbit in and dock to the phone.
 // Driven by the scroll (scroll-follow.js), t = 0..3, resting on whole steps:
 //   0 Leaderboards;   1 Competitions;   2 Rewards;   3 the sources dock.
@@ -137,7 +138,7 @@ const screenMat = new THREE.ShaderMaterial({
 const screenGeo = plate(SWu - 0.004, SHu - 0.004, SRu - 0.002, 32);
 // The screen: a dark backing (solid once built) and the shader on top, inside the outline.
 const front = new THREE.Group(); front.position.z = REST_Z; phone.add(front);
-const frontBackMat = new THREE.MeshPhysicalMaterial({ color: 0x151a28, roughness: 0.45, metalness: 0.1, clearcoat: 0.5, clearcoatRoughness: 0.3, transparent: true });
+const frontBackMat = new THREE.MeshPhysicalMaterial({ color: 0x090c16, roughness: 0.3, metalness: 0.1, clearcoat: 0.6, clearcoatRoughness: 0.2, transparent: true }); // the dark screen the hologram shows on
 const backGeo = new THREE.ExtrudeGeometry(rrShape(SWu, SHu, SRu), { depth: TH, bevelEnabled: false, curveSegments: 24 }); backGeo.translate(0, 0, -TH / 2);
 const frontBack = new THREE.Mesh(backGeo, frontBackMat); front.add(frontBack);
 const frontScr = new THREE.Mesh(screenGeo, screenMat); frontScr.position.z = TH / 2 + 0.002; front.add(frontScr);
@@ -163,7 +164,8 @@ const LAYERS = {
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 405, y: 1803, w: 112, h: 100, r: 50, z: 16 },
   ],
 };
-const DEPTH = MM * 1.4; // world units per millimetre of relief
+const DEPTH = MM * 1.6; // world units per millimetre of relief
+const BLOCK_T = 2.2 * MM; // a block's thickness
 const reliefs = {}; // by sheet k: { group, items: [{ mesh, shadow, z }] }
 function buildRelief(sh) {
   const spec = LAYERS[sh.k]; if (!spec || reliefs[sh.k]) return;
@@ -178,18 +180,23 @@ function buildRelief(sh) {
     ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
     ctx.strokeStyle = 'rgba(79,215,255,0.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke();
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    // A block: a dark slab with real thickness, the piece's picture on its face.
+    const g = new THREE.Group(); group.add(g);
+    const slabMat = new THREE.MeshStandardMaterial({ color: 0x1a2130, roughness: 0.5, metalness: 0.35, transparent: true });
+    const slabGeo = new THREE.ExtrudeGeometry(rrShape(w * sx, h * sy, Math.min(r, w / 2, h / 2) * sx), { depth: BLOCK_T, bevelEnabled: false, curveSegments: 16 });
+    const slab = new THREE.Mesh(slabGeo, slabMat); g.add(slab);
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat);
-    const cx = (x + w / 2 - W / 2) * sx; const cy = (Hh / 2 - (y + h / 2)) * sy; mesh.position.set(cx, cy, 0); group.add(mesh);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat); mesh.position.z = BLOCK_T + 0.0008; g.add(mesh);
+    const cx = (x + w / 2 - W / 2) * sx; const cy = (Hh / 2 - (y + h / 2)) * sy; g.position.set(cx, cy, 0);
     // Its shadow on whatever lies beneath: the same shape, dark and blurred, a little lower.
     const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
     sctx.filter = 'blur(10px)'; sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.beginPath(); sctx.roundRect(PADS, PADS, w, h, r); sctx.fill();
     const stex = new THREE.CanvasTexture(sc); stex.colorSpace = THREE.SRGBColorSpace;
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry((w + PADS * 2) * sx, (h + PADS * 2) * sy), new THREE.MeshBasicMaterial({ map: stex, transparent: true, depthWrite: false, toneMapped: false }));
     shadow.position.set(cx + 2 * sx, cy - 8 * sy, 0); group.add(shadow);
-    items.push({ mesh, shadow, z: L.z });
+    items.push({ g, mesh, slab, shadow, z: L.z });
   });
-  items.sort((a, b) => a.z - b.z).forEach((it, i) => { it.mesh.renderOrder = 10 + i * 2 + 1; it.shadow.renderOrder = 10 + i * 2; });
+  items.sort((a, b) => a.z - b.z).forEach((it, i) => { it.mesh.renderOrder = 10 + i * 3 + 2; it.slab.renderOrder = 10 + i * 3 + 1; it.shadow.renderOrder = 10 + i * 3; });
   reliefs[sh.k] = { group, items };
 }
 // Lifts a screen's pieces: 0 flat and hidden, 1 fully in relief.
@@ -197,7 +204,7 @@ function setRelief(k, lift) {
   const r = reliefs[k]; if (!r) return;
   r.group.visible = lift > 0.01; if (!r.group.visible) return;
   r.items.forEach((it) => {
-    it.mesh.position.z = TH / 2 + 0.004 + it.z * DEPTH * lift; it.mesh.material.opacity = Math.min(1, lift * 1.5);
+    it.g.position.z = TH / 2 + 0.004 + it.z * DEPTH * lift; it.mesh.material.opacity = Math.min(1, lift * 1.5); it.slab.material.opacity = Math.min(1, lift * 1.5);
     it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lift * 0.45; it.shadow.material.opacity = lift;
   });
 }
@@ -474,10 +481,10 @@ function paint(t, now) {
   const u = screenMat.uniforms;
   if (u.map.value !== byOrder(cur).tex.tex) u.map.value = byOrder(cur).tex.tex;
   if (u.map2.value !== byOrder(next).tex.tex) u.map2.value = byOrder(next).tex.tex;
-  u.progress.value = prog; u.build.value = bBuild; u.holo.value = bHolo; u.time.value = time;
-  frontBackMat.opacity = bBuild; frontBack.visible = bBuild > 0.02;
+  u.progress.value = prog; u.build.value = 0; u.holo.value = bHolo; u.time.value = time; // the page stays a hologram
+  frontBackMat.opacity = bHolo; frontBack.visible = bHolo > 0.02;
   // The pieces rise once the screen is built, sink before a swap and rise again after it.
-  const up = win(bBuild, 0.85, 1) * (1 - dock * 0.5);
+  const up = bBuild * (1 - dock * 0.5);
   sheets.forEach((sh2) => {
     const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
     setRelief(sh2.k, up * on);
@@ -486,7 +493,7 @@ function paint(t, now) {
   beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   // The callout names the picture on show; it steps aside while the chips swap.
   const shown = prog < 0.5 ? cur : next;
-  const focus = bBuild > 0.7 && dock < 0.01 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and once the sources arrive
+  const focus = bBuild > 0.9 && dock < 0.01 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and once the sources arrive
   const fb = focus >= 0 ? 1 : 0;
 
   // The sources orbit in, settle on the ring and dock.
