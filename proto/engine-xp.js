@@ -78,13 +78,14 @@ const PW = PHONE.W * MM; const PHh = PHONE.H * MM;
 // Each is a thin white sheet with the layer's screen drawn on a canvas. k = 0 is Competitions,
 // the front sheet (what the phone shows when whole), then Leaderboards, then Rewards.
 const TH = 0.022; const GAP = 0.78;
-const TW = 760; const THH = Math.round(TW * (PHONE.SH / PHONE.SW));
+const TW = 760; const THH = Math.round(TW * (PHONE.SH / PHONE.SW)); const TEX_W = 1180;
 const NAMES = ['Competitions', 'Leaderboards', 'Rewards'];
 const sheets = [0, 1, 2].map((k) => {
   const g = new THREE.Group(); phone.add(g);
   const backMat = new THREE.MeshPhysicalMaterial({ color: 0xf6f7fa, roughness: 0.4, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.3, transparent: true });
   const back = new THREE.Mesh(new RoundedBoxGeometry(SWu, SHu, TH, 3, SRu), backMat); g.add(back);
-  const tex = canvasTex(TW, THH);
+  // Drawn in TW × THH units on a sharper canvas, so a real screenshot stays crisp up close.
+  const tex = canvasTex(TEX_W, Math.round(TEX_W * (THH / TW))); tex.ctx.setTransform(TEX_W / TW, 0, 0, TEX_W / TW, 0, 0);
   const scrMat = new THREE.MeshBasicMaterial({ map: tex.tex, toneMapped: false, transparent: true });
   const scr = new THREE.Mesh(plate(SWu - 0.004, SHu - 0.004, SRu - 0.002, 32), scrMat); scr.position.z = TH / 2 + 0.002; g.add(scr);
   const rest = GLASS_Z + 0.003 + (2 - k) * (TH + 0.0015) + TH / 2; // stacked in the screen, Competitions on top
@@ -144,10 +145,7 @@ function drawCompetitions(s) {
   font(ctx, 700, 32); ctx.fillStyle = INK; ctx.fillText('Walk to the stadium', 340, 1350);
   font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('6,820 of 8,000 steps', 340, 1396);
   font(ctx, 500, 26, 'IBM Plex Mono'); ctx.fillStyle = CLUB; ctx.fillText('Kick-off in 02:14:09', 340, 1448);
-  if (s.linked > 0.01) { // once the sources dock: the engine confirms the data flowing in
-    ctx.globalAlpha = s.linked; const w = 300; card(ctx, TW / 2 - w / 2, THH - 110, w, 60, 30, '#e8eeff', null);
-    dot(ctx, TW / 2 - w / 2 + 34, THH - 80, 9, BLUE); font(ctx, 600, 26); ctx.fillStyle = BLUE; ctx.fillText('11 sources synced', TW / 2 - w / 2 + 58, THH - 71); ctx.globalAlpha = 1;
-  }
+  drawPill(ctx, s.linked);
 }
 
 const ROWS = [['AM', 'Ana M.', '14,210', 'Diamond'], ['RP', 'Radu P.', '13,880', 'Diamond'], ['IC', 'Ioana C.', '12,940', 'Platinum'], ['MD', 'Mihai D.', '12,105', 'Platinum'],
@@ -196,14 +194,40 @@ function drawRewards() {
   });
   font(ctx, 500, 26); ctx.fillStyle = SLATE; ctx.fillText('Rewards fans run for.', 60, 1440);
 }
+// Real screens: one screenshot per sheet (proto/media/engine/). Each is drawn to cover the sheet,
+// so the sheet's rounded plate clips it to the screen's own corner radius. Until a file loads, or if
+// it is missing, the sheet shows its drawn screen.
+const SHOTS = ['competitions', 'leaderboards', 'rewards'].map((n) => `/proto/media/engine/${n}.png`);
+function drawShot(k, img) {
+  const { ctx } = sheets[k].tex;
+  const kk = Math.max(TW / img.naturalWidth, THH / img.naturalHeight); const w = img.naturalWidth * kk; const h = img.naturalHeight * kk; // cover
+  ctx.clearRect(0, 0, TW, THH); ctx.drawImage(img, (TW - w) / 2, (THH - h) / 2, w, h);
+}
+sheets.forEach((s, k) => {
+  const img = new Image();
+  img.onload = () => { s.shot = img; paintAll(true); };
+  img.src = SHOTS[k];
+});
+function drawPill(ctx, linked) { // once the sources dock: the engine confirms the data flowing in
+  if (linked < 0.01) return;
+  ctx.globalAlpha = linked; const w = 300; card(ctx, TW / 2 - w / 2, THH - 110, w, 60, 30, '#e8eeff', null);
+  dot(ctx, TW / 2 - w / 2 + 34, THH - 80, 9, BLUE); font(ctx, 600, 26); ctx.fillStyle = BLUE; ctx.fillText('11 sources synced', TW / 2 - w / 2 + 58, THH - 71); ctx.globalAlpha = 1;
+}
 let compKey = '';
 function paintScreens(s) {
   const k = JSON.stringify(s, (_, v) => (typeof v === 'number' ? Math.round(v * 100) / 100 : v));
   if (k === compKey) return; compKey = k;
-  drawCompetitions(s); sheets[0].tex.tex.needsUpdate = true;
+  if (sheets[0].shot) { drawShot(0, sheets[0].shot); drawPill(sheets[0].tex.ctx, s.linked); } else drawCompetitions(s);
+  sheets[0].tex.tex.needsUpdate = true;
 }
-function paintStatic() { drawBoard(); drawRewards(); sheets[1].tex.tex.needsUpdate = true; sheets[2].tex.tex.needsUpdate = true; compKey = ''; }
-paintStatic();
+function paintAll(force) {
+  if (sheets[1].shot) drawShot(1, sheets[1].shot); else drawBoard();
+  if (sheets[2].shot) drawShot(2, sheets[2].shot); else drawRewards();
+  sheets[1].tex.tex.needsUpdate = true; sheets[2].tex.tex.needsUpdate = true; compKey = '';
+  if (force) paintScreens({ linked: lastLinked });
+}
+let lastLinked = 0;
+paintAll();
 
 // ---------- The sources: a watch and the apps fans already use ----------
 // Monochrome brand marks from Simple Icons where one exists (placeholders until official assets are
@@ -348,7 +372,7 @@ function paint(t) {
   camera.position.set(0, 0.2 + dist * 0.06, dist); camera.lookAt(0, lerp(0, 0.25, open), 0);
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
 
-  paintScreens({ linked: win(t, 4.8, 5) });
+  lastLinked = win(t, 4.8, 5); paintScreens({ linked: lastLinked });
 
   // Words on the left: the verb of the step in ink; all three once the engine is whole again.
   const step = Math.round(t);
@@ -384,6 +408,6 @@ function paint(t) {
 const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint });
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
-document.fonts.ready.then(() => { resize(); paintStatic(); follow.sync(); });
+document.fonts.ready.then(() => { resize(); paintAll(true); follow.sync(); });
 follow.sync();
 window.engineAt = (v) => follow.jump(v);
