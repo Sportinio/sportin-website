@@ -74,6 +74,16 @@ const SWu = PHONE.SW * MM; const SHu = PHONE.SH * MM; const SRu = PHONE.SR * MM;
 const GLASS_Z = (PHONE.D / 2 + 0.04) * MM; // the open screen's depth
 const PW = PHONE.W * MM; const PHh = PHONE.H * MM;
 
+// A rounded rectangle, centred, for extruding.
+function rrShape(w, h, r) {
+  const sh = new THREE.Shape(); const x = -w / 2; const y = -h / 2;
+  sh.moveTo(x + r, y); sh.lineTo(x + w - r, y); sh.quadraticCurveTo(x + w, y, x + w, y + r);
+  sh.lineTo(x + w, y + h - r); sh.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  sh.lineTo(x + r, y + h); sh.quadraticCurveTo(x, y + h, x, y + h - r);
+  sh.lineTo(x, y + r); sh.quadraticCurveTo(x, y, x + r, y);
+  return sh;
+}
+
 // ---------- The three sheets ----------
 // Each is a thin white sheet with the layer's screen drawn on a canvas. k = 0 is Competitions,
 // the front sheet (what the phone shows when whole), then Leaderboards, then Rewards.
@@ -83,7 +93,10 @@ const NAMES = ['Competitions', 'Leaderboards', 'Rewards'];
 const sheets = [0, 1, 2].map((k) => {
   const g = new THREE.Group(); phone.add(g);
   const backMat = new THREE.MeshPhysicalMaterial({ color: 0xf6f7fa, roughness: 0.4, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.3, transparent: true });
-  const back = new THREE.Mesh(new RoundedBoxGeometry(SWu, SHu, TH, 3, SRu), backMat); g.add(back);
+  // The backing is extruded from the screen's own rounded rectangle, so its corners carry the
+  // screen's radius (a rounded box would clamp the radius to half the sheet's thickness).
+  const backGeo = new THREE.ExtrudeGeometry(rrShape(SWu, SHu, SRu), { depth: TH, bevelEnabled: false, curveSegments: 24 }); backGeo.translate(0, 0, -TH / 2);
+  const back = new THREE.Mesh(backGeo, backMat); g.add(back);
   // Drawn in TW × THH units on a sharper canvas, so a real screenshot stays crisp up close.
   const tex = canvasTex(TEX_W, Math.round(TEX_W * (THH / TW))); tex.ctx.setTransform(TEX_W / TW, 0, 0, TEX_W / TW, 0, 0);
   const scrMat = new THREE.MeshBasicMaterial({ map: tex.tex, toneMapped: false, transparent: true });
