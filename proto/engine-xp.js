@@ -163,7 +163,7 @@ const LAYERS = {
     { x: 42, y: 1174, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
     { x: 42, y: 1358, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
     { x: 42, y: 1542, w: 836, h: 148, r: 28, z: 6, t: 'shape' },
-    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 11, t: 'shape' },
   ],
   1: [ // Leaderboards: header pills; the tier cards; filter chips; board buttons; the podium cards with their
        // avatars (plus); the rows; the floating profile image and the switch button; the tab bar
@@ -175,15 +175,15 @@ const LAYERS = {
     { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8, t: 'shape', plus: [{ cx: 460, cy: 1050, r: 68 }] },
     { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 7, t: 'shape', plus: [{ cx: 742, cy: 1150, r: 66 }] },
     { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' },
-    { cx: 820, cy: 1540, r: 58, z: 14, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 14, t: 'shape' }, // overlays in the app: level with the tab bar
-    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
+    { cx: 820, cy: 1540, r: 58, z: 10, t: 'pic', dx: 30, dy: 26 }, { cx: 820, cy: 1680, r: 58, z: 10, t: 'shape', dx: 30, dy: 26 }, // overlays in the app: they hover beside the rows
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 11, t: 'shape' },
   ],
   2: [ // Rewards: the header pill; the partner cards; filter chips; every reward row whole; the tab bar
     { x: 700, y: 132, w: 180, h: 88, r: 44, z: 5, t: 'shape' },
     { x: 35, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 725, y: 436, w: 196, h: 228, r: 24, t: 'shape', z: 7 },
     { x: 172, y: 696, w: 114, h: 80, r: 40, z: 6, t: 'shape' }, { x: 307, y: 696, w: 194, h: 80, r: 40, z: 6, t: 'shape' },
     { x: 46, y: 930, w: 830, h: 185, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1135, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1345, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1555, w: 830, h: 190, r: 36, z: 6, t: 'shape' },
-    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 11, t: 'shape' },
   ],
 };
 const DEPTH = MM * 1.6; // world units per millimetre of relief
@@ -191,7 +191,7 @@ const reliefs = {}; // by sheet k: { group, items, lift, sockets }
 // Every piece's rectangle, radius, height and kind, from its spec (a circle is { cx, cy, r }).
 const rectOf = (L) => {
   const R = { x: L.cx != null ? L.cx - L.r : L.x, y: L.cy != null ? L.cy - L.r : L.y, w: L.cx != null ? L.r * 2 : L.w, h: L.cy != null ? L.r * 2 : L.h,
-    r: L.cx != null ? L.r : Math.min(L.r || 0, L.w / 2, L.h / 2), z: L.z, t: L.t || 'shape', img: L.img, plus: L.plus || [] };
+    r: L.cx != null ? L.r : Math.min(L.r || 0, L.w / 2, L.h / 2), z: L.z, t: L.t || 'shape', img: L.img, plus: L.plus || [], dx: L.dx || 0, dy: L.dy || 0 };
   // The piece's canvas covers the shape and whatever it carries; the shape itself keeps its own place.
   R.sx = R.x; R.sy = R.y; R.sw = R.w; R.sh = R.h;
   R.plus.forEach((c) => { const x0 = Math.min(R.x, c.cx - c.r); const y0 = Math.min(R.y, c.cy - c.r); R.w = Math.max(R.x + R.w, c.cx + c.r) - x0; R.h = Math.max(R.y + R.h, c.cy + c.r) - y0; R.x = x0; R.y = y0; });
@@ -263,7 +263,7 @@ function buildRelief(sh) {
     slab.position.set((R.sx + R.sw / 2 - (x + w / 2)) * sx, ((y + h / 2) - (R.sy + R.sh / 2)) * sy, 0);
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat); mesh.position.z = (R.t === 'shape' ? SLAB_T : 0) + 0.0008; g.add(mesh);
-    const cx = (x + w / 2 - W / 2) * sx; const cy = (Hh / 2 - (y + h / 2)) * sy; g.position.set(cx, cy, 0);
+    const cx = (x + w / 2 - W / 2 + R.dx) * sx; const cy = (Hh / 2 - (y + h / 2) - R.dy) * sy; g.position.set(cx, cy, 0); // dx, dy: where it rests, if not where it came from
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry((w + PADS * 2) * sx, (h + PADS * 2) * sy), new THREE.MeshBasicMaterial({ map: stex, transparent: true, depthWrite: false, toneMapped: false }));
     shadow.position.set(cx + 2 * sx, cy - 8 * sy, 0); group.add(shadow);
     items.push({ g, mesh, slab, shadow, z: R.z });
@@ -445,15 +445,23 @@ paintAll();
 // ---------- The sources: a watch and the apps fans already use ----------
 // Monochrome brand marks from Simple Icons where one exists (placeholders until official assets are
 // approved); the others carry their initial.
-const SOURCES = [['Apple Health', 'apple'], ['Garmin', 'garmin'], ['Fitbit', 'fitbit'], ['Oura'], ['Whoop'],
-  ['Samsung Health', 'samsung'], ['Polar'], ['Suunto'], ['Strava', 'strava'], ['Huawei Health', 'huawei']];
+const SOURCES = [['Apple Health', 'apple'], ['Garmin'], ['Fitbit', 'fitbit'], ['Oura'], ['Whoop'],
+  ['Samsung Health'], ['Polar'], ['Suunto'], ['Strava', 'strava'], ['Huawei Health', 'huawei']];
 const sources = []; // { obj, mats, slot }
+// Brands with no symbol in the icon set get a drawn glyph: a delta for Garmin, a heart for Samsung Health,
+// a ring for Oura, a bold letter for Polar, Suunto and Whoop.
+function glyph(ctx, name, cx, cy, r) {
+  ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineJoin = 'round';
+  if (name === 'Garmin') { ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r * 0.95, cy + r * 0.7); ctx.lineTo(cx - r * 0.95, cy + r * 0.7); ctx.closePath(); ctx.fill(); }
+  else if (name === 'Samsung Health') { ctx.beginPath(); ctx.moveTo(cx, cy + r * 0.85); ctx.bezierCurveTo(cx - r * 1.5, cy - r * 0.2, cx - r * 0.6, cy - r * 1.2, cx, cy - r * 0.4); ctx.bezierCurveTo(cx + r * 0.6, cy - r * 1.2, cx + r * 1.5, cy - r * 0.2, cx, cy + r * 0.85); ctx.fill(); }
+  else if (name === 'Oura') { ctx.lineWidth = r * 0.42; ctx.beginPath(); ctx.arc(cx, cy, r * 0.7, 0, Math.PI * 2); ctx.stroke(); }
+  else { font(ctx, 800, r * 2.1, 'Archivo', 'semi-expanded'); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name[0], cx, cy + r * 0.08); ctx.textBaseline = 'alphabetic'; }
+}
 function drawBadge(ctx, name, icon) {
   const W = 256; const Hh = 300; ctx.clearRect(0, 0, W, Hh);
-  ctx.beginPath(); ctx.arc(128, 104, 92, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,16,32,0.12)'; ctx.stroke();
-  if (icon) ctx.drawImage(icon, 128 - 44, 104 - 44, 88, 88);
-  else { font(ctx, 800, 72, 'Archivo', 'semi-expanded'); ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name[0], 128, 108); ctx.textBaseline = 'alphabetic'; }
-  font(ctx, 600, 28); ctx.fillStyle = SLATE; ctx.textAlign = 'center'; ctx.fillText(name, 128, 248); ctx.textAlign = 'left';
+  ctx.beginPath(); ctx.arc(128, 100, 90, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,16,32,0.12)'; ctx.stroke();
+  if (icon) ctx.drawImage(icon, 128 - 50, 100 - 50, 100, 100); else glyph(ctx, name, 128, 100, 44);
+  font(ctx, 600, 34); ctx.fillStyle = '#c3cad8'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 258); ctx.textAlign = 'left';
 }
 SOURCES.forEach(([name, slug]) => {
   const { ctx, tex } = canvasTex(256, 300);
@@ -544,11 +552,10 @@ const hintEl = document.createElement('div'); hintEl.className = 'xp-hint'; hint
 // The callouts, per screen: where on the screenshot each points (fractions of its width and height),
 // its name and, for the smaller ones, one sentence. Placed to the right of the phone every frame.
 const CALLOUTS = {
-  0: [{ ax: 0.985, ay: 0.17, name: 'Competitions' }],
-  1: [{ ax: 0.985, ay: 0.161, name: 'Leaderboards' },
-      { ax: 0.985, ay: 0.275, name: 'Levels', text: 'Everyone competes in their own level, from Bronze to Master.' },
-      { ax: 0.985, ay: 0.81, name: 'The board', text: 'Every fan ranked by steps, as they move, every day.' }],
-  2: [{ ax: 0.985, ay: 0.161, name: 'Rewards' }],
+  0: [{ ax: 0.985, ay: 0.17, name: 'Competitions', text: 'Fixture by fixture, team against team, in the club\u2019s name.' }],
+  1: [{ ax: 0.985, ay: 0.275, name: 'Levels', text: 'Everyone competes in their own level, from Bronze to Platinum.' },
+      { ax: 0.985, ay: 0.62, name: 'Daily ranking', text: 'Every fan ranked by steps, as they move, every day.' }],
+  2: [{ ax: 0.985, ay: 0.275, name: 'Rewards', text: 'Earned with steps, from the club, its sponsors and local shops.' }],
 };
 const callouts = []; // { k, c, el, l, dot }
 Object.entries(CALLOUTS).forEach(([k, list]) => list.forEach((c) => {
@@ -564,7 +571,7 @@ function resize() {
   renderer.setSize(W, H, false); camera.aspect = W / H; leaders.setAttribute('viewBox', `0 0 ${W} ${H}`);
   // The scene is centred in the space to the right of the words; on a phone, below them.
   const c = copy.getBoundingClientRect(); stacked = W < 700;
-  ringK = stacked ? 0.8 : 1; srcK = stacked ? 0.5 : 1;
+  ringK = stacked ? 0.68 : 1; srcK = stacked ? 0.5 : 1;
   shiftX = stacked ? 0 : (c.right - f.left) / 2;
   shiftY = stacked ? (c.bottom - f.top) / 2 : 0;
   camera.setViewOffset(W, H, -shiftX, -shiftY, W, H); camera.updateProjectionMatrix();
@@ -618,7 +625,7 @@ function paint(t, now) {
   u.progress.value = prog; u.build.value = bBuild; u.holo.value = bHolo; u.time.value = time; // a hologram while it boots, then the real screen
   frontBackMat.opacity = bHolo; frontBack.visible = bHolo > 0.02;
   // The pieces rise once the screen is built, sink before a swap and rise again after it.
-  const up = (1 - dock * 0.5) * (1 + 0.4 * tilt); // further out the more the phone tilts
+  const up = (1 - dock * 0.5) * (1 + 0.25 * Math.min(1, tilt / 0.85)); // a little further out as the phone tilts, up to about thirty degrees
   const enter = RM ? 1 : boot * (1 - leave); // the split's progress, undone as the section leaves
   sheets.forEach((sh2) => {
     const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
@@ -638,7 +645,7 @@ function paint(t, now) {
   sources.forEach((s, i) => {
     const u = win(t, 2 + i * stagger, 2.55 + i * stagger);
     // The watch takes the front of the ring on the right; the apps share the rest of it evenly.
-    const slot = i === 0 ? 0 : 0.62 + ((i - 1) / (N - 2)) * (Math.PI * 2 - 1.24);
+    const slot = i === 0 ? (stacked ? -0.55 : 0) : 0.62 + ((i - 1) / (N - 2)) * (Math.PI * 2 - 1.24);
     const a = lerp(slot + 1.6 + s.seed * 1.2, slot, u); const r = lerp(1.9 + s.seed * 0.5, 1, u);
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
     s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
@@ -653,7 +660,7 @@ function paint(t, now) {
 
   // Camera: on the phone and its floor, out for the ring. The distance fits the scene's height and,
   // on a narrow screen, its width.
-  const needH = lerp(5.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
+  const needH = lerp(5.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 2.4 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
   camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, lerp(0.12, -0.4, dock), 0); // the phone sits clear of the nav bar
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
