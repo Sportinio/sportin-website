@@ -2,9 +2,10 @@
 // One phone in the club's colours splits into its three layers, then presses back into one phone,
 // and the watches and apps fans already use orbit in and dock to it. Driven by the scroll
 // (scroll-follow.js), t = 0..5, resting on whole steps:
-//   0 the phone, whole;   1 the screen lifts into three sheets, Competitions in front;
-//   2 Leaderboards;        3 Rewards;   4 the sheets press back into one phone;
-//   5 the watch and the apps orbit in and dock to the phone.
+//   0 the phone, whole, showing the leaderboard;
+//   1 the phone slides back and leaves that screen in front, with its callout;
+//   2 that screen glides away and the Competitions screen comes out of the phone;  3 Rewards;
+//   4 every screen returns into the phone;   5 the watch and the apps orbit in and dock to it.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -88,12 +89,15 @@ function rrShape(w, h, r) {
 // Each is a thin white sheet with the layer's screen drawn on a canvas. k = 0 is Competitions,
 // the front sheet (what the phone shows when whole), then Leaderboards, then Rewards.
 const TH = 0.022;
-// The cascade the sheets open into, in the phone's frame: slot 0 in front, 1 and 2 stepped up, right and back.
-const CASC = { x: 1.45, dx: 0.42, dy: 0.34, z: 0.55, dz: 0.3 };
+// The order the screens are shown in: the leaderboard is what the phone opens on.
+const ORDER = [1, 0, 2];
+// Where a screen rests once it has left the phone: just where the phone's screen was, facing you.
+const FRONT = new THREE.Vector3(0.1, 0, 0.25);
+const LEAVE = new THREE.Vector3(0, 0.9, 0.3); // a screen glides up and a little forward as it goes
 const TW = 760; const THH = Math.round(TW * (PHONE.SH / PHONE.SW)); const TEX_W = 1180;
 const NAMES = ['Competitions', 'Leaderboards', 'Rewards'];
 const sheets = [0, 1, 2].map((k) => {
-  const g = new THREE.Group(); phone.add(g);
+  const g = new THREE.Group(); rig.add(g);
   const backMat = new THREE.MeshPhysicalMaterial({ color: 0x151a28, roughness: 0.45, metalness: 0.1, clearcoat: 0.5, clearcoatRoughness: 0.3, transparent: true }); // dark, like the app's screens
   // The backing is extruded from the screen's own rounded rectangle, so its corners carry the
   // screen's radius (a rounded box would clamp the radius to half the sheet's thickness).
@@ -103,8 +107,8 @@ const sheets = [0, 1, 2].map((k) => {
   const tex = canvasTex(TEX_W, Math.round(TEX_W * (THH / TW))); tex.ctx.setTransform(TEX_W / TW, 0, 0, TEX_W / TW, 0, 0);
   const scrMat = new THREE.MeshBasicMaterial({ map: tex.tex, toneMapped: false, transparent: true });
   const scr = new THREE.Mesh(plate(SWu - 0.004, SHu - 0.004, SRu - 0.002, 32), scrMat); scr.position.z = TH / 2 + 0.002; g.add(scr);
-  const rest = GLASS_Z + 0.003 + (2 - k) * (TH + 0.0015) + TH / 2; // stacked in the screen, Competitions on top
-  return { k, g, back, backMat, scrMat, tex, rest };
+  const o = ORDER.indexOf(k); const rest = GLASS_Z + 0.003 + (2 - o) * (TH + 0.0015) + TH / 2; // stacked in the screen, the first shown on top
+  return { k, o, g, back, backMat, scrMat, tex, rest };
 });
 const setSheet = (s, o) => { s.backMat.opacity = o; s.scrMat.opacity = o; s.g.visible = o > 0.004; };
 
@@ -313,7 +317,7 @@ function edgePoint(p, out) {
   const kx = (PW / 2 + 0.02) / Math.max(1e-4, Math.abs(p.x)); const ky = (PHh / 2 + 0.02) / Math.max(1e-4, Math.abs(p.y));
   const k = Math.min(kx, ky, 1); return out.set(p.x * k, p.y * k, GLASS_Z + 0.05);
 }
-const _p = new THREE.Vector3(); const _e = new THREE.Vector3(); const _box = new THREE.Box3();
+const _p = new THREE.Vector3(); const _e = new THREE.Vector3(); const _box = new THREE.Box3(); const _q0 = new THREE.Quaternion();
 
 // ---------- Labels (HTML, placed every frame beside each sheet) ----------
 const labels = document.createElement('div'); labels.className = 'xp-labels'; labels.setAttribute('aria-hidden', 'true'); stick.appendChild(labels);
@@ -323,7 +327,7 @@ const leaderEls = [0, 1, 2].map(() => { const l = document.createElementNS(SVG, 
 const LABEL_COPY = [['Competitions', 'Leagues, team battles and challenges, in the club’s name.'], ['Leaderboards', 'Every fan on the board: by fan, supporters’ club or country.'], ['Rewards', 'Prizes from the club, its sponsors and local businesses.']];
 const labelEls = LABEL_COPY.map(([t, p], k) => {
   const el = document.createElement('div'); el.className = 'xp-label'; el.dataset.k = String(k);
-  el.innerHTML = `<b>LAYER ${k + 1}</b><strong>${t}</strong><span>${p}</span>`; labels.appendChild(el); return el;
+  el.innerHTML = `<b>LAYER ${ORDER.indexOf(k) + 1}</b><strong>${t}</strong><span>${p}</span>`; labels.appendChild(el); return el;
 });
 
 // ---------- Framing ----------
@@ -350,24 +354,27 @@ function paint(t) {
   const open = x * (1 - back); // how far apart the sheets are, 0..1
   const dock = win(t, 4, 4.3); // the sources appear
 
-  // The phone turns a little for depth and slides left; the sheets come out of it to the right as a
-  // cascade, face-on, so every screen stays readable: the sheet the step is about in front, the
-  // other two stepped up and back behind it. At each step the next sheet comes over the top.
-  phone.rotation.set(lerp(0.04, 0.05, open), lerp(-0.16, -0.26, open), 0);
-  phone.position.set(lerp(0, -1.75, open), 0, 0); // room on the right for the labels
-  rig.position.x = stacked ? lerp(0, 0.62, open) : 0; // no labels on a phone: the cascade sits centred
-  const focus = t < 3.5 ? Math.max(0, Math.min(2, Math.round(t) - 1)) : -1;
-  const fb = t >= 0.5 && t < 3.5 ? 1 : 0;
-  const slotPos = (slot, out) => out.set(CASC.x + slot * CASC.dx, slot * CASC.dy, GLASS_Z + CASC.z - slot * CASC.dz);
-  const slotOf = (k, step) => (k - (step - 1) + 3) % 3; // which slot sheet k holds at a whole step
-  const ts = Math.max(1, Math.min(3, t)); const s0 = Math.floor(ts); const s1 = Math.ceil(ts); const u = sm(ts - s0);
+  // The phone slides back and a little up and left, leaving the screen it showed in front; later it
+  // comes forward again and every screen returns into it.
+  phone.position.set(lerp(0, -1.2, open), lerp(0, 0.45, open), lerp(0, -4.2, open));
+  phone.rotation.set(lerp(0.04, 0.06, open), lerp(-0.16, -0.3, open), 0);
+  rig.position.x = stacked ? 0 : lerp(0, -0.45, open); // room on the right for the callout
+  phone.updateMatrixWorld(true);
+  // Each screen in turn: the one shown first simply stays where it was as the phone leaves it; each
+  // next one glides out of the phone while the one before glides away. All return as the phone comes back.
+  let focus = -1;
   sheets.forEach((s) => {
-    const a = slotPos(slotOf(s.k, s0), _p); const b = slotPos(slotOf(s.k, s1), _e);
-    _v.copy(a).lerp(b, u);
-    if (slotOf(s.k, s1) === 0 && slotOf(s.k, s0) !== 0) _v.z += Math.sin(u * Math.PI) * 0.5; // over the top, to the front
-    s.g.position.set(lerp(0, _v.x, open), lerp(0, _v.y, open), lerp(s.rest, _v.z, open));
-    setSheet(s, fb && focus !== s.k ? 0.55 : 1); // the sheet the step is about stays bright
+    const step = s.o + 1; // the step this screen is in front
+    const e = (s.o === 0 ? win(t, 0, 1) : win(t, step - 0.7, step)) * (1 - back); // out of the phone
+    const l = step < 3 ? win(t, step, step + 0.55) * (1 - back) : 0; // gone, before the next arrives
+    _p.set(0, 0, s.rest); phone.localToWorld(_p); // its place inside the phone, in the world
+    _e.copy(FRONT).addScaledVector(LEAVE, l);
+    s.g.position.copy(_p).lerp(_e, e);
+    s.g.quaternion.copy(phone.quaternion).slerp(_q0, e);
+    setSheet(s, 1 - l);
+    if (e > 0.9 && l < 0.1) focus = s.k;
   });
+  const fb = focus >= 0 ? 1 : 0;
 
   // The sources orbit in, settle on the ring and dock.
   const stagger = 0.045;
@@ -389,7 +396,7 @@ function paint(t) {
 
   // Camera: close on the whole phone, out for the exploded stack, out again for the ring. The
   // distance fits the scene's height and, on a narrow screen, its width.
-  const needH = lerp(lerp(6.7, 8.1, open), 9.0, dock); const needW = lerp(lerp(2.6, stacked ? 4.3 : 4.6, open), 2 * RX * ringK + 1.6 * srcK, dock);
+  const needH = lerp(lerp(6.7, 7.4, open), 9.0, dock); const needW = lerp(lerp(2.6, 3.6, open), 2 * RX * ringK + 1.6 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
   camera.position.set(0, 0.2 + dist * 0.06, dist); camera.lookAt(0, lerp(0, 0.25, open), 0);
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
@@ -402,27 +409,22 @@ function paint(t) {
   caps.forEach((c, k) => c.classList.toggle('is-on', k === step));
   if (cta) cta.classList.toggle('is-on', step >= 4);
 
-  // Labels: a column to the right of the whole stack, one leader line from each to its sheet's top corner.
-  const showLabels = fb && open > 0.9;
-  if (showLabels) {
-    _box.setFromObject(phone); let right = -Infinity; let top = Infinity; let bottom = -Infinity;
+  // The callout: one label beside the screen in front, with a leader line to its top corner.
+  sheets.forEach((s, k) => {
+    const L = leaderEls[k]; const els = [labelEls[k], L.l, L.c];
+    if (focus !== k) { els.forEach((el) => el.classList.remove('is-on', 'is-focus')); return; }
+    _box.setFromObject(s.back); let right = -Infinity; let top = Infinity; let bottom = -Infinity;
     for (let i = 0; i < 8; i++) {
       _p.set(i & 1 ? _box.max.x : _box.min.x, i & 2 ? _box.max.y : _box.min.y, i & 4 ? _box.max.z : _box.min.z);
       const [px, py] = project(_p); right = Math.max(right, px); top = Math.min(top, py); bottom = Math.max(bottom, py);
     }
-    const lx = Math.round(right + 44); const ly = (top + bottom) / 2;
-    sheets.forEach((s, k) => {
-      const y = Math.round(ly + (k - 1) * 118 - 20);
-      labelEls[k].style.transform = `translate(${lx}px, ${y}px)`;
-      // The anchor: just inside the sheet's top right corner.
-      _p.set(SWu / 2 - 0.12, SHu / 2 - 0.3, TH / 2); s.g.localToWorld(_p); const [ax, ay] = project(_p);
-      const L = leaderEls[k]; L.l.setAttribute('x1', ax); L.l.setAttribute('y1', ay); L.l.setAttribute('x2', lx - 10); L.l.setAttribute('y2', y + 9);
-      L.c.setAttribute('cx', ax); L.c.setAttribute('cy', ay);
-      [labelEls[k], L.l, L.c].forEach((el) => { el.classList.add('is-on'); el.classList.toggle('is-focus', focus === k); });
-    });
-  } else {
-    sheets.forEach((s, k) => [labelEls[k], leaderEls[k].l, leaderEls[k].c].forEach((el) => el.classList.remove('is-on', 'is-focus')));
-  }
+    const lx = Math.round(right + 48); const y = Math.round(top + (bottom - top) * 0.22);
+    labelEls[k].style.transform = `translate(${lx}px, ${y}px)`;
+    _p.set(SWu / 2 - 0.12, SHu / 2 - 0.3, TH / 2); s.g.localToWorld(_p); const [ax, ay] = project(_p);
+    L.l.setAttribute('x1', ax); L.l.setAttribute('y1', ay); L.l.setAttribute('x2', lx - 10); L.l.setAttribute('y2', y + 9);
+    L.c.setAttribute('cx', ax); L.c.setAttribute('cy', ay);
+    els.forEach((el) => el.classList.add('is-on', 'is-focus'));
+  });
 
   renderer.render(scene, camera);
 }
