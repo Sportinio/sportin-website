@@ -153,128 +153,117 @@ const frontScr = new THREE.Mesh(screenGeo, screenMat); frontScr.position.z = TH 
 // with a soft shadow and a faint rim of light: a hologram of the screen with real depth, every pixel
 // the real one. Coordinates are pixels of the screenshot file. Circles are { cx, cy, r }.
 const LAYERS = {
-  0: [ // Competitions
-    { cx: 68, cy: 165, r: 36, z: 5 }, { cx: 851, cy: 165, r: 36, z: 5 },
-    { x: 0, y: 232, w: 921, h: 1768, r: 36, z: 2 },
-    { x: 40, y: 300, w: 850, h: 90, r: 18, z: 3 }, { x: 280, y: 305, w: 200, h: 70, r: 16, z: 6 },
-    { x: 260, y: 420, w: 400, h: 70, r: 35, z: 4 },
-    { x: 42, y: 522, w: 836, h: 80, r: 20, z: 5 }, { cx: 273, cy: 562, r: 22, z: 8 },
-    { x: 42, y: 622, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 652, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 652, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 672, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 648, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 648, w: 170, h: 116, r: 10, z: 8 },
-    { x: 42, y: 806, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 836, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 836, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 856, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 832, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 832, w: 170, h: 116, r: 10, z: 8 },
-    { x: 42, y: 990, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 1020, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1020, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1040, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1016, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1016, w: 170, h: 116, r: 10, z: 8 },
-    { x: 42, y: 1174, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 1204, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1204, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1224, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1200, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1200, w: 170, h: 116, r: 10, z: 8 },
-    { x: 42, y: 1358, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 1388, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1388, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1408, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1384, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1384, w: 170, h: 116, r: 10, z: 8 },
-    { x: 42, y: 1542, w: 836, h: 148, r: 28, z: 4 }, { x: 60, y: 1572, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1572, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1592, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1568, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1568, w: 170, h: 116, r: 10, z: 8 },
-    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 92, y: 1803, w: 112, h: 100, r: 50, z: 16 },
+  0: [ // Competitions: the two header buttons, the pill, the date bar; per match the crests, names and score
+    { cx: 68, cy: 165, r: 36, z: 5, t: 'shape' }, { cx: 851, cy: 165, r: 36, z: 5, t: 'shape' },
+    { x: 260, y: 420, w: 400, h: 70, r: 35, z: 5, t: 'shape' },
+    { x: 42, y: 522, w: 836, h: 80, r: 20, z: 5, t: 'shape' },
+    { x: 66, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 648, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 648, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 672, w: 120, h: 70, z: 7, t: 'text' },
+    { x: 66, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 832, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 832, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 856, w: 120, h: 70, z: 7, t: 'text' },
+    { x: 66, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1016, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1016, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1040, w: 120, h: 70, z: 7, t: 'text' },
+    { x: 66, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1200, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1200, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1224, w: 120, h: 70, z: 7, t: 'text' },
+    { x: 66, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1384, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1384, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1408, w: 120, h: 70, z: 7, t: 'text' },
+    { x: 66, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1568, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1568, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1592, w: 120, h: 70, z: 7, t: 'text' },
   ],
-  2: [ // Rewards
-    { x: 700, y: 132, w: 180, h: 88, r: 44, z: 5 },
-    { x: 35, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 6 },
-    { x: 98, y: 513, w: 80, h: 80, r: 16, z: 10 }, { x: 328, y: 513, w: 80, h: 80, r: 16, z: 10 }, { x: 558, y: 513, w: 80, h: 80, r: 16, z: 10 }, { x: 788, y: 513, w: 80, h: 80, r: 16, z: 10 },
-    { x: 55, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 285, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 515, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 745, y: 450, w: 168, h: 50, r: 10, z: 8 },
-    { x: 55, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 285, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 515, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 745, y: 606, w: 168, h: 46, r: 10, z: 8 },
-    { x: 172, y: 696, w: 114, h: 80, r: 40, z: 5 }, { x: 307, y: 696, w: 194, h: 80, r: 40, z: 5 },
-    { x: 14, y: 806, w: 893, h: 1194, r: 36, z: 2 },
-    { x: 46, y: 930, w: 830, h: 185, r: 36, z: 4 }, { x: 46, y: 1135, w: 830, h: 190, r: 36, z: 4 }, { x: 46, y: 1345, w: 830, h: 190, r: 36, z: 4 }, { x: 46, y: 1555, w: 830, h: 190, r: 36, z: 4 },
-    { x: 225, y: 950, w: 500, h: 150, r: 12, z: 8 }, { x: 225, y: 1160, w: 500, h: 150, r: 12, z: 8 }, { x: 225, y: 1385, w: 500, h: 120, r: 12, z: 8 }, { x: 225, y: 1580, w: 500, h: 150, r: 12, z: 8 },
-    { x: 85, y: 955, w: 120, h: 130, r: 20, z: 10 }, { x: 95, y: 1165, w: 100, h: 140, r: 20, z: 10 }, { x: 105, y: 1370, w: 80, h: 140, r: 20, z: 10 }, { x: 105, y: 1580, w: 80, h: 140, r: 20, z: 10 },
-    { x: 770, y: 985, w: 78, h: 78, r: 16, z: 9 }, { x: 770, y: 1195, w: 78, h: 78, r: 16, z: 9 }, { x: 770, y: 1405, w: 78, h: 78, r: 16, z: 9 }, { x: 770, y: 1615, w: 78, h: 78, r: 16, z: 9 },
-    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 248, y: 1803, w: 112, h: 100, r: 50, z: 16 },
+  1: [ // Leaderboards: the avatar and header pills; tier titles, level icons and counts; filter chips; board
+       // buttons; the podium's avatars, rank badges, names and steps; the rows' rank, avatar, name and steps
+    { cx: 69, cy: 175, r: 38, z: 6, t: 'pic' }, { x: 232, y: 132, w: 270, h: 88, r: 44, z: 5, t: 'shape' }, { x: 524, y: 132, w: 362, h: 88, r: 44, z: 5, t: 'shape' },
+    { x: 55, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 285, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 515, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 745, y: 450, w: 168, h: 50, z: 7, t: 'text' },
+    { cx: 138, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/bronze.png' }, { cx: 368, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/silver.png' }, { cx: 598, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/gold.png' }, { cx: 828, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/platinum.png' },
+    { x: 55, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 285, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 515, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 745, y: 606, w: 168, h: 46, z: 7, t: 'text' },
+    { x: 172, y: 696, w: 174, h: 80, r: 40, z: 6, t: 'shape' }, { x: 365, y: 696, w: 278, h: 80, r: 40, z: 6, t: 'shape' }, { x: 660, y: 696, w: 232, h: 80, r: 40, z: 6, t: 'shape' },
+    { x: 46, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 124, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 660, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 738, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 815, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' },
+    { cx: 178, cy: 1103, r: 66, z: 11, t: 'pic' }, { cx: 460, cy: 1050, r: 68, z: 13, t: 'pic' }, { cx: 742, cy: 1150, r: 66, z: 11, t: 'pic' },
+    { cx: 178, cy: 1210, r: 26, z: 9, t: 'pic' }, { cx: 460, cy: 1157, r: 26, z: 11, t: 'pic' }, { cx: 742, cy: 1258, r: 26, z: 9, t: 'pic' },
+    { x: 100, y: 1236, w: 156, h: 80, z: 9, t: 'text' }, { x: 382, y: 1183, w: 156, h: 80, z: 11, t: 'text' }, { x: 664, y: 1282, w: 156, h: 80, z: 9, t: 'text' },
+    { x: 108, y: 1368, w: 140, h: 48, z: 9, t: 'text' }, { x: 390, y: 1368, w: 150, h: 48, z: 11, t: 'text' }, { x: 672, y: 1368, w: 140, h: 48, z: 9, t: 'text' },
+    { x: 300, y: 1470, w: 320, h: 40, z: 6, t: 'text' },
+    { x: 84, y: 1578, w: 56, h: 60, z: 7, t: 'text' }, { x: 84, y: 1743, w: 56, h: 60, z: 7, t: 'text' }, { x: 84, y: 1908, w: 56, h: 60, z: 7, t: 'text' },
+    { cx: 214, cy: 1612, r: 46, z: 8, t: 'pic' }, { cx: 214, cy: 1773, r: 46, z: 8, t: 'pic' }, { cx: 214, cy: 1938, r: 46, z: 8, t: 'pic' },
+    { x: 282, y: 1568, w: 280, h: 88, z: 8, t: 'text' }, { x: 282, y: 1730, w: 280, h: 58, z: 8, t: 'text' }, { x: 700, y: 1725, w: 150, h: 50, z: 8, t: 'text' },
+    { cx: 820, cy: 1540, r: 58, z: 12, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 10, t: 'shape' },
   ],
-  1: [ // Leaderboards
-    { cx: 69, cy: 175, r: 38, z: 5 }, { x: 232, y: 132, w: 270, h: 88, r: 44, z: 4 }, { x: 524, y: 132, w: 362, h: 88, r: 44, z: 4 },
-    { x: 35, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 6 },
-    { cx: 138, cy: 553, r: 50, z: 10, img: '/levels/bronze.png' }, { cx: 368, cy: 553, r: 50, z: 10, img: '/levels/silver.png' }, { cx: 598, cy: 553, r: 50, z: 10, img: '/levels/gold.png' }, { cx: 828, cy: 553, r: 50, z: 10, img: '/levels/platinum.png' },
-    { x: 55, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 285, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 515, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 745, y: 450, w: 168, h: 50, r: 10, z: 8 },
-    { x: 55, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 285, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 515, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 745, y: 606, w: 168, h: 46, r: 10, z: 8 },
-    { x: 172, y: 696, w: 174, h: 80, r: 40, z: 5 }, { x: 365, y: 696, w: 278, h: 80, r: 40, z: 5 }, { x: 660, y: 696, w: 232, h: 80, r: 40, z: 5 },
-    { x: 14, y: 806, w: 893, h: 1194, r: 36, z: 2 },
-    { x: 46, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 124, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 660, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 738, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 815, y: 834, w: 60, h: 60, r: 18, z: 4 },
-    { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 6 }, { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8 }, { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 6 },
-    { cx: 178, cy: 1103, r: 66, z: 11 }, { cx: 460, cy: 1050, r: 68, z: 13 }, { cx: 742, cy: 1150, r: 66, z: 11 },
-    { cx: 178, cy: 1210, r: 26, z: 9 }, { cx: 460, cy: 1157, r: 26, z: 11 }, { cx: 742, cy: 1258, r: 26, z: 9 },
-    { x: 100, y: 1236, w: 156, h: 80, r: 12, z: 9 }, { x: 382, y: 1183, w: 156, h: 80, r: 12, z: 11 }, { x: 664, y: 1282, w: 156, h: 80, r: 12, z: 9 },
-    { x: 108, y: 1368, w: 140, h: 48, r: 10, z: 9 }, { x: 390, y: 1368, w: 150, h: 48, r: 10, z: 11 }, { x: 672, y: 1368, w: 140, h: 48, r: 10, z: 9 },
-    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 4 }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 4 }, { x: 46, y: 1865, w: 830, h: 135, r: 28, z: 4 },
-    { x: 72, y: 1562, w: 74, h: 100, r: 14, z: 7 }, { x: 72, y: 1727, w: 74, h: 100, r: 14, z: 7 }, { x: 72, y: 1892, w: 74, h: 100, r: 14, z: 7 },
-    { x: 282, y: 1568, w: 280, h: 88, r: 10, z: 8 }, { x: 282, y: 1730, w: 280, h: 58, r: 10, z: 8 }, { x: 700, y: 1725, w: 150, h: 50, r: 10, z: 8 },
-    { cx: 214, cy: 1612, r: 46, z: 8 }, { cx: 214, cy: 1773, r: 46, z: 8 }, { cx: 214, cy: 1938, r: 46, z: 8 },
-    { cx: 820, cy: 1540, r: 58, z: 12 }, { cx: 820, cy: 1680, r: 58, z: 10 },
-    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 405, y: 1803, w: 112, h: 100, r: 50, z: 16 },
+  2: [ // Rewards: the header pill; partner names, logos and counts; filter chips; per reward the picture,
+       // the text and the brand badge
+    { x: 700, y: 132, w: 180, h: 88, r: 44, z: 5, t: 'shape' },
+    { x: 55, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 285, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 515, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 745, y: 450, w: 168, h: 50, z: 7, t: 'text' },
+    { x: 98, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' }, { x: 328, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' }, { x: 558, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' }, { x: 788, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' },
+    { x: 55, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 285, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 515, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 745, y: 606, w: 168, h: 46, z: 7, t: 'text' },
+    { x: 172, y: 696, w: 114, h: 80, r: 40, z: 6, t: 'shape' }, { x: 307, y: 696, w: 194, h: 80, r: 40, z: 6, t: 'shape' },
+    { x: 85, y: 955, w: 120, h: 130, r: 20, z: 10, t: 'pic' }, { x: 95, y: 1165, w: 100, h: 140, r: 20, z: 10, t: 'pic' }, { x: 105, y: 1370, w: 80, h: 140, r: 20, z: 10, t: 'pic' }, { x: 105, y: 1580, w: 80, h: 140, r: 20, z: 10, t: 'pic' },
+    { x: 225, y: 950, w: 500, h: 150, z: 8, t: 'text' }, { x: 225, y: 1160, w: 500, h: 150, z: 8, t: 'text' }, { x: 225, y: 1385, w: 500, h: 120, z: 8, t: 'text' }, { x: 225, y: 1580, w: 500, h: 150, z: 8, t: 'text' },
+    { x: 770, y: 985, w: 78, h: 78, r: 16, z: 9, t: 'pic' }, { x: 770, y: 1195, w: 78, h: 78, r: 16, z: 9, t: 'pic' }, { x: 770, y: 1405, w: 78, h: 78, r: 16, z: 9, t: 'pic' }, { x: 770, y: 1615, w: 78, h: 78, r: 16, z: 9, t: 'pic' },
   ],
 };
 const DEPTH = MM * 1.6; // world units per millimetre of relief
-const BLOCK_T = 3.8 * MM; // a block's thickness
-const reliefs = {}; // by sheet k: { group, items: [{ mesh, shadow, z }] }
-// Every piece's rectangle, radius and height, from its spec (a circle is { cx, cy, r }).
-const rectOf = (L) => L.cx != null ? { x: L.cx - L.r, y: L.cy - L.r, w: L.r * 2, h: L.r * 2, r: L.r, z: L.z, img: L.img } : { x: L.x, y: L.y, w: L.w, h: L.h, r: Math.min(L.r, L.w / 2, L.h / 2), z: L.z, img: L.img };
+const reliefs = {}; // by sheet k: { group, items, lift, sockets }
+// Every piece's rectangle, radius, height and kind, from its spec (a circle is { cx, cy, r }).
+const rectOf = (L) => ({ x: L.cx != null ? L.cx - L.r : L.x, y: L.cy != null ? L.cy - L.r : L.y, w: L.cx != null ? L.r * 2 : L.w, h: L.cy != null ? L.r * 2 : L.h,
+  r: L.cx != null ? L.r : Math.min(L.r || 0, L.w / 2, L.h / 2), z: L.z, t: L.t || 'shape', img: L.img });
 const icons = {}; // real icons from the app, by file, loaded once
+const SLAB_T = 1.4 * MM; // a pill's or button's thickness
+// The screenshot's own pixels, for sampling what lies around a piece.
+function rawOf(sh) {
+  if (sh.raw) return sh.raw;
+  const c = document.createElement('canvas'); c.width = sh.shot.naturalWidth; c.height = sh.shot.naturalHeight; c.getContext('2d').drawImage(sh.shot, 0, 0);
+  sh.raw = c.getContext('2d'); return sh.raw;
+}
+const sample = (raw, x, y) => { const d = raw.getImageData(Math.max(0, Math.round(x)), Math.max(0, Math.round(y)), 1, 1).data; return [d[0], d[1], d[2]]; };
 function buildRelief(sh) {
   const spec = LAYERS[sh.k]; if (!spec || reliefs[sh.k]) return;
-  const img = sh.shot; const W = img.naturalWidth; const Hh = img.naturalHeight;
+  const img = sh.shot; const W = img.naturalWidth; const Hh = img.naturalHeight; const raw = rawOf(sh);
   const sx = (SWu - 0.004) / W; const sy = (SHu - 0.004) / Hh; // world units per screenshot pixel
-  const group = new THREE.Group(); front.add(group); const items = [];
-  const mc = document.createElement('canvas'); mc.width = W; mc.height = Hh; const mctx = mc.getContext('2d'); mctx.fillStyle = '#000'; mctx.fillRect(0, 0, W, Hh); mctx.fillStyle = '#fff';
-  const rects = spec.map(rectOf);
-  rects.forEach((R) => {
+  const group = new THREE.Group(); front.add(group); const items = []; const sockets = [];
+  spec.map(rectOf).forEach((R) => {
     const { x, y, w, h, r } = R;
-    mctx.beginPath(); mctx.roundRect(x, y, w, h, r); mctx.fill(); // its footprint, cut from the page
+    // What the screen keeps behind the piece: its surroundings, sampled just outside it.
+    const bg = sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2);
+    sockets.push({ x, y, w, h, r: R.t === 'text' ? 0 : r, bg });
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
     const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     const stex = new THREE.CanvasTexture(sc); stex.colorSpace = THREE.SRGBColorSpace;
-    if (R.img) {
-      // A real icon from the app: just the picture, no slab; its shadow is the picture's own shape.
-      const draw = (ic) => {
-        ctx.clearRect(0, 0, w, h); ctx.drawImage(ic, 0, 0, w, h); tex.needsUpdate = true;
-        sctx.clearRect(0, 0, sc.width, sc.height); sctx.filter = 'blur(8px)'; sctx.drawImage(ic, PADS, PADS, w, h); sctx.filter = 'none';
-        sctx.globalCompositeOperation = 'source-in'; sctx.fillStyle = 'rgba(0,0,0,0.65)'; sctx.fillRect(0, 0, sc.width, sc.height); sctx.globalCompositeOperation = 'source-over'; stex.needsUpdate = true;
-      };
+    // The shadow of whatever the piece's canvas holds: its own shape, blurred.
+    const shadowOf = () => { sctx.clearRect(0, 0, sc.width, sc.height); sctx.filter = 'blur(8px)'; sctx.drawImage(c, PADS, PADS); sctx.filter = 'none'; sctx.globalCompositeOperation = 'source-in'; sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.fillRect(0, 0, sc.width, sc.height); sctx.globalCompositeOperation = 'source-over'; stex.needsUpdate = true; };
+    if (R.t === 'icon') {
+      const draw = (ic) => { ctx.clearRect(0, 0, w, h); ctx.drawImage(ic, 0, 0, w, h); tex.needsUpdate = true; shadowOf(); };
       if (icons[R.img]) { if (icons[R.img].complete) draw(icons[R.img]); else icons[R.img].addEventListener('load', () => draw(icons[R.img])); }
       else { const ic = new Image(); icons[R.img] = ic; ic.addEventListener('load', () => draw(ic)); ic.src = R.img; }
+    } else if (R.t === 'text') {
+      // Bare text: the piece's pixels with their background keyed out.
+      ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+      const id = ctx.getImageData(0, 0, w, h); const d = id.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const diff = Math.max(Math.abs(d[i] - bg[0]), Math.abs(d[i + 1] - bg[1]), Math.abs(d[i + 2] - bg[2]));
+        d[i + 3] = Math.round(255 * Math.max(0, Math.min(1, (diff - 16) / 48)));
+      }
+      ctx.putImageData(id, 0, 0); tex.needsUpdate = true; shadowOf();
     } else {
-      // The piece, at the screenshot's own resolution, clipped to its shape, with a faint rim of light.
-      ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
-      // Where a higher piece sits on this one, this one keeps an empty socket: the piece shows once, in front.
-      rects.forEach((B) => {
-        if (B === R || B.z <= R.z) return;
-        const ox = Math.max(x, B.x); const oy = Math.max(y, B.y); const ow = Math.min(x + w, B.x + B.w) - ox; const oh = Math.min(y + h, B.y + B.h) - oy;
-        if (ow <= 0 || oh <= 0) return;
-        // The socket's colour: this piece's own surface, sampled just beside the higher piece, a little darker.
-        const px = Math.max(0, Math.min(w - 1, Math.round(B.x - x - 10 >= 0 ? B.x - x - 10 : B.x - x + B.w + 10))); const py = Math.max(0, Math.min(h - 1, Math.round(B.y - y + B.h / 2)));
-        const d = ctx.getImageData(px, py, 1, 1).data; const k = 0.78;
-        ctx.fillStyle = `rgb(${Math.round(d[0] * k)},${Math.round(d[1] * k)},${Math.round(d[2] * k)})`;
-        ctx.beginPath(); ctx.roundRect(B.x - x, B.y - y, B.w, B.h, B.r); ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(B.x - x + 1, B.y - y + 1, B.w - 2, B.h - 2, Math.max(0, B.r - 1)); ctx.stroke();
-      });
-      ctx.restore();
-      ctx.strokeStyle = 'rgba(79,215,255,0.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke();
-      tex.needsUpdate = true;
-      sctx.filter = 'blur(10px)'; sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.beginPath(); sctx.roundRect(PADS, PADS, w, h, r); sctx.fill(); stex.needsUpdate = true;
+      // A picture or a whole shape, clipped to its outline; a shape gets a faint rim of light.
+      ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h); ctx.restore();
+      if (R.t === 'shape') { ctx.strokeStyle = 'rgba(79,215,255,0.3)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke(); }
+      tex.needsUpdate = true; shadowOf();
     }
-    // A block: a dark slab with real thickness, the piece's picture on its face (an icon has no slab).
     const g = new THREE.Group(); group.add(g);
     const slabMat = new THREE.MeshStandardMaterial({ color: 0x1a2130, roughness: 0.5, metalness: 0.35, transparent: true });
-    const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(w * sx, h * sy, r * sx), { depth: BLOCK_T, bevelEnabled: false, curveSegments: 16 }), slabMat); slab.visible = !R.img; g.add(slab);
+    const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(w * sx, h * sy, r * sx), { depth: SLAB_T, bevelEnabled: false, curveSegments: 16 }), slabMat); slab.visible = R.t === 'shape'; g.add(slab);
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat); mesh.position.z = BLOCK_T + 0.0008; g.add(mesh);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat); mesh.position.z = (R.t === 'shape' ? SLAB_T : 0) + 0.0008; g.add(mesh);
     const cx = (x + w / 2 - W / 2) * sx; const cy = (Hh / 2 - (y + h / 2)) * sy; g.position.set(cx, cy, 0);
-    // Its shadow on whatever lies beneath, a little lower.
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry((w + PADS * 2) * sx, (h + PADS * 2) * sy), new THREE.MeshBasicMaterial({ map: stex, transparent: true, depthWrite: false, toneMapped: false }));
     shadow.position.set(cx + 2 * sx, cy - 8 * sy, 0); group.add(shadow);
     items.push({ g, mesh, slab, shadow, z: R.z });
   });
   items.sort((a, b) => a.z - b.z).forEach((it, i) => { it.mesh.renderOrder = 10 + i * 3 + 2; it.slab.renderOrder = 10 + i * 3 + 1; it.shadow.renderOrder = 10 + i * 3; });
-  const mask = new THREE.CanvasTexture(mc); mask.flipY = true;
-  reliefs[sh.k] = { group, items, mask, lift: 0 };
+  reliefs[sh.k] = { group, items, lift: 0, sockets };
+  paintAll(); // the screen now shows its sockets
 }
 // Lifts a screen's pieces: 0 flat and hidden, 1 fully in relief.
-function setRelief(k, lift) {
+function setRelief(k, lift, alpha) {
   const r = reliefs[k]; if (!r) return;
-  r.lift = lift; r.group.visible = lift > 0.01; if (!r.group.visible) return;
+  r.lift = lift; r.group.visible = alpha > 0.01; if (!r.group.visible) return;
   r.items.forEach((it) => {
-    it.g.position.z = TH / 2 + 0.004 + it.z * DEPTH * lift; it.mesh.material.opacity = Math.min(1, lift * 1.5); it.slab.material.opacity = Math.min(1, lift * 1.5);
-    it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lift * 0.45; it.shadow.material.opacity = lift;
+    it.g.position.z = TH / 2 + 0.004 + it.z * DEPTH * lift; it.mesh.material.opacity = alpha; it.slab.material.opacity = alpha;
+    it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lift * 0.45; it.shadow.material.opacity = alpha * Math.min(1, lift * 2);
   });
 }
 
@@ -413,7 +402,11 @@ const SHOTS = ['competitions', 'leaderboards', 'rewards'].map((n) => `/proto/med
 function drawShot(k, img) {
   const { ctx } = sheets[k].tex;
   const kk = Math.max(TW / img.naturalWidth, THH / img.naturalHeight); const w = img.naturalWidth * kk; const h = img.naturalHeight * kk; // cover
-  ctx.clearRect(0, 0, TW, THH); ctx.drawImage(img, (TW - w) / 2, (THH - h) / 2, w, h);
+  const ox = (TW - w) / 2; const oy = (THH - h) / 2;
+  ctx.clearRect(0, 0, TW, THH); ctx.drawImage(img, ox, oy, w, h);
+  // Where a piece has come forward, the screen keeps only its surroundings.
+  const r = reliefs[k]; if (!r) return;
+  r.sockets.forEach((S) => { ctx.fillStyle = `rgb(${S.bg[0]},${S.bg[1]},${S.bg[2]})`; ctx.beginPath(); ctx.roundRect(ox + S.x * kk - 0.5, oy + S.y * kk - 0.5, S.w * kk + 1, S.h * kk + 1, S.r * kk); ctx.fill(); });
 }
 sheets.forEach((s, k) => {
   const img = new Image();
@@ -583,17 +576,16 @@ function paint(t, now) {
   const u = screenMat.uniforms;
   if (u.map.value !== byOrder(cur).tex.tex) u.map.value = byOrder(cur).tex.tex;
   if (u.map2.value !== byOrder(next).tex.tex) u.map2.value = byOrder(next).tex.tex;
-  u.progress.value = prog; u.build.value = 0; u.holo.value = bHolo; u.time.value = time; // the page stays a hologram
+  u.progress.value = prog; u.build.value = bBuild; u.holo.value = bHolo; u.time.value = time; // a hologram while it boots, then the real screen
   frontBackMat.opacity = bHolo; frontBack.visible = bHolo > 0.02;
   // The pieces rise once the screen is built, sink before a swap and rise again after it.
   const up = bBuild * (1 - dock * 0.5) * (1 + 0.4 * tilt); // further out the more the phone tilts
   sheets.forEach((sh2) => {
     const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
-    setRelief(sh2.k, up * on);
+    const shown = ORDER[cur] === sh2.k ? 1 - win(prog, 0.3, 0.5) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.5, 0.7) : 0; // swapped with the screen itself
+    setRelief(sh2.k, up * on, shown * win(bBuild, 0.9, 1));
   });
-  const rA = reliefs[ORDER[cur]]; const rB = reliefs[ORDER[next]];
-  u.mask.value = rA ? rA.mask : NO_MASK; u.liftA.value = rA ? Math.min(1, rA.lift * 1.5) : 0;
-  u.mask2.value = rB ? rB.mask : NO_MASK; u.liftB.value = rB ? Math.min(1, rB.lift * 1.5) : 0;
+
   ground.rotation.z = time * 0.04; ground.material.opacity = bFloor * (1 - dock * 0.5);
   beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   // The callout names the picture on show; it steps aside while the chips swap.
