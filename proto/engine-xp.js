@@ -176,7 +176,7 @@ const LAYERS = {
     { cx: 178, cy: 1210, r: 26, z: 10, t: 'pic' }, { cx: 460, cy: 1157, r: 26, z: 12, t: 'pic' }, { cx: 742, cy: 1258, r: 26, z: 10, t: 'pic' },
     { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' },
     { cx: 214, cy: 1612, r: 46, z: 9, t: 'pic' }, { cx: 214, cy: 1773, r: 46, z: 9, t: 'pic' },
-    { cx: 820, cy: 1540, r: 58, z: 7, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 7, t: 'shape' }, // overlays in the app: just above the rows
+    { cx: 820, cy: 1540, r: 58, z: 14, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 14, t: 'shape' }, // overlays in the app: level with the tab bar
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
   ],
   2: [ // Rewards: the header pill; the partner cards whole; filter chips; every reward row whole, its picture above
@@ -212,7 +212,9 @@ function buildRelief(sh) {
     const { x, y, w, h, r } = R;
     // What the screen keeps behind the piece: its surroundings, sampled just outside it.
     const bg = R.t === 'pic' ? sample(raw, x + w / 2, Math.max(0, y - 6)) : sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2); // a picture: from just above it, outside any card it overhangs
-    sockets.push({ x, y, w, h, r: R.t === 'text' ? 0 : r, bg });
+    // A picture that sits on no card keeps a visible placeholder in the screen.
+    const onCard = R.t === 'pic' && rects.some((B) => B !== R && B.t === 'shape' && B.z < R.z && B.x < x + w && B.x + B.w > x && B.y < y + h && B.y + B.h > y);
+    sockets.push({ x, y, w, h, r: R.t === 'text' ? 0 : r, bg, seat: R.t === 'pic' && !onCard });
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
     const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -412,7 +414,13 @@ function drawShot(k, img) {
   ctx.clearRect(0, 0, TW, THH); ctx.drawImage(img, ox, oy, w, h);
   // Where a piece has come forward, the screen keeps only its surroundings.
   const r = reliefs[k]; if (!r) return;
-  r.sockets.forEach((S) => { ctx.fillStyle = `rgb(${S.bg[0]},${S.bg[1]},${S.bg[2]})`; ctx.beginPath(); ctx.roundRect(ox + S.x * kk - 0.5, oy + S.y * kk - 0.5, S.w * kk + 1, S.h * kk + 1, S.r * kk); ctx.fill(); });
+  r.sockets.forEach((S) => {
+    ctx.fillStyle = `rgb(${S.bg[0]},${S.bg[1]},${S.bg[2]})`; ctx.beginPath(); ctx.roundRect(ox + S.x * kk - 0.5, oy + S.y * kk - 0.5, S.w * kk + 1, S.h * kk + 1, S.r * kk); ctx.fill();
+    if (S.seat) { // a placeholder: a little darker than its surroundings, with a rim
+      ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.beginPath(); ctx.roundRect(ox + S.x * kk, oy + S.y * kk, S.w * kk, S.h * kk, S.r * kk); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(ox + S.x * kk + 1, oy + S.y * kk + 1, S.w * kk - 2, S.h * kk - 2, Math.max(0, S.r * kk - 1)); ctx.stroke();
+    }
+  });
 }
 sheets.forEach((s, k) => {
   const img = new Image();
