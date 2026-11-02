@@ -1,13 +1,10 @@
-// 04 Solution: the engine as a phone with three holographic layers (three.js, from the deck's
-// import map). Seen from the side on a Jarvis-style floor, the phone's three screens float out of
-// it as holograms. On scroll the phone drops back, the first hologram turns to face you and tiny
-// chips assemble it into the real leaderboard; each next scroll dissolves the screen and rebuilds
-// it from the next screenshot. Then everything returns into the phone and the watches and apps
-// fans already use orbit in and dock to it. Driven by the scroll (scroll-follow.js), t = 0..5:
-// The phone itself is a hologram too: a cyan outline, no metal. When the page arrives nothing is
-// there; the floor lights, the beam rises, the outline wipes up and the screens fan out of it.
-//   0 the phone from the side, three holograms;   1 the phone back, the leaderboard built in front;
-//   2 Competitions;   3 Rewards;   4 one whole phone, facing you;   5 the sources dock.
+// 04 Solution: the engine as one holographic phone (three.js, from the deck's import map).
+// A cyan outline of a phone on a Jarvis-style floor, one real screen inside it. When the page
+// arrives nothing is there: the floor lights, the beam rises, the outline wipes up and tiny chips
+// build the leaderboard. Each scroll swaps the screen chip by chip for the next one: Competitions,
+// then Rewards. Then the watches and apps fans already use orbit in and dock to the phone.
+// Driven by the scroll (scroll-follow.js), t = 0..3, resting on whole steps:
+//   0 Leaderboards;   1 Competitions;   2 Rewards;   3 the sources dock.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -22,7 +19,7 @@ const copy = sec.querySelector('.engine__copy');
 const verbs = [...sec.querySelectorAll('.eng-verbs span[data-v]')];
 const caps = [...sec.querySelectorAll('.xp-cap span[data-s]')];
 const cta = sec.querySelector('.eng-cta');
-const STEPS = Number(sec.dataset.steps || 5);
+const STEPS = Number(sec.dataset.steps || 3);
 const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const clamp = (v) => Math.max(0, Math.min(1, v));
@@ -116,72 +113,60 @@ function rrShape(w, h, r) {
   return sh;
 }
 
-// ---------- The screens ----------
+// ---------- The screen ----------
 const TH = 0.022;
 // The order the screens are shown in: the leaderboard first.
 const ORDER = [1, 0, 2];
-const GAP = 0.78; // the holograms' spacing out of the phone
-// Where the built screen stands, facing you.
-const FRONT = new THREE.Vector3(0.1, 0, 0.25);
 const GROUND_Y = -2.5;
 const TW = 760; const THH = Math.round(TW * (PHONE.SH / PHONE.SW)); const TEX_W = 1180;
 const NAMES = ['Competitions', 'Leaderboards', 'Rewards'];
 // One canvas per screen, drawn in TW × THH units on a sharper canvas, so a real screenshot stays crisp.
 const sheets = [0, 1, 2].map((k) => {
   const tex = canvasTex(TEX_W, Math.round(TEX_W * (THH / TW))); tex.ctx.setTransform(TEX_W / TW, 0, 0, TEX_W / TW, 0, 0);
-  const o = ORDER.indexOf(k); const rest = GLASS_Z + 0.003 + (2 - o) * (TH + 0.0015) + TH / 2; // stacked in the screen
-  return { k, o, tex, rest };
+  return { k, o: ORDER.indexOf(k), tex };
 });
 const byOrder = (o) => sheets.find((s) => s.o === o);
-// A hologram's place out of the phone, in the phone's frame: the first shown nearest the glass.
-let spread = 1; // how far the holograms stand out of the phone (0 while booting)
-const holoLocal = (o, out) => out.set((3 - o) * 0.05 * spread, (3 - o) * 0.14 * spread, byOrder(o).rest + (3 - o) * GAP * spread);
+const REST_Z = GLASS_Z + 0.01 + TH / 2; // the screen, just in front of the outline's plane
 
-// The hologram shader: the screen as a cyan hologram (its own picture in light, scanlines, a grid of
-// chips, a lit edge, a sweep) that becomes the real screen chip by chip as progress runs 0..1.
+// The screen shader. Two pictures: the one on show and the next; `progress` swaps them chip by chip,
+// each chip flashing as it lands. `build` runs once at the boot: from a cyan hologram of the picture
+// (its own picture in light, scanlines, a chip grid, a lit edge, a sweep) to the real screen, chip by chip.
 const HOLO = new THREE.Color(0x4fd7ff);
-function holoMaterial(map) {
-  return new THREE.ShaderMaterial({
-    uniforms: { map: { value: map }, progress: { value: 0 }, holo: { value: 1 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(26, 56) } },
-    vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-    fragmentShader: `
-      uniform sampler2D map; uniform float progress; uniform float holo; uniform float time; uniform vec3 tint; uniform vec2 tiles;
-      varying vec2 vUv;
-      float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-      void main() {
-        vec2 cell = floor(vUv * tiles);
-        float gate = (1.0 - vUv.y) * 0.55 + hash(cell) * 0.45; // when this chip lands: from the top down, scattered
-        float k = smoothstep(gate, gate + 0.12, progress * 1.12); // 0 hologram, 1 the real screen
-        vec4 real = texture2D(map, vUv);
-        float lum = dot(real.rgb, vec3(0.299, 0.587, 0.114));
-        float scan = 0.82 + 0.18 * sin(vUv.y * 700.0 - time * 4.0);
-        vec2 f = fract(vUv * tiles); float grid = step(0.94, max(f.x, f.y)) * 0.18;
-        vec2 d = min(vUv, 1.0 - vUv); float edge = 1.0 - smoothstep(0.0, 0.022, min(d.x, d.y));
-        float sweep = smoothstep(0.06, 0.0, abs(vUv.y - fract(time * 0.18))) * 0.5;
-        vec3 hc = tint * (0.22 + lum * 0.9) * scan + tint * (grid + edge * 1.2 + sweep);
-        float ha = (0.38 + lum * 0.25 + edge * 0.5) * holo;
-        float flash = smoothstep(0.0, 0.5, k) * (1.0 - smoothstep(0.5, 1.0, k)); // a chip lights up as it lands
-        vec3 col = mix(hc, real.rgb, k) + tint * flash * 0.8;
-        gl_FragColor = vec4(col, mix(ha, 1.0, k));
-        #include <colorspace_fragment>
-      }`,
-    transparent: true,
-  });
-}
+const screenMat = new THREE.ShaderMaterial({
+  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(26, 56) } },
+  vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `
+    uniform sampler2D map; uniform sampler2D map2; uniform float progress; uniform float build; uniform float holo; uniform float time; uniform vec3 tint; uniform vec2 tiles;
+    varying vec2 vUv;
+    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    void main() {
+      vec2 cell = floor(vUv * tiles);
+      float gate = (1.0 - vUv.y) * 0.55 + hash(cell) * 0.45; // when this chip goes: from the top down, scattered
+      float ks = smoothstep(gate, gate + 0.12, progress * 1.12); // this picture to the next
+      float kb = smoothstep(gate, gate + 0.12, build * 1.12); // hologram to the real screen
+      vec3 real = mix(texture2D(map, vUv).rgb, texture2D(map2, vUv).rgb, ks);
+      float lum = dot(real, vec3(0.299, 0.587, 0.114));
+      float scan = 0.82 + 0.18 * sin(vUv.y * 700.0 - time * 4.0);
+      vec2 f = fract(vUv * tiles); float grid = step(0.94, max(f.x, f.y)) * 0.18;
+      vec2 d = min(vUv, 1.0 - vUv); float edge = 1.0 - smoothstep(0.0, 0.022, min(d.x, d.y));
+      float sweep = smoothstep(0.06, 0.0, abs(vUv.y - fract(time * 0.18))) * 0.5;
+      vec3 hc = tint * (0.22 + lum * 0.9) * scan + tint * (grid + edge * 1.2 + sweep);
+      float ha = (0.38 + lum * 0.25 + edge * 0.5) * holo;
+      float flashB = smoothstep(0.0, 0.5, kb) * (1.0 - smoothstep(0.5, 1.0, kb)); // a chip lights as it lands
+      float flashS = smoothstep(0.0, 0.5, ks) * (1.0 - smoothstep(0.5, 1.0, ks)); // and as it swaps
+      vec3 col = mix(hc, real, kb) + tint * (flashB * 0.8 + flashS * 0.9);
+      gl_FragColor = vec4(col, mix(ha, 1.0, kb));
+      #include <colorspace_fragment>
+    }`,
+  transparent: true,
+});
 const screenGeo = plate(SWu - 0.004, SHu - 0.004, SRu - 0.002, 32);
-// The screen in front: a dark backing (solid once built) and the hologram shader on top.
-const front = new THREE.Group(); rig.add(front);
+// The screen: a dark backing (solid once built) and the shader on top, inside the outline.
+const front = new THREE.Group(); front.position.z = REST_Z; phone.add(front);
 const frontBackMat = new THREE.MeshPhysicalMaterial({ color: 0x151a28, roughness: 0.45, metalness: 0.1, clearcoat: 0.5, clearcoatRoughness: 0.3, transparent: true });
 const backGeo = new THREE.ExtrudeGeometry(rrShape(SWu, SHu, SRu), { depth: TH, bevelEnabled: false, curveSegments: 24 }); backGeo.translate(0, 0, -TH / 2);
 const frontBack = new THREE.Mesh(backGeo, frontBackMat); front.add(frontBack);
-const frontMat = holoMaterial(byOrder(0).tex.tex);
-const frontScr = new THREE.Mesh(screenGeo, frontMat); frontScr.position.z = TH / 2 + 0.002; front.add(frontScr);
-// The other two holograms, out of the phone with it.
-const holos = [1, 2].map((o) => {
-  const sh = byOrder(o); const mat = holoMaterial(sh.tex.tex);
-  const mesh = new THREE.Mesh(screenGeo, mat); phone.add(mesh);
-  return { o, mat, mesh };
-});
+const frontScr = new THREE.Mesh(screenGeo, screenMat); frontScr.position.z = TH / 2 + 0.002; front.add(frontScr);
 
 // The floor: a ring dial with ticks and a faint grid, fading out, spinning slowly. Additive, so it glows.
 const ground = (() => {
@@ -200,7 +185,7 @@ const ground = (() => {
   const m = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
   m.rotation.x = -Math.PI / 2; m.position.y = GROUND_Y; rig.add(m); return m;
 })();
-// The projector beam, from the floor up to the screen in front.
+// The projector beam, from the floor up to the phone.
 const beam = (() => {
   const { ctx, tex } = canvasTex(64, 256); const g = ctx.createLinearGradient(0, 256, 0, 0);
   g.addColorStop(0, 'rgba(79,215,255,0.55)'); g.addColorStop(1, 'rgba(79,215,255,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 256); tex.needsUpdate = true;
@@ -208,7 +193,7 @@ const beam = (() => {
   const geo = new THREE.ShapeGeometry(sh); const pos = geo.attributes.position; const uv = geo.attributes.uv;
   for (let i = 0; i < pos.count; i++) uv.setXY(i, 0.5, (pos.getY(i) - GROUND_Y) / (top - GROUND_Y));
   const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, opacity: 0.35 }));
-  m.position.set(FRONT.x, 0, FRONT.z - 0.05); rig.add(m); return m;
+  m.position.set(0, 0, REST_Z - 0.05); rig.add(m); return m;
 })();
 
 // Header shared by the three screens: the club on the left, the layer on the right.
@@ -433,62 +418,48 @@ function project(p) { _v.copy(p).project(camera); return [((_v.x + 1) / 2) * W, 
 
 // ---------- One frame ----------
 function paint(t, now) {
-  const x = win(t, 0, 1); // the phone drops back and the first hologram comes to the front
-  const back = win(t, 3, 3.75); // everything returns into one phone, facing you
-  const open = x * (1 - back);
-  const dock = win(t, 4, 4.3); // the sources appear
   const time = (now || 0) / 1000;
-  // The boot: once the section is on screen, over 2.6 s. Skipped when the page arrives further in.
+  const dock = win(t, 2, 2.3); // the sources appear
+  // The boot: once the section is on screen, over 2.8 s. Skipped when the page arrives further in.
   if (bootAt == null && (RM || t > 0.3)) bootAt = -1e9;
   if (bootAt == null && onScreen()) bootAt = now || performance.now();
-  const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 2600);
-  const bFloor = win(boot, 0, 0.3); const bFrame = win(boot, 0.12, 0.55); const bHolo = win(boot, 0.42, 1);
-  spread = bHolo;
+  const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 2800);
+  const bFloor = win(boot, 0, 0.28); const bFrame = win(boot, 0.1, 0.5); const bHolo = win(boot, 0.4, 0.62); const bBuild = win(boot, 0.55, 1);
+
+  // One phone, facing you with a little turn, breathing gently; still once the sources dock.
+  const live = (1 - dock) * (RM ? 0 : 1);
+  phone.position.set(0, Math.sin(time * 0.8) * 0.04 * live, 0);
+  phone.rotation.set(0.04 + Math.sin(time * 0.6) * 0.015 * live, -0.16 + Math.sin(time * 0.45) * 0.05 * live, 0);
+  rig.position.x = stacked ? 0 : -0.35 * (1 - dock); // room on the right for the callout
+  phone.updateMatrixWorld(true);
   frame.mat.uniforms.reveal.value = bFrame; frame.mat.uniforms.time.value = time; frame.mesh.visible = bFrame > 0.001;
 
-  // Three poses: from the side with the holograms out (A), dropped back (R), whole and facing you (B).
-  const ax = stacked ? 0.95 : -0.15; const rx = stacked ? 0.5 : -0.4; // the holograms fan out to the left: on a phone, make room for them
-  phone.position.set(lerp(lerp(ax, rx, x), 0, back), lerp(lerp(0, 0.75, x), 0, back), lerp(lerp(0, -4.2, x), 0, back));
-  phone.rotation.set(lerp(0.26, 0.04, back), lerp(-0.98, -0.16, back), lerp(0.08, 0, back));
-  rig.position.x = stacked ? 0 : lerp(0, -0.45, open); // room on the right for the callout
-  phone.updateMatrixWorld(true);
-
-  // The screen in front: which one, and how far the chips have built it.
-  const cur = t < 1.4 ? 1 : t < 2.4 ? 2 : 3;
-  const sh = byOrder(cur - 1);
-  const p = win(t, cur - 0.45, cur) * (cur < 3 ? 1 - win(t, cur, cur + 0.4) : 1);
-  if (frontMat.uniforms.map.value !== sh.tex.tex) frontMat.uniforms.map.value = sh.tex.tex;
-  frontMat.uniforms.progress.value = p; frontMat.uniforms.time.value = time;
-  frontBackMat.opacity = p; frontBack.visible = p > 0.02;
-  // Its place: the first hologram's spot out of the phone, then out front facing you, and at the end
-  // inside the whole phone's screen.
-  const e = win(t, 0.12, 0.85) * (1 - back);
-  holoLocal(0, _p); _e.set(0, 0, byOrder(0).rest); _p.lerp(_e, back); phone.localToWorld(_p);
-  front.position.copy(_p).lerp(FRONT, e);
-  front.quaternion.copy(phone.quaternion).slerp(_q0, e);
-  // The other holograms stay out of the phone until their screen is built in front.
-  frontMat.uniforms.holo.value = win(bHolo, 0, 0.5); // the first screen lights first as it boots
-  holos.forEach((h) => {
-    const a = (1 - win(t, h.o + 0.5, h.o + 0.75)) * (1 - back) * win(bHolo, h.o * 0.22, h.o * 0.22 + 0.5);
-    h.mat.uniforms.holo.value = a; h.mat.uniforms.time.value = time + h.o * 0.7; h.mesh.visible = a > 0.01;
-    holoLocal(h.o, h.mesh.position);
-  });
+  // The screen: the picture of this step, swapped chip by chip for the next one on the way to the next step.
+  const cur = Math.min(2, Math.floor(t)); const next = Math.min(2, cur + 1);
+  const prog = cur < 2 ? win(t - cur, 0.1, 0.9) : 0;
+  const u = screenMat.uniforms;
+  if (u.map.value !== byOrder(cur).tex.tex) u.map.value = byOrder(cur).tex.tex;
+  if (u.map2.value !== byOrder(next).tex.tex) u.map2.value = byOrder(next).tex.tex;
+  u.progress.value = prog; u.build.value = bBuild; u.holo.value = bHolo; u.time.value = time;
+  frontBackMat.opacity = bBuild; frontBack.visible = bBuild > 0.02;
   ground.rotation.z = time * 0.04; ground.material.opacity = bFloor * (1 - dock * 0.5);
-  beam.material.opacity = 0.35 * bFloor * (1 - back); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
-  const focus = e > 0.9 && p > 0.6 ? sh.k : -1;
+  beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
+  // The callout names the picture on show; it steps aside while the chips swap.
+  const shown = prog < 0.5 ? cur : next;
+  const focus = bBuild > 0.7 && dock < 0.01 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and once the sources arrive
   const fb = focus >= 0 ? 1 : 0;
 
   // The sources orbit in, settle on the ring and dock.
   const stagger = 0.045;
   sources.forEach((s, i) => {
-    const u = win(t, 4 + i * stagger, 4.75 + i * stagger);
+    const u = win(t, 2 + i * stagger, 2.75 + i * stagger);
     // The watch takes the front of the ring on the right; the apps share the rest of it evenly.
     const slot = i === 0 ? 0 : 0.62 + ((i - 1) / (N - 2)) * (Math.PI * 2 - 1.24);
     const a = lerp(slot + 1.6 + s.seed * 1.2, slot, u); const r = lerp(1.9 + s.seed * 0.5, 1, u);
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
     s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
     setSource(s, Math.min(dock, u * 2));
-    const L = links[i]; const d = win(t, 4.7 + i * stagger, 4.95 + i * stagger);
+    const L = links[i]; const d = win(t, 2.7 + i * stagger, 2.95 + i * stagger);
     if (d > 0.01) {
       edgePoint(s.obj.position, _e); _p.copy(s.obj.position).lerp(_e, d);
       const pos = L.line.geometry.attributes.position; pos.setXYZ(0, s.obj.position.x, s.obj.position.y, s.obj.position.z); pos.setXYZ(1, _p.x, _p.y, _p.z); pos.needsUpdate = true;
@@ -496,18 +467,18 @@ function paint(t, now) {
     } else { L.line.visible = false; L.d.visible = false; }
   });
 
-  // Camera: close on the whole phone, out for the exploded stack, out again for the ring. The
-  // distance fits the scene's height and, on a narrow screen, its width.
-  const needH = lerp(lerp(8.6, 8.0, open), 9.0, dock); const needW = lerp(lerp(stacked ? 5.2 : 4.6, 3.6, open), 2 * RX * ringK + 1.6 * srcK, dock);
+  // Camera: on the phone and its floor, out for the ring. The distance fits the scene's height and,
+  // on a narrow screen, its width.
+  const needH = lerp(8.4, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
   camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, -0.4 * (1 - dock), 0);
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
 
-  // Words on the left: the verb of the step in ink; all three once the engine is whole again.
+  // Words on the left: the verb of the step in ink.
   const step = Math.round(t);
-  verbs.forEach((v, k) => v.classList.toggle('is-on', step === 0 ? false : step <= 3 ? k === step - 1 : step === 4 ? k < 3 : k === 3));
+  verbs.forEach((v, k) => v.classList.toggle('is-on', k === step));
   caps.forEach((c, k) => c.classList.toggle('is-on', k === step));
-  if (cta) cta.classList.toggle('is-on', step >= 4);
+  if (cta) cta.classList.toggle('is-on', step >= 3);
 
   // The callout: one label beside the screen in front, with a leader line to its top corner.
   sheets.forEach((s, k) => {

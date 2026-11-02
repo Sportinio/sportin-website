@@ -15,8 +15,8 @@
 #engine .eng-eyebrow b { color: #4fd7ff; }
 #engine .xp-label.is-focus b, #engine .xp-leaders line.is-focus { color: #4fd7ff; stroke: #4fd7ff; }
 #engine .xp-leaders circle.is-focus { fill: #4fd7ff; }
-/* Six steps: from the side, Leaderboards, Competitions, Rewards, whole, connected. */
-.engine[data-steps="5"] { height: calc(100vh + 5 * 80vh); }
+/* Four steps: Leaderboards, Competitions, Rewards, connected. */
+.engine[data-steps="3"] { height: calc(100vh + 3 * 80vh); }
 
 /* The words: Compete, Rank, Reward, Connect stand in a column on the left for the whole section,
    the one for the step on screen in ink. Below them, one line for the step. */
@@ -58,7 +58,7 @@
 html.eng3d-failed .eng-fallback { display: flex; }
 html.eng3d-failed #eng3d, html.eng3d-failed .xp-labels { display: none; }
 html.eng3d-failed .eng-verbs span { color: var(--ink); }
-html.eng3d-failed .xp-cap span[data-s="4"] { opacity: 1; }
+html.eng3d-failed .xp-cap span[data-s="0"] { opacity: 1; }
 html.eng3d-failed .eng-a .eng-cta { opacity: 1; pointer-events: auto; }
 
 @media (prefers-reduced-motion: reduce) {
