@@ -153,46 +153,55 @@ const frontScr = new THREE.Mesh(screenGeo, screenMat); frontScr.position.z = TH 
 // with a soft shadow and a faint rim of light: a hologram of the screen with real depth, every pixel
 // the real one. Coordinates are pixels of the screenshot file. Circles are { cx, cy, r }.
 const LAYERS = {
-  0: [ // Competitions: the two header buttons, the pill, the date bar; every match row whole, its crests above it
+  0: [ // Competitions: the two header buttons, the pill, the date bar, every match row whole, the tab bar
     { cx: 68, cy: 165, r: 36, z: 5, t: 'shape' }, { cx: 851, cy: 165, r: 36, z: 5, t: 'shape' },
     { x: 260, y: 420, w: 400, h: 70, r: 35, z: 5, t: 'shape' },
     { x: 42, y: 522, w: 836, h: 80, r: 20, z: 5, t: 'shape' },
+    { x: 42, y: 622, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
+    { x: 42, y: 806, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
+    { x: 42, y: 990, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
+    { x: 42, y: 1174, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
+    { x: 42, y: 1358, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
+    { x: 42, y: 1542, w: 836, h: 148, r: 28, z: 6, t: 'shape' },
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
-    { x: 42, y: 622, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
-    { x: 42, y: 806, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
-    { x: 42, y: 990, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
-    { x: 42, y: 1174, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
-    { x: 42, y: 1358, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
-    { x: 42, y: 1542, w: 836, h: 148, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
   ],
-  1: [ // Leaderboards: avatar and header pills; the tier cards whole; filter chips; board buttons; the podium
-       // cards whole with their avatars and badges above; the rows whole with their avatars above
-    { cx: 69, cy: 175, r: 38, z: 6, t: 'pic' }, { x: 232, y: 132, w: 270, h: 88, r: 44, z: 5, t: 'shape' }, { x: 524, y: 132, w: 362, h: 88, r: 44, z: 5, t: 'shape' },
+  1: [ // Leaderboards: header pills; the tier cards; filter chips; board buttons; the podium cards with their
+       // avatars (plus); the rows; the floating profile image and the switch button; the tab bar
+    { x: 232, y: 132, w: 270, h: 88, r: 44, z: 5, t: 'shape' }, { x: 524, y: 132, w: 362, h: 88, r: 44, z: 5, t: 'shape' },
     { x: 35, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 7, t: 'shape' },
     { x: 172, y: 696, w: 174, h: 80, r: 40, z: 6, t: 'shape' }, { x: 365, y: 696, w: 278, h: 80, r: 40, z: 6, t: 'shape' }, { x: 660, y: 696, w: 232, h: 80, r: 40, z: 6, t: 'shape' },
     { x: 46, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 124, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 660, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 738, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 815, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' },
-    { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 7, t: 'shape' }, { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8, t: 'shape' }, { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 7, t: 'shape' },
-    { cx: 178, cy: 1103, r: 66, z: 11, t: 'pic' }, { cx: 460, cy: 1050, r: 68, z: 13, t: 'pic' }, { cx: 742, cy: 1150, r: 66, z: 11, t: 'pic' },
-    { cx: 178, cy: 1210, r: 26, z: 10, t: 'pic' }, { cx: 460, cy: 1157, r: 26, z: 12, t: 'pic' }, { cx: 742, cy: 1258, r: 26, z: 10, t: 'pic' },
+    { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 7, t: 'shape', plus: [{ cx: 178, cy: 1103, r: 66 }] },
+    { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8, t: 'shape', plus: [{ cx: 460, cy: 1050, r: 68 }] },
+    { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 7, t: 'shape', plus: [{ cx: 742, cy: 1150, r: 66 }] },
     { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' },
-    { cx: 214, cy: 1612, r: 46, z: 9, t: 'pic' }, { cx: 214, cy: 1773, r: 46, z: 9, t: 'pic' },
     { cx: 820, cy: 1540, r: 58, z: 14, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 14, t: 'shape' }, // overlays in the app: level with the tab bar
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
   ],
-  2: [ // Rewards: the header pill; the partner cards whole; filter chips; every reward row whole, its picture above
+  2: [ // Rewards: the header pill; the partner cards; filter chips; every reward row whole; the tab bar
     { x: 700, y: 132, w: 180, h: 88, r: 44, z: 5, t: 'shape' },
-    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
-    { x: 35, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 7, t: 'shape' },
+    { x: 35, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 725, y: 436, w: 196, h: 228, r: 24, t: 'shape', z: 7 },
     { x: 172, y: 696, w: 114, h: 80, r: 40, z: 6, t: 'shape' }, { x: 307, y: 696, w: 194, h: 80, r: 40, z: 6, t: 'shape' },
     { x: 46, y: 930, w: 830, h: 185, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1135, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1345, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1555, w: 830, h: 190, r: 36, z: 6, t: 'shape' },
-    { x: 85, y: 955, w: 120, h: 130, r: 20, z: 10, t: 'pic' }, { x: 95, y: 1165, w: 100, h: 140, r: 20, z: 10, t: 'pic' }, { x: 105, y: 1370, w: 80, h: 140, r: 20, z: 10, t: 'pic' }, { x: 105, y: 1580, w: 80, h: 140, r: 20, z: 10, t: 'pic' },
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
   ],
 };
 const DEPTH = MM * 1.6; // world units per millimetre of relief
 const reliefs = {}; // by sheet k: { group, items, lift, sockets }
 // Every piece's rectangle, radius, height and kind, from its spec (a circle is { cx, cy, r }).
-const rectOf = (L) => ({ x: L.cx != null ? L.cx - L.r : L.x, y: L.cy != null ? L.cy - L.r : L.y, w: L.cx != null ? L.r * 2 : L.w, h: L.cy != null ? L.r * 2 : L.h,
-  r: L.cx != null ? L.r : Math.min(L.r || 0, L.w / 2, L.h / 2), z: L.z, t: L.t || 'shape', img: L.img });
+const rectOf = (L) => {
+  const R = { x: L.cx != null ? L.cx - L.r : L.x, y: L.cy != null ? L.cy - L.r : L.y, w: L.cx != null ? L.r * 2 : L.w, h: L.cy != null ? L.r * 2 : L.h,
+    r: L.cx != null ? L.r : Math.min(L.r || 0, L.w / 2, L.h / 2), z: L.z, t: L.t || 'shape', img: L.img, plus: L.plus || [] };
+  // The piece's canvas covers the shape and whatever it carries; the shape itself keeps its own place.
+  R.sx = R.x; R.sy = R.y; R.sw = R.w; R.sh = R.h;
+  R.plus.forEach((c) => { const x0 = Math.min(R.x, c.cx - c.r); const y0 = Math.min(R.y, c.cy - c.r); R.w = Math.max(R.x + R.w, c.cx + c.r) - x0; R.h = Math.max(R.y + R.h, c.cy + c.r) - y0; R.x = x0; R.y = y0; });
+  return R;
+};
+// The outline of a piece on a canvas, at an offset: its rounded rectangle and the circles it carries.
+function outline(ctx, R, ox, oy, grow = 0) {
+  ctx.beginPath(); ctx.roundRect(R.sx + ox - grow, R.sy + oy - grow, R.sw + grow * 2, R.sh + grow * 2, R.r);
+  R.plus.forEach((c) => { ctx.moveTo(c.cx + ox + c.r + grow, c.cy + oy); ctx.arc(c.cx + ox, c.cy + oy, c.r + grow, 0, Math.PI * 2); });
+}
 const icons = {}; // real icons from the app, by file, loaded once
 const SLAB_T = 1.4 * MM; // a pill's or button's thickness
 // The screenshot's own pixels, for sampling what lies around a piece.
@@ -212,9 +221,7 @@ function buildRelief(sh) {
     const { x, y, w, h, r } = R;
     // What the screen keeps behind the piece: its surroundings, sampled just outside it.
     const bg = R.t === 'pic' ? sample(raw, x + w / 2, Math.max(0, y - 6)) : sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2); // a picture: from just above it, outside any card it overhangs
-    // A picture that sits on no card keeps a visible placeholder in the screen.
-    const onCard = R.t === 'pic' && rects.some((B) => B !== R && B.t === 'shape' && B.z < R.z && B.x < x + w && B.x + B.w > x && B.y < y + h && B.y + B.h > y);
-    sockets.push({ x, y, w, h, r: R.t === 'text' ? 0 : r, bg, seat: R.t === 'pic' && !onCard });
+    sockets.push({ R, bg });
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
     const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -236,20 +243,21 @@ function buildRelief(sh) {
       ctx.putImageData(id, 0, 0); tex.needsUpdate = true; shadowOf();
     } else {
       // A picture or a whole shape, clipped to its outline; a shape gets a faint rim of light.
-      ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+      ctx.save(); outline(ctx, R, -x, -y); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
       // Where a higher piece sits on this shape, the shape keeps an empty socket in its own surface colour.
       if (R.t === 'shape') rects.forEach((B) => {
         if (B === R || B.z <= R.z || B.x + B.w < x || B.x > x + w || B.y + B.h < y || B.y > y + h) return;
         const c2 = sample(raw, Math.max(x + 4, Math.min(x + w - 4, B.x - 12 >= x ? B.x - 12 : B.x + B.w + 12)), Math.max(y + 4, Math.min(y + h - 4, B.y + B.h / 2)));
-        ctx.fillStyle = `rgb(${c2[0]},${c2[1]},${c2[2]})`; ctx.beginPath(); ctx.roundRect(B.x - x - 1, B.y - y - 1, B.w + 2, B.h + 2, B.r); ctx.fill();
+        ctx.fillStyle = `rgb(${c2[0]},${c2[1]},${c2[2]})`; outline(ctx, B, -x, -y, 1); ctx.fill();
       });
       ctx.restore();
-      if (R.t === 'shape') { const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(180,235,255,0.55)'); g.addColorStop(0.25, 'rgba(79,215,255,0.12)'); g.addColorStop(1, 'rgba(79,215,255,0.1)'); ctx.strokeStyle = g; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke(); }
+      if (R.t === 'shape') { const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(180,235,255,0.55)'); g.addColorStop(0.25, 'rgba(79,215,255,0.12)'); g.addColorStop(1, 'rgba(79,215,255,0.1)'); ctx.strokeStyle = g; ctx.lineWidth = 3; outline(ctx, R, -x, -y, -1.5); ctx.stroke(); }
       tex.needsUpdate = true; shadowOf();
     }
     const g = new THREE.Group(); group.add(g);
     const slabMat = new THREE.MeshStandardMaterial({ color: 0x232b3c, roughness: 0.45, metalness: 0.3, emissive: 0x4fd7ff, emissiveIntensity: 0.08, transparent: true }); // a faint lit edge: height reads by light
-    const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(w * sx, h * sy, r * sx), { depth: SLAB_T, bevelEnabled: false, curveSegments: 16 }), slabMat); slab.visible = R.t === 'shape'; g.add(slab);
+    const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(R.sw * sx, R.sh * sy, r * sx), { depth: SLAB_T, bevelEnabled: false, curveSegments: 16 }), slabMat); slab.visible = R.t === 'shape'; g.add(slab);
+    slab.position.set((R.sx + R.sw / 2 - (x + w / 2)) * sx, ((y + h / 2) - (R.sy + R.sh / 2)) * sy, 0);
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat); mesh.position.z = (R.t === 'shape' ? SLAB_T : 0) + 0.0008; g.add(mesh);
     const cx = (x + w / 2 - W / 2) * sx; const cy = (Hh / 2 - (y + h / 2)) * sy; g.position.set(cx, cy, 0);
@@ -415,11 +423,8 @@ function drawShot(k, img) {
   // Where a piece has come forward, the screen keeps only its surroundings.
   const r = reliefs[k]; if (!r) return;
   r.sockets.forEach((S) => {
-    ctx.fillStyle = `rgb(${S.bg[0]},${S.bg[1]},${S.bg[2]})`; ctx.beginPath(); ctx.roundRect(ox + S.x * kk - 0.5, oy + S.y * kk - 0.5, S.w * kk + 1, S.h * kk + 1, S.r * kk); ctx.fill();
-    if (S.seat) { // a placeholder: a little darker than its surroundings, with a rim
-      ctx.fillStyle = 'rgba(0,0,0,0.28)'; ctx.beginPath(); ctx.roundRect(ox + S.x * kk, oy + S.y * kk, S.w * kk, S.h * kk, S.r * kk); ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(ox + S.x * kk + 1, oy + S.y * kk + 1, S.w * kk - 2, S.h * kk - 2, Math.max(0, S.r * kk - 1)); ctx.stroke();
-    }
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(kk, kk); ctx.fillStyle = `rgb(${S.bg[0]},${S.bg[1]},${S.bg[2]})`;
+    outline(ctx, S.R, 0, 0, 0.6); ctx.fill(); ctx.restore();
   });
 }
 sheets.forEach((s, k) => {
@@ -517,7 +522,8 @@ stick.addEventListener('pointerdown', (e) => {
 stick.addEventListener('pointermove', (e) => {
   if (!drag.on) return;
   const dx = e.clientX - drag.px; const dy = e.clientY - drag.py; drag.px = e.clientX; drag.py = e.clientY;
-  rot.y += dx * K; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + dy * K)); drag.idle = performance.now(); if (Math.abs(dx) + Math.abs(dy) > 2) dragged = true;
+  // Capped at about 50° sideways and 25° up or down from rest, so the screen never turns edge-on and the hologram stays whole.
+  rot.y = Math.max(-0.16 - 0.88, Math.min(-0.16 + 0.88, rot.y + dx * K)); rot.x = Math.max(0.04 - 0.45, Math.min(0.04 + 0.45, rot.x + dy * K)); drag.idle = performance.now(); if (Math.abs(dx) + Math.abs(dy) > 2) dragged = true;
   const cap = 0.05; drag.vx = Math.max(-cap, Math.min(cap, dx * K)); drag.vy = Math.max(-cap, Math.min(cap, dy * K)); // a flick glides a little, never a half turn
   if (!RM) follow.kick();
 });
@@ -580,10 +586,10 @@ function paint(t, now) {
   const turn = RM ? 0 : 1 - win(boot, 0.05, 1); // the split opens with the phone turned, so the lift shows in parallax
   const tx = 0.04 + 0.1 * turn + Math.sin(time * 0.6) * 0.03 * live; const ty = -0.16 - 0.34 * turn + Math.sin(time * 0.45) * 0.09 * live;
   if (!drag.on) {
-    const f = dt * 60; rot.y += drag.vx * f; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + drag.vy * f));
+    const f = dt * 60; rot.y = Math.max(-0.16 - 0.88, Math.min(-0.16 + 0.88, rot.y + drag.vx * f)); rot.x = Math.max(0.04 - 0.45, Math.min(0.04 + 0.45, rot.x + drag.vy * f));
     const decay = Math.exp(-dt * 6); drag.vx *= decay; drag.vy *= decay; // a short glide after release
     const idle = ((now || performance.now()) - drag.idle) / 1000;
-    const ease = RM ? 1 : (idle > 3 ? 1 - Math.exp(-dt * 1.5) : 0); // back to rest, by the short way round
+    const ease = RM ? 1 : (idle > 2 ? 1 - Math.exp(-dt * 1.5) : 0); // back to rest after two seconds alone
     const dy = ((rot.y - ty + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
     rot.y -= dy * ease; rot.x += (tx - rot.x) * ease;
   }
