@@ -221,7 +221,9 @@ function buildRelief(sh) {
     const { x, y, w, h, r } = R;
     // What the screen keeps behind the piece: its surroundings, sampled just outside it.
     const bg = R.t === 'pic' ? sample(raw, x + w / 2, Math.max(0, y - 6)) : sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2); // a picture: from just above it, outside any card it overhangs
-    sockets.push({ R, bg });
+    const lines = []; const lx0 = R.x - 10 >= 0 ? R.x - 10 : R.x + R.w + 10; // just outside the piece, left or right
+    for (let yy = R.y - 1; yy <= R.y + R.h + 1; yy++) lines.push([yy, sample(raw, Math.min(W - 1, lx0), Math.max(0, Math.min(Hh - 1, yy)))]);
+    sockets.push({ R, lines });
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
     const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -277,7 +279,7 @@ function setRelief(k, lift, alpha, enter = 1) {
   r.lift = lift; r.group.visible = alpha > 0.01; if (!r.group.visible) return;
   r.items.forEach((it) => {
     const zn = Math.min(1, it.z / 14); const u = clamp((enter - 0.08 - zn * 0.45) / 0.5); const e = u >= 1 ? 1 : over(u);
-    const lf = lift * e;
+    const lf = lift * e; it.lf = lf;
     it.g.position.z = TH / 2 + 0.004 + it.z * DEPTH * lf; it.mesh.material.opacity = alpha; it.slab.material.opacity = alpha;
     it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lf * 0.45; it.shadow.material.opacity = alpha * Math.min(1, lf * 2);
   });
@@ -423,8 +425,10 @@ function drawShot(k, img) {
   // Where a piece has come forward, the screen keeps only its surroundings.
   const r = reliefs[k]; if (!r) return;
   r.sockets.forEach((S) => {
-    ctx.save(); ctx.translate(ox, oy); ctx.scale(kk, kk); ctx.fillStyle = `rgb(${S.bg[0]},${S.bg[1]},${S.bg[2]})`;
-    outline(ctx, S.R, 0, 0, 0.6); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.translate(ox, oy); ctx.scale(kk, kk); outline(ctx, S.R, 0, 0, 0.6); ctx.clip();
+    // Line by line, the colour of the screen just beside the piece at that height.
+    S.lines.forEach(([yy, c]) => { ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`; ctx.fillRect(S.R.x - 1, yy, S.R.w + 2, 1.5); });
+    ctx.restore();
   });
 }
 sheets.forEach((s, k) => {
@@ -574,8 +578,12 @@ function paint(t, now) {
   const time = (now || 0) / 1000;
   const dock = win(t, 2, 2.3); // the sources appear
   // The split: once the section is on screen, over 1.8 s. Already done when the page arrives further in.
+  const rr = sec.getBoundingClientRect(); const vh = window.innerHeight;
+  if (rr.bottom < 0 || rr.top > vh) bootAt = null; // off screen: the split plays again on the next arrival
   if (bootAt == null && (RM || t > 0.3)) bootAt = -1e9;
-  if (bootAt == null && onScreen()) bootAt = now || performance.now();
+  if (bootAt == null && rr.top < vh * 0.35) bootAt = now || performance.now(); // the split starts as the phone settles into view
+  // Leaving at either end: the pieces go back into the phone over the first half screen of travel.
+  const leave = RM ? 0 : win(Math.max(rr.top, vh - rr.bottom) / (vh * 0.5), 0, 1);
   const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 1800);
   const bFloor = win(boot, 0, 0.4); const bFrame = 1; const bHolo = 1; const bBuild = 1; // the phone is whole from the start; the pieces split out over the boot
 
@@ -583,7 +591,7 @@ function paint(t, now) {
   // on after release and drifting back to rest after a while; still once the sources dock.
   const live = (1 - dock) * (RM ? 0 : 1);
   const dt = Math.min(0.05, lastT ? time - lastT : 0.016); lastT = time;
-  const turn = RM ? 0 : 1 - win(boot, 0.05, 1); // the split opens with the phone turned, so the lift shows in parallax
+  const turn = RM ? 0 : Math.max(1 - win(boot, 0.05, 1), leave * 0.6); // the split opens with the phone turned, so the lift shows in parallax; it turns a little as the section leaves
   const tx = 0.04 + 0.1 * turn + Math.sin(time * 0.6) * 0.03 * live; const ty = -0.16 - 0.34 * turn + Math.sin(time * 0.45) * 0.09 * live;
   if (!drag.on) {
     const f = dt * 60; rot.y = Math.max(-0.16 - 0.88, Math.min(-0.16 + 0.88, rot.y + drag.vx * f)); rot.x = Math.max(0.04 - 0.45, Math.min(0.04 + 0.45, rot.x + drag.vy * f));
@@ -610,7 +618,7 @@ function paint(t, now) {
   frontBackMat.opacity = bHolo; frontBack.visible = bHolo > 0.02;
   // The pieces rise once the screen is built, sink before a swap and rise again after it.
   const up = (1 - dock * 0.5) * (1 + 0.4 * tilt); // further out the more the phone tilts
-  const enter = RM ? 1 : boot; // the split's progress
+  const enter = RM ? 1 : boot * (1 - leave); // the split's progress, undone as the section leaves
   sheets.forEach((sh2) => {
     const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
     const shown = ORDER[cur] === sh2.k ? 1 - win(prog, 0.3, 0.5) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.5, 0.7) : 0; // swapped with the screen itself
@@ -687,3 +695,4 @@ document.fonts.ready.then(() => { resize(); paintAll(); follow.sync(); });
 follow.sync();
 window.engineAt = (v) => follow.jump(v);
 window.engineBoot = (v) => { bootForce = v; paint(follow.t, performance.now()); }; // stills of the boot
+window.engineState = () => ({ t: Math.round(follow.t * 100) / 100, lifts: Object.fromEntries(Object.entries(reliefs).map(([k, r]) => [k, Math.round(Math.max(...r.items.map((it) => it.lf || 0)) * 100) / 100])) }); // for checks
