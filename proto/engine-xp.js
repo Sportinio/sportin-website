@@ -117,9 +117,9 @@ const screenMat = new THREE.ShaderMaterial({
     float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
     void main() {
       vec2 cell = floor(vUv * tiles);
-      float gate = (1.0 - vUv.y) * 0.6 + hash(cell) * 0.4; // when this chip goes: from the top down, scattered
-      float ks = smoothstep(gate, gate + 0.12, progress * 1.12); // this picture to the next
-      float kb = smoothstep(gate, gate + 0.12, build * 1.12); // hologram to the real screen
+      float gate = (1.0 - vUv.y) * 0.7 + hash(cell) * 0.3; // when this chip goes: a wave from the top down, a little scattered
+      float ks = smoothstep(gate, gate + 0.3, progress * 1.3); // this picture to the next, each chip cross-fading
+      float kb = smoothstep(gate, gate + 0.3, build * 1.3); // hologram to the real screen
       vec3 real = mix(texture2D(map, vUv).rgb, texture2D(map2, vUv).rgb, ks);
       float lum = dot(real, vec3(0.299, 0.587, 0.114));
       float scan = 0.82 + 0.18 * sin(vUv.y * 700.0 - time * 4.0);
@@ -620,7 +620,9 @@ function paint(t, now) {
 
   // The screen: the picture of this step, swapped chip by chip for the next one on the way to the next step.
   const cur = Math.min(2, Math.floor(t)); const next = Math.min(2, cur + 1);
-  const prog = cur < 2 ? win(t - cur, 0.3, 0.7) : 0; // the swap takes the middle of the step
+  // Within a step: the pieces go in, the wave runs down the screen, the next pieces come out.
+  const su = cur < 2 ? t - cur : 0;
+  const sink = win(su, 0.06, 0.3); const prog = win(su, 0.3, 0.72); const rise = win(su, 0.72, 0.96);
   const u = screenMat.uniforms;
   if (u.map.value !== byOrder(cur).tex.tex) u.map.value = byOrder(cur).tex.tex;
   if (u.map2.value !== byOrder(next).tex.tex) u.map2.value = byOrder(next).tex.tex;
@@ -630,8 +632,8 @@ function paint(t, now) {
   const up = (1 - dock * 0.5) * (1 + 0.25 * Math.min(1, tilt / 0.85)); // a little further out as the phone tilts, up to about thirty degrees
   const enter = RM ? 1 : boot * (1 - leave); // the split's progress, undone as the section leaves
   sheets.forEach((sh2) => {
-    const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
-    const shown = ORDER[cur] === sh2.k ? 1 - win(prog, 0.3, 0.5) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.5, 0.7) : 0; // swapped with the screen itself
+    const on = ORDER[cur] === sh2.k ? 1 - sink : ORDER[next] === sh2.k && cur < 2 ? rise : 0;
+    const shown = ORDER[cur] === sh2.k ? 1 - win(prog, 0.4, 0.55) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.45, 0.6) : 0; // swapped with the screen itself
     setRelief(sh2.k, up * on, shown, enter);
   });
 
@@ -700,7 +702,7 @@ function paint(t, now) {
   renderer.render(scene, camera);
 }
 
-const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint, keepAlive: () => !RM && onScreen() });
+const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint, keepAlive: () => !RM && onScreen(), cruise: 0.34, acc: 0.9 }); // a slow, even pace: about 3.5 s per step
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
 document.fonts.ready.then(() => { resize(); paintAll(); follow.sync(); });
