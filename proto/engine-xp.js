@@ -266,11 +266,25 @@ function buildRelief(sh) {
     const cx = (x + w / 2 - W / 2 + R.dx) * sx; const cy = (Hh / 2 - (y + h / 2) - R.dy) * sy; g.position.set(cx, cy, 0); // dx, dy: where it rests, if not where it came from
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry((w + PADS * 2) * sx, (h + PADS * 2) * sy), new THREE.MeshBasicMaterial({ map: stex, transparent: true, depthWrite: false, toneMapped: false }));
     shadow.position.set(cx + 2 * sx, cy - 8 * sy, 0); group.add(shadow);
-    items.push({ g, mesh, slab, shadow, z: R.z });
+    items.push({ g, mesh, slab, shadow, z: R.z, R, sx, sy, W, Hh });
   });
   items.sort((a, b) => a.z - b.z).forEach((it, i) => { it.mesh.renderOrder = 10 + i * 3 + 2; it.slab.renderOrder = 10 + i * 3 + 1; it.shadow.renderOrder = 10 + i * 3; });
-  reliefs[sh.k] = { group, items, lift: 0, sockets };
+  reliefs[sh.k] = { group, items, lift: 0, sockets, W, Hh };
   paintAll(); // the screen now shows its sockets
+}
+// Where a callout's dot sits: on the piece under its point (the highest, if several), so it rides
+// with that piece as it lifts and the phone turns; on the screen itself where no piece is.
+function anchorOf(k, ax, ay, out) {
+  const r = reliefs[k];
+  if (r) {
+    const px = ax * r.W; const py = ay * r.Hh; let best = null;
+    r.items.forEach((it) => { const R = it.R; if (px >= R.x && px <= R.x + R.w && py >= R.y && py <= R.y + R.h && (!best || it.z > best.z)) best = it; });
+    if (best && best.g.visible !== false && r.group.visible) {
+      const R = best.R; out.set((px - (R.x + R.w / 2 + R.dx)) * best.sx, ((R.y + R.h / 2 + R.dy) - py) * best.sy, best.mesh.position.z + 0.002);
+      return best.g.localToWorld(out);
+    }
+  }
+  out.set((ax - 0.5) * SWu, (0.5 - ay) * SHu, TH / 2); return front.localToWorld(out);
 }
 // Lifts a screen's pieces: 0 flat and hidden, 1 fully in relief.
 // Each piece leaves on its own cue during the split, deeper pieces first, with a little overshoot.
@@ -645,7 +659,8 @@ function paint(t, now) {
   beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   // The callout names the picture on show; it steps aside while the chips swap.
   const shown = prog < 0.5 ? cur : next;
-  const focus = boot > 0.9 && dock < 0.01 && !drag.on && tilt < 0.6 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and while the phone is turned // and once the sources arrive
+  const piecesUp = su === 0 || sink < 0.5 || rise > 0.5; // this screen's pieces still up, or the next screen's already up
+  const focus = boot > 0.9 && dock < 0.01 && piecesUp ? ORDER[shown] : -1; // the callouts stay on while the phone is turned by hand
   const fb = focus >= 0 ? 1 : 0;
 
   // The sources orbit in, settle on the ring and dock.
@@ -689,7 +704,7 @@ function paint(t, now) {
   callouts.forEach((C) => {
     const els = [C.el, C.l, C.dot];
     if (C.k !== focus) { els.forEach((el) => el.classList.remove('is-on', 'is-focus')); return; }
-    _p.set((C.c.ax - 0.5) * SWu, (0.5 - C.c.ay) * SHu, TH / 2); front.localToWorld(_p); const [ax, ay] = project(_p);
+    anchorOf(C.k, C.c.ax, C.c.ay, _p); const [ax, ay] = project(_p);
     const y = Math.round(Math.max(ay - 10, lastY + 64)); lastY = y + (C.c.text ? 36 : 0);
     C.el.style.transform = `translate(${lx}px, ${y}px)`;
     C.l.setAttribute('x1', ax); C.l.setAttribute('y1', ay); C.l.setAttribute('x2', lx - 10); C.l.setAttribute('y2', y + 9);
