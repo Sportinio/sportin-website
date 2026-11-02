@@ -108,7 +108,7 @@ const REST_Z = GLASS_Z + 0.01 + TH / 2; // the screen, just in front of the outl
 // (its own picture in light, scanlines, a chip grid, a lit edge, a sweep) to the real screen, chip by chip.
 const HOLO = new THREE.Color(0x4fd7ff);
 const screenMat = new THREE.ShaderMaterial({
-  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, mask: { value: null }, mask2: { value: null }, liftA: { value: 0 }, liftB: { value: 0 }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(208, 452) } },
+  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, mask: { value: null }, mask2: { value: null }, liftA: { value: 0 }, liftB: { value: 0 }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(40, 87) } },
   vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
   fragmentShader: `
     uniform sampler2D map; uniform sampler2D map2; uniform sampler2D mask; uniform sampler2D mask2; uniform float liftA; uniform float liftB;
@@ -130,7 +130,7 @@ const screenMat = new THREE.ShaderMaterial({
       float ha = (0.38 + lum * 0.25 + edge * 0.5) * holo;
       float flashB = smoothstep(0.0, 0.5, kb) * (1.0 - smoothstep(0.5, 1.0, kb)); // a chip lights as it lands
       float flashS = smoothstep(0.0, 0.5, ks) * (1.0 - smoothstep(0.5, 1.0, ks)); // and as it swaps
-      vec3 col = mix(hc, real, kb) + tint * (flashB * 0.55 + flashS * 0.6);
+      vec3 col = mix(hc, real, kb) + tint * (flashB * 0.3 + flashS * 0.3);
       float cut = mix(texture2D(mask, vUv).r * liftA, texture2D(mask2, vUv).r * liftB, ks); // where a block stands, the page is empty
       gl_FragColor = vec4(col, mix(ha, 1.0, kb) * (1.0 - cut));
       #include <colorspace_fragment>
@@ -553,10 +553,10 @@ const hintEl = document.createElement('div'); hintEl.className = 'xp-hint'; hint
 // The callouts, per screen: where on the screenshot each points (fractions of its width and height),
 // its name and, for the smaller ones, one sentence. Placed to the right of the phone every frame.
 const CALLOUTS = {
-  0: [{ ax: 0.985, ay: 0.17, name: 'Competitions', text: 'Fixture by fixture, team against team, in the club\u2019s name.' }],
+  0: [{ ax: 0.985, ay: 0.17, name: 'Fixtures', text: 'Team against team, a match a week, a table to climb.' }],
   1: [{ ax: 0.985, ay: 0.275, name: 'Levels', text: 'Everyone competes in their own level, from Bronze to Platinum.' },
-      { ax: 0.935, ay: 0.62, name: 'Daily ranking', text: 'Every fan ranked by steps, as they move, every day.' }],
-  2: [{ ax: 0.985, ay: 0.275, name: 'Rewards', text: 'Earned with steps, from the club, its sponsors and local shops.' }],
+      { ax: 0.935, ay: 0.62, name: 'Daily ranking', text: 'Ranked by steps as they move, with a fresh board every morning.' }],
+  2: [{ ax: 0.985, ay: 0.275, name: 'Partners', text: 'A cheesecake for 5,000 steps, a latte for 10,000. Each shop sets its own price.' }],
 };
 const callouts = []; // { k, c, el, l, dot }
 Object.entries(CALLOUTS).forEach(([k, list]) => list.forEach((c) => {
