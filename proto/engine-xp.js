@@ -467,7 +467,7 @@ const rot = { x: 0.04, y: -0.16 }; let lastT = 0;
 const drag = { on: false, px: 0, py: 0, vx: 0, vy: 0, idle: 0 };
 const K = 0.0075; // radians per pixel
 stick.addEventListener('pointerdown', (e) => {
-  if (e.target.closest('a, button') || !onScreen()) return;
+  if (RM || e.target.closest('.eng-a, a, button') || !onScreen()) return; // not from the words, and not with reduced motion
   drag.on = true; drag.px = e.clientX; drag.py = e.clientY; drag.vx = drag.vy = 0; drag.idle = performance.now();
   stick.setPointerCapture(e.pointerId); stick.classList.add('is-grabbing'); if (!RM) follow.kick();
 });
@@ -565,16 +565,16 @@ function paint(t, now) {
   const fb = focus >= 0 ? 1 : 0;
 
   // The sources orbit in, settle on the ring and dock.
-  const stagger = 0.045;
+  const stagger = 0.02; // every source and its line are home by the last step
   sources.forEach((s, i) => {
-    const u = win(t, 2 + i * stagger, 2.75 + i * stagger);
+    const u = win(t, 2 + i * stagger, 2.55 + i * stagger);
     // The watch takes the front of the ring on the right; the apps share the rest of it evenly.
     const slot = i === 0 ? 0 : 0.62 + ((i - 1) / (N - 2)) * (Math.PI * 2 - 1.24);
     const a = lerp(slot + 1.6 + s.seed * 1.2, slot, u); const r = lerp(1.9 + s.seed * 0.5, 1, u);
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
     s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
     setSource(s, Math.min(dock, u * 2));
-    const L = links[i]; const d = win(t, 2.7 + i * stagger, 2.95 + i * stagger);
+    const L = links[i]; const d = win(t, 2.55 + i * stagger, 2.8 + i * stagger);
     if (d > 0.01) {
       edgePoint(s.obj.position, _e); _p.copy(s.obj.position).lerp(_e, d);
       const pos = L.line.geometry.attributes.position; pos.setXYZ(0, s.obj.position.x, s.obj.position.y, s.obj.position.z); pos.setXYZ(1, _p.x, _p.y, _p.z); pos.needsUpdate = true;

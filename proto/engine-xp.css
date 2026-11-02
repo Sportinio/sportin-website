@@ -73,8 +73,8 @@ html.eng3d-failed .eng-a .eng-cta { opacity: 1; pointer-events: auto; }
   .engine__copy { left: var(--gutter); right: var(--gutter); top: calc(var(--nav-h) + 8px); bottom: auto; width: auto; align-items: flex-start; }
   #engine .eng-a .eng-eyebrow.feat__idx { margin-bottom: 10px; }
   .eng-verbs { font-size: clamp(26px, 7.4vw, 34px); }
+  .eng-verbs { display: flex; flex-wrap: wrap; gap: 0 0.3em; }
   .eng-verbs span { display: inline; }
-  .eng-verbs span + span { margin-left: 0.3em; }
   .xp-cap { margin-top: 10px; height: 3em; font-size: 15px; max-width: none; }
   .eng-a .eng-cta { margin-top: 10px; }
   .xp-labels { display: none; }
