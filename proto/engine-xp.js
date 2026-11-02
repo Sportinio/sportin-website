@@ -553,10 +553,14 @@ const hintEl = document.createElement('div'); hintEl.className = 'xp-hint'; hint
 // The callouts, per screen: where on the screenshot each points (fractions of its width and height),
 // its name and, for the smaller ones, one sentence. Placed to the right of the phone every frame.
 const CALLOUTS = {
-  0: [{ ax: 0.985, ay: 0.17, name: 'Fixtures', text: 'Team against team, a match a week, a table to climb.' }],
+  0: [{ ax: 0.985, ay: 0.17, name: 'Fixtures', text: 'Team against team, a match a week, a table to climb.' },
+      { ax: 0.985, ay: 0.281, name: 'Matchday', text: 'Six matches on one day. Every step a fan takes counts for their team.' },
+      { ax: 0.93, ay: 0.536, name: 'Live score', text: 'The score moves while fans move: kilometres become goals.' }],
   1: [{ ax: 0.985, ay: 0.275, name: 'Levels', text: 'Everyone competes in their own level, from Bronze to Platinum.' },
       { ax: 0.935, ay: 0.62, name: 'Daily ranking', text: 'Ranked by steps as they move, with a fresh board every morning.' }],
-  2: [{ ax: 0.985, ay: 0.275, name: 'Partners', text: 'A cheesecake for 5,000 steps, a latte for 10,000. Each shop sets its own price.' }],
+  2: [{ ax: 0.985, ay: 0.275, name: 'Partners', text: 'The club\u2019s sponsors and local shops, each with rewards of its own.' },
+      { ax: 0.985, ay: 0.51, name: 'Priced in steps', text: 'Five thousand steps for a cheesecake, ten thousand for a latte.' },
+      { ax: 0.985, ay: 0.72, name: 'Funded by partners', text: 'Partners pay for the prizes and meet fans at the moment they earn them.' }],
 };
 const callouts = []; // { k, c, el, l, dot }
 Object.entries(CALLOUTS).forEach(([k, list]) => list.forEach((c) => {
