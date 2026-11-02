@@ -107,7 +107,7 @@ const REST_Z = GLASS_Z + 0.01 + TH / 2; // the screen, just in front of the outl
 // (its own picture in light, scanlines, a chip grid, a lit edge, a sweep) to the real screen, chip by chip.
 const HOLO = new THREE.Color(0x4fd7ff);
 const screenMat = new THREE.ShaderMaterial({
-  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(104, 226) } },
+  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(208, 452) } },
   vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
   fragmentShader: `
     uniform sampler2D map; uniform sampler2D map2; uniform float progress; uniform float build; uniform float holo; uniform float time; uniform vec3 tint; uniform vec2 tiles;
@@ -410,7 +410,7 @@ function paint(t, now) {
 
   // The screen: the picture of this step, swapped chip by chip for the next one on the way to the next step.
   const cur = Math.min(2, Math.floor(t)); const next = Math.min(2, cur + 1);
-  const prog = cur < 2 ? win(t - cur, 0.1, 0.9) : 0;
+  const prog = cur < 2 ? win(t - cur, 0.3, 0.7) : 0; // the swap takes the middle of the step
   const u = screenMat.uniforms;
   if (u.map.value !== byOrder(cur).tex.tex) u.map.value = byOrder(cur).tex.tex;
   if (u.map2.value !== byOrder(next).tex.tex) u.map2.value = byOrder(next).tex.tex;
