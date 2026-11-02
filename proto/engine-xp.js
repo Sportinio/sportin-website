@@ -510,7 +510,7 @@ stick.addEventListener('pointerdown', (e) => {
 stick.addEventListener('pointermove', (e) => {
   if (!drag.on) return;
   const dx = e.clientX - drag.px; const dy = e.clientY - drag.py; drag.px = e.clientX; drag.py = e.clientY;
-  rot.y += dx * K; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + dy * K)); drag.idle = performance.now();
+  rot.y += dx * K; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + dy * K)); drag.idle = performance.now(); if (Math.abs(dx) + Math.abs(dy) > 2) dragged = true;
   const cap = 0.05; drag.vx = Math.max(-cap, Math.min(cap, dx * K)); drag.vy = Math.max(-cap, Math.min(cap, dy * K)); // a flick glides a little, never a half turn
   if (!RM) follow.kick();
 });
@@ -522,11 +522,12 @@ const onScreen = () => { const r = sec.getBoundingClientRect(); return r.bottom 
 const labels = document.createElement('div'); labels.className = 'xp-labels'; labels.setAttribute('aria-hidden', 'true'); stick.appendChild(labels);
 const SVG = 'http://www.w3.org/2000/svg';
 const leaders = document.createElementNS(SVG, 'svg'); leaders.setAttribute('class', 'xp-leaders'); labels.appendChild(leaders);
+const hintEl = document.createElement('div'); hintEl.className = 'xp-hint'; hintEl.textContent = 'Drag to turn'; labels.appendChild(hintEl); let dragged = false;
 const leaderEls = [0, 1, 2].map(() => { const l = document.createElementNS(SVG, 'line'); const c = document.createElementNS(SVG, 'circle'); c.setAttribute('r', '3'); leaders.append(l, c); return { l, c }; });
 const LABEL_COPY = [['Competitions', 'Leagues, team battles and challenges, in the club’s name.'], ['Leaderboards', 'Every fan on the board: by fan, supporters’ club or country.'], ['Rewards', 'Prizes from the club, its sponsors and local businesses.']];
 const labelEls = LABEL_COPY.map(([t, p], k) => {
   const el = document.createElement('div'); el.className = 'xp-label'; el.dataset.k = String(k);
-  el.innerHTML = `<b>LAYER ${ORDER.indexOf(k) + 1}</b><strong>${t}</strong><span>${p}</span>`; labels.appendChild(el); return el;
+  el.innerHTML = `<strong>${t}</strong>`; labels.appendChild(el); return el;
 });
 
 // ---------- Framing ----------
@@ -572,7 +573,7 @@ function paint(t, now) {
   const tilt = Math.min(1, Math.hypot(rot.x - 0.04, Math.abs(((rot.y + 0.16 + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI)) / 0.6);
   phone.position.set(0, Math.sin(time * 0.8) * 0.04 * live, 0);
   phone.rotation.set(rot.x, rot.y, 0);
-  rig.position.x = stacked ? 0 : -0.35 * (1 - dock); // room on the right for the callout
+  rig.position.x = stacked ? 0 : -0.7 * (1 - dock); // nearer the words, with room on the right for the callout
   phone.updateMatrixWorld(true);
   fadeBody(bFrame); phone.position.y += (1 - bFrame) * -0.6; front.visible = bHolo > 0.001;
 
@@ -620,7 +621,7 @@ function paint(t, now) {
 
   // Camera: on the phone and its floor, out for the ring. The distance fits the scene's height and,
   // on a narrow screen, its width.
-  const needH = lerp(7.6, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
+  const needH = lerp(6.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
   camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, -0.4 * (1 - dock), 0);
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
@@ -647,6 +648,12 @@ function paint(t, now) {
     L.c.setAttribute('cx', ax); L.c.setAttribute('cy', ay);
     els.forEach((el) => el.classList.add('is-on', 'is-focus'));
   });
+
+  // The hint: under the phone once it is built, until the first drag or the docking.
+  if (!RM && !dragged && bBuild > 0.95 && dock < 0.01) {
+    _p.set(0, -PHh / 2 - 0.3, 0); phone.localToWorld(_p); const [hx, hy] = project(_p);
+    hintEl.style.transform = `translate(${Math.round(hx)}px, ${Math.round(hy)}px) translate(-50%, 0)`; hintEl.classList.add('is-on');
+  } else hintEl.classList.remove('is-on');
 
   renderer.render(scene, camera);
 }
