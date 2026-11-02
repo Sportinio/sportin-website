@@ -15,6 +15,9 @@
 #engine .eng-eyebrow b { color: #4fd7ff; }
 #engine .xp-label.is-focus b, #engine .xp-leaders line.is-focus { color: #4fd7ff; stroke: #4fd7ff; }
 #engine .xp-leaders circle.is-focus { fill: #4fd7ff; }
+/* Drag to turn the phone; a sideways drag on touch, the page still scrolls vertically. */
+#engine > .engine__stick { cursor: grab; touch-action: pan-y; }
+#engine > .engine__stick.is-grabbing { cursor: grabbing; }
 /* Four steps: Leaderboards, Competitions, Rewards, connected. */
 .engine[data-steps="3"] { height: calc(100vh + 3 * 80vh); }
 

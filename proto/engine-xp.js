@@ -195,7 +195,7 @@ const LAYERS = {
   ],
 };
 const DEPTH = MM * 1.6; // world units per millimetre of relief
-const BLOCK_T = 2.2 * MM; // a block's thickness
+const BLOCK_T = 3.8 * MM; // a block's thickness
 const reliefs = {}; // by sheet k: { group, items: [{ mesh, shadow, z }] }
 function buildRelief(sh) {
   const spec = LAYERS[sh.k]; if (!spec || reliefs[sh.k]) return;
@@ -460,10 +460,25 @@ function edgePoint(p, out) {
 }
 const _p = new THREE.Vector3(); const _e = new THREE.Vector3(); const _box = new THREE.Box3(); const _q0 = new THREE.Quaternion();
 let bootAt = null; let bootForce = null; // when the boot began; a fixed boot value, for stills
-// The mouse turns the phone (hover, no drag), and the blocks stand out further the more it tilts.
-const mouse = { x: 0, y: 0, on: false }; const rot = { x: 0.04, y: -0.16 }; let lastT = 0;
-stick.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; const r = stick.getBoundingClientRect(); mouse.x = ((e.clientX - r.left) / r.width - 0.5) * 2; mouse.y = ((e.clientY - r.top) / r.height - 0.5) * 2; mouse.on = true; if (!RM) follow.kick(); });
-stick.addEventListener('pointerleave', () => { mouse.on = false; if (!RM) follow.kick(); });
+// Drag to turn the phone freely (any pointer; a sideways drag on touch, the page still scrolls
+// vertically). It keeps turning a little after release, and drifts back to rest after a few seconds
+// of being left alone. The blocks ride on it and stand out further the more it is turned.
+const rot = { x: 0.04, y: -0.16 }; let lastT = 0;
+const drag = { on: false, px: 0, py: 0, vx: 0, vy: 0, idle: 0 };
+const K = 0.0075; // radians per pixel
+stick.addEventListener('pointerdown', (e) => {
+  if (e.target.closest('a, button') || !onScreen()) return;
+  drag.on = true; drag.px = e.clientX; drag.py = e.clientY; drag.vx = drag.vy = 0; drag.idle = performance.now();
+  stick.setPointerCapture(e.pointerId); stick.classList.add('is-grabbing'); if (!RM) follow.kick();
+});
+stick.addEventListener('pointermove', (e) => {
+  if (!drag.on) return;
+  const dx = e.clientX - drag.px; const dy = e.clientY - drag.py; drag.px = e.clientX; drag.py = e.clientY;
+  rot.y += dx * K; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + dy * K)); drag.vx = dx * K; drag.vy = dy * K; drag.idle = performance.now();
+  if (!RM) follow.kick();
+});
+const release = () => { if (!drag.on) return; drag.on = false; stick.classList.remove('is-grabbing'); drag.idle = performance.now(); if (!RM) follow.kick(); };
+stick.addEventListener('pointerup', release); stick.addEventListener('pointercancel', release);
 const onScreen = () => { const r = sec.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
 
 // ---------- Labels (HTML, placed every frame beside each sheet) ----------
@@ -504,14 +519,20 @@ function paint(t, now) {
   const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 2800);
   const bFloor = win(boot, 0, 0.28); const bFrame = win(boot, 0.1, 0.5); const bHolo = win(boot, 0.4, 0.62); const bBuild = win(boot, 0.55, 1);
 
-  // One phone, facing you with a little turn, breathing gently; turned by the mouse when it is over the
-  // stage; still once the sources dock.
+  // One phone, facing you with a little turn, breathing gently; turned by hand when dragged, gliding
+  // on after release and drifting back to rest after a while; still once the sources dock.
   const live = (1 - dock) * (RM ? 0 : 1);
   const dt = Math.min(0.05, lastT ? time - lastT : 0.016); lastT = time;
-  const tx = 0.04 + (mouse.on ? -mouse.y * 0.26 * live : Math.sin(time * 0.6) * 0.03 * live);
-  const ty = -0.16 + (mouse.on ? mouse.x * 0.42 * live : Math.sin(time * 0.45) * 0.09 * live);
-  const ease = RM ? 1 : 1 - Math.exp(-dt * 6); rot.x += (tx - rot.x) * ease; rot.y += (ty - rot.y) * ease;
-  const tilt = Math.min(1, Math.hypot(rot.x - 0.04, rot.y + 0.16) / 0.45);
+  const tx = 0.04 + Math.sin(time * 0.6) * 0.03 * live; const ty = -0.16 + Math.sin(time * 0.45) * 0.09 * live;
+  if (!drag.on) {
+    const f = dt * 60; rot.y += drag.vx * f; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + drag.vy * f));
+    const decay = Math.exp(-dt * 6); drag.vx *= decay; drag.vy *= decay; // a short glide after release
+    const idle = ((now || performance.now()) - drag.idle) / 1000;
+    const ease = RM ? 1 : (idle > 3 ? 1 - Math.exp(-dt * 1.5) : 0); // back to rest, by the short way round
+    const dy = ((rot.y - ty + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+    rot.y -= dy * ease; rot.x += (tx - rot.x) * ease;
+  }
+  const tilt = Math.min(1, Math.hypot(rot.x - 0.04, Math.abs(((rot.y + 0.16 + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI)) / 0.6);
   phone.position.set(0, Math.sin(time * 0.8) * 0.04 * live, 0);
   phone.rotation.set(rot.x, rot.y, 0);
   rig.position.x = stacked ? 0 : -0.35 * (1 - dock); // room on the right for the callout
@@ -539,7 +560,7 @@ function paint(t, now) {
   beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   // The callout names the picture on show; it steps aside while the chips swap.
   const shown = prog < 0.5 ? cur : next;
-  const focus = bBuild > 0.9 && dock < 0.01 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and once the sources arrive
+  const focus = bBuild > 0.9 && dock < 0.01 && !drag.on && tilt < 0.6 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and while the phone is turned // and once the sources arrive
   const fb = focus >= 0 ? 1 : 0;
 
   // The sources orbit in, settle on the ring and dock.
