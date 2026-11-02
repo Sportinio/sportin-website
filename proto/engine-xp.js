@@ -159,21 +159,24 @@ const LAYERS = {
     { x: 40, y: 300, w: 850, h: 90, r: 18, z: 3 }, { x: 280, y: 305, w: 200, h: 70, r: 16, z: 6 },
     { x: 260, y: 420, w: 400, h: 70, r: 35, z: 4 },
     { x: 42, y: 522, w: 836, h: 80, r: 20, z: 5 }, { cx: 273, cy: 562, r: 22, z: 8 },
-    { x: 42, y: 622, w: 836, h: 165, r: 28, z: 5 }, { x: 60, y: 652, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 652, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 672, w: 120, h: 70, r: 12, z: 7 },
-    { x: 42, y: 806, w: 836, h: 165, r: 28, z: 5 }, { x: 60, y: 836, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 836, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 856, w: 120, h: 70, r: 12, z: 7 },
-    { x: 42, y: 990, w: 836, h: 165, r: 28, z: 5 }, { x: 60, y: 1020, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1020, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1040, w: 120, h: 70, r: 12, z: 7 },
-    { x: 42, y: 1174, w: 836, h: 165, r: 28, z: 5 }, { x: 60, y: 1204, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1204, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1224, w: 120, h: 70, r: 12, z: 7 },
-    { x: 42, y: 1358, w: 836, h: 165, r: 28, z: 5 }, { x: 60, y: 1388, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1388, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1408, w: 120, h: 70, r: 12, z: 7 },
-    { x: 42, y: 1542, w: 836, h: 148, r: 28, z: 5 }, { x: 60, y: 1572, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1572, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1592, w: 120, h: 70, r: 12, z: 7 },
+    { x: 42, y: 622, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 652, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 652, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 672, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 648, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 648, w: 170, h: 116, r: 10, z: 8 },
+    { x: 42, y: 806, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 836, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 836, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 856, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 832, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 832, w: 170, h: 116, r: 10, z: 8 },
+    { x: 42, y: 990, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 1020, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1020, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1040, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1016, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1016, w: 170, h: 116, r: 10, z: 8 },
+    { x: 42, y: 1174, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 1204, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1204, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1224, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1200, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1200, w: 170, h: 116, r: 10, z: 8 },
+    { x: 42, y: 1358, w: 836, h: 165, r: 28, z: 4 }, { x: 60, y: 1388, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1388, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1408, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1384, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1384, w: 170, h: 116, r: 10, z: 8 },
+    { x: 42, y: 1542, w: 836, h: 148, r: 28, z: 4 }, { x: 60, y: 1572, w: 106, h: 120, r: 18, z: 9 }, { x: 756, y: 1572, w: 106, h: 120, r: 18, z: 9 }, { x: 400, y: 1592, w: 120, h: 70, r: 12, z: 7 }, { x: 178, y: 1568, w: 170, h: 116, r: 10, z: 8 }, { x: 578, y: 1568, w: 170, h: 116, r: 10, z: 8 },
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 92, y: 1803, w: 112, h: 100, r: 50, z: 16 },
   ],
   2: [ // Rewards
     { x: 700, y: 132, w: 180, h: 88, r: 44, z: 5 },
     { x: 35, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 6 },
     { x: 98, y: 513, w: 80, h: 80, r: 16, z: 10 }, { x: 328, y: 513, w: 80, h: 80, r: 16, z: 10 }, { x: 558, y: 513, w: 80, h: 80, r: 16, z: 10 }, { x: 788, y: 513, w: 80, h: 80, r: 16, z: 10 },
+    { x: 55, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 285, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 515, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 745, y: 450, w: 168, h: 50, r: 10, z: 8 },
+    { x: 55, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 285, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 515, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 745, y: 606, w: 168, h: 46, r: 10, z: 8 },
     { x: 172, y: 696, w: 114, h: 80, r: 40, z: 5 }, { x: 307, y: 696, w: 194, h: 80, r: 40, z: 5 },
     { x: 14, y: 806, w: 893, h: 1194, r: 36, z: 2 },
-    { x: 46, y: 930, w: 830, h: 185, r: 36, z: 6 }, { x: 46, y: 1135, w: 830, h: 190, r: 36, z: 5 }, { x: 46, y: 1345, w: 830, h: 190, r: 36, z: 5 }, { x: 46, y: 1555, w: 830, h: 190, r: 36, z: 6 },
+    { x: 46, y: 930, w: 830, h: 185, r: 36, z: 4 }, { x: 46, y: 1135, w: 830, h: 190, r: 36, z: 4 }, { x: 46, y: 1345, w: 830, h: 190, r: 36, z: 4 }, { x: 46, y: 1555, w: 830, h: 190, r: 36, z: 4 },
+    { x: 225, y: 950, w: 500, h: 150, r: 12, z: 8 }, { x: 225, y: 1160, w: 500, h: 150, r: 12, z: 8 }, { x: 225, y: 1385, w: 500, h: 120, r: 12, z: 8 }, { x: 225, y: 1580, w: 500, h: 150, r: 12, z: 8 },
     { x: 85, y: 955, w: 120, h: 130, r: 20, z: 10 }, { x: 95, y: 1165, w: 100, h: 140, r: 20, z: 10 }, { x: 105, y: 1370, w: 80, h: 140, r: 20, z: 10 }, { x: 105, y: 1580, w: 80, h: 140, r: 20, z: 10 },
     { x: 770, y: 985, w: 78, h: 78, r: 16, z: 9 }, { x: 770, y: 1195, w: 78, h: 78, r: 16, z: 9 }, { x: 770, y: 1405, w: 78, h: 78, r: 16, z: 9 }, { x: 770, y: 1615, w: 78, h: 78, r: 16, z: 9 },
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 248, y: 1803, w: 112, h: 100, r: 50, z: 16 },
@@ -181,14 +184,20 @@ const LAYERS = {
   1: [ // Leaderboards
     { cx: 69, cy: 175, r: 38, z: 5 }, { x: 232, y: 132, w: 270, h: 88, r: 44, z: 4 }, { x: 524, y: 132, w: 362, h: 88, r: 44, z: 4 },
     { x: 35, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 6 },
-    { cx: 138, cy: 553, r: 48, z: 10 }, { cx: 368, cy: 553, r: 48, z: 10 }, { cx: 598, cy: 553, r: 48, z: 10 }, { cx: 828, cy: 553, r: 48, z: 10 },
+    { cx: 138, cy: 553, r: 50, z: 10, img: '/levels/bronze.png' }, { cx: 368, cy: 553, r: 50, z: 10, img: '/levels/silver.png' }, { cx: 598, cy: 553, r: 50, z: 10, img: '/levels/gold.png' }, { cx: 828, cy: 553, r: 50, z: 10, img: '/levels/platinum.png' },
+    { x: 55, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 285, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 515, y: 450, w: 168, h: 50, r: 10, z: 8 }, { x: 745, y: 450, w: 168, h: 50, r: 10, z: 8 },
+    { x: 55, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 285, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 515, y: 606, w: 168, h: 46, r: 10, z: 8 }, { x: 745, y: 606, w: 168, h: 46, r: 10, z: 8 },
     { x: 172, y: 696, w: 174, h: 80, r: 40, z: 5 }, { x: 365, y: 696, w: 278, h: 80, r: 40, z: 5 }, { x: 660, y: 696, w: 232, h: 80, r: 40, z: 5 },
     { x: 14, y: 806, w: 893, h: 1194, r: 36, z: 2 },
     { x: 46, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 124, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 660, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 738, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 815, y: 834, w: 60, h: 60, r: 18, z: 4 },
     { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 6 }, { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8 }, { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 6 },
     { cx: 178, cy: 1103, r: 66, z: 11 }, { cx: 460, cy: 1050, r: 68, z: 13 }, { cx: 742, cy: 1150, r: 66, z: 11 },
     { cx: 178, cy: 1210, r: 26, z: 9 }, { cx: 460, cy: 1157, r: 26, z: 11 }, { cx: 742, cy: 1258, r: 26, z: 9 },
-    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 5 }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 5 }, { x: 46, y: 1865, w: 830, h: 135, r: 28, z: 5 },
+    { x: 100, y: 1236, w: 156, h: 80, r: 12, z: 9 }, { x: 382, y: 1183, w: 156, h: 80, r: 12, z: 11 }, { x: 664, y: 1282, w: 156, h: 80, r: 12, z: 9 },
+    { x: 108, y: 1368, w: 140, h: 48, r: 10, z: 9 }, { x: 390, y: 1368, w: 150, h: 48, r: 10, z: 11 }, { x: 672, y: 1368, w: 140, h: 48, r: 10, z: 9 },
+    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 4 }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 4 }, { x: 46, y: 1865, w: 830, h: 135, r: 28, z: 4 },
+    { x: 72, y: 1562, w: 74, h: 100, r: 14, z: 7 }, { x: 72, y: 1727, w: 74, h: 100, r: 14, z: 7 }, { x: 72, y: 1892, w: 74, h: 100, r: 14, z: 7 },
+    { x: 282, y: 1568, w: 280, h: 88, r: 10, z: 8 }, { x: 282, y: 1730, w: 280, h: 58, r: 10, z: 8 }, { x: 700, y: 1725, w: 150, h: 50, r: 10, z: 8 },
     { cx: 214, cy: 1612, r: 46, z: 8 }, { cx: 214, cy: 1773, r: 46, z: 8 }, { cx: 214, cy: 1938, r: 46, z: 8 },
     { cx: 820, cy: 1540, r: 58, z: 12 }, { cx: 820, cy: 1680, r: 58, z: 10 },
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 405, y: 1803, w: 112, h: 100, r: 50, z: 16 },
@@ -197,36 +206,63 @@ const LAYERS = {
 const DEPTH = MM * 1.6; // world units per millimetre of relief
 const BLOCK_T = 3.8 * MM; // a block's thickness
 const reliefs = {}; // by sheet k: { group, items: [{ mesh, shadow, z }] }
+// Every piece's rectangle, radius and height, from its spec (a circle is { cx, cy, r }).
+const rectOf = (L) => L.cx != null ? { x: L.cx - L.r, y: L.cy - L.r, w: L.r * 2, h: L.r * 2, r: L.r, z: L.z, img: L.img } : { x: L.x, y: L.y, w: L.w, h: L.h, r: Math.min(L.r, L.w / 2, L.h / 2), z: L.z, img: L.img };
+const icons = {}; // real icons from the app, by file, loaded once
 function buildRelief(sh) {
   const spec = LAYERS[sh.k]; if (!spec || reliefs[sh.k]) return;
   const img = sh.shot; const W = img.naturalWidth; const Hh = img.naturalHeight;
   const sx = (SWu - 0.004) / W; const sy = (SHu - 0.004) / Hh; // world units per screenshot pixel
   const group = new THREE.Group(); front.add(group); const items = [];
   const mc = document.createElement('canvas'); mc.width = W; mc.height = Hh; const mctx = mc.getContext('2d'); mctx.fillStyle = '#000'; mctx.fillRect(0, 0, W, Hh); mctx.fillStyle = '#fff';
-  spec.forEach((L) => {
-    const x = L.cx != null ? L.cx - L.r : L.x; const y = L.cy != null ? L.cy - L.r : L.y;
-    const w = L.cx != null ? L.r * 2 : L.w; const h = L.cy != null ? L.r * 2 : L.h; const r = L.cx != null ? L.r : L.r;
-    mctx.beginPath(); mctx.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2)); mctx.fill(); // its footprint, cut from the page
-    // The piece, at the screenshot's own resolution, clipped to its shape, with a faint rim of light.
+  const rects = spec.map(rectOf);
+  rects.forEach((R) => {
+    const { x, y, w, h, r } = R;
+    mctx.beginPath(); mctx.roundRect(x, y, w, h, r); mctx.fill(); // its footprint, cut from the page
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
-    ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
-    ctx.strokeStyle = 'rgba(79,215,255,0.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke();
+    const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    // A block: a dark slab with real thickness, the piece's picture on its face.
+    const stex = new THREE.CanvasTexture(sc); stex.colorSpace = THREE.SRGBColorSpace;
+    if (R.img) {
+      // A real icon from the app: just the picture, no slab; its shadow is the picture's own shape.
+      const draw = (ic) => {
+        ctx.clearRect(0, 0, w, h); ctx.drawImage(ic, 0, 0, w, h); tex.needsUpdate = true;
+        sctx.clearRect(0, 0, sc.width, sc.height); sctx.filter = 'blur(8px)'; sctx.drawImage(ic, PADS, PADS, w, h); sctx.filter = 'none';
+        sctx.globalCompositeOperation = 'source-in'; sctx.fillStyle = 'rgba(0,0,0,0.65)'; sctx.fillRect(0, 0, sc.width, sc.height); sctx.globalCompositeOperation = 'source-over'; stex.needsUpdate = true;
+      };
+      if (icons[R.img]) { if (icons[R.img].complete) draw(icons[R.img]); else icons[R.img].addEventListener('load', () => draw(icons[R.img])); }
+      else { const ic = new Image(); icons[R.img] = ic; ic.addEventListener('load', () => draw(ic)); ic.src = R.img; }
+    } else {
+      // The piece, at the screenshot's own resolution, clipped to its shape, with a faint rim of light.
+      ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+      // Where a higher piece sits on this one, this one keeps an empty socket: the piece shows once, in front.
+      rects.forEach((B) => {
+        if (B === R || B.z <= R.z) return;
+        const ox = Math.max(x, B.x); const oy = Math.max(y, B.y); const ow = Math.min(x + w, B.x + B.w) - ox; const oh = Math.min(y + h, B.y + B.h) - oy;
+        if (ow <= 0 || oh <= 0) return;
+        // The socket's colour: this piece's own surface, sampled just beside the higher piece, a little darker.
+        const px = Math.max(0, Math.min(w - 1, Math.round(B.x - x - 10 >= 0 ? B.x - x - 10 : B.x - x + B.w + 10))); const py = Math.max(0, Math.min(h - 1, Math.round(B.y - y + B.h / 2)));
+        const d = ctx.getImageData(px, py, 1, 1).data; const k = 0.78;
+        ctx.fillStyle = `rgb(${Math.round(d[0] * k)},${Math.round(d[1] * k)},${Math.round(d[2] * k)})`;
+        ctx.beginPath(); ctx.roundRect(B.x - x, B.y - y, B.w, B.h, B.r); ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(B.x - x + 1, B.y - y + 1, B.w - 2, B.h - 2, Math.max(0, B.r - 1)); ctx.stroke();
+      });
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(79,215,255,0.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke();
+      tex.needsUpdate = true;
+      sctx.filter = 'blur(10px)'; sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.beginPath(); sctx.roundRect(PADS, PADS, w, h, r); sctx.fill(); stex.needsUpdate = true;
+    }
+    // A block: a dark slab with real thickness, the piece's picture on its face (an icon has no slab).
     const g = new THREE.Group(); group.add(g);
     const slabMat = new THREE.MeshStandardMaterial({ color: 0x1a2130, roughness: 0.5, metalness: 0.35, transparent: true });
-    const slabGeo = new THREE.ExtrudeGeometry(rrShape(w * sx, h * sy, Math.min(r, w / 2, h / 2) * sx), { depth: BLOCK_T, bevelEnabled: false, curveSegments: 16 });
-    const slab = new THREE.Mesh(slabGeo, slabMat); g.add(slab);
+    const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(w * sx, h * sy, r * sx), { depth: BLOCK_T, bevelEnabled: false, curveSegments: 16 }), slabMat); slab.visible = !R.img; g.add(slab);
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat); mesh.position.z = BLOCK_T + 0.0008; g.add(mesh);
     const cx = (x + w / 2 - W / 2) * sx; const cy = (Hh / 2 - (y + h / 2)) * sy; g.position.set(cx, cy, 0);
-    // Its shadow on whatever lies beneath: the same shape, dark and blurred, a little lower.
-    const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
-    sctx.filter = 'blur(10px)'; sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.beginPath(); sctx.roundRect(PADS, PADS, w, h, r); sctx.fill();
-    const stex = new THREE.CanvasTexture(sc); stex.colorSpace = THREE.SRGBColorSpace;
+    // Its shadow on whatever lies beneath, a little lower.
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry((w + PADS * 2) * sx, (h + PADS * 2) * sy), new THREE.MeshBasicMaterial({ map: stex, transparent: true, depthWrite: false, toneMapped: false }));
     shadow.position.set(cx + 2 * sx, cy - 8 * sy, 0); group.add(shadow);
-    items.push({ g, mesh, slab, shadow, z: L.z });
+    items.push({ g, mesh, slab, shadow, z: R.z });
   });
   items.sort((a, b) => a.z - b.z).forEach((it, i) => { it.mesh.renderOrder = 10 + i * 3 + 2; it.slab.renderOrder = 10 + i * 3 + 1; it.shadow.renderOrder = 10 + i * 3; });
   const mask = new THREE.CanvasTexture(mc); mask.flipY = true;
