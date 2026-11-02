@@ -4,12 +4,14 @@
 // chips assemble it into the real leaderboard; each next scroll dissolves the screen and rebuilds
 // it from the next screenshot. Then everything returns into the phone and the watches and apps
 // fans already use orbit in and dock to it. Driven by the scroll (scroll-follow.js), t = 0..5:
+// The phone itself is a hologram too: a cyan outline, no metal. When the page arrives nothing is
+// there; the floor lights, the beam rises, the outline wipes up and the screens fan out of it.
 //   0 the phone from the side, three holograms;   1 the phone back, the leaderboard built in front;
 //   2 Competitions;   3 Rewards;   4 one whole phone, facing you;   5 the sources dock.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { PHONE, buildPhone, plate } from '/proto/phone3d.js?v=2';
+import { PHONE, plate } from '/proto/phone3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 const root = document.documentElement;
@@ -69,10 +71,39 @@ function dot(ctx, x, y, r, color) { ctx.fillStyle = color; ctx.beginPath(); ctx.
 const MM = 3.3 / PHONE.H; // world units per millimetre: the phone stands 3.3 units tall
 const rig = new THREE.Group(); scene.add(rig);
 const phone = new THREE.Group(); rig.add(phone);
-const body = buildPhone([null]); body.scale.setScalar(MM); phone.add(body); // an open screen: the sheets sit in it
-body.userData.titanium.color.set(0x7d1322); body.userData.titanium.roughness = 0.34; // the club's colour, in metal
+// The phone as a hologram: its outline, screen edge, island and buttons drawn in light on a plate.
+const PAD = 6 * MM; // room around the outline for its glow
+const frame = (() => {
+  const cw = 768; const ch = Math.round(cw * ((PHONE.H + 12) / (PHONE.W + 12)));
+  const { ctx, tex } = canvasTex(cw, ch); const px = cw / (PHONE.W + 12); // canvas pixels per millimetre
+  const rr = (w, h, r) => { ctx.beginPath(); ctx.roundRect((cw - w * px) / 2, (ch - h * px) / 2, w * px, h * px, r * px); };
+  ctx.shadowColor = 'rgba(79,215,255,0.9)'; ctx.shadowBlur = 28;
+  ctx.strokeStyle = 'rgba(130,230,255,0.95)'; ctx.lineWidth = 5; rr(PHONE.W, PHONE.H, PHONE.R); ctx.stroke(); ctx.stroke();
+  ctx.shadowBlur = 0; ctx.strokeStyle = 'rgba(79,215,255,0.45)'; ctx.lineWidth = 2; rr(PHONE.SW, PHONE.SH, PHONE.SR); ctx.stroke();
+  ctx.fillStyle = 'rgba(79,215,255,0.55)'; rr(20.8, 6.1, 3.05); ctx.translate(0, -((PHONE.SH / 2 - 1.85 - 3.05) * px)); rr(20.8, 6.1, 3.05); ctx.fill(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.strokeStyle = 'rgba(130,230,255,0.8)'; ctx.lineWidth = 3; // the side buttons, as ticks
+  [[-1, 32, 7], [-1, 46, 11], [-1, 60, 11], [1, 50, 17]].forEach(([side, y, len]) => { const xx = cw / 2 + side * (PHONE.W / 2 + 1.2) * px; const yy = ch / 2 - (PHONE.H / 2 - y) * px; ctx.beginPath(); ctx.moveTo(xx, yy - (len / 2) * px); ctx.lineTo(xx, yy + (len / 2) * px); ctx.stroke(); });
+  tex.needsUpdate = true;
+  const mat = new THREE.ShaderMaterial({
+    uniforms: { map: { value: tex }, reveal: { value: 1 }, time: { value: 0 }, alpha: { value: 1 } },
+    vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `
+      uniform sampler2D map; uniform float reveal; uniform float time; uniform float alpha; varying vec2 vUv;
+      void main() {
+        vec4 c = texture2D(map, vUv);
+        float shown = smoothstep(reveal, reveal - 0.05, vUv.y); // wipes up from the bottom as it boots
+        float line = smoothstep(0.03, 0.0, abs(vUv.y - reveal)) * step(0.001, 1.0 - reveal); // the bright front of the wipe
+        float flicker = 0.93 + 0.07 * sin(time * 37.0) * sin(time * 7.3);
+        gl_FragColor = vec4(c.rgb + vec3(0.31, 0.84, 1.0) * line, (c.a * shown + line * (0.25 + 0.6 * c.a)) * alpha * flicker);
+        #include <colorspace_fragment>
+      }`,
+    transparent: true, depthWrite: false, side: THREE.DoubleSide,
+  });
+  const m = new THREE.Mesh(plate((PHONE.W + 12) * MM, (PHONE.H + 12) * MM, (PHONE.R + 6) * MM, 32), mat); phone.add(m);
+  return { mesh: m, mat };
+})();
 const SWu = PHONE.SW * MM; const SHu = PHONE.SH * MM; const SRu = PHONE.SR * MM;
-const GLASS_Z = (PHONE.D / 2 + 0.04) * MM; // the open screen's depth
+const GLASS_Z = 0.02; // the outline's plane; the screens stack just in front of it
 const PW = PHONE.W * MM; const PHh = PHONE.H * MM;
 
 // A rounded rectangle, centred, for extruding.
@@ -103,7 +134,8 @@ const sheets = [0, 1, 2].map((k) => {
 });
 const byOrder = (o) => sheets.find((s) => s.o === o);
 // A hologram's place out of the phone, in the phone's frame: the first shown nearest the glass.
-const holoLocal = (o, out) => out.set((3 - o) * 0.05, (3 - o) * 0.14, byOrder(o).rest + (3 - o) * GAP);
+let spread = 1; // how far the holograms stand out of the phone (0 while booting)
+const holoLocal = (o, out) => out.set((3 - o) * 0.05 * spread, (3 - o) * 0.14 * spread, byOrder(o).rest + (3 - o) * GAP * spread);
 
 // The hologram shader: the screen as a cyan hologram (its own picture in light, scanlines, a grid of
 // chips, a lit edge, a sweep) that becomes the real screen chip by chip as progress runs 0..1.
@@ -147,7 +179,7 @@ const frontScr = new THREE.Mesh(screenGeo, frontMat); frontScr.position.z = TH /
 // The other two holograms, out of the phone with it.
 const holos = [1, 2].map((o) => {
   const sh = byOrder(o); const mat = holoMaterial(sh.tex.tex);
-  const mesh = new THREE.Mesh(screenGeo, mat); holoLocal(o, mesh.position); phone.add(mesh);
+  const mesh = new THREE.Mesh(screenGeo, mat); phone.add(mesh);
   return { o, mat, mesh };
 });
 
@@ -368,6 +400,8 @@ function edgePoint(p, out) {
   const k = Math.min(kx, ky, 1); return out.set(p.x * k, p.y * k, GLASS_Z + 0.05);
 }
 const _p = new THREE.Vector3(); const _e = new THREE.Vector3(); const _box = new THREE.Box3(); const _q0 = new THREE.Quaternion();
+let bootAt = null; let bootForce = null; // when the boot began; a fixed boot value, for stills
+const onScreen = () => { const r = sec.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
 
 // ---------- Labels (HTML, placed every frame beside each sheet) ----------
 const labels = document.createElement('div'); labels.className = 'xp-labels'; labels.setAttribute('aria-hidden', 'true'); stick.appendChild(labels);
@@ -404,6 +438,13 @@ function paint(t, now) {
   const open = x * (1 - back);
   const dock = win(t, 4, 4.3); // the sources appear
   const time = (now || 0) / 1000;
+  // The boot: once the section is on screen, over 2.6 s. Skipped when the page arrives further in.
+  if (bootAt == null && (RM || t > 0.3)) bootAt = -1e9;
+  if (bootAt == null && onScreen()) bootAt = now || performance.now();
+  const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 2600);
+  const bFloor = win(boot, 0, 0.3); const bFrame = win(boot, 0.12, 0.55); const bHolo = win(boot, 0.42, 1);
+  spread = bHolo;
+  frame.mat.uniforms.reveal.value = bFrame; frame.mat.uniforms.time.value = time; frame.mesh.visible = bFrame > 0.001;
 
   // Three poses: from the side with the holograms out (A), dropped back (R), whole and facing you (B).
   const ax = stacked ? 0.95 : -0.15; const rx = stacked ? 0.5 : -0.4; // the holograms fan out to the left: on a phone, make room for them
@@ -426,12 +467,14 @@ function paint(t, now) {
   front.position.copy(_p).lerp(FRONT, e);
   front.quaternion.copy(phone.quaternion).slerp(_q0, e);
   // The other holograms stay out of the phone until their screen is built in front.
+  frontMat.uniforms.holo.value = win(bHolo, 0, 0.5); // the first screen lights first as it boots
   holos.forEach((h) => {
-    const a = (1 - win(t, h.o + 0.5, h.o + 0.75)) * (1 - back);
+    const a = (1 - win(t, h.o + 0.5, h.o + 0.75)) * (1 - back) * win(bHolo, h.o * 0.22, h.o * 0.22 + 0.5);
     h.mat.uniforms.holo.value = a; h.mat.uniforms.time.value = time + h.o * 0.7; h.mesh.visible = a > 0.01;
+    holoLocal(h.o, h.mesh.position);
   });
-  ground.rotation.z = time * 0.04; ground.material.opacity = 1 - dock * 0.5;
-  beam.material.opacity = 0.35 * e * (1 - back);
+  ground.rotation.z = time * 0.04; ground.material.opacity = bFloor * (1 - dock * 0.5);
+  beam.material.opacity = 0.35 * bFloor * (1 - back); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   const focus = e > 0.9 && p > 0.6 ? sh.k : -1;
   const fb = focus >= 0 ? 1 : 0;
 
@@ -486,10 +529,10 @@ function paint(t, now) {
   renderer.render(scene, camera);
 }
 
-const onScreen = () => { const r = sec.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
 const follow = followScroll(sec, { steps: STEPS, reduced: RM, onFrame: paint, keepAlive: () => !RM && onScreen() });
 window.addEventListener('resize', () => { resize(); paint(follow.t); });
 resize();
 document.fonts.ready.then(() => { resize(); paintAll(); follow.sync(); });
 follow.sync();
 window.engineAt = (v) => follow.jump(v);
+window.engineBoot = (v) => { bootForce = v; paint(follow.t, performance.now()); }; // stills of the boot
