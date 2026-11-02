@@ -653,10 +653,10 @@ function paint(t, now) {
     const u = win(t, 2 + i * stagger, 2.55 + i * stagger);
     // The apps share the ring evenly, the first at the right (on phones: at the bottom, in front).
     const slot = (stacked ? -Math.PI / 2 : 0.2) + (i / N) * Math.PI * 2;
-    const a = lerp(slot + 1.6 + s.seed * 1.2, slot, u); const r = lerp(1.9 + s.seed * 0.5, 1, u);
+    const a = lerp(slot + 1.1 + s.seed * 0.8, slot, u); const r = lerp(1.3 + s.seed * 0.25, 1, u); // in from just outside the ring, never across the words
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
     s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
-    setSource(s, Math.min(dock, u * 2));
+    setSource(s, Math.min(dock, win(u, 0.35, 0.8))); // fading in only once it is near the ring
     const L = links[i]; const d = win(t, 2.55 + i * stagger, 2.8 + i * stagger);
     if (d > 0.01) {
       edgePoint(s.obj.position, _e); _p.copy(s.obj.position).lerp(_e, d);
@@ -669,7 +669,7 @@ function paint(t, now) {
   // on a narrow screen, its width.
   const needH = lerp(5.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 2.4 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
-  camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, lerp(0.12, -0.4, dock), 0); // the phone sits clear of the nav bar
+  camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, lerp(0.12, stacked ? 0.55 : -0.4, dock), 0); // the phone sits clear of the nav bar; on phones the ring sits clear of the button
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
 
   // Words on the left: the verb of the step in ink.
