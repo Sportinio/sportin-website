@@ -87,12 +87,14 @@ function rrShape(w, h, r) {
 // ---------- The three sheets ----------
 // Each is a thin white sheet with the layer's screen drawn on a canvas. k = 0 is Competitions,
 // the front sheet (what the phone shows when whole), then Leaderboards, then Rewards.
-const TH = 0.022; const GAP = 0.78;
+const TH = 0.022;
+// The cascade the sheets open into, in the phone's frame: slot 0 in front, 1 and 2 stepped up, right and back.
+const CASC = { x: 1.45, dx: 0.42, dy: 0.34, z: 0.55, dz: 0.3 };
 const TW = 760; const THH = Math.round(TW * (PHONE.SH / PHONE.SW)); const TEX_W = 1180;
 const NAMES = ['Competitions', 'Leaderboards', 'Rewards'];
 const sheets = [0, 1, 2].map((k) => {
   const g = new THREE.Group(); phone.add(g);
-  const backMat = new THREE.MeshPhysicalMaterial({ color: 0xf6f7fa, roughness: 0.4, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.3, transparent: true });
+  const backMat = new THREE.MeshPhysicalMaterial({ color: 0x151a28, roughness: 0.45, metalness: 0.1, clearcoat: 0.5, clearcoatRoughness: 0.3, transparent: true }); // dark, like the app's screens
   // The backing is extruded from the screen's own rounded rectangle, so its corners carry the
   // screen's radius (a rounded box would clamp the radius to half the sheet's thickness).
   const backGeo = new THREE.ExtrudeGeometry(rrShape(SWu, SHu, SRu), { depth: TH, bevelEnabled: false, curveSegments: 24 }); backGeo.translate(0, 0, -TH / 2);
@@ -348,16 +350,23 @@ function paint(t) {
   const open = x * (1 - back); // how far apart the sheets are, 0..1
   const dock = win(t, 4, 4.3); // the sources appear
 
-  // The phone turns to show the stack from the side, then faces you again.
-  phone.rotation.set(lerp(0.04, 0.26, open), lerp(-0.16, -0.98, open), lerp(0, 0.08, open));
-  phone.position.set(lerp(0, stacked ? 1.1 : -0.15, open), 0, 0); // the sheets fan out to the left: on a phone, make room for them
-  // Which sheet the step is about: the front one first, then deeper.
+  // The phone turns a little for depth and slides left; the sheets come out of it to the right as a
+  // cascade, face-on, so every screen stays readable: the sheet the step is about in front, the
+  // other two stepped up and back behind it. At each step the next sheet comes over the top.
+  phone.rotation.set(lerp(0.04, 0.05, open), lerp(-0.16, -0.26, open), 0);
+  phone.position.set(lerp(0, -1.75, open), 0, 0); // room on the right for the labels
+  rig.position.x = stacked ? lerp(0, 0.62, open) : 0; // no labels on a phone: the cascade sits centred
   const focus = t < 3.5 ? Math.max(0, Math.min(2, Math.round(t) - 1)) : -1;
   const fb = t >= 0.5 && t < 3.5 ? 1 : 0;
+  const slotPos = (slot, out) => out.set(CASC.x + slot * CASC.dx, slot * CASC.dy, GLASS_Z + CASC.z - slot * CASC.dz);
+  const slotOf = (k, step) => (k - (step - 1) + 3) % 3; // which slot sheet k holds at a whole step
+  const ts = Math.max(1, Math.min(3, t)); const s0 = Math.floor(ts); const s1 = Math.ceil(ts); const u = sm(ts - s0);
   sheets.forEach((s) => {
-    const z = s.rest + (3 - s.k) * GAP * open;
-    s.g.position.set((3 - s.k) * 0.05 * open, (3 - s.k) * 0.14 * open, z);
-    setSheet(s, fb && focus !== s.k ? 0.42 : 1); // the sheet the step is about stays bright
+    const a = slotPos(slotOf(s.k, s0), _p); const b = slotPos(slotOf(s.k, s1), _e);
+    _v.copy(a).lerp(b, u);
+    if (slotOf(s.k, s1) === 0 && slotOf(s.k, s0) !== 0) _v.z += Math.sin(u * Math.PI) * 0.5; // over the top, to the front
+    s.g.position.set(lerp(0, _v.x, open), lerp(0, _v.y, open), lerp(s.rest, _v.z, open));
+    setSheet(s, fb && focus !== s.k ? 0.55 : 1); // the sheet the step is about stays bright
   });
 
   // The sources orbit in, settle on the ring and dock.
@@ -366,7 +375,7 @@ function paint(t) {
     const u = win(t, 4 + i * stagger, 4.75 + i * stagger);
     // The watch takes the front of the ring on the right; the apps share the rest of it evenly.
     const slot = i === 0 ? 0 : 0.62 + ((i - 1) / (N - 2)) * (Math.PI * 2 - 1.24);
-    const a = lerp(slot + 2.2 + s.seed * 1.5, slot, u); const r = lerp(2.6 + s.seed, 1, u);
+    const a = lerp(slot + 1.6 + s.seed * 1.2, slot, u); const r = lerp(1.9 + s.seed * 0.5, 1, u);
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
     s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
     setSource(s, Math.min(dock, u * 2));
@@ -380,7 +389,7 @@ function paint(t) {
 
   // Camera: close on the whole phone, out for the exploded stack, out again for the ring. The
   // distance fits the scene's height and, on a narrow screen, its width.
-  const needH = lerp(lerp(6.7, 8.1, open), 9.0, dock); const needW = lerp(lerp(2.6, 4.6, open), 2 * RX * ringK + 1.6 * srcK, dock);
+  const needH = lerp(lerp(6.7, 8.1, open), 9.0, dock); const needW = lerp(lerp(2.6, stacked ? 4.3 : 4.6, open), 2 * RX * ringK + 1.6 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
   camera.position.set(0, 0.2 + dist * 0.06, dist); camera.lookAt(0, lerp(0, 0.25, open), 0);
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
