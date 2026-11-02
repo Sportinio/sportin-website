@@ -1,14 +1,14 @@
 // 04 Solution: the engine as one holographic phone (three.js, from the deck's import map).
-// A cyan outline of a phone on a Jarvis-style floor, one real screen inside it. When the page
-// arrives nothing is there: the floor lights, the beam rises, the outline wipes up and tiny chips
-// build the leaderboard. Each scroll swaps the screen chip by chip for the next one: Competitions,
+// The phone in the club's colours on a Jarvis-style floor, one real screen inside it. When the
+// page arrives nothing is there: the floor lights, the beam rises, the phone rises into the beam and
+// a fine grain of chips builds the leaderboard from a hologram. Each scroll swaps the screen chip by chip for the next one: Competitions,
 // then Rewards. Then the watches and apps fans already use orbit in and dock to the phone.
 // Driven by the scroll (scroll-follow.js), t = 0..3, resting on whole steps:
 //   0 Leaderboards;   1 Competitions;   2 Rewards;   3 the sources dock.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { PHONE, plate } from '/proto/phone3d.js?v=2';
+import { PHONE, buildPhone, plate } from '/proto/phone3d.js?v=2';
 import { followScroll } from '/proto/scroll-follow.js?v=1';
 
 const root = document.documentElement;
@@ -68,39 +68,13 @@ function dot(ctx, x, y, r, color) { ctx.fillStyle = color; ctx.beginPath(); ctx.
 const MM = 3.3 / PHONE.H; // world units per millimetre: the phone stands 3.3 units tall
 const rig = new THREE.Group(); scene.add(rig);
 const phone = new THREE.Group(); rig.add(phone);
-// The phone as a hologram: its outline, screen edge, island and buttons drawn in light on a plate.
-const PAD = 6 * MM; // room around the outline for its glow
-const frame = (() => {
-  const cw = 768; const ch = Math.round(cw * ((PHONE.H + 12) / (PHONE.W + 12)));
-  const { ctx, tex } = canvasTex(cw, ch); const px = cw / (PHONE.W + 12); // canvas pixels per millimetre
-  const rr = (w, h, r) => { ctx.beginPath(); ctx.roundRect((cw - w * px) / 2, (ch - h * px) / 2, w * px, h * px, r * px); };
-  ctx.shadowColor = 'rgba(79,215,255,0.9)'; ctx.shadowBlur = 28;
-  ctx.strokeStyle = 'rgba(130,230,255,0.95)'; ctx.lineWidth = 5; rr(PHONE.W, PHONE.H, PHONE.R); ctx.stroke(); ctx.stroke();
-  ctx.shadowBlur = 0; ctx.strokeStyle = 'rgba(79,215,255,0.45)'; ctx.lineWidth = 2; rr(PHONE.SW, PHONE.SH, PHONE.SR); ctx.stroke();
-  ctx.fillStyle = 'rgba(79,215,255,0.55)'; rr(20.8, 6.1, 3.05); ctx.translate(0, -((PHONE.SH / 2 - 1.85 - 3.05) * px)); rr(20.8, 6.1, 3.05); ctx.fill(); ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.strokeStyle = 'rgba(130,230,255,0.8)'; ctx.lineWidth = 3; // the side buttons, as ticks
-  [[-1, 32, 7], [-1, 46, 11], [-1, 60, 11], [1, 50, 17]].forEach(([side, y, len]) => { const xx = cw / 2 + side * (PHONE.W / 2 + 1.2) * px; const yy = ch / 2 - (PHONE.H / 2 - y) * px; ctx.beginPath(); ctx.moveTo(xx, yy - (len / 2) * px); ctx.lineTo(xx, yy + (len / 2) * px); ctx.stroke(); });
-  tex.needsUpdate = true;
-  const mat = new THREE.ShaderMaterial({
-    uniforms: { map: { value: tex }, reveal: { value: 1 }, time: { value: 0 }, alpha: { value: 1 } },
-    vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-    fragmentShader: `
-      uniform sampler2D map; uniform float reveal; uniform float time; uniform float alpha; varying vec2 vUv;
-      void main() {
-        vec4 c = texture2D(map, vUv);
-        float shown = smoothstep(reveal, reveal - 0.05, vUv.y); // wipes up from the bottom as it boots
-        float line = smoothstep(0.03, 0.0, abs(vUv.y - reveal)) * step(0.001, 1.0 - reveal); // the bright front of the wipe
-        float flicker = 0.93 + 0.07 * sin(time * 37.0) * sin(time * 7.3);
-        gl_FragColor = vec4(c.rgb + vec3(0.31, 0.84, 1.0) * line, (c.a * shown + line * (0.25 + 0.6 * c.a)) * alpha * flicker);
-        #include <colorspace_fragment>
-      }`,
-    transparent: true, depthWrite: false, side: THREE.DoubleSide,
-  });
-  const m = new THREE.Mesh(plate((PHONE.W + 12) * MM, (PHONE.H + 12) * MM, (PHONE.R + 6) * MM, 32), mat); phone.add(m);
-  return { mesh: m, mat };
-})();
+const body = buildPhone([null]); body.scale.setScalar(MM); phone.add(body); // an open screen: the hologram sits in it
+body.userData.titanium.color.set(0x7d1322); body.userData.titanium.roughness = 0.34; // the club's colour, in metal
+// Its materials, so the phone can fade in as it boots (the open screen's depth-only material stays as it is).
+const bodyMats = new Set(); body.traverse((o) => { if (o.material && o.material.colorWrite !== false) bodyMats.add(o.material); });
+function fadeBody(o) { bodyMats.forEach((m) => { m.opacity = o; const tr = o < 0.999; if (m.transparent !== tr) { m.transparent = tr; m.needsUpdate = true; } }); body.visible = o > 0.004; }
 const SWu = PHONE.SW * MM; const SHu = PHONE.SH * MM; const SRu = PHONE.SR * MM;
-const GLASS_Z = 0.02; // the outline's plane; the screens stack just in front of it
+const GLASS_Z = (PHONE.D / 2 + 0.04) * MM; // the open screen's depth; the hologram sits just in front of it
 const PW = PHONE.W * MM; const PHh = PHONE.H * MM;
 
 // A rounded rectangle, centred, for extruding.
@@ -133,7 +107,7 @@ const REST_Z = GLASS_Z + 0.01 + TH / 2; // the screen, just in front of the outl
 // (its own picture in light, scanlines, a chip grid, a lit edge, a sweep) to the real screen, chip by chip.
 const HOLO = new THREE.Color(0x4fd7ff);
 const screenMat = new THREE.ShaderMaterial({
-  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(26, 56) } },
+  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(104, 226) } },
   vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
   fragmentShader: `
     uniform sampler2D map; uniform sampler2D map2; uniform float progress; uniform float build; uniform float holo; uniform float time; uniform vec3 tint; uniform vec2 tiles;
@@ -141,20 +115,20 @@ const screenMat = new THREE.ShaderMaterial({
     float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
     void main() {
       vec2 cell = floor(vUv * tiles);
-      float gate = (1.0 - vUv.y) * 0.55 + hash(cell) * 0.45; // when this chip goes: from the top down, scattered
+      float gate = (1.0 - vUv.y) * 0.6 + hash(cell) * 0.4; // when this chip goes: from the top down, scattered
       float ks = smoothstep(gate, gate + 0.12, progress * 1.12); // this picture to the next
       float kb = smoothstep(gate, gate + 0.12, build * 1.12); // hologram to the real screen
       vec3 real = mix(texture2D(map, vUv).rgb, texture2D(map2, vUv).rgb, ks);
       float lum = dot(real, vec3(0.299, 0.587, 0.114));
       float scan = 0.82 + 0.18 * sin(vUv.y * 700.0 - time * 4.0);
-      vec2 f = fract(vUv * tiles); float grid = step(0.94, max(f.x, f.y)) * 0.18;
+      vec2 f = fract(vUv * vec2(26.0, 56.0)); float grid = step(0.94, max(f.x, f.y)) * 0.18;
       vec2 d = min(vUv, 1.0 - vUv); float edge = 1.0 - smoothstep(0.0, 0.022, min(d.x, d.y));
       float sweep = smoothstep(0.06, 0.0, abs(vUv.y - fract(time * 0.18))) * 0.5;
       vec3 hc = tint * (0.22 + lum * 0.9) * scan + tint * (grid + edge * 1.2 + sweep);
       float ha = (0.38 + lum * 0.25 + edge * 0.5) * holo;
       float flashB = smoothstep(0.0, 0.5, kb) * (1.0 - smoothstep(0.5, 1.0, kb)); // a chip lights as it lands
       float flashS = smoothstep(0.0, 0.5, ks) * (1.0 - smoothstep(0.5, 1.0, ks)); // and as it swaps
-      vec3 col = mix(hc, real, kb) + tint * (flashB * 0.8 + flashS * 0.9);
+      vec3 col = mix(hc, real, kb) + tint * (flashB * 0.55 + flashS * 0.6);
       gl_FragColor = vec4(col, mix(ha, 1.0, kb));
       #include <colorspace_fragment>
     }`,
@@ -432,7 +406,7 @@ function paint(t, now) {
   phone.rotation.set(0.04 + Math.sin(time * 0.6) * 0.015 * live, -0.16 + Math.sin(time * 0.45) * 0.05 * live, 0);
   rig.position.x = stacked ? 0 : -0.35 * (1 - dock); // room on the right for the callout
   phone.updateMatrixWorld(true);
-  frame.mat.uniforms.reveal.value = bFrame; frame.mat.uniforms.time.value = time; frame.mesh.visible = bFrame > 0.001;
+  fadeBody(bFrame); phone.position.y += (1 - bFrame) * -0.6; front.visible = bHolo > 0.001;
 
   // The screen: the picture of this step, swapped chip by chip for the next one on the way to the next step.
   const cur = Math.min(2, Math.floor(t)); const next = Math.min(2, cur + 1);
