@@ -142,6 +142,66 @@ const backGeo = new THREE.ExtrudeGeometry(rrShape(SWu, SHu, SRu), { depth: TH, b
 const frontBack = new THREE.Mesh(backGeo, frontBackMat); front.add(frontBack);
 const frontScr = new THREE.Mesh(screenGeo, screenMat); frontScr.position.z = TH / 2 + 0.002; front.add(frontScr);
 
+// ---------- The screen in relief ----------
+// The real screenshot, cut into its elements, each floated above the screen at its own height (mm)
+// with a soft shadow and a faint rim of light: a hologram of the screen with real depth, every pixel
+// the real one. Coordinates are pixels of the screenshot file. Circles are { cx, cy, r }.
+const LAYERS = {
+  1: [ // Leaderboards
+    { cx: 69, cy: 175, r: 38, z: 5 }, { x: 232, y: 132, w: 270, h: 88, r: 44, z: 4 }, { x: 524, y: 132, w: 362, h: 88, r: 44, z: 4 },
+    { x: 35, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 6 }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 6 },
+    { cx: 138, cy: 553, r: 48, z: 10 }, { cx: 368, cy: 553, r: 48, z: 10 }, { cx: 598, cy: 553, r: 48, z: 10 }, { cx: 828, cy: 553, r: 48, z: 10 },
+    { x: 172, y: 696, w: 174, h: 80, r: 40, z: 5 }, { x: 365, y: 696, w: 278, h: 80, r: 40, z: 5 }, { x: 660, y: 696, w: 232, h: 80, r: 40, z: 5 },
+    { x: 14, y: 806, w: 893, h: 1194, r: 36, z: 2 },
+    { x: 46, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 124, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 660, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 738, y: 834, w: 60, h: 60, r: 18, z: 4 }, { x: 815, y: 834, w: 60, h: 60, r: 18, z: 4 },
+    { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 6 }, { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8 }, { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 6 },
+    { cx: 178, cy: 1103, r: 66, z: 11 }, { cx: 460, cy: 1050, r: 68, z: 13 }, { cx: 742, cy: 1150, r: 66, z: 11 },
+    { cx: 178, cy: 1210, r: 26, z: 9 }, { cx: 460, cy: 1157, r: 26, z: 11 }, { cx: 742, cy: 1258, r: 26, z: 9 },
+    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 5 }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 5 }, { x: 46, y: 1865, w: 830, h: 135, r: 28, z: 5 },
+    { cx: 214, cy: 1612, r: 46, z: 8 }, { cx: 214, cy: 1773, r: 46, z: 8 }, { cx: 214, cy: 1938, r: 46, z: 8 },
+    { cx: 820, cy: 1540, r: 58, z: 12 }, { cx: 820, cy: 1680, r: 58, z: 10 },
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14 }, { x: 405, y: 1803, w: 112, h: 100, r: 50, z: 16 },
+  ],
+};
+const DEPTH = MM * 1.4; // world units per millimetre of relief
+const reliefs = {}; // by sheet k: { group, items: [{ mesh, shadow, z }] }
+function buildRelief(sh) {
+  const spec = LAYERS[sh.k]; if (!spec || reliefs[sh.k]) return;
+  const img = sh.shot; const W = img.naturalWidth; const Hh = img.naturalHeight;
+  const sx = (SWu - 0.004) / W; const sy = (SHu - 0.004) / Hh; // world units per screenshot pixel
+  const group = new THREE.Group(); front.add(group); const items = [];
+  spec.forEach((L) => {
+    const x = L.cx != null ? L.cx - L.r : L.x; const y = L.cy != null ? L.cy - L.r : L.y;
+    const w = L.cx != null ? L.r * 2 : L.w; const h = L.cy != null ? L.r * 2 : L.h; const r = L.cx != null ? L.r : L.r;
+    // The piece, at the screenshot's own resolution, clipped to its shape, with a faint rim of light.
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
+    ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+    ctx.strokeStyle = 'rgba(79,215,255,0.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke();
+    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat);
+    const cx = (x + w / 2 - W / 2) * sx; const cy = (Hh / 2 - (y + h / 2)) * sy; mesh.position.set(cx, cy, 0); group.add(mesh);
+    // Its shadow on whatever lies beneath: the same shape, dark and blurred, a little lower.
+    const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
+    sctx.filter = 'blur(10px)'; sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.beginPath(); sctx.roundRect(PADS, PADS, w, h, r); sctx.fill();
+    const stex = new THREE.CanvasTexture(sc); stex.colorSpace = THREE.SRGBColorSpace;
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry((w + PADS * 2) * sx, (h + PADS * 2) * sy), new THREE.MeshBasicMaterial({ map: stex, transparent: true, depthWrite: false, toneMapped: false }));
+    shadow.position.set(cx + 2 * sx, cy - 8 * sy, 0); group.add(shadow);
+    items.push({ mesh, shadow, z: L.z });
+  });
+  items.sort((a, b) => a.z - b.z).forEach((it, i) => { it.mesh.renderOrder = 10 + i * 2 + 1; it.shadow.renderOrder = 10 + i * 2; });
+  reliefs[sh.k] = { group, items };
+}
+// Lifts a screen's pieces: 0 flat and hidden, 1 fully in relief.
+function setRelief(k, lift) {
+  const r = reliefs[k]; if (!r) return;
+  r.group.visible = lift > 0.01; if (!r.group.visible) return;
+  r.items.forEach((it) => {
+    it.mesh.position.z = TH / 2 + 0.004 + it.z * DEPTH * lift; it.mesh.material.opacity = Math.min(1, lift * 1.5);
+    it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lift * 0.45; it.shadow.material.opacity = lift;
+  });
+}
+
 // The floor: a ring dial with ticks and a faint grid, fading out, spinning slowly. Additive, so it glows.
 const ground = (() => {
   const { ctx, tex } = canvasTex(1024, 1024); const c = 512;
@@ -281,7 +341,7 @@ function drawShot(k, img) {
 }
 sheets.forEach((s, k) => {
   const img = new Image();
-  img.onload = () => { s.shot = img; paintAll(); };
+  img.onload = () => { s.shot = img; paintAll(); buildRelief(s); follow.sync(); };
   img.src = SHOTS[k];
 });
 function paintAll() {
@@ -403,7 +463,7 @@ function paint(t, now) {
   // One phone, facing you with a little turn, breathing gently; still once the sources dock.
   const live = (1 - dock) * (RM ? 0 : 1);
   phone.position.set(0, Math.sin(time * 0.8) * 0.04 * live, 0);
-  phone.rotation.set(0.04 + Math.sin(time * 0.6) * 0.015 * live, -0.16 + Math.sin(time * 0.45) * 0.05 * live, 0);
+  phone.rotation.set(0.04 + Math.sin(time * 0.6) * 0.03 * live, -0.16 + Math.sin(time * 0.45) * 0.09 * live, 0);
   rig.position.x = stacked ? 0 : -0.35 * (1 - dock); // room on the right for the callout
   phone.updateMatrixWorld(true);
   fadeBody(bFrame); phone.position.y += (1 - bFrame) * -0.6; front.visible = bHolo > 0.001;
@@ -416,6 +476,12 @@ function paint(t, now) {
   if (u.map2.value !== byOrder(next).tex.tex) u.map2.value = byOrder(next).tex.tex;
   u.progress.value = prog; u.build.value = bBuild; u.holo.value = bHolo; u.time.value = time;
   frontBackMat.opacity = bBuild; frontBack.visible = bBuild > 0.02;
+  // The pieces rise once the screen is built, sink before a swap and rise again after it.
+  const up = win(bBuild, 0.85, 1) * (1 - dock * 0.5);
+  sheets.forEach((sh2) => {
+    const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
+    setRelief(sh2.k, up * on);
+  });
   ground.rotation.z = time * 0.04; ground.material.opacity = bFloor * (1 - dock * 0.5);
   beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   // The callout names the picture on show; it steps aside while the chips swap.
@@ -443,7 +509,7 @@ function paint(t, now) {
 
   // Camera: on the phone and its floor, out for the ring. The distance fits the scene's height and,
   // on a narrow screen, its width.
-  const needH = lerp(8.4, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
+  const needH = lerp(7.6, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
   camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, -0.4 * (1 - dock), 0);
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
