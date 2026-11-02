@@ -354,10 +354,10 @@ function paint(t) {
   const open = x * (1 - back); // how far apart the sheets are, 0..1
   const dock = win(t, 4, 4.3); // the sources appear
 
-  // The phone slides back and a little up and left, leaving the screen it showed in front; later it
+  // The phone slides straight back and a little up, leaving the screen it showed in front; later it
   // comes forward again and every screen returns into it.
-  phone.position.set(lerp(0, -1.2, open), lerp(0, 0.45, open), lerp(0, -4.2, open));
-  phone.rotation.set(lerp(0.04, 0.06, open), lerp(-0.16, -0.3, open), 0);
+  phone.position.set(lerp(0, -0.25, open), lerp(0, 0.7, open), lerp(0, -4.2, open)); // straight back, a little up, no turn
+  phone.rotation.set(0.04, -0.16, 0);
   rig.position.x = stacked ? 0 : lerp(0, -0.45, open); // room on the right for the callout
   phone.updateMatrixWorld(true);
   // Each screen in turn: the one shown first simply stays where it was as the phone leaves it; each
