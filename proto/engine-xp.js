@@ -474,7 +474,8 @@ stick.addEventListener('pointerdown', (e) => {
 stick.addEventListener('pointermove', (e) => {
   if (!drag.on) return;
   const dx = e.clientX - drag.px; const dy = e.clientY - drag.py; drag.px = e.clientX; drag.py = e.clientY;
-  rot.y += dx * K; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + dy * K)); drag.vx = dx * K; drag.vy = dy * K; drag.idle = performance.now();
+  rot.y += dx * K; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + dy * K)); drag.idle = performance.now();
+  const cap = 0.05; drag.vx = Math.max(-cap, Math.min(cap, dx * K)); drag.vy = Math.max(-cap, Math.min(cap, dy * K)); // a flick glides a little, never a half turn
   if (!RM) follow.kick();
 });
 const release = () => { if (!drag.on) return; drag.on = false; stick.classList.remove('is-grabbing'); drag.idle = performance.now(); if (!RM) follow.kick(); };
