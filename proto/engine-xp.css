@@ -54,6 +54,8 @@
 .xp-label.is-focus { color: var(--ink); }
 .xp-label.is-focus b { color: var(--blue); }
 .xp-label.is-focus span { max-height: 4em; margin-top: 6px; opacity: 1; }
+.xp-label--small strong { font-size: 15px; }
+.xp-label--small span { font-size: 12.5px; }
 
 /* Still phone, shown only if the 3D cannot start. */
 .eng-fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; }

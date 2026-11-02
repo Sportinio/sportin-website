@@ -157,6 +157,7 @@ const LAYERS = {
     { cx: 68, cy: 165, r: 36, z: 5, t: 'shape' }, { cx: 851, cy: 165, r: 36, z: 5, t: 'shape' },
     { x: 260, y: 420, w: 400, h: 70, r: 35, z: 5, t: 'shape' },
     { x: 42, y: 522, w: 836, h: 80, r: 20, z: 5, t: 'shape' },
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
     { x: 42, y: 622, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
     { x: 42, y: 806, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
     { x: 42, y: 990, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
@@ -173,12 +174,14 @@ const LAYERS = {
     { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 7, t: 'shape' }, { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8, t: 'shape' }, { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 7, t: 'shape' },
     { cx: 178, cy: 1103, r: 66, z: 11, t: 'pic' }, { cx: 460, cy: 1050, r: 68, z: 13, t: 'pic' }, { cx: 742, cy: 1150, r: 66, z: 11, t: 'pic' },
     { cx: 178, cy: 1210, r: 26, z: 10, t: 'pic' }, { cx: 460, cy: 1157, r: 26, z: 12, t: 'pic' }, { cx: 742, cy: 1258, r: 26, z: 10, t: 'pic' },
-    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1865, w: 830, h: 135, r: 28, z: 6, t: 'shape' },
-    { cx: 214, cy: 1612, r: 46, z: 9, t: 'pic' }, { cx: 214, cy: 1773, r: 46, z: 9, t: 'pic' }, { cx: 214, cy: 1938, r: 46, z: 9, t: 'pic' },
-    { cx: 820, cy: 1540, r: 58, z: 12, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 10, t: 'shape' },
+    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' },
+    { cx: 214, cy: 1612, r: 46, z: 9, t: 'pic' }, { cx: 214, cy: 1773, r: 46, z: 9, t: 'pic' },
+    { cx: 820, cy: 1540, r: 58, z: 7, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 7, t: 'shape' }, // overlays in the app: just above the rows
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
   ],
   2: [ // Rewards: the header pill; the partner cards whole; filter chips; every reward row whole, its picture above
     { x: 700, y: 132, w: 180, h: 88, r: 44, z: 5, t: 'shape' },
+    { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 14, t: 'shape' },
     { x: 35, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 7, t: 'shape' },
     { x: 172, y: 696, w: 114, h: 80, r: 40, z: 6, t: 'shape' }, { x: 307, y: 696, w: 194, h: 80, r: 40, z: 6, t: 'shape' },
     { x: 46, y: 930, w: 830, h: 185, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1135, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1345, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1555, w: 830, h: 190, r: 36, z: 6, t: 'shape' },
@@ -208,7 +211,7 @@ function buildRelief(sh) {
   rects.forEach((R) => {
     const { x, y, w, h, r } = R;
     // What the screen keeps behind the piece: its surroundings, sampled just outside it.
-    const bg = sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2);
+    const bg = R.t === 'pic' ? sample(raw, x + w / 2, Math.max(0, y - 6)) : sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2); // a picture: from just above it, outside any card it overhangs
     sockets.push({ x, y, w, h, r: R.t === 'text' ? 0 : r, bg });
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
     const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
@@ -519,12 +522,21 @@ const labels = document.createElement('div'); labels.className = 'xp-labels'; la
 const SVG = 'http://www.w3.org/2000/svg';
 const leaders = document.createElementNS(SVG, 'svg'); leaders.setAttribute('class', 'xp-leaders'); labels.appendChild(leaders);
 const hintEl = document.createElement('div'); hintEl.className = 'xp-hint'; hintEl.textContent = 'Drag to turn'; labels.appendChild(hintEl); let dragged = false;
-const leaderEls = [0, 1, 2].map(() => { const l = document.createElementNS(SVG, 'line'); const c = document.createElementNS(SVG, 'circle'); c.setAttribute('r', '3'); leaders.append(l, c); return { l, c }; });
-const LABEL_COPY = [['Competitions', 'Leagues, team battles and challenges, in the club’s name.'], ['Leaderboards', 'Every fan on the board: by fan, supporters’ club or country.'], ['Rewards', 'Prizes from the club, its sponsors and local businesses.']];
-const labelEls = LABEL_COPY.map(([t, p], k) => {
-  const el = document.createElement('div'); el.className = 'xp-label'; el.dataset.k = String(k);
-  el.innerHTML = `<strong>${t}</strong>`; labels.appendChild(el); return el;
-});
+// The callouts, per screen: where on the screenshot each points (fractions of its width and height),
+// its name and, for the smaller ones, one sentence. Placed to the right of the phone every frame.
+const CALLOUTS = {
+  0: [{ ax: 0.985, ay: 0.17, name: 'Competitions' }],
+  1: [{ ax: 0.985, ay: 0.161, name: 'Leaderboards' },
+      { ax: 0.985, ay: 0.275, name: 'Levels', text: 'Everyone competes in their own level, from Bronze to Master.' },
+      { ax: 0.985, ay: 0.81, name: 'The board', text: 'Every fan ranked by steps, as they move, every day.' }],
+  2: [{ ax: 0.985, ay: 0.161, name: 'Rewards' }],
+};
+const callouts = []; // { k, c, el, l, dot }
+Object.entries(CALLOUTS).forEach(([k, list]) => list.forEach((c) => {
+  const el = document.createElement('div'); el.className = 'xp-label' + (c.text ? ' xp-label--small' : ''); el.innerHTML = `<strong>${c.name}</strong>` + (c.text ? `<span>${c.text}</span>` : ''); labels.appendChild(el);
+  const l = document.createElementNS(SVG, 'line'); const dot = document.createElementNS(SVG, 'circle'); dot.setAttribute('r', '3'); leaders.append(l, dot);
+  callouts.push({ k: Number(k), c, el, l, dot });
+}));
 
 // ---------- Framing ----------
 let W = 1; let H = 1; let stacked = false; let shiftX = 0; let shiftY = 0;
@@ -533,7 +545,7 @@ function resize() {
   renderer.setSize(W, H, false); camera.aspect = W / H; leaders.setAttribute('viewBox', `0 0 ${W} ${H}`);
   // The scene is centred in the space to the right of the words; on a phone, below them.
   const c = copy.getBoundingClientRect(); stacked = W < 700;
-  ringK = stacked ? 0.62 : 1; srcK = stacked ? 0.72 : 1;
+  ringK = stacked ? 0.8 : 1; srcK = stacked ? 0.5 : 1;
   shiftX = stacked ? 0 : (c.right - f.left) / 2;
   shiftY = stacked ? (c.bottom - f.top) / 2 : 0;
   camera.setViewOffset(W, H, -shiftX, -shiftY, W, H); camera.updateProjectionMatrix();
@@ -628,20 +640,19 @@ function paint(t, now) {
   caps.forEach((c, k) => c.classList.toggle('is-on', k === step));
   if (cta) cta.classList.toggle('is-on', step >= 3);
 
-  // The callout: one label beside the screen in front, with a leader line to its top corner.
-  sheets.forEach((s, k) => {
-    const L = leaderEls[k]; const els = [labelEls[k], L.l, L.c];
-    if (focus !== k) { els.forEach((el) => el.classList.remove('is-on', 'is-focus')); return; }
-    _box.setFromObject(frontScr); let right = -Infinity; let top = Infinity; let bottom = -Infinity;
-    for (let i = 0; i < 8; i++) {
-      _p.set(i & 1 ? _box.max.x : _box.min.x, i & 2 ? _box.max.y : _box.min.y, i & 4 ? _box.max.z : _box.min.z);
-      const [px, py] = project(_p); right = Math.max(right, px); top = Math.min(top, py); bottom = Math.max(bottom, py);
-    }
-    const lx = Math.round(right + 48); const y = Math.round(top + (bottom - top) * 0.22);
-    labelEls[k].style.transform = `translate(${lx}px, ${y}px)`;
-    _p.set(SWu / 2 - 0.12, SHu / 2 - 0.3, TH / 2); front.localToWorld(_p); const [ax, ay] = project(_p);
-    L.l.setAttribute('x1', ax); L.l.setAttribute('y1', ay); L.l.setAttribute('x2', lx - 10); L.l.setAttribute('y2', y + 9);
-    L.c.setAttribute('cx', ax); L.c.setAttribute('cy', ay);
+  // The callouts of the screen in front, to the right of the phone, each with a leader line to its
+  // place on the screen; kept at least 64px apart, top to bottom.
+  let right = -Infinity;
+  if (focus >= 0) { _box.setFromObject(frontScr); for (let i = 0; i < 8; i++) { _p.set(i & 1 ? _box.max.x : _box.min.x, i & 2 ? _box.max.y : _box.min.y, i & 4 ? _box.max.z : _box.min.z); right = Math.max(right, project(_p)[0]); } }
+  const lx = Math.round(right + 48); let lastY = -Infinity;
+  callouts.forEach((C) => {
+    const els = [C.el, C.l, C.dot];
+    if (C.k !== focus) { els.forEach((el) => el.classList.remove('is-on', 'is-focus')); return; }
+    _p.set((C.c.ax - 0.5) * SWu, (0.5 - C.c.ay) * SHu, TH / 2); front.localToWorld(_p); const [ax, ay] = project(_p);
+    const y = Math.round(Math.max(ay - 10, lastY + 64)); lastY = y + (C.c.text ? 36 : 0);
+    C.el.style.transform = `translate(${lx}px, ${y}px)`;
+    C.l.setAttribute('x1', ax); C.l.setAttribute('y1', ay); C.l.setAttribute('x2', lx - 10); C.l.setAttribute('y2', y + 9);
+    C.dot.setAttribute('cx', ax); C.dot.setAttribute('cy', ay);
     els.forEach((el) => el.classList.add('is-on', 'is-focus'));
   });
 
