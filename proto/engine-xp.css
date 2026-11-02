@@ -6,7 +6,16 @@
 #eng3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; pointer-events: none; }
 .engine__grid { position: relative; z-index: 1; grid-template-columns: 1fr; grid-template-rows: 1fr; align-items: stretch; justify-items: center; }
 .engine__stage { width: 100%; min-height: 0; }
-/* Six steps: whole, Competitions, Leaderboards, Rewards, whole again, connected. */
+/* The stage is dark in both themes: the holograms and the floor need it. The words on it are light. */
+.engine#engine > .engine__stick { background: #070a14; }
+#engine .eng-verbs, #engine .xp-label.is-focus { color: #eef1f7; }
+#engine .eng-verbs span { color: rgba(238, 241, 247, 0.18); }
+#engine .eng-verbs span.is-on { color: #eef1f7; }
+#engine .xp-cap, #engine .xp-label.is-focus span, #engine .eng-a .eng-eyebrow.feat__idx, #engine .eng-eyebrow span { color: #9aa3b5; }
+#engine .eng-eyebrow b { color: #4fd7ff; }
+#engine .xp-label.is-focus b, #engine .xp-leaders line.is-focus { color: #4fd7ff; stroke: #4fd7ff; }
+#engine .xp-leaders circle.is-focus { fill: #4fd7ff; }
+/* Six steps: from the side, Leaderboards, Competitions, Rewards, whole, connected. */
 .engine[data-steps="5"] { height: calc(100vh + 5 * 80vh); }
 
 /* The words: Compete, Rank, Reward, Connect stand in a column on the left for the whole section,
