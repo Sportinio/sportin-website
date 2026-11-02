@@ -108,10 +108,11 @@ const REST_Z = GLASS_Z + 0.01 + TH / 2; // the screen, just in front of the outl
 // (its own picture in light, scanlines, a chip grid, a lit edge, a sweep) to the real screen, chip by chip.
 const HOLO = new THREE.Color(0x4fd7ff);
 const screenMat = new THREE.ShaderMaterial({
-  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(208, 452) } },
+  uniforms: { map: { value: byOrder(0).tex.tex }, map2: { value: byOrder(1).tex.tex }, mask: { value: null }, mask2: { value: null }, liftA: { value: 0 }, liftB: { value: 0 }, progress: { value: 0 }, build: { value: 0 }, holo: { value: 0 }, time: { value: 0 }, tint: { value: HOLO }, tiles: { value: new THREE.Vector2(208, 452) } },
   vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
   fragmentShader: `
-    uniform sampler2D map; uniform sampler2D map2; uniform float progress; uniform float build; uniform float holo; uniform float time; uniform vec3 tint; uniform vec2 tiles;
+    uniform sampler2D map; uniform sampler2D map2; uniform sampler2D mask; uniform sampler2D mask2; uniform float liftA; uniform float liftB;
+    uniform float progress; uniform float build; uniform float holo; uniform float time; uniform vec3 tint; uniform vec2 tiles;
     varying vec2 vUv;
     float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
     void main() {
@@ -130,11 +131,15 @@ const screenMat = new THREE.ShaderMaterial({
       float flashB = smoothstep(0.0, 0.5, kb) * (1.0 - smoothstep(0.5, 1.0, kb)); // a chip lights as it lands
       float flashS = smoothstep(0.0, 0.5, ks) * (1.0 - smoothstep(0.5, 1.0, ks)); // and as it swaps
       vec3 col = mix(hc, real, kb) + tint * (flashB * 0.55 + flashS * 0.6);
-      gl_FragColor = vec4(col, mix(ha, 1.0, kb));
+      float cut = mix(texture2D(mask, vUv).r * liftA, texture2D(mask2, vUv).r * liftB, ks); // where a block stands, the page is empty
+      gl_FragColor = vec4(col, mix(ha, 1.0, kb) * (1.0 - cut));
       #include <colorspace_fragment>
     }`,
   transparent: true,
 });
+// An empty mask for a screen without blocks.
+const NO_MASK = (() => { const c = document.createElement('canvas'); c.width = c.height = 2; const t = new THREE.CanvasTexture(c); return t; })();
+screenMat.uniforms.mask.value = NO_MASK; screenMat.uniforms.mask2.value = NO_MASK;
 const screenGeo = plate(SWu - 0.004, SHu - 0.004, SRu - 0.002, 32);
 // The screen: a dark backing (solid once built) and the shader on top, inside the outline.
 const front = new THREE.Group(); front.position.z = REST_Z; phone.add(front);
@@ -197,9 +202,11 @@ function buildRelief(sh) {
   const img = sh.shot; const W = img.naturalWidth; const Hh = img.naturalHeight;
   const sx = (SWu - 0.004) / W; const sy = (SHu - 0.004) / Hh; // world units per screenshot pixel
   const group = new THREE.Group(); front.add(group); const items = [];
+  const mc = document.createElement('canvas'); mc.width = W; mc.height = Hh; const mctx = mc.getContext('2d'); mctx.fillStyle = '#000'; mctx.fillRect(0, 0, W, Hh); mctx.fillStyle = '#fff';
   spec.forEach((L) => {
     const x = L.cx != null ? L.cx - L.r : L.x; const y = L.cy != null ? L.cy - L.r : L.y;
     const w = L.cx != null ? L.r * 2 : L.w; const h = L.cy != null ? L.r * 2 : L.h; const r = L.cx != null ? L.r : L.r;
+    mctx.beginPath(); mctx.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2)); mctx.fill(); // its footprint, cut from the page
     // The piece, at the screenshot's own resolution, clipped to its shape, with a faint rim of light.
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
     ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
@@ -222,12 +229,13 @@ function buildRelief(sh) {
     items.push({ g, mesh, slab, shadow, z: L.z });
   });
   items.sort((a, b) => a.z - b.z).forEach((it, i) => { it.mesh.renderOrder = 10 + i * 3 + 2; it.slab.renderOrder = 10 + i * 3 + 1; it.shadow.renderOrder = 10 + i * 3; });
-  reliefs[sh.k] = { group, items };
+  const mask = new THREE.CanvasTexture(mc); mask.flipY = true;
+  reliefs[sh.k] = { group, items, mask, lift: 0 };
 }
 // Lifts a screen's pieces: 0 flat and hidden, 1 fully in relief.
 function setRelief(k, lift) {
   const r = reliefs[k]; if (!r) return;
-  r.group.visible = lift > 0.01; if (!r.group.visible) return;
+  r.lift = lift; r.group.visible = lift > 0.01; if (!r.group.visible) return;
   r.items.forEach((it) => {
     it.g.position.z = TH / 2 + 0.004 + it.z * DEPTH * lift; it.mesh.material.opacity = Math.min(1, lift * 1.5); it.slab.material.opacity = Math.min(1, lift * 1.5);
     it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lift * 0.45; it.shadow.material.opacity = lift;
@@ -452,6 +460,10 @@ function edgePoint(p, out) {
 }
 const _p = new THREE.Vector3(); const _e = new THREE.Vector3(); const _box = new THREE.Box3(); const _q0 = new THREE.Quaternion();
 let bootAt = null; let bootForce = null; // when the boot began; a fixed boot value, for stills
+// The mouse turns the phone (hover, no drag), and the blocks stand out further the more it tilts.
+const mouse = { x: 0, y: 0, on: false }; const rot = { x: 0.04, y: -0.16 }; let lastT = 0;
+stick.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; const r = stick.getBoundingClientRect(); mouse.x = ((e.clientX - r.left) / r.width - 0.5) * 2; mouse.y = ((e.clientY - r.top) / r.height - 0.5) * 2; mouse.on = true; if (!RM) follow.kick(); });
+stick.addEventListener('pointerleave', () => { mouse.on = false; if (!RM) follow.kick(); });
 const onScreen = () => { const r = sec.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
 
 // ---------- Labels (HTML, placed every frame beside each sheet) ----------
@@ -492,10 +504,16 @@ function paint(t, now) {
   const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 2800);
   const bFloor = win(boot, 0, 0.28); const bFrame = win(boot, 0.1, 0.5); const bHolo = win(boot, 0.4, 0.62); const bBuild = win(boot, 0.55, 1);
 
-  // One phone, facing you with a little turn, breathing gently; still once the sources dock.
+  // One phone, facing you with a little turn, breathing gently; turned by the mouse when it is over the
+  // stage; still once the sources dock.
   const live = (1 - dock) * (RM ? 0 : 1);
+  const dt = Math.min(0.05, lastT ? time - lastT : 0.016); lastT = time;
+  const tx = 0.04 + (mouse.on ? -mouse.y * 0.26 * live : Math.sin(time * 0.6) * 0.03 * live);
+  const ty = -0.16 + (mouse.on ? mouse.x * 0.42 * live : Math.sin(time * 0.45) * 0.09 * live);
+  const ease = RM ? 1 : 1 - Math.exp(-dt * 6); rot.x += (tx - rot.x) * ease; rot.y += (ty - rot.y) * ease;
+  const tilt = Math.min(1, Math.hypot(rot.x - 0.04, rot.y + 0.16) / 0.45);
   phone.position.set(0, Math.sin(time * 0.8) * 0.04 * live, 0);
-  phone.rotation.set(0.04 + Math.sin(time * 0.6) * 0.03 * live, -0.16 + Math.sin(time * 0.45) * 0.09 * live, 0);
+  phone.rotation.set(rot.x, rot.y, 0);
   rig.position.x = stacked ? 0 : -0.35 * (1 - dock); // room on the right for the callout
   phone.updateMatrixWorld(true);
   fadeBody(bFrame); phone.position.y += (1 - bFrame) * -0.6; front.visible = bHolo > 0.001;
@@ -509,11 +527,14 @@ function paint(t, now) {
   u.progress.value = prog; u.build.value = 0; u.holo.value = bHolo; u.time.value = time; // the page stays a hologram
   frontBackMat.opacity = bHolo; frontBack.visible = bHolo > 0.02;
   // The pieces rise once the screen is built, sink before a swap and rise again after it.
-  const up = bBuild * (1 - dock * 0.5);
+  const up = bBuild * (1 - dock * 0.5) * (1 + 0.4 * tilt); // further out the more the phone tilts
   sheets.forEach((sh2) => {
     const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
     setRelief(sh2.k, up * on);
   });
+  const rA = reliefs[ORDER[cur]]; const rB = reliefs[ORDER[next]];
+  u.mask.value = rA ? rA.mask : NO_MASK; u.liftA.value = rA ? Math.min(1, rA.lift * 1.5) : 0;
+  u.mask2.value = rB ? rB.mask : NO_MASK; u.liftB.value = rB ? Math.min(1, rB.lift * 1.5) : 0;
   ground.rotation.z = time * 0.04; ground.material.opacity = bFloor * (1 - dock * 0.5);
   beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   // The callout names the picture on show; it steps aside while the chips swap.
