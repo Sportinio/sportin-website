@@ -153,45 +153,36 @@ const frontScr = new THREE.Mesh(screenGeo, screenMat); frontScr.position.z = TH 
 // with a soft shadow and a faint rim of light: a hologram of the screen with real depth, every pixel
 // the real one. Coordinates are pixels of the screenshot file. Circles are { cx, cy, r }.
 const LAYERS = {
-  0: [ // Competitions: the two header buttons, the pill, the date bar; per match the crests, names and score
+  0: [ // Competitions: the two header buttons, the pill, the date bar; every match row whole, its crests above it
     { cx: 68, cy: 165, r: 36, z: 5, t: 'shape' }, { cx: 851, cy: 165, r: 36, z: 5, t: 'shape' },
     { x: 260, y: 420, w: 400, h: 70, r: 35, z: 5, t: 'shape' },
     { x: 42, y: 522, w: 836, h: 80, r: 20, z: 5, t: 'shape' },
-    { x: 66, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 648, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 648, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 672, w: 120, h: 70, z: 7, t: 'text' },
-    { x: 66, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 832, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 832, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 856, w: 120, h: 70, z: 7, t: 'text' },
-    { x: 66, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1016, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1016, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1040, w: 120, h: 70, z: 7, t: 'text' },
-    { x: 66, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1200, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1200, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1224, w: 120, h: 70, z: 7, t: 'text' },
-    { x: 66, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1384, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1384, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1408, w: 120, h: 70, z: 7, t: 'text' },
-    { x: 66, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 178, y: 1568, w: 200, h: 116, z: 8, t: 'text' }, { x: 560, y: 1568, w: 190, h: 116, z: 8, t: 'text' }, { x: 400, y: 1592, w: 120, h: 70, z: 7, t: 'text' },
+    { x: 42, y: 622, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 658, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
+    { x: 42, y: 806, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 842, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
+    { x: 42, y: 990, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1026, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
+    { x: 42, y: 1174, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1210, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
+    { x: 42, y: 1358, w: 836, h: 165, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1394, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
+    { x: 42, y: 1542, w: 836, h: 148, r: 28, z: 6, t: 'shape' }, { x: 66, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' }, { x: 762, y: 1578, w: 94, h: 94, r: 16, z: 9, t: 'pic' },
   ],
-  1: [ // Leaderboards: the avatar and header pills; tier titles, level icons and counts; filter chips; board
-       // buttons; the podium's avatars, rank badges, names and steps; the rows' rank, avatar, name and steps
+  1: [ // Leaderboards: avatar and header pills; the tier cards whole; filter chips; board buttons; the podium
+       // cards whole with their avatars and badges above; the rows whole with their avatars above
     { cx: 69, cy: 175, r: 38, z: 6, t: 'pic' }, { x: 232, y: 132, w: 270, h: 88, r: 44, z: 5, t: 'shape' }, { x: 524, y: 132, w: 362, h: 88, r: 44, z: 5, t: 'shape' },
-    { x: 55, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 285, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 515, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 745, y: 450, w: 168, h: 50, z: 7, t: 'text' },
-    { cx: 138, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/bronze.png' }, { cx: 368, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/silver.png' }, { cx: 598, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/gold.png' }, { cx: 828, cy: 553, r: 50, z: 9, t: 'icon', img: '/levels/platinum.png' },
-    { x: 55, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 285, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 515, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 745, y: 606, w: 168, h: 46, z: 7, t: 'text' },
+    { x: 35, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 7, t: 'shape' },
     { x: 172, y: 696, w: 174, h: 80, r: 40, z: 6, t: 'shape' }, { x: 365, y: 696, w: 278, h: 80, r: 40, z: 6, t: 'shape' }, { x: 660, y: 696, w: 232, h: 80, r: 40, z: 6, t: 'shape' },
     { x: 46, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 124, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 660, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 738, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' }, { x: 815, y: 834, w: 60, h: 60, r: 18, z: 5, t: 'shape' },
+    { x: 46, y: 1100, w: 266, h: 330, r: 28, z: 7, t: 'shape' }, { x: 327, y: 1050, w: 266, h: 380, r: 28, z: 8, t: 'shape' }, { x: 610, y: 1145, w: 266, h: 285, r: 28, z: 7, t: 'shape' },
     { cx: 178, cy: 1103, r: 66, z: 11, t: 'pic' }, { cx: 460, cy: 1050, r: 68, z: 13, t: 'pic' }, { cx: 742, cy: 1150, r: 66, z: 11, t: 'pic' },
-    { cx: 178, cy: 1210, r: 26, z: 9, t: 'pic' }, { cx: 460, cy: 1157, r: 26, z: 11, t: 'pic' }, { cx: 742, cy: 1258, r: 26, z: 9, t: 'pic' },
-    { x: 100, y: 1236, w: 156, h: 80, z: 9, t: 'text' }, { x: 382, y: 1183, w: 156, h: 80, z: 11, t: 'text' }, { x: 664, y: 1282, w: 156, h: 80, z: 9, t: 'text' },
-    { x: 108, y: 1368, w: 140, h: 48, z: 9, t: 'text' }, { x: 390, y: 1368, w: 150, h: 48, z: 11, t: 'text' }, { x: 672, y: 1368, w: 140, h: 48, z: 9, t: 'text' },
-    { x: 300, y: 1470, w: 320, h: 40, z: 6, t: 'text' },
-    { x: 84, y: 1578, w: 56, h: 60, z: 7, t: 'text' }, { x: 84, y: 1743, w: 56, h: 60, z: 7, t: 'text' }, { x: 84, y: 1908, w: 56, h: 60, z: 7, t: 'text' },
-    { cx: 214, cy: 1612, r: 46, z: 8, t: 'pic' }, { cx: 214, cy: 1773, r: 46, z: 8, t: 'pic' }, { cx: 214, cy: 1938, r: 46, z: 8, t: 'pic' },
-    { x: 282, y: 1568, w: 280, h: 88, z: 8, t: 'text' }, { x: 282, y: 1730, w: 280, h: 58, z: 8, t: 'text' }, { x: 700, y: 1725, w: 150, h: 50, z: 8, t: 'text' },
+    { cx: 178, cy: 1210, r: 26, z: 10, t: 'pic' }, { cx: 460, cy: 1157, r: 26, z: 12, t: 'pic' }, { cx: 742, cy: 1258, r: 26, z: 10, t: 'pic' },
+    { x: 46, y: 1535, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1700, w: 830, h: 160, r: 28, z: 6, t: 'shape' }, { x: 46, y: 1865, w: 830, h: 135, r: 28, z: 6, t: 'shape' },
+    { cx: 214, cy: 1612, r: 46, z: 9, t: 'pic' }, { cx: 214, cy: 1773, r: 46, z: 9, t: 'pic' }, { cx: 214, cy: 1938, r: 46, z: 9, t: 'pic' },
     { cx: 820, cy: 1540, r: 58, z: 12, t: 'pic' }, { cx: 820, cy: 1680, r: 58, z: 10, t: 'shape' },
   ],
-  2: [ // Rewards: the header pill; partner names, logos and counts; filter chips; per reward the picture,
-       // the text and the brand badge
+  2: [ // Rewards: the header pill; the partner cards whole; filter chips; every reward row whole, its picture above
     { x: 700, y: 132, w: 180, h: 88, r: 44, z: 5, t: 'shape' },
-    { x: 55, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 285, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 515, y: 450, w: 168, h: 50, z: 7, t: 'text' }, { x: 745, y: 450, w: 168, h: 50, z: 7, t: 'text' },
-    { x: 98, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' }, { x: 328, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' }, { x: 558, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' }, { x: 788, y: 513, w: 80, h: 80, r: 16, z: 9, t: 'pic' },
-    { x: 55, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 285, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 515, y: 606, w: 168, h: 46, z: 7, t: 'text' }, { x: 745, y: 606, w: 168, h: 46, z: 7, t: 'text' },
+    { x: 35, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 265, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 495, y: 436, w: 207, h: 228, r: 24, z: 7, t: 'shape' }, { x: 725, y: 436, w: 196, h: 228, r: 24, z: 7, t: 'shape' },
     { x: 172, y: 696, w: 114, h: 80, r: 40, z: 6, t: 'shape' }, { x: 307, y: 696, w: 194, h: 80, r: 40, z: 6, t: 'shape' },
+    { x: 46, y: 930, w: 830, h: 185, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1135, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1345, w: 830, h: 190, r: 36, z: 6, t: 'shape' }, { x: 46, y: 1555, w: 830, h: 190, r: 36, z: 6, t: 'shape' },
     { x: 85, y: 955, w: 120, h: 130, r: 20, z: 10, t: 'pic' }, { x: 95, y: 1165, w: 100, h: 140, r: 20, z: 10, t: 'pic' }, { x: 105, y: 1370, w: 80, h: 140, r: 20, z: 10, t: 'pic' }, { x: 105, y: 1580, w: 80, h: 140, r: 20, z: 10, t: 'pic' },
-    { x: 225, y: 950, w: 500, h: 150, z: 8, t: 'text' }, { x: 225, y: 1160, w: 500, h: 150, z: 8, t: 'text' }, { x: 225, y: 1385, w: 500, h: 120, z: 8, t: 'text' }, { x: 225, y: 1580, w: 500, h: 150, z: 8, t: 'text' },
-    { x: 770, y: 985, w: 78, h: 78, r: 16, z: 9, t: 'pic' }, { x: 770, y: 1195, w: 78, h: 78, r: 16, z: 9, t: 'pic' }, { x: 770, y: 1405, w: 78, h: 78, r: 16, z: 9, t: 'pic' }, { x: 770, y: 1615, w: 78, h: 78, r: 16, z: 9, t: 'pic' },
   ],
 };
 const DEPTH = MM * 1.6; // world units per millimetre of relief
@@ -213,7 +204,8 @@ function buildRelief(sh) {
   const img = sh.shot; const W = img.naturalWidth; const Hh = img.naturalHeight; const raw = rawOf(sh);
   const sx = (SWu - 0.004) / W; const sy = (SHu - 0.004) / Hh; // world units per screenshot pixel
   const group = new THREE.Group(); front.add(group); const items = []; const sockets = [];
-  spec.map(rectOf).forEach((R) => {
+  const rects = spec.map(rectOf);
+  rects.forEach((R) => {
     const { x, y, w, h, r } = R;
     // What the screen keeps behind the piece: its surroundings, sampled just outside it.
     const bg = sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2);
@@ -239,7 +231,14 @@ function buildRelief(sh) {
       ctx.putImageData(id, 0, 0); tex.needsUpdate = true; shadowOf();
     } else {
       // A picture or a whole shape, clipped to its outline; a shape gets a faint rim of light.
-      ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h); ctx.restore();
+      ctx.save(); ctx.beginPath(); ctx.roundRect(0, 0, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+      // Where a higher piece sits on this shape, the shape keeps an empty socket in its own surface colour.
+      if (R.t === 'shape') rects.forEach((B) => {
+        if (B === R || B.z <= R.z || B.x + B.w < x || B.x > x + w || B.y + B.h < y || B.y > y + h) return;
+        const c2 = sample(raw, Math.max(x + 4, Math.min(x + w - 4, B.x - 12 >= x ? B.x - 12 : B.x + B.w + 12)), Math.max(y + 4, Math.min(y + h - 4, B.y + B.h / 2)));
+        ctx.fillStyle = `rgb(${c2[0]},${c2[1]},${c2[2]})`; ctx.beginPath(); ctx.roundRect(B.x - x - 1, B.y - y - 1, B.w + 2, B.h + 2, B.r); ctx.fill();
+      });
+      ctx.restore();
       if (R.t === 'shape') { ctx.strokeStyle = 'rgba(79,215,255,0.3)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke(); }
       tex.needsUpdate = true; shadowOf();
     }
@@ -258,12 +257,16 @@ function buildRelief(sh) {
   paintAll(); // the screen now shows its sockets
 }
 // Lifts a screen's pieces: 0 flat and hidden, 1 fully in relief.
-function setRelief(k, lift, alpha) {
+// Each piece leaves on its own cue during the split, deeper pieces first, with a little overshoot.
+const over = (u) => 1 + 2.2 * (u - 1) * (u - 1) * (u - 1) + 1.2 * (u - 1) * (u - 1); // ease out back, ends at 1
+function setRelief(k, lift, alpha, enter = 1) {
   const r = reliefs[k]; if (!r) return;
   r.lift = lift; r.group.visible = alpha > 0.01; if (!r.group.visible) return;
   r.items.forEach((it) => {
-    it.g.position.z = TH / 2 + 0.004 + it.z * DEPTH * lift; it.mesh.material.opacity = alpha; it.slab.material.opacity = alpha;
-    it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lift * 0.45; it.shadow.material.opacity = alpha * Math.min(1, lift * 2);
+    const zn = Math.min(1, it.z / 14); const u = clamp((enter - 0.08 - zn * 0.45) / 0.5); const e = u >= 1 ? 1 : over(u);
+    const lf = lift * e;
+    it.g.position.z = TH / 2 + 0.004 + it.z * DEPTH * lf; it.mesh.material.opacity = alpha; it.slab.material.opacity = alpha;
+    it.shadow.position.z = TH / 2 + 0.003 + it.z * DEPTH * lf * 0.45; it.shadow.material.opacity = alpha * Math.min(1, lf * 2);
   });
 }
 
@@ -544,11 +547,11 @@ function project(p) { _v.copy(p).project(camera); return [((_v.x + 1) / 2) * W, 
 function paint(t, now) {
   const time = (now || 0) / 1000;
   const dock = win(t, 2, 2.3); // the sources appear
-  // The boot: once the section is on screen, over 2.8 s. Skipped when the page arrives further in.
+  // The split: once the section is on screen, over 1.8 s. Already done when the page arrives further in.
   if (bootAt == null && (RM || t > 0.3)) bootAt = -1e9;
   if (bootAt == null && onScreen()) bootAt = now || performance.now();
-  const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 2800);
-  const bFloor = win(boot, 0, 0.28); const bFrame = win(boot, 0.1, 0.5); const bHolo = win(boot, 0.4, 0.62); const bBuild = win(boot, 0.55, 1);
+  const boot = bootForce != null ? bootForce : bootAt == null ? 0 : clamp(((now || performance.now()) - bootAt) / 1800);
+  const bFloor = win(boot, 0, 0.4); const bFrame = 1; const bHolo = 1; const bBuild = 1; // the phone is whole from the start; the pieces split out over the boot
 
   // One phone, facing you with a little turn, breathing gently; turned by hand when dragged, gliding
   // on after release and drifting back to rest after a while; still once the sources dock.
@@ -568,7 +571,7 @@ function paint(t, now) {
   phone.rotation.set(rot.x, rot.y, 0);
   rig.position.x = stacked ? 0 : -0.7 * (1 - dock); // nearer the words, with room on the right for the callout
   phone.updateMatrixWorld(true);
-  fadeBody(bFrame); phone.position.y += (1 - bFrame) * -0.6; front.visible = bHolo > 0.001;
+  front.visible = true;
 
   // The screen: the picture of this step, swapped chip by chip for the next one on the way to the next step.
   const cur = Math.min(2, Math.floor(t)); const next = Math.min(2, cur + 1);
@@ -579,18 +582,19 @@ function paint(t, now) {
   u.progress.value = prog; u.build.value = bBuild; u.holo.value = bHolo; u.time.value = time; // a hologram while it boots, then the real screen
   frontBackMat.opacity = bHolo; frontBack.visible = bHolo > 0.02;
   // The pieces rise once the screen is built, sink before a swap and rise again after it.
-  const up = bBuild * (1 - dock * 0.5) * (1 + 0.4 * tilt); // further out the more the phone tilts
+  const up = (1 - dock * 0.5) * (1 + 0.4 * tilt); // further out the more the phone tilts
+  const enter = RM ? 1 : boot; // the split's progress
   sheets.forEach((sh2) => {
     const on = ORDER[cur] === sh2.k ? 1 - win(prog, 0, 0.35) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.65, 1) : 0;
     const shown = ORDER[cur] === sh2.k ? 1 - win(prog, 0.3, 0.5) : ORDER[next] === sh2.k && cur < 2 ? win(prog, 0.5, 0.7) : 0; // swapped with the screen itself
-    setRelief(sh2.k, up * on, shown * win(bBuild, 0.9, 1));
+    setRelief(sh2.k, up * on, shown, enter);
   });
 
   ground.rotation.z = time * 0.04; ground.material.opacity = bFloor * (1 - dock * 0.5);
   beam.material.opacity = 0.35 * bFloor * (1 - dock); beam.scale.y = bFloor; beam.position.y = GROUND_Y * (1 - bFloor);
   // The callout names the picture on show; it steps aside while the chips swap.
   const shown = prog < 0.5 ? cur : next;
-  const focus = bBuild > 0.9 && dock < 0.01 && !drag.on && tilt < 0.6 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and while the phone is turned // and once the sources arrive
+  const focus = boot > 0.9 && dock < 0.01 && !drag.on && tilt < 0.6 && (prog < 0.12 || prog > 0.88) ? ORDER[shown] : -1; // and while the phone is turned // and once the sources arrive
   const fb = focus >= 0 ? 1 : 0;
 
   // The sources orbit in, settle on the ring and dock.
@@ -642,7 +646,7 @@ function paint(t, now) {
   });
 
   // The hint: under the phone once it is built, until the first drag or the docking.
-  if (!RM && !dragged && bBuild > 0.95 && dock < 0.01) {
+  if (!RM && !dragged && boot > 0.95 && dock < 0.01) {
     _p.set(0, -PHh / 2 - 0.3, 0); phone.localToWorld(_p); const [hx, hy] = project(_p);
     hintEl.style.transform = `translate(${Math.round(hx)}px, ${Math.round(hy)}px) translate(-50%, 0)`; hintEl.classList.add('is-on');
   } else hintEl.classList.remove('is-on');
