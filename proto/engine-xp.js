@@ -457,11 +457,12 @@ function paintAll() {
 }
 paintAll();
 
-// ---------- The sources: a watch and the apps fans already use ----------
+// ---------- The sources: the apps and watch platforms fans already use ----------
 // Monochrome brand marks from Simple Icons where one exists (placeholders until official assets are
 // approved); the others carry their initial.
-const SOURCES = [['Apple Health', 'apple'], ['Garmin'], ['Fitbit', 'fitbit'], ['Oura'], ['Whoop'],
-  ['Samsung Health'], ['Polar'], ['Suunto'], ['Strava', 'strava'], ['Huawei Health', 'huawei']];
+// [name, icon-set slug, logo file]: the real logo where the site has one, the icon set's mark otherwise.
+const SOURCES = [['Apple Health', 'apple'], ['Garmin', null, '/partners/garmin.png'], ['Fitbit', null, '/logos/fitbit.png'], ['Oura', null, '/logos/oura.png'], ['Whoop', null, '/logos/whoop.webp'],
+  ['Samsung Health', 'samsung'], ['Polar'], ['Suunto'], ['Strava', null, '/logos/strava.webp'], ['Huawei Health', null, '/logos/huawei.png']];
 const sources = []; // { obj, mats, slot }
 // Brands with no symbol in the icon set get a drawn glyph: a delta for Garmin, a heart for Samsung Health,
 // a ring for Oura, a bold letter for Polar, Suunto and Whoop.
@@ -475,13 +476,15 @@ function glyph(ctx, name, cx, cy, r) {
 function drawBadge(ctx, name, icon, withName = true) {
   const W = 256; const Hh = 300; ctx.clearRect(0, 0, W, Hh);
   ctx.beginPath(); ctx.arc(128, 100, 90, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,16,32,0.12)'; ctx.stroke();
-  if (icon) ctx.drawImage(icon, 128 - 50, 100 - 50, 100, 100); else glyph(ctx, name, 128, 100, 44);
+  if (icon) { const box = icon.dataset && icon.dataset.logo ? 116 : 100; const k = Math.min(box / icon.naturalWidth, box / icon.naturalHeight); const w = icon.naturalWidth * k; const h = icon.naturalHeight * k; ctx.drawImage(icon, 128 - w / 2, 100 - h / 2, w, h); }
+  else glyph(ctx, name, 128, 100, 44);
   if (withName) { font(ctx, 600, 34); ctx.fillStyle = '#c3cad8'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 258); ctx.textAlign = 'left'; }
 }
-SOURCES.forEach(([name, slug]) => {
+SOURCES.forEach(([name, slug, file]) => {
   const { ctx, tex } = canvasTex(256, 300);
   let icon = null; let withName = true; const redraw = (names) => { withName = names; drawBadge(ctx, name, icon, withName); tex.needsUpdate = true; };
   drawBadge(ctx, name, null);
+  if (file) { const img = new Image(); img.dataset.logo = '1'; img.onload = () => { icon = img; drawBadge(ctx, name, img, withName); tex.needsUpdate = true; }; img.src = file; }
   if (slug) {
     const img = new Image(); img.onload = () => { icon = img; drawBadge(ctx, name, img, withName); tex.needsUpdate = true; };
     fetch(`https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/${slug}.svg`).then((r) => (r.ok ? r.text() : Promise.reject())).then((svg) => {
@@ -492,26 +495,6 @@ SOURCES.forEach(([name, slug]) => {
   const sp = new THREE.Sprite(mat); rig.add(sp);
   sources.push({ obj: sp, mats: [mat], base: [0.8, 0.8 * (300 / 256), 1], redraw });
 });
-// The watch: a small aluminium case, black glass, a steps ring on its screen.
-function buildWatch() {
-  const g = new THREE.Group(); const mats = [];
-  const m = (mt) => { mt.transparent = true; mats.push(mt); return mt; };
-  const alu = m(new THREE.MeshPhysicalMaterial({ color: 0xe4e7eb, metalness: 0.85, roughness: 0.28, clearcoat: 0.2 }));
-  const CW = 0.62; const CH = 0.74; const CD = 0.16;
-  g.add(new THREE.Mesh(new RoundedBoxGeometry(CW, CH, CD, 4, 0.17), alu));
-  const band = m(new THREE.MeshPhysicalMaterial({ color: 0xebedf0, roughness: 0.55, clearcoat: 0.2 }));
-  [1, -1].forEach((side) => { const b = new THREE.Mesh(new RoundedBoxGeometry(0.42, 0.6, 0.06, 3, 0.03), band); b.position.set(0, side * (CH / 2 + 0.24), -0.03); g.add(b); });
-  const glass = new THREE.Mesh(plate(CW - 0.06, CH - 0.06, 0.15), m(new THREE.MeshPhysicalMaterial({ color: 0x07080b, roughness: 0.14, metalness: 0.2, clearcoat: 1 }))); glass.position.z = CD / 2 + 0.002; g.add(glass);
-  const ws = canvasTex(256, 300); const { ctx } = ws;
-  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 256, 300); ring(ctx, 128, 130, 70, 18, 0.74, BLUE);
-  font(ctx, 800, 44, 'Archivo', 'semi-expanded'); ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.fillText('7,412', 128, 146); font(ctx, 600, 26); ctx.fillStyle = '#9aa3b5'; ctx.fillText('steps', 128, 250); ctx.textAlign = 'left';
-  ws.tex.needsUpdate = true;
-  const scr = new THREE.Mesh(plate(CW - 0.12, CH - 0.12, 0.12), m(new THREE.MeshBasicMaterial({ map: ws.tex, toneMapped: false }))); scr.position.z = CD / 2 + 0.004; g.add(scr);
-  const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.07, 24).rotateZ(Math.PI / 2), alu); crown.position.set(CW / 2 + 0.03, 0.12, 0); g.add(crown);
-  rig.add(g);
-  return { obj: g, mats, base: [0.85, 0.85, 0.85] };
-}
-sources.unshift(buildWatch());
 const N = sources.length;
 sources.forEach((s, i) => { s.slot = i; s.seed = (i * 0.618) % 1; });
 const setSource = (s, o) => { s.mats.forEach((m) => { m.opacity = o; }); s.obj.visible = o > 0.004; };
@@ -668,10 +651,8 @@ function paint(t, now) {
   const stagger = 0.02; // every source and its line are home by the last step
   sources.forEach((s, i) => {
     const u = win(t, 2 + i * stagger, 2.55 + i * stagger);
-    // The watch takes the front of the ring on the right; the apps share the rest of it evenly.
-    // The watch at the right (on phones: at the bottom, in front); the apps share the rest of the ring evenly.
-    const w0 = stacked ? -Math.PI / 2 : 0; const gap = stacked ? 0.7 : 0.62;
-    const slot = i === 0 ? w0 : w0 + gap + ((i - 1) / (N - 2)) * (Math.PI * 2 - 2 * gap);
+    // The apps share the ring evenly, the first at the right (on phones: at the bottom, in front).
+    const slot = (stacked ? -Math.PI / 2 : 0.2) + (i / N) * Math.PI * 2;
     const a = lerp(slot + 1.6 + s.seed * 1.2, slot, u); const r = lerp(1.9 + s.seed * 0.5, 1, u);
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
     s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
