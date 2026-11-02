@@ -154,7 +154,7 @@ const frontScr = new THREE.Mesh(screenGeo, screenMat); frontScr.position.z = TH 
 // the real one. Coordinates are pixels of the screenshot file. Circles are { cx, cy, r }.
 const LAYERS = {
   0: [ // Competitions: the two header buttons, the pill, the date bar, every match row whole, the tab bar
-    { cx: 68, cy: 165, r: 36, z: 5, t: 'shape' }, { cx: 851, cy: 165, r: 36, z: 5, t: 'shape' },
+    { cx: 74, cy: 165, r: 33, z: 5, t: 'shape' }, { cx: 848, cy: 165, r: 33, z: 5, t: 'shape' },
     { x: 260, y: 420, w: 400, h: 70, r: 35, z: 5, t: 'shape' },
     { x: 42, y: 522, w: 836, h: 80, r: 20, z: 5, t: 'shape' },
     { x: 42, y: 622, w: 836, h: 165, r: 28, z: 6, t: 'shape' },
@@ -222,7 +222,8 @@ function buildRelief(sh) {
     // What the screen keeps behind the piece: its surroundings, sampled just outside it.
     const bg = R.t === 'pic' ? sample(raw, x + w / 2, Math.max(0, y - 6)) : sample(raw, x - 8 >= 0 ? x - 8 : x + w + 8, y + h / 2); // a picture: from just above it, outside any card it overhangs
     const lines = []; const lx0 = R.x - 10 >= 0 ? R.x - 10 : R.x + R.w + 10; // just outside the piece, left or right
-    for (let yy = R.y - 1; yy <= R.y + R.h + 1; yy++) lines.push([yy, sample(raw, Math.min(W - 1, lx0), Math.max(0, Math.min(Hh - 1, yy)))]);
+    const above = R.t === 'pic' ? sample(raw, Math.min(W - 1, R.x + R.w / 2), Math.max(0, R.y - 8)) : null; // a picture: from just above it
+    for (let yy = R.y - 1; yy <= R.y + R.h + 1; yy++) lines.push([yy, above || sample(raw, Math.min(W - 1, lx0), Math.max(0, Math.min(Hh - 1, yy)))]);
     sockets.push({ R, lines });
     const c = document.createElement('canvas'); c.width = w; c.height = h; const ctx = c.getContext('2d');
     const PADS = 28; const sc = document.createElement('canvas'); sc.width = w + PADS * 2; sc.height = h + PADS * 2; const sctx = sc.getContext('2d');
@@ -591,7 +592,7 @@ function paint(t, now) {
   // on after release and drifting back to rest after a while; still once the sources dock.
   const live = (1 - dock) * (RM ? 0 : 1);
   const dt = Math.min(0.05, lastT ? time - lastT : 0.016); lastT = time;
-  const turn = RM ? 0 : Math.max(1 - win(boot, 0.05, 1), leave * 0.6); // the split opens with the phone turned, so the lift shows in parallax; it turns a little as the section leaves
+  const turn = RM ? 0 : Math.max(win(boot, 0, 0.17) * (1 - win(boot, 0.17, 1)), leave * 0.6); // the split opens with the phone turned, so the lift shows in parallax; it turns a little as the section leaves
   const tx = 0.04 + 0.1 * turn + Math.sin(time * 0.6) * 0.03 * live; const ty = -0.16 - 0.34 * turn + Math.sin(time * 0.45) * 0.09 * live;
   if (!drag.on) {
     const f = dt * 60; rot.y = Math.max(-0.16 - 0.88, Math.min(-0.16 + 0.88, rot.y + drag.vx * f)); rot.x = Math.max(0.04 - 0.45, Math.min(0.04 + 0.45, rot.x + drag.vy * f));
