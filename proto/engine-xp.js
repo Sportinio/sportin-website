@@ -247,7 +247,13 @@ function buildRelief(sh) {
     } else {
       // A picture or a whole shape, clipped to its outline; a shape gets a faint rim of light.
       ctx.save(); outline(ctx, R, -x, -y); ctx.clip(); ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
-      // Pieces that pass over this one (the tab bar, the floating buttons) leave it whole.
+      // The two floating buttons have left this piece for a place of their own: they leave a socket in
+      // it. Pieces that merely pass over it (the tab bar) leave it whole.
+      if (R.t === 'shape') rects.forEach((B) => {
+        if (B === R || !(B.dx || B.dy) || B.x + B.w < x || B.x > x + w || B.y + B.h < y || B.y > y + h) return;
+        const c2 = sample(raw, Math.max(x + 4, Math.min(x + w - 4, B.x - 12 >= x ? B.x - 12 : B.x + B.w + 12)), Math.max(y + 4, Math.min(y + h - 4, B.y + B.h / 2)));
+        ctx.fillStyle = `rgb(${c2[0]},${c2[1]},${c2[2]})`; outline(ctx, B, -x, -y, 1); ctx.fill();
+      });
       ctx.restore();
       if (R.t === 'shape') { const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(180,235,255,0.55)'); g.addColorStop(0.25, 'rgba(79,215,255,0.12)'); g.addColorStop(1, 'rgba(79,215,255,0.1)'); ctx.strokeStyle = g; ctx.lineWidth = 3; outline(ctx, R, -x, -y, -1.5); ctx.stroke(); }
       tex.needsUpdate = true; shadowOf();
