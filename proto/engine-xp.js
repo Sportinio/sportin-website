@@ -218,7 +218,7 @@ function buildRelief(sh) {
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     const stex = new THREE.CanvasTexture(sc); stex.colorSpace = THREE.SRGBColorSpace;
     // The shadow of whatever the piece's canvas holds: its own shape, blurred.
-    const shadowOf = () => { sctx.clearRect(0, 0, sc.width, sc.height); sctx.filter = 'blur(8px)'; sctx.drawImage(c, PADS, PADS); sctx.filter = 'none'; sctx.globalCompositeOperation = 'source-in'; sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.fillRect(0, 0, sc.width, sc.height); sctx.globalCompositeOperation = 'source-over'; stex.needsUpdate = true; };
+    const shadowOf = () => { sctx.clearRect(0, 0, sc.width, sc.height); sctx.filter = 'blur(14px)'; sctx.drawImage(c, PADS, PADS); sctx.filter = 'none'; sctx.globalCompositeOperation = 'source-in'; sctx.fillStyle = 'rgba(0,0,0,0.35)'; sctx.fillRect(0, 0, sc.width, sc.height); sctx.globalCompositeOperation = 'source-over'; stex.needsUpdate = true; };
     if (R.t === 'icon') {
       const draw = (ic) => { ctx.clearRect(0, 0, w, h); ctx.drawImage(ic, 0, 0, w, h); tex.needsUpdate = true; shadowOf(); };
       if (icons[R.img]) { if (icons[R.img].complete) draw(icons[R.img]); else icons[R.img].addEventListener('load', () => draw(icons[R.img])); }
@@ -242,11 +242,11 @@ function buildRelief(sh) {
         ctx.fillStyle = `rgb(${c2[0]},${c2[1]},${c2[2]})`; ctx.beginPath(); ctx.roundRect(B.x - x - 1, B.y - y - 1, B.w + 2, B.h + 2, B.r); ctx.fill();
       });
       ctx.restore();
-      if (R.t === 'shape') { ctx.strokeStyle = 'rgba(79,215,255,0.3)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke(); }
+      if (R.t === 'shape') { const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(180,235,255,0.55)'); g.addColorStop(0.25, 'rgba(79,215,255,0.12)'); g.addColorStop(1, 'rgba(79,215,255,0.1)'); ctx.strokeStyle = g; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(1.5, 1.5, w - 3, h - 3, Math.max(0, r - 1.5)); ctx.stroke(); }
       tex.needsUpdate = true; shadowOf();
     }
     const g = new THREE.Group(); group.add(g);
-    const slabMat = new THREE.MeshStandardMaterial({ color: 0x1a2130, roughness: 0.5, metalness: 0.35, transparent: true });
+    const slabMat = new THREE.MeshStandardMaterial({ color: 0x232b3c, roughness: 0.45, metalness: 0.3, emissive: 0x4fd7ff, emissiveIntensity: 0.08, transparent: true }); // a faint lit edge: height reads by light
     const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(rrShape(w * sx, h * sy, r * sx), { depth: SLAB_T, bevelEnabled: false, curveSegments: 16 }), slabMat); slab.visible = R.t === 'shape'; g.add(slab);
     const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w * sx, h * sy), mat); mesh.position.z = (R.t === 'shape' ? SLAB_T : 0) + 0.0008; g.add(mesh);
@@ -569,7 +569,8 @@ function paint(t, now) {
   // on after release and drifting back to rest after a while; still once the sources dock.
   const live = (1 - dock) * (RM ? 0 : 1);
   const dt = Math.min(0.05, lastT ? time - lastT : 0.016); lastT = time;
-  const tx = 0.04 + Math.sin(time * 0.6) * 0.03 * live; const ty = -0.16 + Math.sin(time * 0.45) * 0.09 * live;
+  const turn = RM ? 0 : 1 - win(boot, 0.05, 1); // the split opens with the phone turned, so the lift shows in parallax
+  const tx = 0.04 + 0.1 * turn + Math.sin(time * 0.6) * 0.03 * live; const ty = -0.16 - 0.34 * turn + Math.sin(time * 0.45) * 0.09 * live;
   if (!drag.on) {
     const f = dt * 60; rot.y += drag.vx * f; rot.x = Math.max(-0.9, Math.min(0.9, rot.x + drag.vy * f));
     const decay = Math.exp(-dt * 6); drag.vx *= decay; drag.vy *= decay; // a short glide after release
@@ -581,7 +582,7 @@ function paint(t, now) {
   const tilt = Math.min(1, Math.hypot(rot.x - 0.04, Math.abs(((rot.y + 0.16 + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI)) / 0.6);
   phone.position.set(0, Math.sin(time * 0.8) * 0.04 * live, 0);
   phone.rotation.set(rot.x, rot.y, 0);
-  rig.position.x = stacked ? 0 : -0.7 * (1 - dock); // nearer the words, with room on the right for the callout
+  rig.position.x = stacked ? 0 : -0.55 * (1 - dock); // nearer the words, with room on the right for the callouts
   phone.updateMatrixWorld(true);
   front.visible = true;
 
@@ -629,9 +630,9 @@ function paint(t, now) {
 
   // Camera: on the phone and its floor, out for the ring. The distance fits the scene's height and,
   // on a narrow screen, its width.
-  const needH = lerp(6.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
+  const needH = lerp(5.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 1.6 * srcK, dock);
   const dist = Math.max(fitH(needH), fitW(needW));
-  camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, -0.4 * (1 - dock), 0);
+  camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, lerp(0.12, -0.4, dock), 0); // the phone sits clear of the nav bar
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
 
   // Words on the left: the verb of the step in ink.
