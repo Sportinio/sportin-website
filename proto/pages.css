@@ -16,7 +16,6 @@
 #fandata.block { background: var(--pg-blue); }
 #delivery > .dl__stick { background: var(--pg-pink); }
 #demo.closing { background: var(--pg-grey); }
-#live.block { background: var(--pg-blue); }
 
 /* Cards on a tinted page take the surface colour. */
 #formats .game, #pay .pay__step, #fandata .rpt__card { background: var(--surface); }
@@ -24,26 +23,57 @@
 #pay .pay__token { box-shadow: 0 0 0 4px var(--pg-grey); }
 
 
-/* 16: the live matchday (matchday.css) on the blue block, its heading row centred over the board.
-   Sized to fit one screen: shorter rows, and an opened match scrolls inside the card. */
-#live .feat__idx { display: flex; justify-content: center; align-items: baseline; gap: 12px; margin: 0 0 4px; font-family: var(--body); font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--slate); }
-#live .mdx { --row-h: 60px; }
-#live .mdx__hero { gap: 10px; margin-bottom: 20px; }
-#live .mdx__head { font-size: clamp(34px, 4vw, 58px); }
+/* 06 League of Brands, immersive: the night stadium fills the block behind the words, drifting
+   slowly; a scrim from the left keeps the copy readable. The copy sits left, with the format's
+   three steps; the live matchday card floats on the right as dark glass, its rows called live. */
+#live.block { position: relative; overflow: clip; background: #070b18; color: #fff; }
+.lob__bg { position: absolute; inset: 0; z-index: 0; margin: 0; overflow: hidden; background: #070b18; }
+.lob__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 35% 50%; transform-origin: 55% 60%; animation: lob-drift 30s ease-in-out infinite alternate; } /* mirrored: the lit stadium and the arcs on the right, the dark sky under the words */
+@keyframes lob-drift { from { transform: scaleX(-1) scale(1.04) translate(0, 0); } to { transform: scaleX(-1) scale(1.12) translate(1.4%, -1%); } }
+.lob__bg::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(7, 11, 24, 0.92) 0%, rgba(7, 11, 24, 0.78) 30%, rgba(7, 11, 24, 0.18) 55%, rgba(7, 11, 24, 0) 100%),
+              linear-gradient(180deg, rgba(7, 11, 24, 0.45) 0%, rgba(7, 11, 24, 0) 24%, rgba(7, 11, 24, 0) 76%, rgba(7, 11, 24, 0.45) 100%); }
+#live .mdx { position: relative; z-index: 1; --row-h: 60px; --card: rgba(8, 12, 24, 0.72); --ink: #fff; --slate: rgba(255, 255, 255, 0.55); --sub: rgba(255, 255, 255, 0.75); --line: rgba(255, 255, 255, 0.12); --chip: rgba(255, 255, 255, 0.1); --cap: rgba(255, 255, 255, 0.06); --blue: #5b8cff; --red: #ff5f5f; --focus: rgba(91, 140, 255, 0.18);
+  display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: center; gap: clamp(28px, 4vw, 64px); }
+#live .feat__idx { display: flex; justify-content: flex-start; align-items: baseline; gap: 12px; margin: 0 0 4px; font-family: var(--body); font-size: 14px; letter-spacing: 0; text-transform: none; color: rgba(255, 255, 255, 0.7); }
+#live .feat__idx b { color: #5b8cff; }
+#live .feat__idx span { color: #fff; }
+#live .feat__idx b + span { border-left-color: rgba(255, 255, 255, 0.25); }
+#live .mdx__hero { justify-items: start; gap: 10px; margin: 0; text-align: left; }
+#live .mdx__head { font-size: clamp(34px, 3.8vw, 58px); color: #fff; }
+#live .mdx__head em { color: #5b8cff; }
+.lob__lede { margin: 10px 0 0 !important; max-width: 34em; font-size: 18px !important; line-height: 1.5; color: rgba(255, 255, 255, 0.75) !important; }
+.lob__steps { display: grid; gap: 14px; width: 100%; margin: 26px 0 0; padding: 0; list-style: none; counter-reset: lob; }
+.lob__steps li { display: grid; grid-template-columns: 34px 72px minmax(0, 1fr); align-items: baseline; gap: 10px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.12); counter-increment: lob; }
+.lob__steps li::before { content: counter(lob, decimal-leading-zero); font-family: var(--mono); font-size: 12px; color: rgba(255, 255, 255, 0.45); }
+.lob__steps b { font-family: var(--display); font-weight: 800; font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase; color: #5b8cff; }
+.lob__steps span { font-size: 15px; color: rgba(255, 255, 255, 0.8); }
+/* The matchday card as dark glass. */
+#live .mdx__day { margin: 0; border-radius: 20px; background: var(--card); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+#live .mdx__dn, #live .mdx__dd { color: #fff; }
+#live .mdx__time { color: rgba(255, 255, 255, 0.6); }
+#live .mdx__stop { background: rgba(255, 255, 255, 0.1); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18); }
 @media (min-width: 900px) {
   #live .mdx__rows { max-height: calc(6 * 61px); overflow-y: auto; scrollbar-width: thin; }
 }
-/* 06 League of Brands, the clean board: no line under the title, no caption bar, and each row only
-   the teams, crests and score (status, flags, members and likes stay on the standalone page). */
-#live .mdx__hero { margin-bottom: 28px; }
+/* The clean board: no caption bar, and each row only the teams, crests and score (status, flags,
+   members and likes stay on the standalone page). */
 #live .mdx__cap, #live .mdx__t small, #live .mdx__t b img { display: none; }
 #live .mdx__st { visibility: hidden; }
 #live .mdx__rw { grid-template-columns: 40px minmax(0, 1fr) 40px; }
 #live .mdx__t b { font-size: 16px; }
 #live .mdx__sc { font-size: 22px; }
 #live .mdx__xi { padding-left: 40px; }
+@media (max-width: 900px) {
+  #live .mdx { grid-template-columns: 1fr; gap: 24px; }
+  .lob__bg img { object-position: 55% 50%; }
+  .lob__bg::after { background: linear-gradient(180deg, rgba(7, 11, 24, 0.5) 0%, rgba(7, 11, 24, 0.6) 20%, rgba(7, 11, 24, 0.88) 36%, rgba(7, 11, 24, 0.9) 100%); }
+  .lob__steps { display: none; } /* the card carries the format on a phone */
+}
 @media (max-width: 760px) {
   #live .mdx__rw { grid-template-columns: 8px minmax(0, 1fr) 16px; }
   #live .mdx__t b { font-size: 13px; }
   #live .mdx__xi { padding-left: 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .lob__bg img { animation: none; transform: scaleX(-1) scale(1.04); } }
 }
