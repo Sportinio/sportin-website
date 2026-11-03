@@ -449,7 +449,7 @@ function drawShot(k, img) {
 }
 sheets.forEach((s, k) => {
   const img = new Image();
-  img.onload = () => { s.shot = img; paintAll(); buildRelief(s); follow.sync(); };
+  img.onload = () => { s.shot = img; paintAll(); buildRelief(s); if (window.engineAt) follow.sync(); };
   img.src = SHOTS[k];
 });
 function paintAll() {
@@ -471,13 +471,13 @@ function glyph(ctx, name, cx, cy, r) {
   if (name === 'Garmin') { ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r * 0.95, cy + r * 0.7); ctx.lineTo(cx - r * 0.95, cy + r * 0.7); ctx.closePath(); ctx.fill(); }
   else if (name === 'Samsung Health') { ctx.beginPath(); ctx.moveTo(cx, cy + r * 0.85); ctx.bezierCurveTo(cx - r * 1.5, cy - r * 0.2, cx - r * 0.6, cy - r * 1.2, cx, cy - r * 0.4); ctx.bezierCurveTo(cx + r * 0.6, cy - r * 1.2, cx + r * 1.5, cy - r * 0.2, cx, cy + r * 0.85); ctx.fill(); }
   else if (name === 'Oura') { ctx.lineWidth = r * 0.42; ctx.beginPath(); ctx.arc(cx, cy, r * 0.7, 0, Math.PI * 2); ctx.stroke(); }
-  else { font(ctx, 800, r * 2.1, 'Archivo', 'semi-expanded'); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name[0], cx, cy + r * 0.08); ctx.textBaseline = 'alphabetic'; }
+  else { font(ctx, 600, r * 2.0, 'Archivo', 'semi-expanded'); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name[0], cx, cy + r * 0.08); ctx.textBaseline = 'alphabetic'; }
 }
 function drawBadge(ctx, name, icon, withName = true) {
   const W = 256; const Hh = 300; ctx.clearRect(0, 0, W, Hh);
   ctx.beginPath(); ctx.arc(128, 100, 90, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,16,32,0.12)'; ctx.stroke();
-  if (icon) { const box = icon.dataset && icon.dataset.logo ? 116 : 100; const k = Math.min(box / icon.naturalWidth, box / icon.naturalHeight); const w = icon.naturalWidth * k; const h = icon.naturalHeight * k; ctx.drawImage(icon, 128 - w / 2, 100 - h / 2, w, h); }
-  else glyph(ctx, name, 128, 100, 44);
+  if (icon) { const box = 100; const k = Math.min(box / icon.naturalWidth, box / icon.naturalHeight); const w = icon.naturalWidth * k; const h = icon.naturalHeight * k; ctx.drawImage(icon, 128 - w / 2, 100 - h / 2, w, h); } // every mark in one optical box
+  else glyph(ctx, name, 128, 100, 36);
   if (withName) { font(ctx, 600, 34); ctx.fillStyle = '#c3cad8'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 258); ctx.textAlign = 'left'; }
 }
 SOURCES.forEach(([name, slug, file]) => {
@@ -493,6 +493,7 @@ SOURCES.forEach(([name, slug, file]) => {
   }
   const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, toneMapped: false, depthWrite: false });
   const sp = new THREE.Sprite(mat); rig.add(sp);
+  const nameEl = document.createElement('div'); nameEl.className = 'xp-src'; nameEl.textContent = name; sp.userData.nameEl = nameEl; // added to the labels layer once it exists
   sources.push({ obj: sp, mats: [mat], base: [0.8, 0.8 * (300 / 256), 1], redraw });
 });
 const N = sources.length;
@@ -500,9 +501,9 @@ sources.forEach((s, i) => { s.slot = i; s.seed = (i * 0.618) % 1; });
 const setSource = (s, o) => { s.mats.forEach((m) => { m.opacity = o; }); s.obj.visible = o > 0.004; };
 
 // Docking lines: one thin line from each docked source to the phone's edge, and a dot where it lands.
-const lineMat = new THREE.LineBasicMaterial({ color: 0x0751fb, transparent: true, opacity: 0.55 });
+const lineMat = new THREE.LineBasicMaterial({ color: 0x4fd7ff, transparent: true, opacity: 0.55 });
 const dotGeo = new THREE.SphereGeometry(0.035, 12, 8);
-const dotMat = new THREE.MeshBasicMaterial({ color: 0x0751fb, transparent: true });
+const dotMat = new THREE.MeshBasicMaterial({ color: 0x4fd7ff, transparent: true });
 const links = sources.map(() => {
   const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
   const line = new THREE.Line(geo, lineMat); line.visible = false; rig.add(line);
@@ -545,20 +546,23 @@ const onScreen = () => { const r = sec.getBoundingClientRect(); return r.bottom 
 
 // ---------- Labels (HTML, placed every frame beside each sheet) ----------
 const labels = document.createElement('div'); labels.className = 'xp-labels'; labels.setAttribute('aria-hidden', 'true'); stick.appendChild(labels);
+sources.forEach((src) => labels.appendChild(src.obj.userData.nameEl));
 const SVG = 'http://www.w3.org/2000/svg';
 const leaders = document.createElementNS(SVG, 'svg'); leaders.setAttribute('class', 'xp-leaders'); labels.appendChild(leaders);
+const eyebrowSpan = sec.querySelector('.eng-eyebrow span'); const eyebrowEm = sec.querySelector('.eng-eyebrow em');
 const hintEl = document.createElement('div'); hintEl.className = 'xp-hint'; hintEl.textContent = 'Drag to turn'; labels.appendChild(hintEl); let dragged = false;
 // The callouts, per screen: where on the screenshot each points (fractions of its width and height),
 // its name and, for the smaller ones, one sentence. Placed to the right of the phone every frame.
 const CALLOUTS = {
   0: [{ ax: 0.985, ay: 0.17, name: 'Fixtures', text: 'Team against team, a match a week, a table to climb.' },
-      { ax: 0.985, ay: 0.281, name: 'Matchday', text: 'Six matches on one day. Every step a fan takes counts for their team.' },
+      { ax: 0.985, ay: 0.352, name: 'Matchday', text: 'Six matches on one day. Every step a fan takes counts for their team.' },
       { ax: 0.93, ay: 0.536, name: 'Live score', text: 'The score moves while fans move: kilometres become goals.' }],
   1: [{ ax: 0.985, ay: 0.275, name: 'Levels', text: 'Everyone competes in their own level, from Bronze to Platinum.' },
+      { ax: 0.96, ay: 0.368, name: 'Three boards', text: 'Solo, with your supporters\u2019 club, or for your country.' },
       { ax: 0.935, ay: 0.62, name: 'Daily ranking', text: 'Ranked by steps as they move, with a fresh board every morning.' }],
   2: [{ ax: 0.985, ay: 0.275, name: 'Partners', text: 'The club\u2019s sponsors and local shops, each with rewards of its own.' },
       { ax: 0.985, ay: 0.51, name: 'Priced in steps', text: 'Five thousand steps for a cheesecake, ten thousand for a latte.' },
-      { ax: 0.985, ay: 0.72, name: 'Funded by partners', text: 'Partners pay for the prizes and meet fans at the moment they earn them.' }],
+      { ax: 0.985, ay: 0.72, name: 'Free for the club', text: 'Partners pay for the prizes and meet fans at the moment they earn them.' }],
 };
 const callouts = []; // { k, c, el, l, dot }
 Object.entries(CALLOUTS).forEach(([k, list]) => list.forEach((c) => {
@@ -575,7 +579,7 @@ function resize() {
   // The scene is centred in the space to the right of the words; on a phone, below them.
   const c = copy.getBoundingClientRect(); stacked = W < 700;
   ringK = stacked ? 0.72 : 1; ringKy = stacked ? 1.08 : 1; srcK = stacked ? 0.5 : 1;
-  if (stacked !== wasStacked) { wasStacked = stacked; sources.forEach((src) => src.redraw && src.redraw(!stacked)); } // names only where there is room
+  if (wasStacked === null) { wasStacked = true; sources.forEach((src) => src.redraw && src.redraw(false)); } // the names are HTML, not in the badge
   shiftX = stacked ? 0 : (c.right - f.left) / 2;
   shiftY = stacked ? (c.bottom - f.top) / 2 - 60 : 0; // on a phone, a little higher than centred below the words, so the base and the hint clear the fold
   camera.setViewOffset(W, H, -shiftX, -shiftY, W, H); camera.updateProjectionMatrix();
@@ -647,6 +651,10 @@ function paint(t, now) {
   const focus = boot > 0.9 && dock < 0.01 && piecesUp ? ORDER[shown] : -1; // the callouts stay on while the phone is turned by hand
   const fb = focus >= 0 ? 1 : 0;
 
+  // The camera's distance fits the scene's height and, on a narrow screen, its width.
+  const needH = lerp(5.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 2.4 * srcK, dock);
+  const dist = Math.max(fitH(needH), fitW(needW)); const pxPerUnit = H / (2 * dist * TAN); // screen pixels per world unit at the phone
+
   // The sources orbit in, settle on the ring and dock.
   const stagger = 0.02; // every source and its line are home by the last step
   sources.forEach((s, i) => {
@@ -655,7 +663,8 @@ function paint(t, now) {
     const slot = (stacked ? -Math.PI / 2 : 0.2) + (i / N) * Math.PI * 2;
     const a = lerp(slot + 1.1 + s.seed * 0.8, slot, u); const r = lerp(1.3 + s.seed * 0.25, 1, u); // in from just outside the ring, never across the words
     ringPoint(a, r, s.obj.position); s.obj.position.y += (1 - u) * (0.6 - s.seed * 1.2);
-    s.obj.scale.set(s.base[0] * srcK, s.base[1] * srcK, s.base[2] * srcK); s.obj.lookAt(camera.position);
+    const minS = (48 * 256 / 180) / pxPerUnit; const sk = Math.max(srcK, minS / s.base[0]); // a badge is never smaller than 48px on screen
+    s.obj.scale.set(s.base[0] * sk, s.base[1] * sk, s.base[2] * sk); s.obj.lookAt(camera.position);
     setSource(s, Math.min(dock, win(u, 0.35, 0.8))); // fading in only once it is near the ring
     const L = links[i]; const d = win(t, 2.55 + i * stagger, 2.8 + i * stagger);
     if (d > 0.01) {
@@ -665,10 +674,7 @@ function paint(t, now) {
     } else { L.line.visible = false; L.d.visible = false; }
   });
 
-  // Camera: on the phone and its floor, out for the ring. The distance fits the scene's height and,
-  // on a narrow screen, its width.
-  const needH = lerp(5.1, 9.0, dock); const needW = lerp(3.0, 2 * RX * ringK + 2.4 * srcK, dock);
-  const dist = Math.max(fitH(needH), fitW(needW));
+  // Camera: on the phone and its floor, out for the ring (the distance was worked out before the sources).
   camera.position.set(0, 0.2 + dist * 0.1, dist); camera.lookAt(0, lerp(0.12, stacked ? 0.55 : -0.4, dock), 0); // the phone sits clear of the nav bar; on phones the ring sits clear of the button
   scene.updateMatrixWorld(); camera.updateMatrixWorld();
 
@@ -693,6 +699,16 @@ function paint(t, now) {
     C.dot.setAttribute('cx', ax); C.dot.setAttribute('cy', ay);
     els.forEach((el) => el.classList.add('is-on', 'is-focus'));
   });
+
+  // The sources' names, under each badge, at one type size on every screen.
+  sources.forEach((s2) => {
+    const el = s2.obj.userData.nameEl; const o = s2.mats[0].opacity;
+    if (!s2.obj.visible || o < 0.02) { el.style.opacity = '0'; return; }
+    const [bx, by] = project(s2.obj.position); const rpx = (s2.obj.scale.x * 180 / 256) * pxPerUnit / 2;
+    el.style.opacity = String(o); el.style.transform = `translate(${Math.round(bx)}px, ${Math.round(by + rpx + 6)}px) translate(-50%, 0)`;
+  });
+  // The eyebrow: Integration on the last step, where the nav says so too.
+  if (eyebrowSpan) { const last = step >= 3; if (eyebrowSpan.textContent !== (last ? 'Integration' : 'Solution')) { eyebrowSpan.textContent = last ? 'Integration' : 'Solution'; eyebrowEm.textContent = last ? 'Every device a fan carries' : 'In your club\u2019s colours'; } }
 
   // The hint: under the phone once it is built, until the first drag or the docking.
   if (!RM && !dragged && boot > 0.95 && dock < 0.01) {
