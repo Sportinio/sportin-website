@@ -19,7 +19,7 @@
 /* The map fills the whole block behind the words; a scrim from the left keeps them readable. The
    video drifts slowly, like a camera over the realm. deck.js leaves it out of the fitted slide,
    since it is positioned absolutely, so it stays full-bleed in the deck too. */
-#gameofrun.block { position: relative; overflow: clip; }
+#gameofrun.block { position: relative; }
 .gor__in { position: relative; z-index: 1; display: block; }
 .gor__text { max-width: 560px; }
 .gor__map { position: absolute; inset: 0; z-index: 0; margin: 0; aspect-ratio: auto; border-radius: 0; overflow: hidden; background: #05070d url('/proto/media/gor/map-poster.webp?v=1') center / cover; box-shadow: none; }

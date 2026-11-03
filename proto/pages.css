@@ -6,6 +6,16 @@
 :root[data-theme='dark'] { --pg-grey: #161e2e; --pg-blue: #111a34; --pg-pink: #241622; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) { --pg-grey: #161e2e; --pg-blue: #111a34; --pg-pink: #241622; } }
 
+/* The dark pages (04, 06, 07) sit on a grey backdrop in dark mode, so their rounded card reads as a
+   card and not as a hole in the page. The backdrop is painted behind the card, out to the page's
+   edges, by a layer under each section; the card itself stays dark. */
+:root[data-theme='dark'] { --pg-backdrop: #1a1f2c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) { --pg-backdrop: #1a1f2c; } }
+#engine, #live, #gameofrun { position: relative; z-index: 0; }
+#engine::before, #live::before, #gameofrun::before { content: ''; position: absolute; inset: calc(-1 * var(--inset)); z-index: -1; background: var(--pg-backdrop, transparent); pointer-events: none; }
+#live.block, #gameofrun.block { overflow: visible; } /* the card's corners are rounded by its layers, so the backdrop can show beyond it */
+#live > .mdx, .lob__bg, .gor__map { border-radius: inherit; }
+.lob__bg, .gor__map { overflow: hidden; }
 #problem.block { background: var(--pg-grey); }
 #engine > .engine__stick { background: var(--pg-blue); }
 #formats.block { background: var(--pg-pink); }
@@ -26,7 +36,7 @@
 /* 06 League of Brands, immersive: the night stadium fills the block behind the words, drifting
    slowly; a scrim from the left keeps the copy readable. The copy sits left, with the format's
    three steps; the live matchday card floats on the right as dark glass, its rows called live. */
-#live.block { position: relative; overflow: clip; background: #070b18; color: #fff; }
+#live.block { position: relative; background: #070b18; color: #fff; }
 .lob__bg { position: absolute; inset: 0; z-index: 0; margin: 0; overflow: hidden; background: #070b18; }
 .lob__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 35% 50%; transform-origin: 55% 60%; animation: lob-drift 30s ease-in-out infinite alternate; } /* mirrored: the lit stadium and the arcs on the right, the dark sky under the words */
 @keyframes lob-drift { from { transform: scaleX(-1) scale(1.04) translate(0, 0); } to { transform: scaleX(-1) scale(1.12) translate(1.4%, -1%); } }
