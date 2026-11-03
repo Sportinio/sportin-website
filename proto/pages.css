@@ -38,8 +38,8 @@
    three steps; the live matchday card floats on the right as dark glass, its rows called live. */
 #live.block { position: relative; background: #070b18; color: #fff; }
 .lob__bg { position: absolute; inset: 0; z-index: 0; margin: 0; overflow: hidden; background: #070b18; }
-.lob__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 35% 50%; transform-origin: 55% 60%; animation: lob-drift 30s ease-in-out infinite alternate; } /* mirrored: the lit stadium and the arcs on the right, the dark sky under the words */
-@keyframes lob-drift { from { transform: scaleX(-1) scale(1.04) translate(0, 0); } to { transform: scaleX(-1) scale(1.12) translate(1.4%, -1%); } }
+.lob__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 35% 50%; transform-origin: 50% 50%; animation: lob-drift 30s ease-in-out infinite alternate; } /* mirrored: the lit stadium and the arcs on the right, the dark sky under the words */
+@keyframes lob-drift { from { transform: scaleX(-1) scale(1.06) translate(0, 0); } to { transform: scaleX(-1) scale(1.14) translate(1.2%, -0.8%); } } /* flipped about the centre, so the image always covers the block */
 .lob__bg::after { content: ''; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(90deg, rgba(7, 11, 24, 0.92) 0%, rgba(7, 11, 24, 0.78) 30%, rgba(7, 11, 24, 0.18) 55%, rgba(7, 11, 24, 0) 100%),
               linear-gradient(180deg, rgba(7, 11, 24, 0.45) 0%, rgba(7, 11, 24, 0) 24%, rgba(7, 11, 24, 0) 76%, rgba(7, 11, 24, 0.45) 100%); }
@@ -85,5 +85,5 @@
   #live .mdx__t b { font-size: 13px; }
   #live .mdx__xi { padding-left: 10px; }
 }
-@media (prefers-reduced-motion: reduce) { .lob__bg img { animation: none; transform: scaleX(-1) scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .lob__bg img { animation: none; transform: scaleX(-1) scale(1.06); } }
 }
