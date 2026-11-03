@@ -16,10 +16,26 @@
 .gor__steps b { font-family: var(--display); font-weight: 800; font-size: 18px; letter-spacing: 0.04em; text-transform: uppercase; color: #e3b860; }
 .gor__steps span { font-size: 15px; color: rgba(255, 255, 255, 0.8); }
 
-.gor__map { position: relative; margin: 0; aspect-ratio: 1804 / 1148; border-radius: 24px; overflow: hidden; background: #05070d url('/proto/media/gor/map-poster.webp?v=1') center / cover; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
-.gor__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* The map fills the whole block behind the words; a scrim from the left keeps them readable. The
+   video drifts slowly, like a camera over the realm. deck.js leaves it out of the fitted slide,
+   since it is positioned absolutely, so it stays full-bleed in the deck too. */
+#gameofrun.block { position: relative; overflow: clip; }
+.gor__in { position: relative; z-index: 1; display: block; }
+.gor__text { max-width: 560px; }
+.gor__map { position: absolute; inset: 0; z-index: 0; margin: 0; aspect-ratio: auto; border-radius: 0; overflow: hidden; background: #05070d url('/proto/media/gor/map-poster.webp?v=1') center / cover; box-shadow: none; }
+.gor__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 55% 50%; animation: gor-drift 26s ease-in-out infinite alternate; }
+@keyframes gor-drift { from { transform: scale(1.03) translate(0, 0); } to { transform: scale(1.12) translate(-1.6%, 1.2%); } }
+.gor__map::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(10, 13, 22, 0.94) 0%, rgba(10, 13, 22, 0.84) 30%, rgba(10, 13, 22, 0.35) 58%, rgba(10, 13, 22, 0.08) 100%),
+              linear-gradient(180deg, rgba(10, 13, 22, 0.55) 0%, rgba(10, 13, 22, 0) 28%, rgba(10, 13, 22, 0) 70%, rgba(10, 13, 22, 0.55) 100%); }
+/* Clubs choose the map: real streets, or a realm of the club's own. */
+.gor__k { margin: 26px 0 10px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #e3b860; }
+.gor__maps { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.gor__maps li { padding: 14px 16px; border-radius: 14px; background: rgba(8, 10, 18, 0.55); box-shadow: inset 0 0 0 1px rgba(227, 184, 96, 0.22); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.gor__maps b { display: block; margin-bottom: 4px; font-family: var(--display); font-weight: 800; font-size: 15px; letter-spacing: 0.02em; color: #fff; }
+.gor__maps span { font-size: 13.5px; line-height: 1.45; color: rgba(255, 255, 255, 0.78); }
 /* The territory table: four teams, re-ranked as they claim. */
-.gor__board { position: absolute; top: 16px; right: 16px; width: min(270px, 46%); padding: 14px 14px 8px; border-radius: 16px; background: rgba(8, 10, 18, 0.82); box-shadow: inset 0 0 0 1px rgba(227, 184, 96, 0.28); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.gor__board { position: absolute; top: clamp(84px, 14vh, 128px); right: clamp(20px, 3vw, 44px); width: min(270px, 46%); z-index: 1; padding: 14px 14px 8px; border-radius: 16px; background: rgba(8, 10, 18, 0.82); box-shadow: inset 0 0 0 1px rgba(227, 184, 96, 0.28); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .gor__bh { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 8px; }
 .gor__bh b { font-family: var(--display); font-weight: 800; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #e3b860; }
 .gor__bh span { font-family: var(--mono); font-size: 10px; color: rgba(255, 255, 255, 0.55); }
@@ -30,7 +46,7 @@
 .gor__teams span { font-family: var(--mono); font-size: 13px; color: #e3b860; font-variant-numeric: tabular-nums; }
 .gor__teams li.is-up span { color: #fff; }
 /* The latest claim, bottom left. */
-.gor__feed { position: absolute; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 10px; max-width: calc(100% - 32px); margin: 0; padding: 8px 14px 8px 8px; border-radius: 14px; background: rgba(8, 10, 18, 0.82); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: opacity 300ms ease, transform 300ms var(--ease); }
+.gor__feed { position: absolute; right: clamp(20px, 3vw, 44px); bottom: clamp(20px, 4vh, 40px); z-index: 1; display: flex; align-items: center; gap: 10px; max-width: calc(100% - 32px); margin: 0; padding: 8px 14px 8px 8px; border-radius: 14px; background: rgba(8, 10, 18, 0.82); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: opacity 300ms ease, transform 300ms var(--ease); }
 .gor__feed.is-swap { opacity: 0; transform: translateY(6px); }
 .gor__crest { width: 34px; height: 34px; object-fit: contain; }
 .gor__ev { font-size: 14px; color: rgba(255, 255, 255, 0.9); }
@@ -38,11 +54,12 @@
 
 @media (max-width: 900px) {
   .gor__in { grid-template-columns: 1fr; }
-  /* On a phone the map comes first, the table and the latest claim stack under it. */
-  .gor__map { display: grid; gap: 12px; aspect-ratio: auto; overflow: visible; border-radius: 0; background: none; box-shadow: none; }
-  .gor__video { position: relative; inset: auto; height: auto; aspect-ratio: 1804 / 1148; border-radius: 20px; background: #05070d; }
-  .gor__board, .gor__feed { position: static; width: auto; max-width: none; }
+  /* On a phone the map stays behind the words, darker; the table makes way, the latest claim stays at the foot. */
+  .gor__map::after { background: linear-gradient(180deg, rgba(10, 13, 22, 0.9) 0%, rgba(10, 13, 22, 0.78) 60%, rgba(10, 13, 22, 0.5) 100%); }
+  .gor__board, .gor__feed { display: none; } /* the words fill a phone's screen; the map plays behind them */
+  .gor__maps { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   .gor__teams li, .gor__feed { transition: none; }
+  .gor__video { animation: none; }
 }
