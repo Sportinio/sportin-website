@@ -73,8 +73,8 @@ html.eng3d-failed .eng-a .eng-cta { opacity: 1; pointer-events: auto; }
   .eng-verbs span, .xp-cap span, .eng-a .eng-cta, .xp-label, .xp-label span, .xp-leaders line, .xp-leaders circle { transition: none; translate: none; }
 }
 
-/* Phones: the words on top, the scene below them, the labels hidden (the words carry the step). */
-@media (max-width: 700px) {
+/* Phones and tablets held upright: the words on top, the scene below them, the labels hidden (the words carry the step). */
+@media (max-width: 1000px) {
   .engine__copy { left: var(--gutter); right: var(--gutter); top: calc(var(--nav-h) + 8px); bottom: auto; width: auto; align-items: flex-start; }
   #engine .eng-a .eng-eyebrow.feat__idx { margin-bottom: 10px; }
   .eng-verbs { font-size: clamp(26px, 7.4vw, 34px); }

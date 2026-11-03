@@ -577,7 +577,7 @@ function resize() {
   const f = stick.getBoundingClientRect(); W = Math.max(1, f.width); H = Math.max(1, f.height);
   renderer.setSize(W, H, false); camera.aspect = W / H; leaders.setAttribute('viewBox', `0 0 ${W} ${H}`);
   // The scene is centred in the space to the right of the words; on a phone, below them.
-  const c = copy.getBoundingClientRect(); stacked = W < 700;
+  const c = copy.getBoundingClientRect(); stacked = W < 1000; // phones and tablets held upright
   ringK = stacked ? 0.72 : 1; ringKy = stacked ? 1.08 : 1; srcK = stacked ? 0.5 : 1;
   if (wasStacked === null) { wasStacked = true; sources.forEach((src) => src.redraw && src.redraw(false)); } // the names are HTML, not in the badge
   shiftX = stacked ? 0 : (c.right - f.left) / 2;

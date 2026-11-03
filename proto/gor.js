@@ -8,7 +8,7 @@
   const video = root.querySelector('.gor__video'); const list = root.querySelector('.gor__teams');
   const feed = root.querySelector('.gor__feed'); const ev = feed.querySelector('.gor__ev'); const crest = feed.querySelector('.gor__crest');
   // [id, name, landmarks held]
-  const TEAMS = [['iron-wolves', 'Iron Wolves', 412], ['golden-stags', 'Golden Stags', 405], ['nightstride', 'Nightstride', 377], ['carpathian-ravens', 'Carpathian Ravens', 351]];
+  const TEAMS = [['iron-wolves', 'Iron Wolves', 412], ['golden-stags', 'Golden Stags', 410], ['nightstride', 'Nightstride', 377], ['carpathian-ravens', 'Carpathian Ravens', 351]];
   // [team, landmark, House]
   const CLAIMS = [
     ['golden-stags', 'the Black Church', 'brasov'], ['iron-wolves', 'the Council Tower', 'sibiu'],
@@ -33,7 +33,6 @@
     const c = CLAIMS[k % CLAIMS.length]; k++;
     const r = rows.find((x) => x.id === c[0]); r.v++; rows.forEach((x) => x.li.classList.toggle('is-up', x === r));
     show(c, true); place();
-    if (k % CLAIMS.length === 0) rows.forEach((x) => { x.v = x.v0; }); // a quiet reset each round keeps the numbers believable
     timer = setTimeout(tick, 2600);
   }
   function start() { if (on) return; on = true; if (video) video.play().catch(() => {}); if (!RM) timer = setTimeout(tick, 900); }
