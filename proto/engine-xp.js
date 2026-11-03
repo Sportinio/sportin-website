@@ -186,7 +186,7 @@ const LAYERS = {
     { x: 40, y: 1790, w: 840, h: 125, r: 62, z: 11, t: 'shape' },
   ],
 };
-const DEPTH = MM * 1.6; // world units per millimetre of relief
+const DEPTH = MM * 0.85; // world units per millimetre of relief: a discreet lift
 const reliefs = {}; // by sheet k: { group, items, lift, sockets }
 // Every piece's rectangle, radius, height and kind, from its spec (a circle is { cx, cy, r }).
 const rectOf = (L) => {
@@ -635,7 +635,7 @@ function paint(t, now) {
   u.progress.value = prog; u.build.value = bBuild; u.holo.value = bHolo; u.time.value = time; // a hologram while it boots, then the real screen
   frontBackMat.opacity = bHolo; frontBack.visible = bHolo > 0.02;
   // The pieces rise once the screen is built, sink before a swap and rise again after it.
-  const up = (1 - dock * 0.5) * (1 + 0.25 * Math.min(1, tilt / 0.85)); // a little further out as the phone tilts, up to about thirty degrees
+  const up = (1 - dock * 0.5) * (1 + 0.12 * Math.min(1, tilt / 0.85)); // a touch further out as the phone tilts, up to about thirty degrees
   const enter = RM ? 1 : boot * (1 - leave); // the split's progress, undone as the section leaves
   sheets.forEach((sh2) => {
     const on = ORDER[cur] === sh2.k ? 1 - sink : ORDER[next] === sh2.k && cur < 2 ? rise : 0;
