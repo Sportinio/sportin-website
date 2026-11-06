@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SportIn for gyms · Keep members moving between visits</title>
+  <meta name="description" content="Gyms see members for an hour a day and lose them in the rest of it. SportIn turns the hours outside the gym into leagues, challenges and rewards in your gym's colours." />
+  <link rel="canonical" href="https://sportin.io/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SportIn" />
+  <meta property="og:title" content="SportIn for gyms · The hour in your gym is the easy part" />
+  <meta property="og:description" content="SportIn turns the hours outside the gym into leagues, challenges and rewards in your gym's colours, so members keep coming back." />
+  <meta property="og:url" content="https://sportin.io/" />
+  <meta property="og:image" content="https://sportin.io/assets/gym/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,700..900&family=Instrument+Sans:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="/assets/gym/gym.css?v=1" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <div class="nav__in">
+      <a class="nav__logo" href="#top" aria-label="SportIn home">
+        <img src="/assets/site/logo/sportin-wordmark-black.svg" alt="SportIn" width="124" height="15" />
+      </a>
+      <nav class="nav__links" aria-label="Sections">
+        <a href="#day">How it works</a>
+        <a href="#app">The app</a>
+        <a href="#games">Games</a>
+        <a href="#owners">For owners</a>
+      </nav>
+      <a class="btn btn--primary btn--sm" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo</a>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="hero" id="top">
+      <div class="wrap hero__copy">
+        <h1 class="hero__title load">The hour in your gym is the easy part.</h1>
+        <p class="hero__lede load">Members drift away in the other hours of the day. SportIn turns those hours into leagues, challenges and rewards in your gym’s colours, so members keep coming back.</p>
+        <div class="hero__actions load">
+          <a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo</a>
+          <a class="btn btn--quiet" href="#day">See how it works</a>
+        </div>
+      </div>
+      <div class="hero__device load">
+        <div class="phone phone--hero" id="heroPhone">
+          <div class="phone__screen">
+            <div class="app">
+              <div class="app__bar"><span class="app__gym"><span class="app__crest">N</span>Northside Gym</span><span class="app__time">18:42</span></div>
+              <div class="app__head">
+                <p class="app__kicker">Spring league · week 3 of 8</p>
+                <p class="app__big">412 <span>pts</span></p>
+                <p class="app__sub">Your points this week · 2nd in 6am Crew</p>
+              </div>
+              <ol class="board">
+                <li><span class="board__pos">1</span><span class="av" style="--h:24">MK</span><span class="board__name">Maya K.<small>6am Crew</small></span><span class="board__pts">468</span></li>
+                <li class="is-me"><span class="board__pos">2</span><span class="av" style="--h:220">You</span><span class="board__name">You<small>6am Crew</small></span><span class="board__pts">412</span></li>
+                <li><span class="board__pos">3</span><span class="av" style="--h:150">DR</span><span class="board__name">Dan R.<small>Lunch Club</small></span><span class="board__pts">397</span></li>
+                <li><span class="board__pos">4</span><span class="av" style="--h:300">SL</span><span class="board__name">Sara L.<small>Spin Tue</small></span><span class="board__pts">355</span></li>
+                <li><span class="board__pos">5</span><span class="av" style="--h:80">TO</span><span class="board__name">Tom O.<small>Lunch Club</small></span><span class="board__pts">341</span></li>
+              </ol>
+              <div class="app__toast"><span class="dot dot--ember"></span>Evening run · 5.2 km<b>+52</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The day: the signature scroll story -->
+    <section class="day stage" id="day" aria-labelledby="day-title">
+      <div class="day__pin">
+        <div class="wrap day__in">
+          <h2 class="sr-only" id="day-title">How SportIn covers the hours outside the gym</h2>
+          <div class="day__lines" aria-live="off">
+            <p class="day__line" data-step="0">You know what your members do for <span class="nowrap">60 minutes</span> a day.</p>
+            <p class="day__line" data-step="1">The rest of the day is out of sight. That’s where they drift.</p>
+            <p class="day__line" data-step="2">SportIn covers the rest of the day.</p>
+          </div>
+
+          <div class="clock" aria-hidden="true">
+            <div class="clock__track">
+              <div class="clock__gym"><span>In your gym · 60 min</span></div>
+              <div class="clock__dark"><span>Out of reach</span></div>
+              <div class="clock__act" style="--a:8.33;--b:8.83"></div>
+              <div class="clock__act" style="--a:12.5;--b:13"></div>
+              <div class="clock__act" style="--a:18.5;--b:19.17"></div>
+              <div class="clock__act" style="--a:21;--b:21.5"></div>
+            </div>
+            <div class="clock__hours"><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span><span>24:00</span></div>
+          </div>
+
+          <div class="day__foot">
+            <ul class="feed" aria-label="A member's day outside the gym">
+              <li><time>08:20</time><span>Walk to work · 2,140 steps</span><b>+21</b></li>
+              <li><time>12:30</time><span>Lunch walk · 3,020 steps</span><b>+30</b></li>
+              <li><time>18:30</time><span>Evening run · 5.2 km</span><b>+52</b></li>
+              <li><time>21:00</time><span>Team goal hit · 10,000 steps</span><b>+40</b></li>
+            </ul>
+            <div class="tally">
+              <p class="tally__num"><span id="tally">143</span> pts</p>
+              <p class="tally__label">earned for Northside Gym today, outside the gym</p>
+              <p class="tally__rank">6am Crew moves up to <b>2nd</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The app -->
+    <section class="app-sec" id="app" aria-labelledby="app-title">
+      <div class="wrap">
+        <header class="sec-head">
+          <h2 class="h1" id="app-title">Your gym’s game, on every member’s phone.</h2>
+          <p class="lede">Members join with your gym’s code and play in your colours. You choose the rules and the rewards. SportIn runs the game.</p>
+        </header>
+
+        <div class="tour">
+          <div class="tour__device" aria-hidden="true">
+            <div class="phone">
+              <div class="phone__screen">
+                <!-- Screen: move -->
+                <div class="app screen is-on" data-screen="0">
+                  <div class="app__bar"><span class="app__gym"><span class="app__crest">N</span>Northside Gym</span><span class="app__time">21:04</span></div>
+                  <div class="app__head">
+                    <p class="app__kicker">Today</p>
+                    <p class="app__big">143 <span>pts</span></p>
+                    <p class="app__sub">From 4 activities</p>
+                  </div>
+                  <ul class="list">
+                    <li><span class="ic ic--ember">W</span><span>Walk to work<small>2,140 steps</small></span><b>+21</b></li>
+                    <li><span class="ic ic--ember">W</span><span>Lunch walk<small>3,020 steps</small></span><b>+30</b></li>
+                    <li><span class="ic ic--ember">R</span><span>Evening run<small>5.2 km · 28:40</small></span><b>+52</b></li>
+                    <li><span class="ic ic--blue">G</span><span>Gym session<small>Strength · 58 min</small></span><b>+60</b></li>
+                  </ul>
+                </div>
+                <!-- Screen: rank -->
+                <div class="app screen" data-screen="1">
+                  <div class="app__bar"><span class="app__gym"><span class="app__crest">N</span>Northside Gym</span><span class="app__time">21:05</span></div>
+                  <div class="tabs"><span>Members</span><span class="is-on">Classes</span><span>Time slots</span></div>
+                  <ol class="board board--teams">
+                    <li><span class="board__pos">1</span><span class="sw" style="--h:24"></span><span class="board__name">Lunch Club<small>38 members</small></span><span class="board__pts">9,812</span></li>
+                    <li class="is-me"><span class="board__pos">2</span><span class="sw" style="--h:220"></span><span class="board__name">6am Crew<small>41 members · yours</small></span><span class="board__pts">9,640</span></li>
+                    <li><span class="board__pos">3</span><span class="sw" style="--h:300"></span><span class="board__name">Spin Tue<small>24 members</small></span><span class="board__pts">7,205</span></li>
+                    <li><span class="board__pos">4</span><span class="sw" style="--h:150"></span><span class="board__name">Saturday HIIT<small>30 members</small></span><span class="board__pts">6,930</span></li>
+                    <li><span class="board__pos">5</span><span class="sw" style="--h:80"></span><span class="board__name">Mobility<small>17 members</small></span><span class="board__pts">4,118</span></li>
+                  </ol>
+                  <p class="app__note">172 points between you and 1st · 4 days left</p>
+                </div>
+                <!-- Screen: win -->
+                <div class="app screen" data-screen="2">
+                  <div class="app__bar"><span class="app__gym"><span class="app__crest">N</span>Northside Gym</span><span class="app__time">21:05</span></div>
+                  <div class="app__head">
+                    <p class="app__kicker">Rewards</p>
+                    <p class="app__big">1,240 <span>pts</span></p>
+                    <p class="app__sub">Available to spend</p>
+                  </div>
+                  <ul class="rewards">
+                    <li class="is-open"><span>Protein shake<small>From the gym bar</small></span><em>Unlocked</em></li>
+                    <li><span>Free PT session<small>1,500 pts</small></span><i style="--p:.83"></i></li>
+                    <li><span>20% off running shoes<small>Partner store · 2,000 pts</small></span><i style="--p:.62"></i></li>
+                    <li><span>One month free<small>Top 3 at season end</small></span><i style="--p:.4"></i></li>
+                  </ul>
+                </div>
+                <!-- Screen: belong -->
+                <div class="app screen" data-screen="3">
+                  <div class="app__bar"><span class="app__gym"><span class="app__crest">N</span>Northside Gym</span><span class="app__time">21:06</span></div>
+                  <div class="crew">
+                    <p class="app__kicker">6am Crew</p>
+                    <p class="crew__streak"><b>6</b> weeks in a row</p>
+                    <div class="weeks"><i></i><i></i><i></i><i></i><i></i><i></i><i class="is-now"></i><i class="is-next"></i></div>
+                  </div>
+                  <ul class="posts">
+                    <li><span class="av" style="--h:24">MK</span><p><b>Maya</b> finished a 10 km run<small>Cheered by 12</small></p></li>
+                    <li><span class="av" style="--h:150">DR</span><p><b>Dan</b> is on a 21-day streak<small>Cheered by 8</small></p></li>
+                    <li><span class="av" style="--h:300">SL</span><p><b>Sara</b> needs 2,000 steps for the team goal<small>Tonight</small></p></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ol class="tour__steps">
+            <li class="step" data-step="0">
+              <h3 class="h2">Every move counts.</h3>
+              <p>Walks, runs, rides and gym sessions all earn points, synced from the phone and the watch members already use. The commute and the lunch walk now count for your gym.</p>
+            </li>
+            <li class="step" data-step="1">
+              <h3 class="h2">Every member, on a board.</h3>
+              <p>Weekly leagues by member, by class and by time slot. The 6am crew against the lunch crowd, with something to play for every day of the week.</p>
+            </li>
+            <li class="step" data-step="2">
+              <h3 class="h2">Rewards they move for.</h3>
+              <p>A free PT session, a shake from the bar, a month on the house. You and your partners set the rewards; members unlock them by staying active.</p>
+            </li>
+            <li class="step" data-step="3">
+              <h3 class="h2">A crew to show up for.</h3>
+              <p>Teams, streaks and a feed of each other’s wins. Skipping a session means letting the crew down, which is the best reason there is to come in.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Games -->
+    <section class="games stage" id="games" aria-labelledby="games-title">
+      <div class="games__pin">
+        <div class="wrap">
+          <header class="sec-head">
+            <h2 class="h1" id="games-title">Games your members already understand.</h2>
+            <p class="lede">Pick one to start. Run a new one each season.</p>
+          </header>
+        </div>
+        <div class="games__viewport">
+          <ul class="games__track">
+            <li class="game">
+              <div class="game__viz viz-vs" aria-hidden="true">
+                <div><span>6am Crew</span><i style="--w:.86"></i><b>9,640</b></div>
+                <div><span>Spin Tue</span><i style="--w:.64"></i><b>7,205</b></div>
+              </div>
+              <h3 class="h3">Class against class</h3>
+              <p>Your 6am HIIT against Tuesday spin. Every member’s steps and sessions count for their class.</p>
+            </li>
+            <li class="game">
+              <div class="game__viz viz-goal" aria-hidden="true">
+                <p><b>7,412</b> of 10,000 km</p>
+                <i style="--w:.74"></i>
+                <span>9 days left</span>
+              </div>
+              <h3 class="h3">The monthly challenge</h3>
+              <p>10,000 km in March, or 30 sessions in 30 days. One goal, the whole gym working on it.</p>
+            </li>
+            <li class="game">
+              <div class="game__viz viz-streak" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i class="is-now"></i><i class="is-next"></i>
+              </div>
+              <h3 class="h3">Streaks</h3>
+              <p>Three active days a week, week after week. Easy to start, painful to break.</p>
+            </li>
+            <li class="game">
+              <div class="game__viz viz-sites" aria-hidden="true">
+                <p><span>1</span>Northside<b>48.2k</b></p>
+                <p><span>2</span>Riverside<b>45.9k</b></p>
+                <p><span>3</span>Old Town<b>39.1k</b></p>
+              </div>
+              <h3 class="h3">Location against location</h3>
+              <p>For chains and partner gyms: every site races the others on one board.</p>
+            </li>
+            <li class="game">
+              <div class="game__viz viz-friends" aria-hidden="true">
+                <span class="av" style="--h:220">You</span><span class="plus">+</span><span class="av av--new" style="--h:24">JP</span><b>+100 pts each</b>
+              </div>
+              <h3 class="h3">Bring a friend</h3>
+              <p>Members earn points when a friend joins and trains. Your best members become your sales team.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- For owners -->
+    <section class="owners" id="owners" aria-labelledby="owners-title">
+      <div class="wrap">
+        <header class="sec-head">
+          <h2 class="h1" id="owners-title">See what happens outside your walls.</h2>
+          <p class="lede">Your dashboard shows who is active between visits, who is drifting, and which games bring people back, so you can act before a member cancels.</p>
+        </header>
+
+        <figure class="dash">
+          <div class="dash__top">
+            <span class="dash__gym"><span class="app__crest">N</span>Northside Gym · this week</span>
+            <span class="dash__note">Sample figures</span>
+          </div>
+          <div class="dash__grid">
+            <div class="dash__stat"><p>Active outside the gym</p><b>412</b><small>of 680 members</small></div>
+            <div class="dash__stat"><p>Gym visits per active member</p><b>2.8</b><small>per week</small></div>
+            <div class="dash__stat"><p>Friends invited</p><b>23</b><small>9 joined</small></div>
+            <div class="dash__chart">
+              <p>Members active each week</p>
+              <div class="bars"><i style="--v:.42"></i><i style="--v:.47"></i><i style="--v:.51"></i><i style="--v:.55"></i><i style="--v:.58"></i><i style="--v:.57"></i><i style="--v:.63"></i><i style="--v:.66"></i><i style="--v:.71"></i><i style="--v:.74"></i><i style="--v:.78"></i><i class="is-now" style="--v:.81"></i></div>
+              <div class="bars__axis"><span>Week 1</span><span>Week 12</span></div>
+            </div>
+            <div class="dash__risk">
+              <p>Drifting · no visit in 14 days <b>37</b></p>
+              <ul>
+                <li><span class="av" style="--h:40">JB</span>James B.<small>Last visit 19 days ago</small></li>
+                <li><span class="av" style="--h:190">AN</span>Ana N.<small>Last visit 16 days ago</small></li>
+                <li><span class="av" style="--h:330">LC</span>Leo C.<small>Last visit 15 days ago</small></li>
+              </ul>
+              <span class="dash__btn">Send them a challenge</span>
+            </div>
+          </div>
+        </figure>
+
+        <ul class="outcomes">
+          <li>
+            <h3 class="h3">Keep members longer</h3>
+            <p>Members who play have a reason to come back every week, and you see the ones slipping before they cancel.</p>
+          </li>
+          <li>
+            <h3 class="h3">Grow through your members</h3>
+            <p>Invites and team challenges turn active members into the people who bring their friends.</p>
+          </li>
+          <li>
+            <h3 class="h3">Open new revenue</h3>
+            <p>Partner brands fund rewards and sponsor seasons. Premium challenges can be sold as add-ons.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Pilot -->
+    <section class="pilot" id="pilot" aria-labelledby="pilot-title">
+      <div class="wrap">
+        <header class="sec-head">
+          <h2 class="h1" id="pilot-title">Start with an 8-week pilot.</h2>
+          <p class="lede">One gym, one season. We set it up, you invite your members, and we measure what changed.</p>
+        </header>
+        <ol class="plan">
+          <li><span class="plan__when">Week 1</span><h3 class="h3">Launch</h3><p>We build your league in your colours and help you announce it at the front desk, in classes and by email.</p></li>
+          <li><span class="plan__when">Weeks 2–7</span><h3 class="h3">Season</h3><p>Members play. You get a short report every week and can add challenges any time.</p></li>
+          <li><span class="plan__when">Week 8</span><h3 class="h3">Results</h3><p>Active members, gym visits, invites and members brought back, compared with the weeks before.</p></li>
+        </ol>
+        <div class="pilot__actions">
+          <a class="btn btn--primary" href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo</a>
+          <a class="btn btn--secondary" href="mailto:hello@sportin.io?subject=Gym%20pilot">Email us</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot__top">
+        <div>
+          <img src="/assets/site/logo/sportin-wordmark-black.svg" alt="SportIn" width="124" height="15" />
+          <p class="foot__tag">Gamification for gyms.</p>
+        </div>
+        <div class="foot__cols">
+          <div>
+            <p class="foot__h">Product</p>
+            <ul><li><a href="#day">How it works</a></li><li><a href="#app">The app</a></li><li><a href="#games">Games</a></li><li><a href="#owners">For owners</a></li></ul>
+          </div>
+          <div>
+            <p class="foot__h">Talk to us</p>
+            <ul><li><a href="https://calendly.com/sportin" target="_blank" rel="noopener">Book a demo</a></li><li><a href="mailto:hello@sportin.io">hello@sportin.io</a></li><li><a href="mailto:press@sportin.io">Press</a></li></ul>
+          </div>
+          <div>
+            <p class="foot__h">Members</p>
+            <ul><li><a href="https://apps.apple.com/us/app/sportin-rise-to-the-challenge/id6762152651" target="_blank" rel="noopener">Get the app<span class="sr-only"> (opens the App Store)</span></a></li></ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot__base">
+        <span>© <span id="year">2026</span> SportIn.io SRL, Romania</span>
+        <span><a href="/privacy-policy">Privacy</a><a href="/terms">Terms</a><a href="/trophies-terms">Rewards terms</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="/assets/gym/gym.js?v=1" defer></script>
+</body>
+</html>
