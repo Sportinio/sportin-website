@@ -1,0 +1,806 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style></head><body><title>SportIn Homepage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: sticky stage, first person from the start. Her eyes open in her own view as she runs; each scroll adds one flat HUD widget: her live leaderboard, then her next reward. The League of Brands moves to a later runner's view. */
+:root{
+  --ink:#04060D; --surface:#0B1020; --hud:rgba(6,9,18,.88); --hair:rgba(242,244,248,.18); --text:#F2F4F8; --soft:#C9D0DE; --muted:#8A93A6;
+  --blue:#3D74FF; --btn:#2E62EE; --white:#FFFFFF;
+  --sans:'Instrument Sans','Helvetica Neue',Arial,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.23,1,.32,1);
+  --gl:max(48px, env(safe-area-inset-left, 0px)); --gr:max(48px, env(safe-area-inset-right, 0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--sans);font-size:16px}
+a{color:inherit}
+a:focus-visible{outline:2px solid #8FB0FF;outline-offset:3px}
+.story{position:relative;height:1500vh}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--ink)}
+#bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(4,6,13,.72) 0%,rgba(4,6,13,.2) 50%,rgba(4,6,13,0) 100%),linear-gradient(0deg,rgba(4,6,13,.55) 0%,rgba(4,6,13,0) 40%),linear-gradient(180deg,rgba(4,6,13,.6) 0%,rgba(4,6,13,0) 16%)}
+#ar{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.nav{position:absolute;top:0;left:0;right:0;z-index:9;display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:26px;padding-left:var(--gl);padding-right:var(--gr)}
+.nav img{height:22px;width:auto;display:block}
+.links{display:flex;gap:32px;font-size:15px;font-weight:500}
+.links a{text-decoration:none;color:var(--soft)}.links a:hover{color:var(--white)}
+.right{display:flex;align-items:center;gap:12px}
+.snd{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:0 16px;border-radius:999px;border:1px solid rgba(242,244,248,.35);background:rgba(4,6,13,.35);color:var(--soft);font:500 13px var(--mono);letter-spacing:.06em;cursor:pointer}
+.snd:hover{color:var(--white);border-color:rgba(242,244,248,.6)}.snd:focus-visible{outline:2px solid #8FB0FF;outline-offset:3px}
+.snd .ic{position:relative;width:14px;height:12px}
+.snd .ic i{position:absolute;left:0;top:3px;width:5px;height:6px;background:currentColor}
+.snd .ic b{position:absolute;left:3px;top:0;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:7px solid currentColor}
+.snd[aria-pressed="true"]{color:var(--white);border-color:var(--blue)}
+.demo{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:999px;background:var(--btn);color:var(--white);text-decoration:none;font-weight:600;font-size:15px;white-space:nowrap}
+
+/* ---- HUD frame: chamfer, corner brackets, top hairline. Flat, no glow. ---- */
+.fr{position:relative;background:var(--hud);clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.fr::before{content:"";position:absolute;inset:0;pointer-events:none;background:
+  linear-gradient(#F2F4F8,#F2F4F8) 0 0/10px 1px no-repeat,linear-gradient(#F2F4F8,#F2F4F8) 0 0/1px 10px no-repeat,
+  linear-gradient(#F2F4F8,#F2F4F8) 100% 100%/10px 1px no-repeat,linear-gradient(#F2F4F8,#F2F4F8) 100% 100%/1px 10px no-repeat,
+  linear-gradient(var(--hair),var(--hair)) 0 0/100% 1px no-repeat}
+.lab{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.num{font:600 12px/1 var(--mono);letter-spacing:.04em;font-variant-numeric:tabular-nums;color:#F2F4F8}
+.rd{font:500 12px/1 var(--mono);letter-spacing:.12em;color:var(--soft)}
+
+/* ---- runner tags ---- */
+.tag{position:absolute;left:0;top:0;will-change:transform,opacity}
+.tag .wrap{position:absolute;left:0;bottom:22px;transform:translateX(-50%) translateY(10px);opacity:0;transition:opacity 140ms ease-out,transform 140ms ease-out}
+.tag.on .wrap{transform:translateX(-50%);opacity:1;transition:opacity 220ms var(--ease) var(--dl,0ms),transform 220ms var(--ease) var(--dl,0ms)}
+.tag .box{display:flex;align-items:center;gap:10px;height:34px;padding:0 13px 0 10px;white-space:nowrap}
+.tag .lab{font-size:12px}.tag .num{font-size:14px}.tag .rd{font-size:10px}
+.tag .bar{width:2px;height:18px;background:var(--blue)}
+.tag .lk{position:absolute;left:0;bottom:6px;width:1px;height:16px;background:#F2F4F8;transform-origin:bottom;transform:scaleY(0);transition:transform 140ms ease-out}
+.tag.on .lk{transform:scaleY(1);transition:transform 220ms var(--ease) var(--dl,0ms)}
+.tag .an{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border:1px solid #F2F4F8;border-radius:50%;opacity:0;transform:scale(.4);transition:opacity 120ms ease-out,transform 120ms ease-out}
+.tag.on .an{opacity:1;transform:none}
+.tag.off .bar{background:#5A6275}.tag.off .num{color:var(--muted)}
+.tag.ping .an::after{content:"";position:absolute;inset:-1px;border:1px solid #F2F4F8;border-radius:50%;animation:ping 2.4s var(--ease) infinite}
+@keyframes ping{from{transform:scale(1);opacity:.6}to{transform:scale(2.2);opacity:0}}
+
+
+/* ---- callouts pinned to the runners ahead: ring, leader line, elbow, card ---- */
+.pin{position:absolute;left:0;top:0;will-change:transform,opacity;--h:64px}
+.pin .an{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border:1px solid #F2F4F8;border-radius:50%;transform:scale(.3);opacity:0;transition:transform 140ms ease-out,opacity 140ms ease-out}
+.pin .an::after{content:"";position:absolute;left:4px;top:4px;width:4px;height:4px;background:#F2F4F8;border-radius:50%}
+.pin.on .an{transform:none;opacity:1;transition:transform 280ms var(--ease),opacity 200ms ease-out}
+.pin.on .an::before{content:"";position:absolute;inset:-1px;border:1px solid #F2F4F8;border-radius:50%;animation:ping 2.4s var(--ease) 600ms infinite}
+.pin .ld{position:absolute;left:0;bottom:7px;width:1px;height:var(--h);transform-origin:bottom;transform:scaleY(0);background:repeating-linear-gradient(to top,#F2F4F8 0 2px,rgba(242,244,248,.35) 2px 6px);transition:transform 120ms ease-out}
+.pin.on .ld{transform:scaleY(1);transition:transform 300ms var(--ease) 120ms}
+.pin .el{position:absolute;bottom:calc(var(--h) + 7px);height:1px;width:26px;background:#F2F4F8;transform:scaleX(0);transition:transform 100ms ease-out}
+.pin.on .el{transform:scaleX(1);transition:transform 180ms var(--ease) 380ms}
+.pin[data-side="r"] .el{left:0;transform-origin:left}.pin[data-side="l"] .el{right:0;transform-origin:right}
+.pin .cw{position:absolute;bottom:calc(var(--h) + 7px);transform:translateY(50%);clip-path:inset(0 100% 0 0);transition:clip-path 140ms ease-in}
+.pin[data-side="r"] .cw{left:26px}.pin[data-side="l"] .cw{right:26px;clip-path:inset(0 0 0 100%)}
+.pin.on .cw{clip-path:inset(0 0 0 0);transition:clip-path 300ms var(--ease) 480ms}
+.pin .card{display:flex;align-items:center;gap:12px;padding:11px 14px 11px 12px;white-space:nowrap}
+.pin .bar{width:2px;height:34px;background:var(--blue)}
+.pin .who{font:600 17px/1 var(--sans);color:#F2F4F8}
+.pin .sub{margin-top:7px;font-size:10px}
+.pin .rk{font:600 20px/1 var(--mono);color:#F2F4F8;padding-left:12px;border-left:1px solid rgba(242,244,248,.18);font-variant-numeric:tabular-nums}
+.pin .chip{display:block;margin-top:7px;font:500 9px/1 var(--mono);letter-spacing:.14em;color:#FF8A7A;max-height:0;opacity:0;overflow:hidden;transition:opacity 160ms ease-out,max-height 160ms ease-out}
+.pin .chip.on{opacity:1;max-height:12px}
+
+
+/* ---- level up: tier badge and message ---- */
+.lvl{top:112px;left:var(--gl);width:320px;--dl:0ms;transform:perspective(1100px) rotateY(9deg);transform-origin:left center}
+.lvl .card{display:flex;align-items:center;gap:14px;padding:12px 18px 12px 12px}
+.lvl .bd{position:relative;flex:none;width:60px;height:60px}
+.lvl .bd img{width:60px;height:60px;display:block;transform:scale(.5) rotate(-12deg);opacity:0;transition:transform 160ms ease-in,opacity 160ms ease-in}
+.lvl.on .bd img{transform:none;opacity:1;transition:transform 520ms cubic-bezier(.34,1.56,.64,1) 200ms,opacity 200ms ease-out 200ms}
+.lvl .bd::after{content:"";position:absolute;inset:4px;border:1px solid #C9A13A;border-radius:50%;opacity:0}
+.lvl.on .bd::after{animation:burst2 700ms ease-out 420ms 1}
+@keyframes burst2{from{opacity:.9;transform:scale(.8)}to{opacity:0;transform:scale(1.7)}}
+.lvl .msg{font:600 19px/1.15 var(--sans);color:#F2F4F8}
+.lvl .lab{color:#C9A13A}
+.lvl .rd{display:block;margin-top:7px}
+/* a Target medal, shown the same way as the level card: Maria's under her board, Tom's top right, Lena's under the commentary, Sam's top left */
+.med .bd img{border-radius:50%}.med .msg{margin-top:7px}
+.med.pr{left:auto;right:var(--gr);transform:none}.med.pr2{top:284px}.med.pr3{top:470px}
+
+
+/* ---- boot reveal (JS-driven): a line draws from the centre, the card opens around it, rows fade in, text decodes ---- */
+.hud .cw,.pin .cw{clip-path:none !important;transition:none !important;visibility:hidden}
+.hud.vis .cw,.pin.vis .cw{visibility:visible}
+.fx{position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-.5px;background:#F2F4F8;pointer-events:none;opacity:0;z-index:4}
+
+
+/* ---- Tom's view: his run, big and bracketed like the coffee goal ---- */
+.run{right:var(--gr);bottom:64px;text-align:center;opacity:0;transition:opacity 260ms var(--ease)}
+.run.on{opacity:1}
+.run .lab{font-size:12px}.run .rd{display:block;margin-top:8px}
+.run .nb{position:relative;display:inline-block;padding:6px 18px 0;margin-top:6px}
+.run .nb::before,.run .nb::after{content:"";position:absolute;top:8px;width:7px;height:56px;border:1px solid #F2F4F8}
+.run .nb::before{left:0;border-right:0}.run .nb::after{right:0;border-left:0}
+.run .big{font:600 68px/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+/* ---- Lena's view: League of Brands and live commentary ---- */
+.cm .hd{display:flex;justify-content:space-between;align-items:center}
+.cm{top:112px;right:var(--gr);width:380px}
+.cm .cms{margin-top:12px;display:flex;flex-direction:column;gap:10px;min-height:100px}
+.cm .cl{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:baseline;font:500 16px/1.3 var(--sans);color:var(--soft)}
+.cm .cl:first-child{color:#F2F4F8}
+.cm .cl.typing .ct::after{content:"";display:inline-block;width:7px;height:14px;background:#F2F4F8;margin-left:3px;vertical-align:-2px;animation:blink 1s steps(2,jump-none) infinite}
+
+/* ---- HUD in her view ---- */
+.hud{position:absolute;z-index:6;pointer-events:none}
+.hud .cw{clip-path:inset(0 100% 0 0);transition:clip-path 160ms ease-in}
+.hud.on .cw{clip-path:inset(0 0 0 0);transition:clip-path 260ms var(--ease) var(--dl,0ms)}
+.hud .v{margin-top:7px;font:600 15px var(--sans)}
+.hud .gb{margin-top:10px;height:2px;background:rgba(242,244,248,.18);position:relative}
+.hud .gb i{position:absolute;inset:0;background:var(--blue);transform-origin:left;transform:scaleX(0)}
+.hud .ticks{height:4px;margin-top:3px;background:repeating-linear-gradient(90deg,rgba(242,244,248,.45) 0 1px,transparent 1px 10%)}
+.hud .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;font:600 14px var(--sans)}
+.hud .row .num{font-size:20px}
+.steps{right:var(--gr);bottom:28px;text-align:center;opacity:0;transition:opacity 260ms var(--ease)}
+.steps.on{opacity:1}
+.steps .nb{position:relative;display:inline-block;padding:6px 18px 0}
+.steps .nb::before,.steps .nb::after{content:"";position:absolute;top:8px;width:7px;height:56px;border:1px solid #F2F4F8}
+.steps .nb::before{left:0;border-right:0}.steps .nb::after{right:0;border-left:0}
+.steps .big{font:600 68px/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em;display:inline-block;transition:transform 80ms ease-out}
+.steps .big.tk{transform:translateY(-1px)}
+.steps.won .big{animation:pop 420ms var(--ease)}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.steps .lab{font-size:12px}
+.steps .g{width:300px;height:2px;margin:12px auto 0;background:rgba(242,244,248,.2);position:relative}
+.steps .g i{position:absolute;inset:0;background:#F2F4F8;transform-origin:left;transform:scaleX(0)}
+.steps.won .g i{background:var(--blue)}
+.steps .ticks{width:300px;margin:3px auto 0;height:4px;background:repeating-linear-gradient(90deg,rgba(242,244,248,.45) 0 1px,transparent 1px 10%)}
+
+/* ---- live leaderboard in her view: rows re-sort as the values change ---- */
+.lb{top:112px;right:var(--gr);width:360px;--dl:0ms}
+.hud .card{padding:14px 16px}
+.hud .lab{font-size:12px}
+.lb .hd{display:flex;justify-content:space-between;align-items:center}
+.live{display:flex;align-items:center;gap:6px}
+.live i{width:6px;height:6px;background:#F2F4F8;animation:blink 1.6s steps(2,jump-none) infinite}
+@keyframes blink{50%{opacity:.25}}
+.lb .ls{position:relative;margin-top:10px}
+.lb .r{position:absolute;left:0;right:0;top:0;height:38px;display:grid;grid-template-columns:32px 1fr auto 16px;align-items:center;gap:10px;padding:0 10px 0 8px;font:500 17px var(--sans);color:var(--soft);border-top:1px solid rgba(242,244,248,.08)}
+.lb .r .k{font:500 12px/1 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.lb .r .num{font-size:15px;color:var(--soft)}
+.lb .r.me{background:rgba(61,116,255,.22);color:#F2F4F8;box-shadow:inset 2px 0 0 var(--blue);border-top-color:transparent;z-index:2}
+.lb .r.me .k,.lb .r.me .num{color:#F2F4F8}
+.lb .tri{width:0;height:0;justify-self:end;opacity:0;transition:opacity 160ms ease-out}
+.lb .tri.up{border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:7px solid #7FE3A0;opacity:1}
+.lb .tri.dn{border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #FF8A7A;opacity:1}
+.lb .ft .rd{font-size:12px}
+.lg{top:112px;left:var(--gl);width:330px;--dl:60ms;transform:perspective(1100px) rotateY(9deg);transform-origin:left center}
+.lg .hd{display:flex;justify-content:space-between;align-items:center}
+.lg .mt{margin-top:10px;padding-top:8px;border-top:1px solid rgba(242,244,248,.1)}
+.lg .mt:first-of-type{border-top:0;padding-top:0}
+.lg .row{margin-top:4px;font:500 17px var(--sans);color:var(--soft)}.lg .row .num{font-size:20px;color:var(--soft)}
+.lg .row.w{color:#F2F4F8}.lg .row.w .num{color:#F2F4F8}
+.lg .lgf{margin-top:12px}
+.lids{position:absolute;inset:0;z-index:7;pointer-events:none;background:#04060D}
+/* Sam's view: partner rewards, the first one filling with his goal */
+.rw{top:112px;right:var(--gr);width:340px}
+.rw .hd{display:flex;justify-content:space-between;align-items:center}
+.rwr{display:grid;grid-template-columns:1fr auto;column-gap:10px;row-gap:4px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(242,244,248,.08)}
+.rwr .nm{font:600 16px/1.1 var(--sans);color:var(--soft)}
+.rwr .what{grid-column:1;font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.rwr .pct{grid-column:2;grid-row:1/3;align-self:center;font:600 16px/1 var(--mono);font-variant-numeric:tabular-nums;color:var(--soft)}
+.rwr .gb{grid-column:1/3;margin-top:6px}
+.rwr.on .nm,.rwr.on .pct{color:#F2F4F8}
+.rwr.won .pct{color:#7FE3A0}
+/* a message from someone else in each body, as the app's channel row: avatar, name, channel, text, reaction */
+.chat{right:var(--gr);bottom:64px;width:300px}
+.chat.hi{bottom:230px}
+.chat .card{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}
+.chat .av{width:34px;height:34px;border-radius:50%;border:1px solid rgba(242,244,248,.35);display:flex;align-items:center;justify-content:center;font:600 12px/1 var(--mono);color:var(--soft)}
+.chat .mh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.chat .cn{font:600 14px/1 var(--sans);color:#F2F4F8}
+.chat .lab{font-size:12px}
+.chat .cx{margin-top:6px;font:500 15px/1.3 var(--sans);color:#F2F4F8}
+.chat .rc{display:inline-block;margin-top:8px;padding:3px 8px;border:1px solid rgba(242,244,248,.25);border-radius:999px;font:600 11px/1.2 var(--mono);color:var(--soft)}
+/* running leaderboard in Tom's view: same row as the app (rank, avatar, name with pace under it, time with gap to the leader under it) */
+.rl{top:112px;left:var(--gl);width:340px}
+.rl .hd{display:flex;justify-content:space-between;align-items:center}
+.rl .ls{position:relative;margin-top:10px}
+/* runner levels, as the app's race cards: label, badge, runners; the selected level is outlined */
+.rl .lv{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:8px}
+.rl .lv div{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 5px;border:1px solid rgba(242,244,248,.1);font:500 10px/1 var(--mono);color:var(--muted)}
+.rl .lvh{display:block;margin-top:12px}
+.rl .lv img{width:34px;height:34px;display:block;opacity:.32}
+.rl .lv .un img{opacity:1}
+.rl .lv small{font-size:9px;color:var(--muted)}
+.rl .lv .sel{border-color:var(--blue);background:rgba(61,116,255,.16);color:#F2F4F8}
+.rl .r{position:absolute;left:0;right:0;top:0;height:48px;display:grid;grid-template-columns:24px 30px 1fr auto;align-items:center;gap:10px;padding:0 10px 0 8px;border-top:1px solid rgba(242,244,248,.08);transition:transform 420ms var(--ease)}
+.rl .r .k{font:500 12px/1 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.rl .av{width:30px;height:30px;border-radius:50%;border:1px solid rgba(242,244,248,.35);display:flex;align-items:center;justify-content:center;font:600 11px/1 var(--mono);color:var(--soft)}
+.rl .nm{font:600 16px/1.1 var(--sans);color:#F2F4F8}
+.rl .pc{margin-top:4px;font:500 12px/1 var(--mono);color:#F2F4F8;font-variant-numeric:tabular-nums}.rl .pc small{font-size:10px;color:var(--soft)}
+.rl .vc{text-align:right}
+.rl .tm{font:600 16px/1.1 var(--mono);font-variant-numeric:tabular-nums;color:#F2F4F8}
+.rl .dl{margin-top:4px;font:500 11px/1 var(--mono);font-variant-numeric:tabular-nums;color:var(--muted);min-height:11px}
+.rl .r.me{background:rgba(61,116,255,.22);box-shadow:inset 2px 0 0 var(--blue);border-top-color:transparent;z-index:2}
+.lb .ft{margin-top:12px;display:flex;justify-content:space-between;gap:8px;min-height:9px}
+.lb .ft .rd{transition:opacity 160ms ease-out}
+.lb .ft .rd.al{color:#FF8A7A}
+
+/* ---- text beats ---- */
+.panel{position:absolute;z-index:8;left:var(--gl);bottom:72px;width:min(600px,calc(100% - 96px))}
+.beat{position:absolute;left:0;bottom:0;width:100%;visibility:hidden;transition:visibility 0s 200ms}
+.beat.on{visibility:visible;transition:visibility 0s}
+.beat>*{opacity:0;transform:translateY(-6px);transition:opacity 160ms ease-out,transform 160ms ease-out,filter 160ms ease-out}
+.beat.on>*{opacity:1;transform:none;filter:none;transition:opacity 360ms var(--ease),transform 360ms var(--ease),filter 360ms var(--ease)}
+.beat.pre>*{transform:translateY(14px);filter:blur(4px);transition:none}
+.beat.on>:nth-child(1){transition-delay:120ms}.beat.on>:nth-child(2){transition-delay:160ms}.beat.on>:nth-child(3){transition-delay:210ms}.beat.on>:nth-child(4){transition-delay:260ms}.beat.on>:nth-child(5){transition-delay:310ms}
+.beat h1,.beat h2{margin:0;font-weight:600;letter-spacing:-.04em;line-height:.95;text-wrap:balance}
+.beat h1{font-size:clamp(48px,7vw,108px)}
+.beat h2{font-size:clamp(40px,5vw,72px)}
+.beat p{text-wrap:balance;margin:20px 0 0;max-width:520px;font-size:19px;line-height:1.45;color:var(--soft)}
+.beat .eb{display:block;margin-bottom:16px;font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.beat .cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chips span{padding:7px 11px;border:1px solid rgba(242,244,248,.3);background:rgba(6,9,18,.5);font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#F2F4F8}
+.ghost{display:inline-flex;align-items:center;gap:10px;min-height:50px;padding:0 24px;border-radius:999px;border:1px solid rgba(242,244,248,.45);text-decoration:none;font-weight:600}
+.cue{position:absolute;z-index:8;left:50%;bottom:22px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:9px 16px;border:1px solid rgba(242,244,248,.4);border-radius:999px;background:rgba(4,6,13,.5);font:500 12px/1 var(--mono);letter-spacing:.14em;color:#F2F4F8;transition:opacity 200ms ease-out}
+.cue i{width:7px;height:7px;border-right:1.5px solid #F2F4F8;border-bottom:1.5px solid #F2F4F8;transform:rotate(45deg);margin-top:-4px;animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(4px) rotate(45deg)}}
+.bod{position:absolute;z-index:8;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:16px;font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(242,244,248,.5);opacity:0;transition:opacity 200ms ease-out;white-space:nowrap}
+.bod b{font-weight:500;display:flex;align-items:center;gap:6px}
+.bod b::before{content:"";width:6px;height:6px;border-radius:50%;border:1px solid currentColor}
+.bod b.on{color:#F2F4F8}.bod b.on::before{background:var(--blue);border-color:var(--blue)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ---- after the film: the problem, then pick a community, then the demo ---- */
+/* The problem, as a picture: 72 people. Scrolling, most go dark; then the four reasons from the film light them again. */
+.why{position:relative;height:260vh}
+.whyS{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:64px;align-items:center;padding-left:var(--gl);padding-right:var(--gr);overflow:hidden}
+#whyC,#whyG{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#whyG{filter:blur(44px)}
+.whyT,.whyF{position:relative;z-index:1}
+.why .eb{display:block;margin-bottom:16px;font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.whyH{display:grid}
+.whyH h2{grid-area:1/1;margin:0;font-size:clamp(40px,5vw,72px);font-weight:600;letter-spacing:-.04em;line-height:.95;text-wrap:balance;opacity:0;transform:translateY(10px);transition:opacity 320ms var(--ease),transform 320ms var(--ease)}
+.whyH h2.on{opacity:1;transform:none}
+.rsn{list-style:none;margin:40px 0 0;padding:0;max-width:460px;opacity:0;transition:opacity 320ms var(--ease)}
+.rsn.vis{opacity:1}
+.rsn li{position:relative;display:grid;grid-template-columns:34px 1fr auto;align-items:baseline;gap:12px;padding:15px 0 14px;border-top:1px solid rgba(242,244,248,.12);color:var(--muted);transition:color 320ms var(--ease)}
+.rsn li::after{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform 520ms var(--ease)}
+.rsn li.on{color:#F2F4F8}.rsn li.on::after{transform:scaleX(1)}
+.rsn .k,.rsn .w{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.rsn .t{font:600 22px/1.1 var(--sans);letter-spacing:-.02em}
+.whyF{justify-self:end;width:min(100%,520px)}
+.whyR{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.whyR .cnt{font:600 68px/.9 var(--mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums;transition:color 320ms var(--ease)}
+.whyR .cnt small{font:500 20px/1 var(--mono);letter-spacing:0;color:var(--muted);margin-left:6px}
+.whyF.all .cnt{color:#8FB0FF}
+.dots{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.dots i{aspect-ratio:1;border-radius:50%;border:1px solid rgba(242,244,248,.3);transition:background-color 320ms var(--ease),border-color 320ms var(--ease),transform 320ms var(--ease)}
+.dots i.a{background:#F2F4F8;border-color:#F2F4F8}
+.dots i.b{background:var(--blue);border-color:var(--blue)}
+.dots i.o{transform:scale(.72)}
+.pick{padding-block:120px;padding-left:var(--gl);padding-right:var(--gr)}
+.pick h2{margin:0 0 36px;font-size:clamp(34px,4vw,56px);letter-spacing:-.035em;font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tile{position:relative;display:block;height:540px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));overflow:hidden;text-decoration:none;color:var(--white);background:var(--surface)}
+.tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.tile:hover video{transform:scale(1.03)}
+.tile .sh{position:absolute;inset:0;background:linear-gradient(to top,rgba(4,6,13,.82) 0%,rgba(4,6,13,0) 55%)}
+.tile .tt{position:absolute;left:28px;right:28px;bottom:26px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.tile .kk{font-size:42px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.tile .s{text-wrap:balance;margin-top:8px;font-size:16px;color:#DCE1EA}
+.tile .ar{width:48px;height:48px;background:var(--text);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;font-size:20px}
+.close{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px;padding-block:56px 96px;padding-left:var(--gl);padding-right:var(--gr);border-top:1px solid #141B2C}
+.close p{text-wrap:balance;margin:0;max-width:560px;font-size:20px;color:var(--soft)}
+.note{margin:0;padding-block:0 40px;padding-left:var(--gl);padding-right:var(--gr);font:500 11px var(--mono);color:#6E7891}
+@media (max-width:900px){
+  :root{--gl:max(16px, env(safe-area-inset-left, 0px));--gr:max(16px, env(safe-area-inset-right, 0px))}
+  .links{display:none}.nav{padding-block:18px}.right{gap:8px}.snd{min-height:40px;padding:0 12px}.snd #sndT{display:none}.demo{min-height:40px;padding:0 16px}
+  .panel{bottom:150px;width:calc(100% - 32px)}
+  .beat p{font-size:16px}.chips{gap:4px}.chips span{padding:7px 5px;letter-spacing:0}
+  .bod{bottom:calc(10px + env(safe-area-inset-bottom, 0px));gap:10px;font-size:11px}
+  .lb .hd .lab,.rl .hd .lab,.lg .hd .lab,.cm .hd .lab,.rl .lvh,.lg .lgf .rd{font-size:11px;letter-spacing:.04em;white-space:nowrap}.lg .live,.cm .live,.rl .live{display:none}.hm{display:none}
+  .lb,.lg{top:76px;transform:none}.lb{width:200px}.lg{width:calc(100% - 240px)}.lb .card,.lg .card{padding:10px 10px}
+  .lb .r{grid-template-columns:20px 1fr auto 10px;gap:6px;height:28px;padding:0 4px;font-size:14px}.lb .r .num{font-size:13px}
+  .lg .row{font-size:12px}.lg .row .num{font-size:15px}.lg .mt{margin-top:7px;padding-top:6px}
+  .steps{right:auto;left:50%;transform:translateX(-50%);bottom:34px}.steps .big{font-size:48px}.steps .nb::before,.steps .nb::after{height:40px}
+  .steps .g,.steps .ticks{width:220px}
+  .steps .lab{font-size:10px;white-space:nowrap}.lg .rnd{display:none}.lb .ft .rd{font-size:10px}
+  .pin .card{gap:8px;padding:7px 9px 7px 8px}.pin .bar{height:18px}.pin .sub,.pin .chip{display:none}.pin .who{font-size:13px}.pin .sub{font-size:8px;margin-top:5px}.pin .rk{font-size:14px;padding-left:8px}.pin .el{width:14px}.pin[data-side="r"] .cw{left:14px}.pin[data-side="l"] .cw{right:14px}
+  .lvl{top:76px;left:16px;width:calc(100% - 240px);transform:none}.lvl .card{flex-direction:column;align-items:flex-start;gap:8px;padding:10px}.lvl .bd,.lvl .bd img{width:40px;height:40px}.lvl .msg{font-size:14px}
+  .med,.med.pr{top:390px;left:16px;right:auto;width:auto}.med .card{flex-direction:row;align-items:center;padding:8px 12px 8px 8px}.med .bd,.med .bd img{width:32px;height:32px}.med .lab,.med .rd{display:none}.med .msg{margin-top:0}
+  .run{right:auto;left:50%;transform:translateX(-50%);bottom:30px}.run .big{font-size:40px}.run .nb::before,.run .nb::after{height:34px}.run .lab{font-size:10px}
+  .rl{top:76px;left:16px;width:206px}.rl .card{padding:10px}.rl .r{grid-template-columns:18px 1fr auto;gap:6px;height:38px;padding:0 4px}.rl .av{display:none}.rl .lv{gap:3px;margin-top:8px}.rl .lv div{padding:4px 0;font-size:9px;gap:3px}.rl .lv img{width:20px;height:20px}.rl .lv small{display:none}.rl .nm,.rl .tm{font-size:13px}.rl .pc,.rl .dl{font-size:10px;margin-top:3px}
+  .chat,.chat.hi{right:16px;bottom:auto;top:390px;width:200px}.chat .card{grid-template-columns:1fr;padding:8px 10px}.chat .av{display:none}.chat .cn{font-size:12px}.chat .cx{font-size:13px;margin-top:4px;text-wrap:balance}.chat .rc{margin-top:6px}
+  .rw{top:76px;right:16px;width:196px}.rw .card{padding:10px}.rwr{margin-top:8px;padding-top:7px}.rwr .nm,.rwr .pct{font-size:13px}.rwr .what{font-size:10px}
+  .cm{top:76px;width:200px}.cm .card{padding:10px}.cm .cl{font-size:13px;grid-template-columns:1fr}.cm .cl .rd{display:none}.cm .ct{text-wrap:balance}.cm .cms{gap:7px;min-height:80px}
+  .tiles{grid-template-columns:minmax(0,1fr)}.tile{height:420px}
+  .whyS{grid-template-columns:minmax(0,1fr);align-content:center;gap:0}.whyT{display:contents}.why .eb{order:0;margin-bottom:12px}.whyH{order:1}.whyH h2{font-size:34px}.whyF{order:2;width:100%;margin-top:28px}.rsn{order:3;margin-top:22px;max-width:none}
+  .rsn li{padding:10px 0 9px}.rsn .t{font-size:17px}.whyR{margin-bottom:14px}.whyR .cnt{font-size:44px}.whyR .cnt small{font-size:14px}.dots{gap:8px}
+  .pick{padding-block:80px}
+}
+/* short desktop windows (a laptop browser with its bars): the cards reach down into the copy, so the five middle beats keep one line of headline only */
+@media (min-width:901px) and (max-height:840px){
+  .beat .eb,.beat:nth-child(n+2):nth-child(-n+6) p{display:none}.beat h2{font-size:44px}.panel{bottom:56px;width:min(760px,calc(100% - 96px))}
+}
+/* short phones (most phones once the browser bars show): cards hang from the top and copy from the bottom, so the middle is tight. Headline only, no name tags. */
+@media (max-width:900px) and (max-height:830px){
+  .pin,.beat .eb,.beat:nth-child(n+2):nth-child(-n+6) p,.chat .rc{display:none}.beat h2{font-size:34px}
+}
+@media (max-width:420px){
+  .nav{gap:12px}.nav img{height:18px}.nav .demo{padding:0 14px}
+}
+@media (max-height:480px){
+  .beat .eb,.beat p,.chips,.bod{display:none}.beat h1,.beat h2{font-size:28px}.panel{bottom:40px}
+}
+@media (prefers-reduced-motion:reduce){
+  .tag .wrap,.tag.on .wrap{transition:opacity 120ms linear !important;transform:translateX(-50%) !important}
+  .hud .cw,.hud.on .cw{transition:opacity 120ms linear !important}
+  .hud .cw{clip-path:none !important}
+  .tag.ping .an::after,.live i,.pin.on .an::before,.cm .cl.typing .ct::after{animation:none !important}
+  .pin .cw,.pin.on .cw{clip-path:none !important;transition:opacity 120ms linear !important}
+  .lvl.on .bd::after,.cue i,.steps.won .big{animation:none !important}
+  .lvl .bd img,.lvl.on .bd img{transform:none !important;transition:opacity 120ms linear !important}
+  .lb .r,.rl .r{transition:none !important}
+  .beat>*,.beat.on>*,.beat.pre>*{transform:none !important;filter:none !important;transition:opacity 120ms linear !important}
+  .tile video{transition:none}.tile:hover video{transform:none}
+  .whyH h2,.rsn,.rsn li,.rsn li::after,.dots i,.whyR .cnt{transition:none !important}
+}
+</style>
+
+<div class="story" id="story">
+  <div class="stage" id="stage">
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <div class="shade" aria-hidden="true"></div>
+    <div class="lids" id="lids" aria-hidden="true"></div>
+    <div id="ar" aria-hidden="true">
+      <div class="pin" id="pT" data-side="l"><span class="ld"></span><span class="el"></span><div class="cw"><div class="fr card"><span class="bar"></span><div><div class="who">Tom</div><div class="lab sub" id="pTs">Riverside · 7,640</div><span class="chip" id="pTc">Passed you</span></div><span class="rk" id="pTr">#07</span></div></div><span class="an"></span></div>
+      <div class="pin" id="pN" data-side="l"><span class="ld"></span><span class="el"></span><div class="cw"><div class="fr card"><span class="bar" id="pNb" style="background:#C9A13A"></span><div><div class="who" id="pNw">Lena</div><div class="lab sub" id="pNs">5K · 24:51</div></div><span class="rk" id="pNr">#02</span></div></div><span class="an"></span></div>
+      <div class="pin" id="pL" data-side="r"><span class="ld"></span><span class="el"></span><div class="cw"><div class="fr card"><span class="bar" style="background:#C9A13A"></span><div><div class="who">Lena</div><div class="lab sub" id="pLs">Riverside · 8,980</div></div><span class="rk" id="pLr">#02</span></div></div><span class="an"></span></div>
+    </div>
+    <div class="hud lvl" id="hLvl" aria-hidden="true"><div class="cw"><div class="fr card"><span class="bd"><img src="tier_gold.png" alt=""></span><div><span class="lab">Level up</span><div class="msg" style="margin-top:7px">Gold level unlocked</div><span class="rd">RIVERSIDE · THIS WEEK</span></div></div></div></div>
+    <div class="hud lvl med" id="hMed" aria-hidden="true"><div class="cw"><div class="fr card"><span class="bd"><img alt="" id="medI"></span><div><span class="lab">Target medal</span><div class="msg"><span id="medN"></span><span class="hm"> unlocked</span></div><span class="rd" id="medS"></span></div></div></div></div>
+    <div class="hud lb" id="hLb" aria-hidden="true"><div class="cw"><div class="fr card"><div class="hd"><span class="lab">Riverside · steps<span class="hm"> today</span></span><span class="live rd"><i></i>LIVE</span></div><div class="ls" id="lbL"></div><div class="ft"><span class="rd" id="lbF"></span></div></div></div></div>
+    <div class="hud chat" id="hMsg" aria-hidden="true"><div class="cw"><div class="fr card"><span class="av" id="mA"></span><div><div class="mh"><span class="cn" id="mW"></span><span class="lab" id="mC"></span></div><div class="cx" id="mT"></div><span class="rc" id="mR"></span></div></div></div></div>
+    <div class="hud rl" id="hRl" aria-hidden="true"><div class="cw"><div class="fr card"><div class="hd"><span class="lab">Riverside · 5K time</span><span class="live rd"><i></i>LIVE</span></div><span class="lvh rd">Runner levels · 2 of 6</span><div class="lv"><div class="un"><span>3K</span><img src="../media/app/race_3k.png" alt=""></div><div class="sel un"><span>5K</span><img src="../media/app/race_5k.png" alt=""></div><div><span>10K</span><img src="../media/app/race_10k.png" alt=""></div><div><span>15K</span><img src="../media/app/race_15k.png" alt=""></div><div><span>21K</span><img src="../media/app/race_half.png" alt=""></div><div><span>42K</span><img src="../media/app/race_full.png" alt=""></div></div><div class="ls" id="rlL"></div></div></div></div>
+    <div class="hud run" id="hRun" aria-hidden="true"><div class="blk"><div class="lab">Pace · Tom</div><div class="nb"><span class="big" id="runP">5:08</span></div><span class="rd">MIN / KM</span></div></div>
+    <div class="hud lg" id="hLg" aria-hidden="true"><div class="cw"><div class="fr card"><div class="hd"><span class="lab">League of Brands</span><span class="live rd"><i></i>LIVE</span></div><div class="mt"><div class="row" id="lg0a"><span>Peak Sports</span><span class="num">4.8</span></div><div class="row" id="lg0b"><span>Harbour Bikes</span><span class="num">4.9</span></div></div><div class="mt"><div class="row" id="lg1a"><span>Bean Bar</span><span class="num">4.8</span></div><div class="row" id="lg1b"><span>North Bakery</span><span class="num">4.9</span></div></div><div class="mt"><div class="row" id="lg2a"><span>Volt Drinks</span><span class="num">4.4</span></div><div class="row" id="lg2b"><span>City Gym</span><span class="num">4.5</span></div></div><div class="lgf"><span class="rd">Movement Index<span class="rnd"> · round 4</span></span></div></div></div></div>
+    <div class="hud cm" id="hCm" aria-hidden="true"><div class="cw"><div class="fr card"><div class="hd"><span class="lab">Live commentary</span><span class="live rd"><i></i>LIVE</span></div><div class="cms" id="cmL"></div></div></div></div>
+    <div class="hud rw" id="hRw" aria-hidden="true"><div class="cw"><div class="fr card"><div class="hd"><span class="lab">Rewards</span><span class="live rd"><i></i>LIVE</span></div><div class="rwr on" id="rw0"><span class="nm">Bean Bar</span><span class="what">Free coffee</span><span class="pct" id="rwP">86%</span><div class="gb"><i id="rwG"></i></div></div><div class="rwr"><span class="nm">Peak Sports</span><span class="what">10% off shoes</span><span class="pct">62%</span><div class="gb"><i style="transform:scaleX(.62)"></i></div></div><div class="rwr"><span class="nm">City Gym</span><span class="what">Day pass</span><span class="pct">40%</span><div class="gb"><i style="transform:scaleX(.4)"></i></div></div></div></div></div>
+    <div class="hud steps" id="hSteps" aria-hidden="true"><div class="lab" id="cofL">To unlock a coffee · Bean Bar</div><div class="nb"><span class="big" id="stepsV">86%</span></div><div class="g"><i id="stepsG"></i></div><div class="ticks"></div></div>
+
+    <header class="nav">
+      <a href="#story" aria-label="SportIn home"><img src="wordmark-light.svg" alt="SportIn"></a>
+      <nav class="links" aria-label="Main"><a href="#pick">Clubs</a><a href="#pick">Companies</a><a href="#pick">Gyms</a><a href="#story">How it works</a></nav>
+      <div class="right"><button class="snd" id="snd" type="button" aria-pressed="false" aria-label="Sound"><span class="ic" aria-hidden="true"><i></i><b></b></span><span id="sndT">Sound off</span></button><a class="demo" href="https://calendly.com/sportin">Book a demo</a></div>
+    </header>
+
+    <div class="panel">
+      <div class="beat on"><span class="eb">For clubs, companies and gyms</span><h1>Movement is the game.</h1><p>Run with four players.</p></div>
+      <div class="beat"><span class="eb">Leaderboard with levels</span><h2>She climbs as she runs.</h2><p>Three places up in one street.</p><span class="sr">A live leaderboard shows Maria climbing from sixth to third in Riverside and reaching Gold level.</span></div>
+      <div class="beat"><span class="eb">She loses a place</span><h2>Tom passes her.</h2><p>Now she has someone to catch.</p><span class="sr">The board shows Tom moving past Maria. A friend messages her to go get him.</span></div>
+      <div class="beat"><span class="eb">Running leaderboard</span><h2>His pace moves him up.</h2><p>#4 to #3 on the 5K board, live.</p><span class="sr">A 5K running leaderboard with six runner levels shows Tom moving from fourth to third.</span></div>
+      <div class="beat"><span class="eb">League of Brands</span><h2>Brands play too.</h2><p>Lena's steps just put Peak Sports first.</p><span class="sr">A League of Brands scoreboard shows Peak Sports taking the lead, with live commentary.</span></div>
+      <div class="beat"><span class="eb">Rewards</span><h2>Sam earns a coffee.</h2><p>Bean Bar gets a customer.</p><span class="sr">A rewards card shows his coffee goal at Bean Bar filling to 100 percent as he passes the cafe.</span></div>
+      <div class="beat"><span class="eb">Your turn</span><h2>Now your community plays.</h2><p>Members move. Partners reward. You see the numbers.</p><div class="chips"><span>Gold level</span><span>#3 on 5K</span><span>Round lead</span><span>1 coffee</span></div><div class="cta"><a class="demo" href="https://calendly.com/sportin">Book a demo</a><a class="ghost" href="#pick">Find your community <span aria-hidden="true">↓</span></a></div></div>
+    </div>
+    <div class="bod" id="bod" aria-hidden="true"><b>Maria</b><b>Tom</b><b>Lena</b><b>Sam</b></div>
+    <div class="cue" id="hint" aria-hidden="true"><span id="cueT">LOADING</span><i></i></div>
+  </div>
+  <div id="b1" style="position:absolute;top:100vh"></div>
+</div>
+
+<section class="why" id="why">
+  <div class="whyS">
+    <canvas id="whyG" aria-hidden="true"></canvas>
+    <canvas id="whyC" aria-hidden="true"></canvas>
+    <div class="whyT">
+      <span class="eb" id="whyE">The problem</span>
+      <div class="whyH"><h2 class="on">Without a reason, people stop.</h2><h2>With four, they don't.</h2></div>
+      <ol class="rsn" id="whyL"><li><span class="k">01</span><span class="t">A rank to climb</span><span class="w">Maria</span></li><li><span class="k">02</span><span class="t">A rival to catch</span><span class="w">Tom</span></li><li><span class="k">03</span><span class="t">A team to win for</span><span class="w">Lena</span></li><li><span class="k">04</span><span class="t">A reward to earn</span><span class="w">Sam</span></li></ol>
+    </div>
+    <div class="whyF" id="whyF" aria-hidden="true">
+      <div class="whyR"><span class="lab">Still moving</span><span class="cnt"><span id="whyN">72</span><small>/72</small></span></div>
+      <div class="dots" id="whyD"></div>
+    </div>
+  </div>
+</section>
+<section class="pick" id="pick">
+  <h2>Choose your community.</h2>
+  <div class="tiles">
+    <a class="tile" href="#pick"><video src="/proto/media/hv-fan.mp4" poster="/proto/media/hv-fan.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><div class="sh"></div><div class="tt"><div><div class="kk">Clubs</div><div class="s">Supporters who play all season.</div></div><span class="ar" aria-hidden="true">→</span></div></a>
+    <a class="tile" href="#pick"><video src="/assets/site/media/clip-rungroup.mp4" poster="/assets/site/media/clip-rungroup.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><div class="sh"></div><div class="tt"><div><div class="kk">Companies</div><div class="s">Teams that compete in your colours.</div></div><span class="ar" aria-hidden="true">→</span></div></a>
+    <a class="tile" href="#pick"><video src="/assets/site/media/clip-run2.mp4" poster="/assets/site/media/clip-run2.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><div class="sh"></div><div class="tt"><div><div class="kk">Gyms</div><div class="s">Members who keep coming back.</div></div><span class="ar" aria-hidden="true">→</span></div></a>
+  </div>
+</section>
+<section class="close">
+  <p>Try it for 8 weeks. We launch it, run it with you and hand over the report.</p>
+  <a class="demo" href="https://calendly.com/sportin" style="min-height:54px;padding:0 28px;font-size:16px">Book a demo</a>
+</section>
+<p class="note">Names, brands, scores and rankings in the story are a sample. Footage is AI-generated.</p>
+
+<script>window.AR={"A":{"maria":{"0":[761.9,296.8,406.0],"1":[762.9,295.9,406.6],"2":[762.6,293.1,411.3],"3":[764.0,292.4,413.1],"4":[765.7,290.7,415.1],"5":[765.9,290.0,415.7],"6":[765.8,291.7,415.2],"7":[764.8,292.6,412.9],"8":[763.5,292.4,413.9],"9":[760.4,288.8,418.5],"10":[757.7,285.1,422.7],"11":[758.1,284.9,423.3],"12":[761.7,287.7,420.9],"13":[764.0,290.9,417.1],"14":[766.0,291.3,416.9],"15":[769.9,289.8,420.3],"16":[770.9,284.8,425.7],"17":[768.4,283.5,427.8],"18":[767.9,283.6,428.2],"19":[765.7,285.3,426.7],"20":[760.7,285.3,425.9],"21":[754.0,283.4,427.1],"22":[749.6,278.3,431.7],"23":[746.9,273.3,437.6],"24":[746.2,272.2,439.1],"25":[747.3,272.6,439.7],"26":[748.3,272.6,441.2],"27":[748.7,269.9,445.2],"28":[746.8,267.9,447.7],"29":[744.5,266.8,448.5],"30":[742.0,266.4,448.7],"31":[740.8,266.5,447.9],"32":[739.8,266.2,447.9],"33":[739.3,263.7,449.8],"34":[738.3,261.6,451.7],"35":[736.9,260.6,452.5],"36":[734.4,261.4,452.6],"37":[732.4,260.9,453.9],"38":[728.2,260.6,454.3],"39":[723.9,257.0,458.5],"40":[721.5,253.7,463.1],"41":[723.6,253.2,463.2],"42":[726.6,255.2,460.2],"43":[731.9,255.9,459.9],"44":[736.9,253.8,461.6],"45":[739.2,250.0,464.8],"46":[738.6,246.5,468.3],"47":[736.0,245.3,471.6],"48":[732.6,245.8,471.3],"49":[728.4,244.7,473.2],"50":[724.3,242.3,475.3],"51":[721.4,235.8,483.5],"52":[721.6,232.4,484.7],"53":[723.7,230.0,487.2],"54":[730.2,230.1,486.3],"55":[710.0,253.4,427.6],"56":[688.2,279.6,366.2],"57":[663.3,302.8,309.8],"58":[635.9,324.7,254.6],"59":[607.1,348.2,197.5],"60":[605.4,351.7,196.3],"73":[716.0,168.9,623.0],"74":[707.9,162.1,611.6],"75":[703.2,160.3,601.2],"76":[695.7,157.8,557.5],"77":[692.2,159.8,555.0],"78":[695.9,160.7,551.9],"79":[703.2,156.0,557.1],"80":[710.9,149.0,565.0],"81":[718.3,141.3,573.5],"82":[723.4,140.5,574.3],"83":[725.6,142.4,571.4],"84":[725.1,141.3,572.4],"85":[722.5,136.4,577.5],"86":[715.9,125.3,588.3],"87":[712.5,117.3,596.5],"88":[712.1,114.4,601.4],"89":[718.6,115.7,599.3],"90":[727.2,116.7,597.8],"91":[738.6,110.9,604.3],"92":[751.9,101.7,614.3],"93":[765.3,92.8,622.3],"94":[776.3,88.5,627.5],"95":[786.9,86.2,674.7],"96":[795.9,80.9,680.3],"97":[799.9,71.7,689.9],"98":[804.1,63.3,698.6],"99":[812.6,62.8,699.2],"100":[822.6,63.3,654.7],"101":[833.6,66.9,650.2],"102":[841.7,64.3,695.9],"103":[851.7,59.4,700.5],"104":[861.1,57.3,701.5],"105":[875.2,57.8,700.8],"106":[890.1,58.8,701.5],"107":[908.4,58.7,657.9],"108":[921.6,54.5,661.7],"109":[930.1,47.8,668.3],"110":[932.3,43.5,672.8],"111":[938.4,47.7,669.1],"112":[941.9,51.3,666.1],"113":[941.6,50.7,667.2],"114":[942.0,40.2,677.5],"115":[944.0,31.7,684.7],"116":[952.8,31.1,685.1],"117":[961.1,37.1,679.8],"118":[969.2,43.9,674.2],"119":[979.1,58.9,660.4],"61":[613.9,337.6,229.1],"62":[622.4,323.6,261.9],"63":[630.9,309.5,294.8],"64":[639.4,295.5,327.6],"65":[647.9,281.4,360.4],"66":[656.4,267.3,393.2],"67":[665.0,253.3,426.1],"68":[673.5,239.2,458.9],"69":[682.0,225.1,491.7],"70":[690.5,211.1,524.5],"71":[699.0,197.0,557.4],"72":[707.5,183.0,590.2]},"r0":{"0":[490.3,342.9,186.6],"1":[489.7,341.1,189.7],"2":[489.3,339.7,192.1],"3":[488.4,338.5,194.6],"4":[487.6,337.2,196.8],"5":[486.7,337.3,195.2],"6":[486.1,339.3,194.0],"7":[486.1,339.8,195.0],"8":[485.9,339.9,197.4],"9":[486.3,338.7,197.7],"10":[487.1,336.6,197.7],"11":[505.5,337.4,196.4],"12":[523.2,338.7,194.5],"13":[540.9,341.7,189.8],"14":[557.7,346.9,184.6],"15":[574.3,352.8,180.7],"16":[572.6,354.3,178.1],"17":[571.1,355.2,177.9],"18":[569.2,354.1,179.4],"19":[567.5,352.0,183.8],"20":[565.9,349.9,188.5],"21":[564.7,349.1,189.6],"22":[563.4,349.3,189.2],"23":[562.2,348.5,190.6],"24":[561.2,346.3,194.0],"25":[560.3,343.9,196.9],"26":[559.7,343.4,197.9],"27":[559.1,343.9,196.3],"28":[558.7,346.6,193.4],"29":[558.7,348.1,192.5],"30":[558.4,348.4,191.5],"31":[557.8,346.1,194.3],"32":[557.1,346.3,195.8],"33":[555.8,345.7,196.1],"34":[554.0,346.8,193.2],"35":[552.6,348.6,191.4],"36":[551.7,350.1,190.6],"37":[550.9,348.5,190.3],"38":[550.4,348.3,189.6],"39":[550.4,348.7,188.2],"40":[549.9,348.7,188.9],"41":[550.0,349.7,187.9],"42":[550.3,350.0,189.3],"43":[550.6,349.1,191.2],"44":[550.7,349.2,192.6],"45":[551.2,349.3,191.1],"46":[550.3,349.5,190.4],"47":[549.2,350.2,189.6],"48":[548.5,351.1,189.8],"49":[548.3,349.9,191.1],"50":[548.3,349.5,194.3],"51":[548.6,349.4,194.6],"52":[548.6,350.0,194.5],"53":[548.3,351.2,193.4],"54":[548.3,351.0,194.7],"55":[548.4,349.3,196.4],"56":[547.7,349.0,198.1],"57":[547.3,349.4,196.7],"58":[546.7,349.5,196.3],"59":[545.7,350.7,195.7],"60":[544.4,353.2,193.4],"61":[544.3,351.8,195.0],"62":[544.4,350.3,197.4],"63":[544.3,350.2,196.5],"64":[543.6,350.7,197.4],"65":[542.9,351.6,196.4],"66":[541.3,352.4,195.5],"67":[539.6,352.3,196.7],"68":[538.3,349.7,202.3],"69":[537.4,348.1,201.8],"70":[536.3,346.9,202.2],"71":[536.3,348.3,200.2],"72":[535.4,350.2,197.7],"73":[533.9,351.9,193.4],"74":[519.7,352.1,191.1],"75":[505.6,352.4,187.5],"76":[490.7,352.9,185.3],"77":[476.9,353.1,181.4],"78":[463.9,353.5,180.7],"79":[464.2,353.2,182.6],"80":[464.3,351.8,186.1],"81":[465.2,350.6,186.8],"82":[465.6,350.9,188.6],"83":[466.3,352.3,188.2],"84":[466.9,354.2,188.1],"85":[468.1,354.3,191.0],"86":[468.7,353.2,194.2],"87":[469.5,351.8,195.2],"88":[470.0,350.6,195.3],"89":[470.3,351.0,194.0],"90":[470.7,353.3,190.9],"91":[471.3,354.7,192.5],"92":[472.5,354.2,194.5],"93":[473.5,353.8,197.7],"94":[473.8,354.1,194.2],"95":[473.8,354.2,193.1],"96":[474.0,355.7,188.0],"97":[474.2,356.3,188.7],"98":[475.2,355.8,185.9],"99":[476.9,354.4,187.3],"100":[478.8,352.7,188.6],"101":[479.9,352.4,189.0],"102":[480.8,354.2,183.0],"103":[481.4,356.0,181.3],"104":[482.0,355.7,185.9],"105":[482.6,355.6,188.7],"106":[483.3,354.8,189.1],"107":[483.8,354.2,190.6],"108":[484.0,354.7,189.1],"109":[483.7,356.6,186.4],"110":[483.5,358.7,183.4],"111":[483.6,358.8,180.7],"112":[483.8,357.9,179.7],"113":[501.3,358.6,183.0],"114":[518.8,360.1,180.0],"115":[536.9,361.6,176.6],"116":[555.2,363.8,180.6],"117":[573.2,365.0,183.9],"118":[573.7,365.3,182.6],"119":[574.9,364.6,185.1]},"r1":{"0":[575.6,346.1,192.9],"1":[575.8,347.1,189.8],"2":[586.7,349.0,185.6],"3":[597.7,351.1,181.1],"4":[608.7,354.9,177.1],"5":[619.6,358.2,173.4],"6":[630.4,358.3,176.3],"7":[630.5,357.7,179.5],"8":[630.6,356.4,182.5],"9":[630.6,354.9,183.6],"10":[630.5,355.5,183.0],"11":[630.4,355.9,180.2],"12":[629.7,355.5,179.8],"13":[628.7,354.8,179.1],"14":[628.0,354.3,177.8],"15":[627.3,352.1,178.1],"16":[625.4,352.6,179.9],"17":[624.2,351.8,181.6],"18":[622.7,350.4,184.7],"19":[621.8,349.3,186.8],"20":[620.6,347.8,191.3],"21":[620.1,346.6,191.5],"22":[618.7,345.7,194.3],"23":[617.7,344.6,196.6],"24":[616.5,344.5,199.3],"25":[616.0,344.4,199.2],"26":[615.5,344.4,199.7],"27":[615.6,346.2,195.7],"28":[615.6,349.9,190.9],"29":[616.0,349.8,191.1],"30":[615.8,350.2,188.7],"31":[615.6,349.3,189.8],"32":[615.3,348.7,191.5],"33":[614.5,347.7,193.2],"34":[612.7,348.6,191.9],"35":[611.5,347.7,195.0],"36":[610.6,348.6,193.1],"37":[609.5,348.0,192.7],"38":[608.4,346.4,194.5],"39":[608.1,346.6,193.3],"40":[608.2,347.2,192.6],"41":[608.9,345.7,194.3],"42":[610.0,346.0,195.2],"43":[611.3,344.3,197.7],"44":[612.0,343.3,200.2],"45":[612.0,343.6,200.1],"46":[610.8,343.9,202.2],"47":[609.6,342.8,203.1],"48":[579.8,342.3,201.8],"49":[550.0,340.4,202.6],"50":[520.6,339.6,203.4],"51":[491.7,339.8,201.7],"52":[463.3,338.2,204.6],"53":[463.6,338.4,203.6],"54":[463.6,339.0,197.6],"55":[463.4,338.4,195.8],"56":[463.2,338.8,190.8],"57":[462.6,341.7,184.3],"58":[461.9,343.8,184.6],"59":[462.0,343.4,190.4],"60":[461.8,342.9,191.6],"61":[461.5,341.3,195.4],"62":[461.5,340.9,196.5],"63":[461.6,341.9,193.6],"64":[461.8,344.2,195.5],"65":[462.0,345.8,192.5],"66":[462.6,345.8,192.0],"67":[462.6,343.9,196.3],"68":[462.9,342.1,197.5],"69":[462.7,342.7,192.8],"70":[462.9,344.9,192.8],"71":[463.4,347.0,194.6],"72":[464.2,348.5,194.0],"73":[464.6,349.1,195.5],"74":[441.5,349.3,192.8],"75":[418.2,349.8,190.7],"76":[406.4,350.1,187.9],"77":[377.2,347.8,182.3],"78":[348.3,344.3,192.5],"79":[348.6,343.1,194.7],"80":[348.8,341.3,196.0],"81":[348.9,343.6,195.6],"82":[349.9,345.6,200.9],"83":[351.2,347.5,193.5],"84":[352.5,345.7,199.3],"85":[353.7,344.0,205.2],"86":[355.0,343.5,196.9],"87":[355.4,345.9,189.2],"88":[355.8,349.8,185.5],"89":[356.7,352.3,179.2],"90":[358.2,354.1,172.0],"91":[359.2,354.7,173.6],"92":[361.6,354.7,170.2],"93":[364.8,355.1,166.9],"94":[366.2,355.9,163.8],"95":[368.0,357.4,161.3],"96":[372.4,356.1,167.4],"97":[375.1,351.7,175.4],"98":[376.0,349.2,178.0],"99":[376.7,350.6,178.0],"100":[377.2,351.8,178.1],"101":[379.1,351.8,181.1],"102":[380.6,350.9,184.3],"103":[382.3,349.0,188.1],"104":[419.5,350.3,192.6],"105":[456.8,350.8,197.7],"106":[493.6,352.2,196.8],"107":[530.0,356.1,195.7],"108":[566.5,360.5,193.4],"109":[567.4,363.1,187.5],"110":[568.3,366.1,182.0],"111":[568.6,367.9,182.6],"112":[569.3,368.0,185.4],"113":[582.6,368.6,186.6],"114":[595.6,365.8,193.4],"115":[608.3,364.7,194.9],"116":[621.7,364.3,196.4],"117":[635.1,363.9,195.4],"118":[635.3,362.7,196.8],"119":[635.8,363.4,193.9]},"r2":{"8":[380.8,342.6,172.9],"9":[381.0,339.7,183.8],"10":[380.8,337.1,185.7],"11":[380.3,335.6,187.5],"12":[380.1,333.3,200.5],"13":[380.1,332.4,201.5],"14":[379.3,333.5,201.4],"15":[378.9,335.2,206.3],"16":[379.1,334.6,207.9],"17":[378.4,333.7,208.2],"18":[377.6,331.7,213.2],"19":[397.9,333.9,207.6],"20":[418.1,336.6,202.9],"21":[438.2,338.4,202.1],"22":[458.7,339.7,195.5],"23":[479.4,340.3,189.8],"24":[478.8,337.8,189.2],"25":[478.1,335.8,186.1],"26":[477.3,337.5,181.6],"27":[476.0,338.2,183.7],"28":[475.3,338.5,188.1],"29":[474.9,337.4,191.7],"30":[474.4,336.1,195.5],"31":[473.4,334.3,199.9],"32":[472.8,335.7,201.8],"33":[471.7,337.4,200.6],"34":[471.0,338.6,201.5],"35":[470.3,339.3,202.9],"36":[469.9,339.5,203.1],"37":[469.4,337.7,203.1],"38":[469.1,337.2,202.7],"39":[468.6,337.7,203.5],"40":[468.6,337.5,205.6],"41":[468.1,336.6,205.4],"42":[467.5,336.9,199.3],"43":[467.0,336.1,195.3],"44":[466.2,337.5,191.1],"45":[465.5,339.7,187.1],"46":[464.9,340.9,185.8],"47":[464.5,340.9,188.9],"48":[441.4,340.6,191.3],"49":[419.4,339.0,191.8],"50":[397.7,337.6,190.8],"51":[376.8,336.6,194.7],"52":[356.1,336.0,196.8],"53":[358.1,335.3,199.1],"54":[358.9,334.7,200.5],"55":[359.7,333.5,203.8],"56":[356.4,335.5,189.8],"57":[352.9,336.2,189.6],"58":[348.9,337.3,191.6],"59":[347.8,337.8,192.1],"60":[346.7,337.6,192.4],"61":[346.2,338.3,197.6],"62":[345.9,340.7,193.9],"63":[345.8,341.9,191.3],"64":[346.5,341.9,187.5],"65":[347.5,342.7,184.2],"66":[348.2,341.3,179.1],"67":[348.5,340.6,177.3],"68":[348.9,341.5,173.5],"69":[349.1,341.9,180.0],"70":[349.4,341.9,183.3],"71":[349.0,341.3,185.0],"72":[348.2,339.8,189.5],"73":[347.5,337.4,195.5],"74":[347.2,336.3,192.6],"75":[346.8,335.0,192.4]}},"B":{"r0":{"0":[736.1,143.9,502.5],"1":[738.7,143.4,501.4],"2":[741.3,141.4,499.5],"3":[746.1,141.9,493.1],"4":[748.4,141.9,492.3],"5":[750.2,143.8,488.5],"6":[751.6,146.6,486.4],"7":[752.2,148.5,489.8],"8":[752.4,149.4,494.3],"9":[757.1,146.6,502.2],"10":[763.2,142.9,509.9],"11":[772.6,142.9,509.3],"12":[786.1,145.6,506.4],"13":[800.7,148.8,502.8],"14":[815.9,150.9,496.8],"15":[831.6,150.6,487.8],"16":[845.4,148.6,489.6],"17":[856.1,148.6,487.5],"18":[866.8,148.6,486.9],"19":[877.9,148.2,488.8],"20":[889.1,147.4,498.3],"21":[901.8,144.2,506.7],"22":[917.9,138.7,510.7],"23":[935.5,136.7,508.9],"24":[954.0,138.3,503.7],"25":[972.7,140.3,497.1],"26":[990.3,140.6,491.1],"27":[1005.4,139.8,490.6],"28":[1019.5,136.6,495.4],"29":[1030.5,136.1,493.6],"30":[1040.7,138.6,491.3],"31":[1049.1,141.6,488.7],"32":[1056.0,143.1,488.1],"33":[1061.4,141.9,490.1],"34":[1067.5,137.1,493.4],"35":[1073.9,131.7,493.3],"36":[1081.4,132.7,487.6],"37":[1089.4,136.0,483.1],"38":[1096.2,140.2,474.9],"39":[1100.4,142.0,471.7],"40":[1103.4,142.5,474.1],"41":[1103.8,142.9,471.8],"42":[1097.2,145.4,467.2],"43":[1089.5,149.4,463.2],"44":[1077.6,152.4,460.6],"45":[1062.7,155.2,456.8],"46":[1042.3,154.1,460.4],"47":[1020.4,156.7,445.4],"48":[995.8,160.4,433.7],"49":[969.4,167.0,423.6],"50":[942.3,173.9,412.6],"51":[912.0,179.3,398.2],"52":[880.8,180.2,401.6],"53":[850.9,181.1,400.9],"54":[819.1,184.1,394.7],"55":[785.8,187.6,389.7],"56":[755.4,191.8,385.2],"57":[728.0,193.9,381.1],"58":[703.2,194.6,374.7],"59":[685.4,196.6,374.6],"60":[672.1,199.1,370.1],"61":[663.9,201.9,369.7],"62":[659.4,204.3,373.2],"63":[654.9,205.9,375.4],"64":[649.8,205.4,375.2],"65":[641.9,206.4,373.1],"66":[634.0,209.4,367.4],"67":[626.8,214.3,358.0],"68":[620.1,217.4,354.7],"69":[613.7,219.6,343.3],"70":[609.3,219.1,337.2],"71":[604.7,219.5,335.5],"72":[599.4,221.4,332.1],"73":[592.5,225.1,329.3],"74":[584.8,227.0,333.2],"75":[577.3,228.8,335.0],"76":[570.9,228.4,335.1],"77":[566.7,229.9,331.9],"78":[564.4,232.3,327.3],"79":[564.1,234.3,325.5],"80":[564.7,235.8,324.6],"81":[564.4,235.8,325.4],"82":[563.4,234.1,329.5],"83":[560.6,233.6,330.8],"84":[557.2,235.4,330.1],"85":[553.5,237.1,330.3],"86":[550.6,238.3,330.2],"87":[548.7,237.7,330.4],"88":[548.3,236.2,332.6],"89":[549.9,236.2,329.3],"90":[552.3,237.4,326.9],"91":[555.4,240.0,323.2],"92":[557.7,241.7,320.2],"93":[559.7,242.4,318.3],"94":[560.6,240.9,322.5],"95":[561.3,240.4,322.9],"96":[560.4,241.2,321.6],"97":[558.9,242.4,322.6],"98":[558.2,243.4,323.0],"99":[557.8,243.1,322.9],"100":[557.3,241.6,321.8],"101":[558.5,240.1,320.9],"102":[561.4,240.7,319.2],"103":[563.5,242.0,316.1],"104":[565.5,243.3,314.3],"105":[567.4,243.7,316.0],"106":[569.3,243.2,315.3],"107":[570.1,241.9,314.0],"108":[570.0,241.1,312.8],"109":[569.9,242.6,308.8],"110":[569.8,243.7,306.0],"111":[570.5,243.8,308.5],"112":[571.1,243.1,308.2],"113":[573.2,242.4,310.9],"114":[575.2,242.2,310.1],"115":[577.5,243.7,307.5],"116":[579.3,245.5,302.4],"117":[581.5,246.0,304.9],"118":[582.2,247.4,301.5],"119":[583.7,247.3,303.3]},"r1":{"0":[933.2,199.6,406.0],"1":[932.2,204.4,399.8],"2":[931.5,207.2,398.8],"3":[932.9,209.4,398.3],"4":[932.5,210.3,397.7],"5":[931.9,208.2,395.8],"6":[936.6,204.2,400.5],"7":[945.9,202.7,398.5],"8":[955.7,202.3,397.9],"9":[967.1,203.9,399.7],"10":[979.8,204.5,405.1],"11":[993.1,203.6,408.5],"12":[1005.4,201.9,412.1],"13":[1016.3,200.8,411.7],"14":[1026.9,200.1,411.1],"15":[1038.2,200.8,408.5],"16":[1048.2,200.1,409.7],"17":[1058.0,195.8,413.7],"18":[1070.0,191.9,414.8],"19":[1085.9,191.5,413.5],"20":[1100.8,191.8,412.8],"21":[1114.1,193.7,408.7],"22":[1128.6,194.2,408.6],"23":[1142.3,193.3,413.6],"24":[1153.3,188.9,416.1],"25":[1165.7,185.3,418.2],"26":[1180.4,184.3,418.3],"27":[1192.2,185.6,416.5],"28":[1203.2,186.9,412.8],"29":[1212.4,187.8,405.0],"30":[1218.7,186.5,400.3],"31":[1222.1,186.4,395.4],"32":[1224.6,188.5,391.9],"33":[1226.1,190.2,390.9],"34":[1226.7,189.6,394.5],"35":[1227.4,188.7,394.5],"36":[1228.6,185.8,395.4],"37":[1229.9,185.4,391.1],"38":[1232.2,186.5,384.4],"39":[1234.3,190.7,375.9],"40":[1236.2,193.9,370.7],"41":[1235.8,197.2,364.1],"42":[1233.3,198.7,360.2],"43":[1228.8,201.6,356.0],"44":[1220.2,205.2,355.2],"45":[1207.4,209.4,353.0],"46":[1189.3,211.3,352.8],"47":[1164.2,212.9,349.1],"48":[1137.5,214.4,347.0],"49":[1109.6,218.0,341.6],"50":[1080.9,223.1,336.3],"51":[1051.9,228.9,333.3],"52":[1022.8,233.2,332.6],"53":[993.2,236.6,326.9],"54":[960.3,239.7,323.9],"55":[928.4,241.6,320.0],"56":[897.8,243.5,315.5],"57":[871.5,245.0,309.5],"58":[847.6,246.8,308.8],"59":[830.6,248.5,307.5],"60":[817.1,250.8,305.8],"61":[808.3,253.4,306.0],"62":[801.8,255.0,309.8],"63":[796.6,256.3,310.1],"64":[792.7,256.0,308.6],"65":[788.3,256.3,307.5],"66":[780.5,256.7,303.8],"67":[772.5,257.6,301.0],"68":[763.9,257.2,300.4],"69":[754.6,256.8,300.5],"70":[746.8,255.8,300.9],"71":[743.7,255.7,299.8],"72":[741.7,256.2,297.9],"73":[739.3,256.7,296.7],"74":[737.1,256.2,298.3],"75":[734.0,256.2,298.6],"76":[729.9,256.8,298.2],"77":[725.4,258.6,296.5],"78":[720.6,260.9,293.9],"79":[714.3,261.3,294.7],"80":[707.8,260.8,298.5],"81":[702.4,258.6,301.6],"82":[699.3,257.7,302.2],"83":[697.3,258.3,301.2],"84":[698.8,260.2,298.0],"85":[700.8,260.8,296.6],"86":[702.2,260.3,298.4],"87":[702.9,258.2,300.2],"88":[703.5,255.6,302.9],"89":[703.3,255.4,304.3],"90":[702.7,258.3,301.7],"91":[700.4,260.4,301.2],"92":[696.9,261.2,300.9],"93":[693.4,261.4,298.2],"94":[688.7,260.9,297.7],"95":[685.3,261.3,295.5],"96":[684.3,263.9,291.5],"97":[685.5,265.6,293.3],"98":[687.2,265.4,299.0],"99":[690.2,264.2,302.8],"100":[692.8,262.1,305.8],"101":[694.5,263.9,302.8],"102":[692.4,266.3,298.1],"103":[689.5,269.2,292.4],"104":[686.3,269.3,291.1],"105":[683.2,267.7,292.0],"106":[680.7,263.7,294.3],"107":[681.3,265.0,290.8],"108":[683.9,266.9,288.0],"109":[687.3,269.7,283.5],"110":[690.8,271.7,281.6],"111":[693.8,271.4,284.7],"112":[697.1,267.9,290.3],"113":[698.9,265.1,293.8],"114":[699.1,266.9,291.3],"115":[698.4,269.3,286.8],"116":[696.3,270.9,283.9],"117":[694.3,270.1,283.7],"118":[692.5,271.1,282.2],"119":[690.9,268.2,285.4]}},"cafe":{"8":[426.0,237.2],"9":[427.8,235.9],"10":[429.6,234.5],"11":[433.3,233.9],"12":[437.7,232.6],"13":[442.6,230.0],"14":[448.0,227.1],"15":[452.3,224.4],"16":[457.9,220.6],"17":[462.4,217.0],"18":[468.5,212.3],"19":[475.0,207.4],"20":[480.0,203.6],"21":[486.5,198.8],"22":[491.7,196.0],"23":[498.1,190.3],"24":[503.8,185.1],"25":[507.7,181.2],"26":[511.8,175.5],"27":[512.7,171.0],"28":[536.1,172.3],"29":[549.0,171.9],"30":[555.5,168.9],"31":[557.0,166.7],"32":[557.5,164.8],"33":[528.3,145.7],"34":[539.1,148.3],"35":[542.6,148.5],"36":[539.8,144.6],"37":[535.4,140.6],"38":[526.2,134.6],"39":[513.6,127.7],"40":[501.8,122.2],"41":[487.4,112.4],"42":[474.9,104.3],"43":[455.0,96.8],"44":[428.5,87.5],"45":[405.0,83.7],"46":[370.5,81.2],"47":[341.0,78.4],"48":[296.5,76.2],"49":[262.5,75.1],"50":[239.2,74.5],"51":[214.9,77.0],"52":[196.4,78.3],"53":[174.2,78.9],"54":[149.4,75.9],"55":[130.4,73.4],"56":[106.7,71.7],"57":[87.9,70.9],"58":[64.2,70.4],"59":[220.8,137.3],"60":[294.9,170.9],"61":[327.0,183.4]},"shop":{"52":[1084.5,191.2],"53":[1054.0,192.2],"54":[1023.3,193.0],"55":[1008.1,192.9],"56":[979.2,192.1],"57":[966.0,191.4],"58":[945.9,189.9],"59":[935.2,187.7],"60":[933.2,186.3],"61":[932.4,182.7],"62":[933.1,180.6],"63":[935.4,176.1],"64":[938.7,171.7],"65":[940.3,169.2],"66":[944.1,164.0],"67":[946.2,161.2],"68":[950.3,155.6],"69":[955.2,149.9],"70":[957.9,147.2],"71":[964.1,140.9],"72":[967.6,137.8],"73":[974.3,131.5],"74":[980.7,124.8],"75":[984.0,121.3],"76":[991.3,114.1],"77":[995.2,110.1],"78":[1004.5,102.2],"79":[1014.6,94.4],"80":[1020.0,90.0],"81":[1030.9,81.0],"82":[1036.4,76.2],"83":[1048.0,66.3],"84":[1060.4,56.2],"85":[1066.9,51.2],"86":[1081.3,40.4],"87":[1088.5,34.8],"88":[1104.7,23.8],"89":[1121.3,13.3],"90":[1130.6,7.6],"91":[1150.1,-4.5],"92":[1158.7,-10.5],"93":[1157.5,-11.0],"94":[1162.3,-16.8],"95":[1170.0,-22.6],"96":[1182.3,-34.6],"97":[1186.1,-38.7],"98":[1200.1,-51.7],"99":[1197.6,-51.8],"100":[1206.5,-57.6],"101":[1214.7,-64.6],"102":[1223.7,-69.0],"103":[1227.2,-71.0]}};
+window.AR.C={"r0":{"0":[588.8,237.3,310.7],"1":[588.6,238.3,310.1],"2":[588.8,241.7,305.8],"3":[588.0,244.5,303.8],"4":[587.3,245.7,301.2],"5":[585.7,246.6,305.5],"6":[585.6,247.4,304.4],"7":[585.5,247.4,304.3],"8":[585.9,249.6,301.7],"9":[586.0,251.0,303.1],"10":[587.5,250.8,303.8],"11":[587.8,249.7,304.9],"12":[588.1,250.3,306.7],"13":[587.7,250.0,306.6],"14":[588.0,248.2,306.3],"15":[586.2,247.3,304.0],"16":[585.2,251.0,302.6],"17":[584.7,251.9,301.3],"18":[583.4,251.0,305.1],"19":[581.8,251.3,303.1],"20":[580.9,252.9,303.8],"21":[581.5,253.4,303.7],"22":[581.5,254.3,304.8],"23":[582.3,255.5,303.6],"24":[583.1,257.0,303.0],"25":[582.6,257.3,302.1],"26":[579.9,257.2,300.9],"27":[577.4,256.4,300.9],"28":[576.1,256.8,296.9],"29":[574.7,258.2,294.9],"30":[574.9,258.8,296.3],"31":[575.5,258.6,298.4],"32":[575.7,259.6,299.2],"33":[575.7,259.5,300.7],"34":[576.8,259.6,303.6],"35":[578.4,258.1,304.5],"36":[579.4,257.0,300.9],"37":[580.0,255.9,298.2],"38":[579.5,256.1,298.4],"39":[579.3,256.4,297.8],"40":[578.3,257.9,301.1],"41":[579.1,256.4,306.2],"42":[580.4,253.5,310.4],"43":[581.9,253.2,311.2],"44":[583.5,253.6,314.2],"45":[585.9,255.4,317.2],"46":[587.1,255.3,321.2],"47":[588.1,254.8,318.6],"48":[589.2,251.9,317.7],"49":[588.9,250.9,317.2],"50":[587.4,252.7,309.8],"51":[587.4,254.6,310.5],"52":[587.6,255.5,311.4],"53":[589.1,255.7,313.4],"54":[590.6,255.4,312.7],"55":[592.4,256.1,313.5],"56":[593.2,258.1,311.9],"57":[594.0,258.6,319.8],"58":[594.0,258.1,323.8],"59":[593.6,256.8,323.9],"60":[593.6,253.8,321.0],"61":[592.6,254.5,315.1],"62":[592.1,258.3,307.8],"63":[592.1,260.7,310.0],"64":[593.2,262.6,310.8],"65":[594.9,262.4,312.5],"66":[597.9,260.3,314.6],"67":[599.8,257.9,318.2],"68":[601.5,257.7,316.8],"69":[602.3,256.3,323.8],"70":[602.5,256.1,326.7],"71":[603.4,256.0,327.7],"72":[604.9,256.2,323.3],"73":[606.7,256.8,323.1],"74":[608.1,258.6,318.6],"75":[609.5,259.2,323.2],"76":[609.6,256.2,330.4],"77":[609.2,252.8,336.2],"78":[608.3,252.4,334.7],"79":[608.3,253.5,334.8],"80":[608.3,254.6,335.3],"81":[610.1,255.1,337.3],"82":[611.6,256.8,335.5],"83":[612.3,256.0,338.5],"84":[612.1,254.8,337.2],"85":[612.0,253.4,339.9],"86":[610.1,252.6,340.9],"87":[609.1,251.8,341.8],"88":[608.8,253.5,337.6],"89":[609.8,255.3,337.1],"90":[610.8,256.2,335.8],"91":[612.6,258.4,327.5],"92":[614.0,258.4,332.3],"93":[614.7,257.7,334.5],"94":[615.4,255.9,335.7],"95":[615.6,254.5,331.2],"96":[616.1,255.4,332.8],"97":[616.7,258.5,327.4],"98":[618.2,259.4,330.6],"99":[619.5,258.5,331.7],"100":[620.8,258.2,334.7],"101":[620.6,257.9,336.1],"102":[619.6,258.1,340.1],"103":[617.7,255.7,343.1],"104":[615.6,252.9,349.6],"105":[614.1,251.6,350.9],"106":[614.1,251.9,353.4],"107":[614.2,252.2,355.4],"108":[615.9,252.7,353.2],"109":[618.7,253.5,346.2],"110":[620.9,253.9,341.9],"111":[622.2,254.8,333.6],"112":[622.3,254.6,333.2],"113":[621.5,252.4,339.4],"114":[620.3,251.3,349.5],"115":[620.3,250.3,355.4],"116":[620.2,249.0,364.5],"117":[621.9,248.8,366.1],"118":[624.2,250.4,363.9],"119":[625.7,251.1,361.6],"120":[627.4,251.2,359.2],"121":[628.2,250.1,360.6],"122":[628.2,249.1,360.8],"123":[627.2,248.0,363.7],"124":[626.2,247.3,368.5],"125":[624.6,245.7,375.1],"126":[624.5,244.7,376.8],"127":[624.5,243.6,379.3],"128":[625.3,244.4,380.1],"129":[626.1,244.3,382.0],"130":[626.2,244.3,379.9],"131":[626.6,244.6,380.8],"132":[628.3,245.2,380.3],"133":[630.2,244.8,379.9],"134":[630.8,244.2,376.4],"135":[633.1,242.2,381.9],"136":[635.4,240.0,384.8],"137":[637.1,238.3,385.9],"138":[638.0,238.6,387.7],"139":[640.3,238.1,391.5],"140":[641.6,238.9,384.7],"141":[641.1,238.4,383.0],"142":[640.5,238.4,381.6],"143":[638.7,238.3,378.2],"144":[636.0,238.7,375.1],"145":[632.9,238.1,380.5],"146":[631.7,238.3,380.7],"147":[630.9,238.8,382.9],"148":[630.9,235.8,384.6],"149":[631.9,236.3,383.7]},"r1":{"0":[693.6,269.2,271.2],"1":[695.1,268.4,276.6],"2":[696.9,269.5,278.3],"3":[698.7,267.2,290.2],"4":[700.2,264.7,297.9],"5":[700.5,261.7,295.0],"6":[702.5,261.2,292.6],"7":[704.1,262.3,290.1],"8":[704.1,262.5,287.8],"9":[704.2,262.6,287.4],"10":[703.6,263.3,290.8],"11":[701.4,264.8,291.7],"12":[699.2,266.1,293.1],"13":[698.8,266.1,293.8],"14":[698.3,265.8,293.7],"15":[697.4,264.4,296.5],"16":[696.2,262.2,297.6],"17":[695.8,259.7,294.7],"18":[694.0,259.2,294.8],"19":[691.8,259.9,295.1],"20":[690.4,262.1,288.5],"21":[690.9,268.2,284.2],"22":[690.8,273.4,281.7],"23":[691.8,275.9,277.1],"24":[693.3,274.8,275.1],"25":[694.8,275.1,281.6],"26":[694.4,273.6,283.6],"27":[693.4,274.2,283.6],"28":[692.4,275.0,281.8],"29":[690.1,276.9,281.6],"30":[688.9,277.3,275.7],"31":[689.7,278.1,275.6],"32":[691.4,277.3,278.4],"33":[693.1,276.6,280.8],"34":[696.3,275.5,281.4],"35":[697.7,274.4,288.7],"36":[698.1,272.6,288.4],"37":[698.4,271.9,284.4],"38":[698.0,271.7,286.3],"39":[696.6,271.9,290.6],"40":[695.8,271.5,293.8],"41":[695.7,271.5,297.4],"42":[694.9,269.7,303.3],"43":[696.4,269.3,303.0],"44":[698.3,269.9,299.7],"45":[700.7,269.9,298.1],"46":[703.2,270.3,297.5],"47":[707.1,272.2,297.0],"48":[708.1,273.5,295.9],"49":[708.9,273.9,296.7],"50":[708.8,274.9,300.6],"51":[708.7,274.2,299.3],"52":[708.1,274.1,293.9],"53":[708.1,275.2,292.6],"54":[708.5,276.7,292.5],"55":[709.6,276.2,287.8],"56":[709.6,273.9,292.4],"57":[709.9,271.7,299.6],"58":[710.3,273.8,298.2],"59":[710.6,277.2,295.1],"60":[710.7,278.3,293.1],"61":[710.4,280.4,288.6],"62":[710.3,281.7,288.8],"63":[711.6,280.6,289.8],"64":[712.8,280.4,288.1],"65":[714.1,280.9,291.2],"66":[715.1,278.6,297.7],"67":[715.1,276.0,301.6],"68":[716.2,275.6,297.9],"69":[718.1,275.0,296.1],"70":[720.2,275.1,293.7],"71":[723.8,276.9,292.7],"72":[726.9,279.0,289.9],"73":[727.7,277.5,296.6],"74":[728.3,275.4,303.8],"75":[728.5,272.7,308.1],"76":[726.0,270.8,308.2],"77":[724.5,269.5,309.7],"78":[723.5,271.0,307.6],"79":[722.8,272.0,303.1],"80":[723.4,273.4,301.8],"81":[726.1,274.1,306.4],"82":[728.8,273.9,309.2],"83":[731.1,271.6,313.4],"84":[731.8,271.1,318.4],"85":[731.1,270.5,323.3],"86":[729.8,269.5,315.5],"87":[729.3,267.1,317.2],"88":[730.6,267.4,320.0],"89":[732.4,267.8,319.5],"90":[734.5,269.4,315.2],"91":[736.7,269.1,323.6],"92":[737.6,270.1,323.9],"93":[737.3,267.9,324.2],"94":[738.2,265.4,324.9],"95":[738.9,267.5,322.2],"96":[739.8,270.7,319.5],"97":[740.9,271.7,317.5],"98":[742.6,270.6,318.4],"99":[743.7,269.4,321.2],"100":[746.1,268.7,327.2],"101":[746.9,269.8,324.5],"102":[747.8,270.2,325.8],"103":[747.4,270.2,332.5],"104":[747.1,269.2,339.2],"105":[746.2,264.4,339.8],"106":[747.3,264.4,345.2],"107":[748.7,264.2,349.1],"108":[750.8,263.3,345.2],"109":[752.1,261.2,348.6],"110":[753.5,261.7,351.3],"111":[754.6,260.9,349.2],"112":[755.7,261.9,346.6],"113":[754.6,262.1,366.8],"114":[755.1,262.0,366.9],"115":[754.7,259.7,370.9],"116":[756.5,255.6,374.9],"117":[758.5,252.1,380.5],"118":[761.9,252.0,363.3],"119":[763.3,252.0,362.4],"120":[763.9,249.9,365.6],"121":[762.0,248.8,367.1],"122":[759.7,249.6,364.6],"123":[757.5,251.2,363.6],"124":[755.1,252.6,363.4],"125":[754.0,252.8,364.7],"126":[755.9,254.9,364.3],"127":[758.5,255.9,364.1],"128":[761.8,256.2,361.5],"129":[766.1,257.3,359.3],"130":[768.8,257.6,361.1],"131":[770.5,256.2,364.5],"132":[772.7,254.6,366.7],"133":[773.1,253.9,371.1],"134":[772.9,251.2,373.7],"135":[772.4,248.2,374.3],"136":[773.9,248.2,370.6],"137":[774.6,247.4,371.7],"138":[776.3,246.7,371.6],"139":[777.6,246.3,375.0],"140":[779.9,250.0,372.4],"141":[779.7,246.3,379.1],"142":[779.4,245.8,383.1],"143":[778.5,244.5,389.4],"144":[778.8,243.3,389.4],"145":[779.6,242.4,389.5],"146":[781.1,248.4,384.6],"147":[782.3,251.2,384.5],"148":[783.9,250.8,382.6],"149":[786.0,255.5,382.5]}};
+window.AR.N={"tom":{"0":[818.1,218.3,482.4],"1":[821.3,214.9,488.3],"2":[822.2,215.3,485.4],"3":[823.8,214.7,488.5],"4":[823.9,215.4,486.9],"5":[824.2,215.3,487.6],"6":[821.9,215.0,489.1],"7":[822.6,215.0,493.1],"8":[825.9,214.4,493.7],"9":[830.8,214.1,495.6],"10":[834.9,214.8,495.4],"11":[838.8,215.6,493.5],"12":[841.5,214.0,490.5],"13":[842.4,213.6,490.1],"14":[841.7,213.2,489.6],"15":[841.4,212.8,489.6],"16":[840.8,212.2,490.7],"17":[840.8,211.6,496.6],"18":[841.6,211.2,500.2],"19":[844.2,211.9,501.2],"20":[846.7,211.8,502.1],"21":[849.7,210.7,501.7],"22":[852.0,209.9,500.7],"23":[853.2,209.8,500.6],"24":[852.8,209.8,501.2],"25":[850.2,210.2,501.4],"26":[846.9,210.8,502.8],"27":[842.5,209.8,505.9],"28":[839.7,208.9,507.3],"29":[839.3,208.8,506.1],"30":[841.4,210.3,503.2],"31":[843.1,211.3,501.9],"32":[845.5,211.7,500.3],"33":[847.2,210.2,501.5],"34":[846.3,209.1,503.5],"35":[844.7,208.7,503.9],"36":[842.8,208.1,504.7],"37":[838.7,206.9,507.2],"38":[833.5,205.2,510.6],"39":[831.5,203.4,512.4],"40":[831.6,203.2,512.8],"41":[833.4,204.8,510.4],"42":[836.1,206.2,509.2],"43":[839.6,206.5,508.5],"44":[841.6,204.8,509.8],"45":[841.7,203.4,510.2],"46":[839.9,204.0,510.6],"47":[837.2,204.1,510.3],"48":[832.6,202.3,511.9],"49":[827.3,200.1,514.7],"50":[824.1,198.7,516.8],"51":[824.6,198.3,517.0],"52":[828.1,198.7,515.9],"53":[832.3,199.6,515.6],"54":[835.8,199.9,514.6],"55":[838.6,199.8,514.5],"56":[838.8,199.5,515.5],"57":[837.1,199.5,515.6],"58":[833.9,199.1,516.2],"59":[830.9,197.9,519.1],"60":[829.1,196.4,520.8],"61":[830.4,195.2,521.2],"62":[834.6,195.0,521.2],"63":[839.1,195.0,521.3],"64":[843.5,194.6,520.5],"65":[847.9,193.3,522.7],"66":[849.6,192.3,524.4],"67":[848.3,192.3,525.5],"68":[848.4,192.0,525.4],"69":[847.4,191.2,526.2],"70":[844.9,189.5,528.2],"71":[845.4,187.6,529.9],"72":[849.3,186.7,530.6],"73":[853.2,186.3,531.6],"74":[856.0,185.7,533.2],"75":[859.3,183.7,535.4],"76":[860.7,182.8,536.6],"77":[860.3,182.5,537.8],"78":[861.3,182.8,536.5],"79":[863.5,182.9,536.1],"80":[864.3,182.4,535.8],"81":[864.8,179.1,538.6],"82":[869.7,176.4,540.1],"83":[876.1,175.7,541.5],"84":[883.6,174.4,544.1],"85":[889.6,172.1,547.5],"86":[896.4,169.3,550.7],"87":[898.5,166.2,556.0],"88":[898.0,165.3,557.5],"89":[896.6,166.2,555.7],"90":[895.1,166.6,554.0],"91":[890.7,165.8,553.8],"92":[887.7,165.3,552.1],"93":[887.9,164.2,552.2],"94":[886.3,162.2,553.4],"95":[887.2,163.6,552.1]},"lena":{"0":[620.5,208.1,363.9],"1":[622.9,208.1,365.7],"2":[624.2,207.2,362.1],"3":[627.9,207.7,361.6],"4":[627.7,209.4,359.2],"5":[626.2,210.3,359.1],"6":[623.6,210.4,357.4],"7":[619.8,210.5,359.8],"8":[615.7,211.0,358.0],"9":[614.9,212.0,356.6],"10":[615.3,212.5,354.7],"11":[616.1,213.4,352.3],"12":[618.7,213.7,350.6],"13":[620.0,215.0,346.7],"14":[619.7,215.4,344.8],"15":[617.9,215.0,343.4],"16":[614.3,214.3,345.2],"17":[610.0,214.6,347.2],"18":[608.4,216.4,348.3],"19":[609.6,217.5,347.9],"20":[610.9,217.3,346.3],"21":[614.1,217.2,339.5],"22":[617.2,218.4,336.6],"23":[618.5,220.1,333.4],"24":[617.6,219.8,334.2],"25":[614.6,218.2,333.8],"26":[612.0,218.4,333.8],"27":[611.3,220.3,328.1],"28":[611.6,220.2,329.1],"29":[611.3,219.5,330.1],"30":[614.4,220.5,328.1],"31":[616.5,221.9,328.4],"32":[615.8,223.0,329.2],"33":[613.2,221.9,330.7],"34":[610.3,221.0,328.8],"35":[606.7,220.2,332.7],"36":[604.1,220.6,331.0],"37":[604.6,221.3,329.3],"38":[606.7,222.7,322.9],"39":[609.9,223.2,315.7],"40":[613.2,223.8,310.7],"41":[614.5,225.9,307.5],"42":[612.8,227.4,304.7],"43":[609.7,227.4,305.6],"44":[607.7,227.6,305.5],"45":[606.1,229.1,304.3],"46":[607.7,229.7,301.6],"47":[610.7,228.6,302.8],"48":[614.1,228.6,299.4],"49":[616.9,229.9,295.1],"50":[618.4,231.1,292.1],"51":[617.1,232.7,291.7],"52":[615.5,234.0,289.1],"53":[614.3,233.9,289.8],"54":[613.6,234.3,288.3],"55":[613.7,235.2,287.5],"56":[614.4,235.7,288.2],"57":[614.6,235.1,289.8],"58":[614.2,235.5,283.8],"59":[613.5,235.1,290.2],"60":[613.6,236.3,286.9],"61":[614.7,236.7,282.6],"62":[616.1,236.8,276.7],"63":[618.0,236.9,278.6],"64":[619.4,237.8,277.9],"65":[618.8,238.1,277.9],"66":[617.6,237.0,280.2],"67":[616.0,236.1,281.9],"68":[615.2,236.6,277.8],"69":[614.9,237.7,270.1],"70":[615.7,238.2,269.4],"71":[616.6,238.3,265.6],"72":[618.2,239.5,261.3],"73":[619.1,239.3,266.1],"74":[618.4,239.9,270.2],"75":[616.9,240.1,269.2],"76":[615.1,239.2,270.7],"77":[612.5,238.9,269.9],"78":[611.2,240.4,266.3],"79":[610.5,242.6,262.7],"80":[611.5,242.0,265.4],"81":[612.2,241.7,267.7],"82":[613.8,241.4,273.8],"83":[613.9,242.0,277.4],"84":[613.2,241.0,283.4],"85":[611.9,240.1,283.7],"86":[610.7,240.5,283.6],"87":[610.4,241.3,280.1],"88":[611.5,241.5,275.8],"89":[613.5,239.8,275.0],"90":[615.9,239.2,271.4],"91":[619.5,238.3,269.6],"92":[620.7,238.2,273.4],"93":[620.8,237.2,278.6],"94":[621.3,237.0,276.7],"95":[621.2,237.6,281.3]}};
+</script>
+<script>
+(function(){
+  var reduce=false; try{reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+  var $=function(id){return document.getElementById(id);};
+  var MONO=getComputedStyle(document.body).getPropertyValue('--mono')||'monospace';
+  var AR=window.AR, story=$('story'), stage=$('stage'), bg=$('bg'), ctx=bg.getContext('2d');
+  var beats=[].slice.call(document.querySelectorAll('.beat'));
+  function cl(x){return Math.min(1,Math.max(0,x));}
+  function sm(a,b,x){var t=cl((x-a)/(b-a));return t*t*(3-2*t);}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function fmt(n){return Math.round(n).toLocaleString('en-US');}
+  function k(dt,tau){return 1-Math.exp(-dt/tau);}
+  // piecewise-linear value over scroll: [[pS,value],...]
+  function pw(q,pts){ if(q<=pts[0][0])return pts[0][1]; for(var i=1;i<pts.length;i++){ if(q<=pts[i][0]){var a=pts[i-1],b=pts[i];return lerp(a[1],b[1],(q-a[0])/(b[0]-a[0]));} } return pts[pts.length-1][1]; }
+  function seq(dir,n){var a=[];for(var i=0;i<n;i++){(function(i){var im=new Image(),u=dir+'/f'+('00'+i).slice(-3)+'.jpg',tries=0;im.decoding='async';im.onerror=function(){if(tries++<3)setTimeout(function(){im.src=u+'?r='+tries;},400*tries);};im.src=u;a.push(im);})(i);}return a;}
+  // her run is one 18 s shot: the first clip (b, 120 frames) continues into the second (c, 150 frames)
+  var CN=73; // the second clip is used up to frame 72: after that the model invents a figure that turns unnaturally in the street
+  var FR=seq('b',120).concat(seq('c',CN)), NF=FR.length;
+  function ready(arr,i){var im=arr[Math.max(0,Math.min(NF-1,i))];return im.complete&&im.naturalWidth?im:null;}
+  function pick(arr,i){for(var q=i;q>=0;q--){var im=ready(arr,q);if(im)return im;}return null;}
+  function trk(n,i){return i<120?AR.B[n][String(i)]:AR.C[n][String(i-120)];}
+  function atF(n,f){var i=Math.floor(f),a=trk(n,i),b=trk(n,i+1),t=f-i;
+    if(a&&b)return [lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2]||0,b[2]||0,t)]; return a||b||null;}
+  var hMax=0; ['r0','r1'].forEach(function(n){[AR.B[n],AR.C[n]].forEach(function(tr){for(var q in tr)hMax=Math.max(hMax,tr[q][2]);});});
+
+  // ---- sound: off until the visitor turns it on; short tones made in the page ----
+  var ac=null, sndOn=false, sb=$('snd');
+  sb.addEventListener('click',function(){
+    sndOn=!sndOn; sb.setAttribute('aria-pressed',sndOn?'true':'false'); $('sndT').textContent=sndOn?'Sound on':'Sound off';
+    if(sndOn){ try{ if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)(); if(ac.state==='suspended')ac.resume(); tone([660,990],0.05); }catch(e){} }
+  });
+  function tone(fs,vol,dur,gap){ if(!sndOn||!ac)return; try{ var t0=ac.currentTime+0.01; fs.forEach(function(f,i){
+      var o=ac.createOscillator(), g=ac.createGain(), t=t0+i*(gap||0.07), d=dur||0.16; o.type='sine'; o.frequency.setValueAtTime(f,t);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.05,t+0.008); g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+d+0.02); }); }catch(e){} }
+  function sweep(f0,f1,dur,vol,type){ if(!sndOn||!ac)return; try{ var t=ac.currentTime+0.01,o=ac.createOscillator(),g=ac.createGain(); o.type=type||'sine';
+      o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f1,t+dur);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+dur*0.25); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+0.02); }catch(e){} }
+  function whoosh(){ if(!sndOn||!ac)return; try{ var t=ac.currentTime+0.01, n=(ac.sampleRate*0.5)|0, b=ac.createBuffer(1,n,ac.sampleRate), d=b.getChannelData(0); for(var i=0;i<n;i++)d[i]=Math.random()*2-1;
+      var src=ac.createBufferSource(), f=ac.createBiquadFilter(), g=ac.createGain(); src.buffer=b; f.type='bandpass'; f.Q.value=1.2; f.frequency.setValueAtTime(400,t); f.frequency.exponentialRampToValueAtTime(2000,t+0.45);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.12,t+0.3); g.gain.exponentialRampToValueAtTime(0.0001,t+0.48); src.connect(f); f.connect(g); g.connect(ac.destination); src.start(t); src.stop(t+0.5); }catch(e){} }
+  var SND={hLb:[660,880],hSteps:[880,1320],hRl:[660,880],hRw:[740,1110],hMsg:[990,1320],hLvl:[784,1046,1318],hMed:[784,988,1318],hRun:[660,990],hLg:[740,1110],hCm:[880,1175]};
+
+  // ---- timeline: her eyes open on load, then each scroll adds one widget ----
+  var openT=-1, lastT=0, p=0, pN=0, pS=0, lastSeg=0;
+  // beats by master scroll: Maria (hero, climb, pass), Tom, Lena, Sam, final
+  var WIN=[[0,0.105],[0.105,0.25],[0.25,0.405],[0.405,0.59],[0.59,0.77],[0.77,0.93],[0.93,1.01]], cur=0;
+  // ---- one shot, four bodies: the view flies into the runner ahead, eyes close, eyes open in the next body ----
+  function sheets(dir){var a=[];for(var i=0;i<24;i++){var im=new Image();im.decoding='async';a.push(im);}a.dir=dir;return a;}
+  var SH=[null,sheets('t'),sheets('l'),sheets('f')];
+  setTimeout(function(){SH.slice(1).forEach(function(a){a.forEach(function(im,i){var u=a.dir+'/s'+('0'+i).slice(-2)+'.jpg?v=2',tries=0; im.onerror=function(){if(tries++<3)setTimeout(function(){im.src=u+'&r='+tries;},400*tries);}; im.src=u; /* v=2: Tom's and Sam's clips were replaced, so browsers must not reuse the old sheets */});});},1200);
+  function cell(seg,k){ var a=SH[seg]; k=Math.max(0,Math.min(95,k)); for(var q=k>>2;q>=0;q--){ var im=a[q]; if(im.complete&&im.naturalWidth)return [im,q===(k>>2)?(k&3):3]; } return null; }
+  var HOPS=[{s:0.38,c:0.405,e:0.425},{s:0.57,c:0.59,e:0.61},{s:0.75,c:0.77,e:0.79}];
+  var HS=[{t:-1},{t:-1},{t:-1}], HP={i:-1,dir:1,t0:-1,cd:0}, pPrev=0; /* HS, per hop: when the scan started, which sounds played, lock ready. HP: the hop in play, its direction, start time, and when the next may start */
+  // while a hop plays, the page drives the scroll; wheel and touch wait for it to land
+  ['wheel','touchmove'].forEach(function(ev){ addEventListener(ev,function(e){ if(HP.i>=0&&e.cancelable)e.preventDefault(); },{passive:false}); });
+  var SEGR=[[0,0.38],[0.405,0.57],[0.59,0.75],[0.77,0.97]], SEGN=[0,72,95,84]; /* last frame used per clip; Maria's (index 0) comes from NF. Sam's stops at 84, before a lamp post fills the frame */
+  function headOf(i){ var t=i===0?AR.C.r0[String(CN-1)]:i===1?AR.N.tom['72']:AR.N.lena['95']; return [t[0],t[1]+0.12*t[2]]; }
+  function trkN(name,f){ var i=Math.max(0,Math.min(94,Math.floor(f))), a=AR.N[name][String(i)], b=AR.N[name][String(i+1)], t=f-i; return [lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)]; }
+  function drawSeg(seg,f,x,y,w,h){
+    var i=Math.floor(f), t=f-i;
+    if(seg===0){ var b0=pick(FR,i), b1=ready(FR,i+1); if(b0)ctx.drawImage(b0,x,y,w,h); if(b1&&t>0.01){ctx.globalAlpha=t;ctx.drawImage(b1,x,y,w,h);ctx.globalAlpha=1;} return; }
+    function dc(c,a){ if(!c)return; ctx.globalAlpha=a; ctx.drawImage(c[0],(c[1]&1)*960,(c[1]>>1)*540,960,540,x,y,w,h); ctx.globalAlpha=1; }
+    dc(cell(seg,i),1); if(t>0.01)dc(cell(seg,i+1),t);
+  }
+  // Lena's view: commentary lines type in as the round moves; scores follow them
+  var CM=[{p:0.611,tm:'18:42',t:'Peak Sports lead · 5.3 to 4.9'},{p:0.675,tm:'18:43',t:'Bean Bar tied · 4.9 each'},{p:0.715,tm:'18:44',t:'Sam · 200 steps to a coffee'}], cmL=null;
+  function setBeat(i){ if(i===cur)return; beats[cur].classList.remove('on'); var b=beats[i]; b.classList.add('pre'); void b.offsetWidth; b.classList.remove('pre'); b.classList.add('on'); cur=i; }
+  function progress(){var total=story.offsetHeight-innerHeight; if(!(total>0))return 0; var v=-story.getBoundingClientRect().top/total; return isFinite(v)?cl(v):0;}
+  var view={};
+  function toPage(x,y){return [view.tx+(view.dx+x*view.base-view.sx)*view.z, view.ty+(view.dy+y*view.base-view.sy)*view.z];}
+  function place(el,pt,vis,minY,dt,depth){
+    var W=view.W,H=view.H, op=0, sx=el._x, sy=el._y;
+    if(pt&&vis>0.02){
+      var q=toPage(pt[0],pt[1]);
+      if(el._x===undefined||Math.abs(q[0]-el._x)+Math.abs(q[1]-el._y)>80){sx=q[0];sy=q[1];}
+      else {var kk=k(dt,0.06);sx=el._x+(q[0]-el._x)*kk;sy=el._y+(q[1]-el._y)*kk;}
+      var e=Math.min(sm(0,80,sx),sm(0,80,W-sx),sm(minY,minY+60,sy),sm(0,60,H-60-sy));
+      op=vis*e;
+    }
+    el._x=sx; el._y=sy;
+    if(sx!==undefined){var sc=depth===undefined?1:(0.82+0.18*depth); el.style.transform='translate('+sx.toFixed(1)+'px,'+sy.toFixed(1)+'px) scale('+sc.toFixed(3)+')';}
+    el.style.opacity=op.toFixed(3);
+    var on=el.classList.contains('on'), pin=el.classList.contains('pin'); if(!on&&op>0.5){el.classList.add('on'); if(pin)boot(el,430);} else if(on&&op<0.2){el.classList.remove('on'); if(pin)unboot(el);}
+  }
+  // ---- boot reveal: JARVIS-style, flat, no glow ----
+  var GL='0123456789ABCDEF#/<>+=', DEC=[];
+  function decode(el,delay,dur){ if(el._o===undefined)el._o=el.textContent; DEC=DEC.filter(function(d){return d.el!==el;}); DEC.push({el:el,t0:performance.now()+delay,dur:dur}); }
+  function runDecode(now){ DEC=DEC.filter(function(d){ var tgt=d.el._t!==undefined?d.el._t:d.el._o, p=(now-d.t0)/d.dur;
+      if(p>=1){ d.el.textContent=tgt; return false; }
+      var n=Math.max(0,Math.floor(tgt.length*p)), o=''; for(var i=0;i<tgt.length;i++){ var c=tgt[i]; o+=(i<n||c===' '||c==='·'||c==='/'||c===',')?c:GL[(Math.random()*GL.length)|0]; }
+      d.el.textContent=o; return true; }); }
+  function leaves(root){ return [].filter.call(root.querySelectorAll('.lab,.rd,.who,.msg,.k,.nm,.num,.rk,.v,span'),function(e){ return !e.children.length&&e.textContent.trim().length&&!e.classList.contains('fx'); }); }
+  function boot(el,delay){
+    el.classList.add('vis'); if(el._an)el._an.forEach(function(a){a.cancel();}); el._an=[]; if(reduce)return;
+    var fr=el.querySelector('.fr'), E='cubic-bezier(.23,1,.32,1)';
+    var kids=fr?[].filter.call(fr.children,function(c){return !c.classList.contains('fx');}):[].slice.call(el.children);
+    if(fr){
+      if(!fr._fx){ fr._fx=[0,1].map(function(){var i=document.createElement('i'); i.className='fx'; fr.appendChild(i); return i;}); }
+      var h=fr.offsetHeight/2;
+      el._an.push(fr.animate([{clipPath:'inset(calc(50% - 1px) 50% calc(50% - 1px) 50%)'},{clipPath:'inset(calc(50% - 1px) 0 calc(50% - 1px) 0)',offset:0.42},{clipPath:'inset(0 0 0 0)'}],{duration:560,delay:delay,easing:E,fill:'backwards'}));
+      fr._fx.forEach(function(x,j){ el._an.push(x.animate([{opacity:1,transform:'none'},{opacity:1,transform:'none',offset:0.42},{opacity:0.9,transform:'translateY('+(j?h:-h)+'px)',offset:0.85},{opacity:0,transform:'translateY('+(j?h:-h)+'px)'}],{duration:560,delay:delay,easing:E,fill:'backwards'})); });
+    }
+    var rows=[].slice.call(el.querySelectorAll('.lb .r'));
+    kids.concat(rows).forEach(function(c,i){ el._an.push(c.animate([{opacity:0},{opacity:1}],{duration:240,delay:delay+300+i*45,easing:'ease-out',fill:'backwards'})); });
+    leaves(el).forEach(function(e,i){ decode(e,delay+300+i*18,360); });
+  }
+  function unboot(el){
+    if(el._an)el._an.forEach(function(a){a.cancel();}); el._an=[];
+    var fr=el.querySelector('.fr'); if(reduce||!fr){ el.classList.remove('vis'); return; }
+    var a=fr.animate([{clipPath:'inset(0 0 0 0)'},{clipPath:'inset(calc(50% - 1px) 0 calc(50% - 1px) 0)',offset:0.6},{clipPath:'inset(calc(50% - 1px) 50% calc(50% - 1px) 50%)'}],{duration:240,easing:'ease-in',fill:'forwards'});
+    el._an.push(a); a.onfinish=function(){ if(!el.classList.contains('on')){ el.classList.remove('vis'); a.cancel(); } };
+  }
+  function hud(el,show,dl){var on=el.classList.contains('on'); if(show&&!on){el.classList.add('on'); boot(el,dl||0); if(SND[el.id]&&!dl)tone(SND[el.id],0.05);} else if(!show&&on){el.classList.remove('on'); unboot(el);}}
+  function txt(el,s){if(el._t!==s){el._t=s;el.textContent=s;}}
+  var pins=[$('pT'),$('pL')], lids=$('lids'), og=document.createElement('canvas'), octx=og.getContext('2d'), GS=[{p:0},{p:0}];
+
+  // live leaderboard (sample): Maria climbs three places, Tom chases her and passes her
+  var LB=[
+    {n:'Iris',  v:[[0.13,9240],[1,9320]]},
+    {n:'Lena',  v:[[0.13,8980],[1,9400]]},
+    {n:'Ana',   v:[[0.13,8030],[1,8060]]},
+    {n:'Dan',   v:[[0.13,7945],[1,7965]]},
+    {n:'Marco', v:[[0.13,7905],[1,7920]]},
+    {n:'Maria', me:1, v:[[0.13,7860],[0.31,8150],[0.47,8420],[0.63,8690],[0.80,8950],[1,9050]]},
+    {n:'Tom',   v:[[0.13,7640],[0.31,8100],[0.47,8560],[0.63,8830],[0.80,9090],[1,9190]]}
+  ], lbL=$('lbL'), lbF=$('lbF'), lbOn=false, lostT=-1, passer='';
+  LB.forEach(function(r){var el=document.createElement('div'); el.className='r'+(r.me?' me':''); el.innerHTML='<span class="k"></span><span class="nm">'+r.n+'</span><span class="num"></span><span class="tri"></span>'; lbL.appendChild(el); r.el=el; r.k=el.children[0]; r.vEl=el.children[2]; r.tri=el.children[3]; r.y=null; r.rk=0; r.upT=-1;});
+  function lbRank(q){ LB.forEach(function(r){r.val=pw(q,r.v);}); var o=LB.slice().sort(function(a,b){return b.val-a.val;}); o.forEach(function(r,i){r.now=i+1;}); return o; }
+  // running leaderboard (sample): 5K times in seconds; Tom speeds up and passes Dan
+  var RL=[{n:'Iris',t:1452},{n:'Lena',t:1491},{n:'Dan',t:1536},{n:'Tom',me:1,t:1552},{n:'Marco',t:1565}], rlL=$('rlL'), rlRk=0;
+  function mmss(x){return Math.floor(x/60)+':'+('0'+(x%60)).slice(-2);}
+  RL.forEach(function(r){var el=document.createElement('div'); el.className='r'+(r.me?' me':''); el.innerHTML='<span class="k"></span><span class="av">'+r.n[0]+'</span><div><div class="nm">'+r.n+'</div><div class="pc"><span></span><small>/km</small></div></div><div class="vc"><div class="tm"></div><div class="dl"></div></div>'; rlL.appendChild(el); r.el=el; r.k=el.children[0]; r.pcE=el.querySelector('.pc span'); r.tmE=el.querySelector('.tm'); r.dlE=el.querySelector('.dl');});
+  // one message from someone else in each body (sample): [from, to] in master scroll
+  var MS=[{a:0.29,b:0.365,w:'Ana',c:'Riverside Runners',t:'Tom just passed you. Go get him',r:'\uD83D\uDD25 4'},
+          {a:0.47,b:0.555,w:'Lena',c:'Riverside Runners',t:'Nice one, Tom. Catch me next',r:'\uD83D\uDCAA 3',hi:1},
+          {a:0.655,b:0.74,w:'Iris',c:'Peak Sports',t:'That was you, Lena. We lead',r:'\uD83D\uDC4F 6'},
+          {a:0.89,b:0.93,w:'Bean Bar',c:'Rewards',t:'Your coffee is waiting, Sam',r:'\u2615 2',hi:1}], msCur=-1;
+  var HUDF={l:1,c:1}, BOD=$('bod'), bodSeg=-1, NAVD=document.querySelector('.nav .demo');
+  /* one Target medal per body (sample), named and pictured as in the app's Rewards > Target tab, shown like the level card from a to b.
+     The day counts are the ones the app shows; Phoenix's 30 days was given by the founder on 2026-11-11. c places the card. */
+  var MED=[{a:0.112,b:0.158,img:'target_dragon.png',n:'Dragon',s:'5 OF 5 DAYS',c:' pr pr3'},
+           {a:0.515,b:0.562,img:'target_eagle.png',n:'Eagle',s:'10 OF 10 DAYS',c:' pr'},
+           {a:0.665,b:0.74,img:'target_dolphin.png',n:'Dolphin',s:'10 OF 10 DAYS',c:' pr pr2'},
+           {a:0.845,b:0.925,img:'target_phoenix.png',n:'Phoenix',s:'30 OF 30 DAYS',c:''}], medCur=-1;
+  MED.forEach(function(m){ (new Image()).src=m.img; });
+  var lastPct=86, wonOn=false;
+
+  function render(){
+    var W=stage.clientWidth, H=stage.clientHeight, small=W<900;
+    var now=performance.now(), dt=lastT?Math.min(0.25,(now-lastT)/1000):0.016; lastT=now; runDecode(now);
+    p=progress(); pN=reduce?p:pN+(p-pN)*k(dt,0.12);
+    // the hop plays as one timed move: reaching it takes over the scroll for about 1.4 s (forward) or 0.7 s (back)
+    var hopT=-1, hopI=-1;
+    if(!reduce){
+      if(HP.i<0&&now>HP.cd){ HOPS.forEach(function(h,i){ if(HP.i>=0)return; if(pPrev<h.s&&p>=h.s&&p<h.e){HP.i=i;HP.dir=1;HP.t0=-1;} else if(pPrev>=h.e&&p<h.e&&p>=h.s){HP.i=i;HP.dir=-1;HP.t0=now;} }); }
+      if(HP.i>=0){ var hh=HOPS[HP.i], tt, Pt;
+        if(HP.dir>0){ if(HP.t0<0&&HS[HP.i].rdy&&pN>=hh.s-0.003)HP.t0=now; tt=HP.t0<0?0:now-HP.t0; hopT=tt; hopI=HP.i;
+          Pt=tt<800?lerp(hh.s,hh.c-0.0005,tt/800):lerp(hh.c,hh.e+0.002,Math.min(1,(tt-800)/550)); if(tt>=1350){HP.i=-1;HP.cd=now+400;} }
+        else { tt=now-HP.t0; Pt=lerp(hh.e-0.0005,hh.s-0.004,Math.min(1,tt/700)); if(tt>=700){HP.i=-1;HP.cd=now+400;} }
+        scrollTo(0,story.getBoundingClientRect().top+scrollY+Pt*(story.offsetHeight-innerHeight)); p=Pt; if(!(HP.dir>0&&HP.t0<0))pN=Pt; }
+    }
+    pPrev=p;
+    var P=pN, seg=P<0.405?0:P<0.59?1:P<0.77?2:3, inM=P<0.38;
+    pS=Math.min(0.47,P/0.38*0.47); // Maria's part keeps its own timeline
+    var w=WIN[cur]; if(P<w[0]-0.008||P>w[1]+0.008){ for(var i=0;i<WIN.length;i++){ if(P>=WIN[i][0]&&P<WIN[i][1]){setBeat(i);break;} } }
+    $('hint').style.opacity=P<0.03?1:0; BOD.style.opacity=(P<0.03||P>0.93)?0:1; NAVD.style.visibility=P>0.935?'hidden':'';
+    if(seg!==bodSeg){ bodSeg=seg; [].forEach.call(BOD.children,function(b,j){b.classList.toggle('on',j===seg);}); }
+    // hop: zoom into the next runner's head, eyes close, cut, eyes open in their body
+    var hz=0, hT=null, hl=1;
+    HOPS.forEach(function(h,i){ if(P>=h.s&&P<h.c){ hz=sm(h.s,h.c,P); hT=headOf(i); hl=1-sm(lerp(h.s,h.c,0.35),h.c,P); } else if(P>=h.c&&P<h.e){ hl=sm(h.c,h.e,P); } });
+    if(reduce)hz=0; // reduced motion: no zoom, only the lids dip
+    var zm=1+5*hz*hz*hz, zLand=0;
+    if(hopT>=0){ var eI=Math.pow(cl((hopT-320)/450),3); // line 0-200, wind up 200-320, pull 320-770, black to 850, eyes open to 1350
+      if(hopT<800){ hT=headOf(hopI); hz=eI; zm=hopT<200?1:hopT<320?lerp(1,0.96,sm(200,320,hopT)):lerp(0.96,6,eI); hl=1-sm(680,770,hopT); }
+      else { var eo=1-Math.pow(2,-10*cl((hopT-850)/500)); hz=0; zm=1; hl=hopT<850?0:eo; zLand=0.08*(1-eo); } }
+    if(seg!==lastSeg){ if(seg>lastSeg)tone([196,294,392],0.04,0.26,0.06); lastSeg=seg; }
+    // eyes open once the first frames are in: open, a short blink, then fully open
+    if(openT<0&&ready(FR,0)&&ready(FR,1)){ openT=now; $('cueT').textContent='SCROLL'; }
+    var ot=openT<0?0:(now-openT)/1000, lo=reduce?1:(openT<0?0:(ot<0.4?0:ot<1.0?0.45*sm(0.4,1.0,ot):ot<1.25?lerp(0.45,0.18,sm(1.0,1.25,ot)):lerp(0.18,1,sm(1.25,2.2,ot))));
+    var loLoad=lo; lo=Math.min(lo,hl);
+    if(lo>0.995){ if(lids._o!==1){lids._o=1;lids.style.opacity=0;} }
+    else { lids._o=lo; lids.style.opacity=(1-sm(0.85,1,lo)).toFixed(3);
+      lids.style.background=lo<0.005?'#04060D':'radial-gradient(ellipse '+(80+60*lo*lo).toFixed(1)+'% '+(lo*95).toFixed(1)+'% at 50% 50%, rgba(4,6,13,0) 45%, rgba(4,6,13,.92) 82%, #04060D 100%)'; }
+    // her view: the first frames play as her eyes open, then the scroll drives the run
+    var autoF=reduce?10:10*sm(0,2.4,ot);
+    var r0=SEGR[seg], fS=seg===0?Math.max(autoF,lerp(10,NF-1,cl(P/0.38))):lerp(0,SEGN[seg],cl((P-r0[0])/(r0[1]-r0[0]))), fB=seg===0?fS:NF-1;
+    var dpr=Math.min(devicePixelRatio||1,2);
+    if(bg.width!==Math.round(W*dpr)||bg.height!==Math.round(H*dpr)){bg.width=Math.round(W*dpr);bg.height=Math.round(H*dpr);}
+    var base=Math.max(W/1280,H/720)*(small?1:1.06), dx=(W-1280*base)/2, dy=(H-720*base)/2;
+    /* Tom's and Sam's clips. Phone: the narrow crop slides to keep Lena (Tom's view) or the cafe (Sam's view) in frame; the switch
+       happens behind closed lids. Desktop: zoom in 4% so the runner's own arm at the far left edge stays out of the picture. */
+    if(small){ if(seg===1)dx=Math.min(0,Math.max(W-1280*base,W/2-845*base)); else if(seg===3)dx=Math.min(0,Math.max(W-1280*base,W/2-320*base)); }
+    else if(seg===1||seg===3){ base*=1.04; dx=(W-1280*base)/2; dy=(H-720*base)/2; }
+    var zB=seg===0?1+0.04*(1-sm(0,2.4,ot)):1.05-0.05*sm(r0[0],r0[0]+0.03,P), vB={W:W,H:H,base:base,dx:dx,dy:dy,sx:W/2,sy:H/2,tx:W/2,ty:H/2,z:zB+zLand};
+    if(hT){ var hsx=dx+hT[0]*base, hsy=dy+hT[1]*base; vB={W:W,H:H,base:base,dx:dx,dy:dy,sx:hsx,sy:hsy,tx:lerp(hsx,W/2,hz),ty:lerp(hsy,H/2,hz),z:zB*zm}; }
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.fillStyle='#04060D'; ctx.fillRect(0,0,W,H);
+    var blur=reduce?0:Math.max(8*(1-sm(0.4,2.4,ot)),6*(1-hl));
+    var GR=['saturate(1.3) contrast(1.08)','brightness(0.86) contrast(1.06)','',''][seg]; ctx.save(); if(blur>0.05||GR)ctx.filter=(GR?GR+' ':'')+(blur>0.05?'blur('+blur.toFixed(1)+'px)':''); ctx.translate(vB.tx,vB.ty); ctx.scale(vB.z,vB.z); ctx.translate(-vB.sx,-vB.sy);
+    drawSeg(seg,fS,dx,dy,1280*base,720*base); ctx.restore();
+    view=vB;
+
+    // ---- HUD: each scroll adds one widget, and they stay while she runs ----
+    var awake=loLoad>0.9&&inM, open=hl>0.9;
+    var onLb=awake&&pS>0.135, onCof=seg===3&&open&&P>0.80&&P<(small?0.925:0.93);
+    hud($('hSteps'),onCof); hud($('hRw'),onCof,140);
+    // rewards: her coffee goal fills from 86% and unlocks
+    var pct=Math.floor(pw(P,[[0.80,86],[0.885,100]]));
+    if(pct!==lastPct){ var sv=$('stepsV'); lastPct=pct; sv.classList.add('tk'); setTimeout(function(){sv.classList.remove('tk');},80); }
+    txt($('stepsV'),pct+'%'); $('stepsG').style.transform='scaleX('+(pct/100).toFixed(3)+')'; txt($('rwP'),pct+'%'); $('rwG').style.transform='scaleX('+(pct/100).toFixed(3)+')';
+    var won=pct>=100; if(won!==wonOn){ wonOn=won; $('hSteps').classList.toggle('won',won); $('rw0').classList.toggle('won',won); txt($('cofL'),won?'Coffee unlocked · Bean Bar':'To unlock a coffee · Bean Bar'); if(won&&onCof)tone([880,1175,1320],0.05,0.22,0.09); }
+
+    // live leaderboard: re-rank every frame, rows glide to their new place
+    var o=lbRank(pS), rh=small?28:38, me=LB[5], fwd=p>=pN-0.002;
+    if(onLb&&!lbOn){ LB.forEach(function(r){r.rk=r.now;r.y=null;r.upT=-1;r.tri.className='tri';}); lostT=-1; }
+    lbOn=onLb; hud($('hLb'),onLb);
+    if(onLb){
+      o.forEach(function(r){
+        if(r.rk&&r.now<r.rk){ r.upT=now; if(r.me){ lostT=-1; if(fwd)tone([1046],0.03,0.08); } else if(fwd&&r.rk>me.rk&&r.now<me.now){ lostT=now; passer=r.n; tone([523,392],0.045,0.18,0.1); } }
+        r.rk=r.now;
+        var ty=(r.now-1)*rh; r.y=(r.y===null||reduce)?ty:r.y+(ty-r.y)*k(dt,0.09);
+        r.el.style.transform='translateY('+r.y.toFixed(1)+'px)';
+        txt(r.k,('0'+r.now).slice(-2)); txt(r.vEl,fmt(r.val));
+        var up=r.upT>0&&now-r.upT<1400, dn=r.me&&lostT>0&&now-lostT<2600;
+        var c='tri'+(dn?' dn':up?' up':''); if(r.tri.className!==c)r.tri.className=c;
+      });
+      lbL.style.height=(LB.length*rh)+'px';
+      var ab=me.now>1?o[me.now-2]:null, gap=ab?Math.max(1,Math.round(ab.val-me.val)):0;
+      var lost=lostT>0&&now-lostT<3200&&passer;
+      var ft=lost?passer.toUpperCase()+' PASSED YOU · '+fmt(gap)+' TO #'+(me.now-1):(ab?fmt(gap)+' STEPS TO #'+(me.now-1)+' · '+ab.n.toUpperCase():'YOU LEAD RIVERSIDE');
+      txt(lbF,ft); lbF.classList.toggle('al',!!lost);
+    }
+    // callouts pinned to Tom and Lena: they open with the leaderboard and ride on the runners to the end
+    var pinOn=awake?sm(0.14,0.17,pS)*(1-sm(0.455,0.47,pS)):0;
+    HUDF.l+=(($('hLvl').classList.contains('on')?0:1)-HUDF.l)*k(dt,0.1); HUDF.c+=((small&&$('hMsg').classList.contains('on')?0:1)-HUDF.c)*k(dt,0.1); pinOn*=HUDF.l*HUDF.c;
+    ['r0','r1'].forEach(function(n,i){ var pt=atF(n,fB), d=pt?pt[2]/hMax:0.5, r=LB[i?1:6], el=pins[i], id=i?'pL':'pT';
+      // desktop: both cards open to the left at two heights, clear of the leaderboard; phone: compact, one each side
+      el.style.setProperty('--h',(small?10:(i?136:56))+'px'); var qx=pt?toPage(pt[0],pt[1])[0]:W/2, side=small?(i?(qx>W-120?'l':'r'):(qx<120?'r':'l')):'l'; /* phone: a tag flips inward before it would run off the screen */ if(el.dataset.side!==side)el.dataset.side=side;
+      txt($(id+'s'),'Riverside · '+fmt(r.val)); txt($(id+'r'),'#'+('0'+r.now).slice(-2));
+      var anc=pt?(small?[pt[0],pt[1]+0.36*pt[2]]:[pt[0],pt[1]-6]):null;
+      place(el,anc,pinOn*(0.6+0.4*d),small?150:110,dt,d); });
+    $('pTc').classList.toggle('on',!!(lostT>0&&now-lostT<3200&&passer==='Tom'));
+    // ---- on the ground at their feet: drawn into the street in perspective, passing behind their legs ----
+    if(og.width!==bg.width||og.height!==bg.height){og.width=bg.width;og.height=bg.height;}
+    octx.setTransform(1,0,0,1,0,0); octx.clearRect(0,0,og.width,og.height); octx.setTransform(dpr,0,0,dpr,0,0);
+    var gOn=pinOn*(1-sm(0.45,0.48,pS)), S=view.base*view.z, anyG=false;
+    ['r0','r1'].forEach(function(n,i){ var pt=atF(n,fB), g=GS[i]; if(!pt)return;
+      var h=pt[2], fx=pt[0], fy=pt[1]+0.98*h, q=toPage(fx,fy), d=h/hMax, a=gOn*(0.6+0.4*d);
+      g.p=reduce?(a>0.3?1:0):cl(g.p+(a>0.3?dt/0.6:-dt/0.25)); if(g.p<=0.001)return; anyG=true;
+      var e=1-Math.pow(1-g.p,3), asp=Math.min(0.55,Math.max(0.22,0.91*h/853)), rx=0.25*h*S*e, ry=rx*asp, al=Math.max(a,0.25)*Math.min(1,g.p*2);
+      // camera at eye height: a 0.45 m ring at the feet is squashed by how far below the horizon it lies
+      if(small&&q[1]>H*0.72)return; /* phone: no rings under the copy */
+      octx.lineWidth=1.5; octx.strokeStyle='rgba(242,244,248,'+(0.9*al).toFixed(3)+')'; octx.beginPath(); octx.ellipse(q[0],q[1],rx,ry,0,0,Math.PI*2); octx.stroke();
+      octx.lineWidth=1; octx.setLineDash([7,6]); octx.lineDashOffset=reduce?0:-now/60; octx.strokeStyle='rgba(242,244,248,'+(0.5*al).toFixed(3)+')'; octx.beginPath(); octx.ellipse(q[0],q[1],rx*0.74,ry*0.74,0,0,Math.PI*2); octx.stroke(); octx.setLineDash([]);
+      octx.lineWidth=1.5; octx.strokeStyle='rgba(242,244,248,'+(0.9*al).toFixed(3)+')';
+      [[1,0],[-1,0],[0,1]].forEach(function(v){ octx.beginPath(); octx.moveTo(q[0]+v[0]*rx*1.06,q[1]+v[1]*ry*1.06); octx.lineTo(q[0]+v[0]*rx*1.2,q[1]+v[1]*ry*1.2); octx.stroke(); });
+    });
+    if(anyG){
+      // their bodies stand in front of the ring: cut each runner's legs and torso out of the ground layer
+      octx.globalCompositeOperation='destination-out'; octx.fillStyle='#000';
+      ['r0','r1'].forEach(function(n){ var pt=atF(n,fB); if(!pt)return; var h=pt[2], x=pt[0], y=pt[1];
+        [[0.15,0.0,0.50],[0.12,0.48,0.97]].forEach(function(b){ var p0=toPage(x-b[0]*h,y+b[1]*h), p1=toPage(x+b[0]*h,y+b[2]*h); octx.fillRect(p0[0],p0[1],p1[0]-p0[0],p1[1]-p0[1]); }); });
+      octx.globalCompositeOperation='source-over';
+      ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(og,0,0); ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    // ---- the hop, JARVIS style: scan, lock, hold, line, wind up, pull, thump, land ----
+    if(!reduce){ HOPS.forEach(function(h,i){
+      var a0=h.s-0.035, st=HS[i], WH='242,244,248', inHop=hopT>=0&&hopI===i;
+      if(P<a0-0.004||P>=h.e){ st.t=-1; st.lk=0; st.pl=0; st.rdy=0; st.th=0; return; }
+      if(P<a0)return;
+      if(inHop&&hopT>=770&&!st.th){ st.th=1; sweep(90,45,0.18,0.2); }
+      if(P>=h.c){ // land: one ring opens from the centre as the new eyes open
+        var ld=inHop?cl((hopT-850)/500):sm(h.c,h.e,P); ctx.lineWidth=1.5; ctx.strokeStyle='rgba('+WH+','+(0.6*(1-ld)).toFixed(3)+')'; ctx.beginPath(); ctx.arc(W/2,H/2,(1-Math.pow(1-ld,3))*Math.max(W,H)*0.7,0,Math.PI*2); ctx.stroke(); return; }
+      var tr=i===0?atF('r0',fB):trkN(i===1?'tom':'lena',fS); if(!tr)return;
+      if(st.t<0){ if(P<h.s-0.01){ st.t=now; if(i===0)sweep(320,1400,0.3,0.035); } else { st.t=now-5000; st.lk=1; } } // scrolling back in: already locked, no replay
+      var el=(now-st.t)/1000, sc0=i===0?0.3:0, cx=tr[0], top=tr[1], hh=tr[2];
+      // 1 scan, first hop only: one line of light sweeps down the street (300 ms)
+      if(i===0&&el<0.3){ var sy2=H*el/0.3, gr=ctx.createLinearGradient(0,sy2-70,0,sy2); gr.addColorStop(0,'rgba(61,116,255,0)'); gr.addColorStop(1,'rgba(61,116,255,.22)');
+        ctx.fillStyle=gr; ctx.fillRect(0,sy2-70,W,70); ctx.fillStyle='rgba('+WH+',.9)'; ctx.fillRect(0,sy2,W,1); }
+      // 2 lock (220 ms): brackets snap in, overshoot and settle; then a 120 ms hold before the hop may start
+      var lk=cl((el-sc0)/0.22); if(lk>=0.9&&!st.lk){ st.lk=1; tone([1320,1760],0.045,0.06,0.07); }
+      if(el>=sc0+0.34)st.rdy=1;
+      var hp=toPage(cx,top+0.12*hh), fade=1-sm(0.55,1,hz);
+      if(lk>0){ var sc2=lk<0.6?lerp(1.7,0.94,1-Math.pow(1-lk/0.6,3)):lerp(0.94,1,(lk-0.6)/0.4), p0=toPage(cx-0.21*hh,top-0.03*hh), p1=toPage(cx+0.21*hh,top+1.0*hh);
+        var mx=(p0[0]+p1[0])/2, my=(p0[1]+p1[1])/2, bw=(p1[0]-p0[0])/2*sc2, bh=(p1[1]-p0[1])/2*sc2, L=Math.min(bw,bh)*0.34;
+        if(lk>0.55&&lk<0.85){ ctx.fillStyle='rgba('+WH+',.10)'; ctx.fillRect(mx-bw,my-bh,bw*2,bh*2); }
+        ctx.lineWidth=2; ctx.strokeStyle='rgba('+WH+','+(lk*fade).toFixed(3)+')'; ctx.beginPath();
+        [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(c){ var x=mx+c[0]*bw, y=my+c[1]*bh; ctx.moveTo(x-c[0]*L,y); ctx.lineTo(x,y); ctx.lineTo(x,y-c[1]*L); }); ctx.stroke();
+        var rr=0.1*hh*S; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(hp[0],hp[1],rr*sc2,0,Math.PI*2); ctx.stroke();
+        ctx.strokeStyle='rgba(61,116,255,'+(lk*fade).toFixed(3)+')'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(hp[0],hp[1],rr*1.45,now/400,now/400+1.9); ctx.stroke(); }
+      // 3 line (200 ms): a line of light runs from you to them, pulses flowing along it
+      var tp=inHop?1-Math.pow(1-cl(hopT/200),3):(HP.i<0&&P>=h.s?1:0);
+      if(tp>0.01){ var ox=W/2, oy=H+8, ex=lerp(ox,hp[0],tp), ey=lerp(oy,hp[1],tp), ln=Math.hypot(ex-ox,ey-oy)||1, nx2=-(ey-oy)/ln, ny2=(ex-ox)/ln, w0=7;
+        ctx.fillStyle='rgba('+WH+','+(0.6*fade).toFixed(3)+')'; ctx.beginPath(); ctx.moveTo(ox+nx2*w0,oy+ny2*w0); ctx.lineTo(ex+nx2*0.6,ey+ny2*0.6); ctx.lineTo(ex-nx2*0.6,ey-ny2*0.6); ctx.lineTo(ox-nx2*w0,oy-ny2*w0); ctx.fill();
+        for(var j=0;j<3;j++){ var t2=((now/420+j/3)%1); ctx.fillStyle='rgba(61,116,255,'+((1-t2*0.4)*fade).toFixed(3)+')'; ctx.beginPath(); ctx.arc(lerp(ox,ex,t2),lerp(oy,ey,t2),lerp(5,1.6,t2),0,Math.PI*2); ctx.fill(); } }
+      // 4 pull (450 ms, slow then very fast): the street streaks past; the lids only close in the last fifth
+      if(hz>0){ if(!st.pl){ st.pl=1; whoosh(); }
+        ctx.lineWidth=2; ctx.strokeStyle='rgba('+WH+','+(0.8*Math.min(1,hz*4)*hl).toFixed(3)+')'; ctx.beginPath();
+        for(var q2=0;q2<60;q2++){ var an=q2*2.399+0.3, r1=(50+(q2*53%170))*(1+7*hz), r2=r1+30+460*hz*((q2*29%10)/10+0.4); ctx.moveTo(hp[0]+Math.cos(an)*r1,hp[1]+Math.sin(an)*r1); ctx.lineTo(hp[0]+Math.cos(an)*r2,hp[1]+Math.sin(an)*r2); }
+        ctx.stroke(); }
+    }); }
+    // level up: Gold the moment she climbs into the top three
+    hud($('hLvl'),awake&&pS>0.2&&pS<0.31&&me.now<=3);
+    // ---- a Target medal unlocks in each body ----
+    var hMd=$('hMed'), di=-1; MED.forEach(function(m,i){ if(P>=m.a&&P<m.b)di=i; });
+    if(di>=0&&di!==medCur&&!hMd.classList.contains('on')){ var md=MED[di]; medCur=di; $('medI').src=md.img; $('medI').style.filter=di===0?'brightness(1.6)':''; txt($('medN'),md.n); txt($('medS'),md.s); hMd.className='hud lvl med'+md.c; }
+    hud(hMd,di>=0&&di===medCur&&open&&(seg>0||awake));
+
+    // ---- a message from someone else lands in each body ----
+    var hM=$('hMsg'), mi=-1; MS.forEach(function(m,i){ if(P>=m.a&&P<m.b)mi=i; });
+    if(mi>=0&&mi!==msCur&&!hM.classList.contains('on')){ var mm=MS[mi]; msCur=mi; txt($('mA'),mm.w[0]); txt($('mW'),mm.w); txt($('mC'),mm.c); txt($('mT'),mm.t); txt($('mR'),mm.r); hM.classList.toggle('hi',!!mm.hi); }
+    hud(hM,mi>=0&&mi===msCur&&open&&(seg>0||awake)&&!(small&&seg===3&&!onCof));
+    // ---- Tom's view: his pace and distance ----
+    var onRun=seg===1&&open&&P<0.566; hud($('hRun'),onRun,140);
+    hud($('hRl'),onRun);
+    if(onRun){ var tT=Math.round(lerp(1552,1528,cl((P-0.405)/0.161))), meR=RL[3]; meR.t=tT;
+      var ro=RL.slice().sort(function(a,b){return a.t-b.t;}), rrh=small?38:48;
+      ro.forEach(function(r,i){ r.el.style.transform='translateY('+(i*rrh)+'px)'; txt(r.k,'0'+(i+1)); txt(r.tmE,mmss(r.t)); txt(r.pcE,mmss(Math.round(r.t/5))); txt(r.dlE,i?'+'+mmss(r.t-ro[0].t):''); if(r.me){ if(rlRk&&i+1<rlRk)tone([784,1046],0.05); rlRk=i+1; } });
+      rlL.style.height=(RL.length*rrh)+'px';
+      txt($('runP'),mmss(Math.round(tT/5))); }
+    // the runner ahead in Tom's and Lena's views: who we fly into next
+    var nx=seg===1?'tom':seg===2?'lena':null, pn=$('pN');
+    if(nx){ txt($('pNw'),seg===1?'Lena':'Sam'); txt($('pNs'),seg===1?'5K · 24:51':'Peak Sports · '+(P<0.611?'4.8':'5.3')); txt($('pNr'),seg===1?'#02':'#01'); $('pNb').style.background=seg===1?'#C9A13A':'#3D74FF'; pn.style.setProperty('--h',(small?10:60)+'px'); var sd=(seg===2&&!small)?'r':'l'; if(pn.dataset.side!==sd)pn.dataset.side=sd; }
+    var nv=nx?sm(r0[0]+0.02,r0[0]+0.035,P)*(1-sm(r0[1]-0.012,r0[1],P)):0, npt=nx?trkN(nx,fS):null;
+    place(pn,npt?(small?[npt[0],npt[1]+0.36*npt[2]]:[npt[0],npt[1]-6]):null,(open?nv:0)*HUDF.c,small?150:110,dt,npt?Math.min(1,npt[2]/560):0.6);
+    // ---- Lena's view: League of Brands, live, with commentary ----
+    var onLg=seg===2&&open&&P<0.746; hud($('hLg'),onLg); hud($('hCm'),onLg,140);
+    if(onLg){
+      var SC=[[P<0.611?4.8:5.3,4.9],[P<0.675?4.8:4.9,4.9],[4.4,P<0.715?4.5:4.7]];
+      SC.forEach(function(m,i){ var ea=$('lg'+i+'a'), eb=$('lg'+i+'b'), sa=m[0].toFixed(1), sb2=m[1].toFixed(1);
+        if(ea.lastChild._t&&ea.lastChild._t!==sa)decode(ea.lastChild,0,420); if(eb.lastChild._t&&eb.lastChild._t!==sb2)decode(eb.lastChild,0,420);
+        txt(ea.lastChild,sa); txt(eb.lastChild,sb2); ea.classList.toggle('w',+sa>+sb2); eb.classList.toggle('w',+sb2>+sa); });
+      if(!cmL)cmL=$('cmL');
+      CM.forEach(function(c,i){
+        if(P>=c.p&&!c.el){ var d=document.createElement('div'); d.className='cl typing'; d.innerHTML='<span class="rd">'+c.tm+'</span><span class="ct"></span>'; cmL.insertBefore(d,cmL.firstChild); c.el=d; c.t0=now; tone([1175],0.025,0.06); }
+        else if(P<c.p-0.004&&c.el){ c.el.remove(); c.el=null; }
+        if(c.el){ var n=reduce?c.t.length:Math.min(c.t.length,Math.floor((now-c.t0)/24)); c.el.lastChild.textContent=c.t.slice(0,n); c.el.classList.toggle('typing',n<c.t.length); }
+      });
+    }
+  }
+  // ---- the problem: 72 people; most stop as you scroll, then each of the four reasons brings a quarter back ----
+  var WY=$('why'), WD=$('whyD'), WN=72, WK=63, wyDots=[], wySig='';
+  (function(){ var ord=[], sd=7; for(var i=0;i<WN;i++)ord.push(i); for(i=WN-1;i>0;i--){ sd=(sd*9301+49297)%233280; var j=Math.floor(sd/233280*(i+1)), t=ord[i]; ord[i]=ord[j]; ord[j]=t; }
+    var els=[]; for(i=0;i<WN;i++){ var d=document.createElement('i'); d.className='a'; WD.appendChild(d); els.push(d); } ord.forEach(function(ix){ wyDots.push(els[ix]); }); })(); /* wyDots is in the order people stop; the last 9 never do */
+  function why(){ var r=WY.getBoundingClientRect(), tot=r.height-innerHeight, q=tot>0?cl(-r.top/tot):0;
+    var off=Math.round(WK*sm(0.06,0.42,q)), nR=q<0.52?0:q<0.62?1:q<0.72?2:q<0.82?3:4, back=Math.round(WK*nR/4), sig=off+'/'+nR; if(sig===wySig)return; wySig=sig;
+    wyDots.forEach(function(d,j){ var c=j>=WK?(nR===4?'b':'a'):j<back?'b':j<off?'o':'a'; if(d.className!==c)d.className=c; });
+    wyLit=(WN-off+back)/WN; wyBlue=back/WK;
+    $('whyN').textContent=('0'+(WN-off+back)).slice(-2); $('whyF').classList.toggle('all',nR===4);
+    var hs=WY.querySelectorAll('.whyH h2'); hs[0].classList.toggle('on',nR===0); hs[1].classList.toggle('on',nR>0);
+    $('whyE').textContent=nR>0?'The answer':'The problem'; $('whyL').classList.toggle('vis',nR>0); [].forEach.call($('whyL').children,function(li,i){ li.classList.toggle('on',i<nR); }); }
+  /* behind it: a ribbon of light. Sixty-odd fine lines twist around each other and add up where they cross, over a soft glow, with sparks riding along.
+     It follows the counter: it collapses to one thin grey line as people stop, and opens again in blue and violet as they come back. */
+  var wyLit=1, wyBlue=0, wyTm=0, wyAmp=1, wyB=0, wyT=0, WC=$('whyC'), wctx=WC.getContext('2d'), WG=$('whyG'), gctx=WG.getContext('2d'), wySp=[];
+  for(var wi=0;wi<44;wi++)wySp.push([(wi*0.6180339)%1,(wi*0.37+0.11)%1,0.02+((wi*7)%10)/260]); /* sparks: start, which line, speed */
+  function whyBg(now){ var r=WY.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight){ wyT=0; return; }
+    var box=WC.parentNode, W=box.clientWidth, H=box.clientHeight, dpr=Math.min(devicePixelRatio||1,2), dt=wyT?Math.min(0.1,(now-wyT)/1000):0, ph=W<900; wyT=now;
+    if(WC.width!==Math.round(W*dpr)||WC.height!==Math.round(H*dpr)){ WC.width=Math.round(W*dpr); WC.height=Math.round(H*dpr); }
+    var gw=Math.max(2,Math.round(W/6)), gh=Math.max(2,Math.round(H/6)); if(WG.width!==gw||WG.height!==gh){ WG.width=gw; WG.height=gh; }
+    wyAmp+=(wyLit-wyAmp)*k(dt,0.7); wyB+=(wyBlue-wyB)*k(dt,0.5); if(!reduce)wyTm+=dt*(0.12+0.5*wyAmp);
+    var t=wyTm, yc=H*(ph?0.82:0.76), A=lerp(H*0.003,H*(ph?0.06:0.1),wyAmp), TH=lerp(1.5,H*(ph?0.09:0.13),wyAmp), N=ph?44:68, S=ph?56:120;
+    function mix(a,b){ return Math.round(lerp(a[0],b[0],wyB))+','+Math.round(lerp(a[1],b[1],wyB))+','+Math.round(lerp(a[2],b[2],wyB)); }
+    var c0=mix([150,158,176],[61,116,255]), c1=mix([242,244,248],[120,214,255]), c2=mix([170,176,196],[150,110,255]);
+    function yAt(x,sn){ var wx=x/W*7.6, c=Math.sin(wx+t*0.9)*(0.6+0.4*Math.sin(wx*0.43-t*0.5))+0.35*Math.sin(wx*2.3+t*1.4), w=(sn-0.5)*Math.sin(wx*0.8-t*0.6+1.2)+0.16*Math.sin(sn*9+wx*1.7+t); return yc+A*c-TH*w; }
+    // the glow: the ribbon's spine, thick, on a small canvas that CSS blurs
+    gctx.setTransform(gw/W,0,0,gh/H,0,0); gctx.clearRect(0,0,W,H); gctx.lineCap='round';
+    var en=wyAmp*(0.35+0.65*wyB);
+    [[c0,H*0.2,0.5,0.35],[c2,H*0.1,0.45,0.7],[c1,H*0.04,0.5,0.5]].forEach(function(L){ gctx.strokeStyle='rgba('+L[0]+','+(L[2]*en).toFixed(3)+')'; gctx.lineWidth=L[1]; gctx.beginPath(); for(var q=0;q<=24;q++){ var x=W*q/24, y=yAt(x,L[3]); if(q)gctx.lineTo(x,y); else gctx.moveTo(x,y); } gctx.stroke(); });
+    // the silk
+    wctx.setTransform(dpr,0,0,dpr,0,0); wctx.clearRect(0,0,W,H); wctx.globalCompositeOperation='lighter'; wctx.lineWidth=1;
+    var g=wctx.createLinearGradient(0,0,W,0); g.addColorStop(0,'rgba('+c0+',.25)'); g.addColorStop(0.3,'rgba('+c1+',1)'); g.addColorStop(0.62,'rgba('+c0+',1)'); g.addColorStop(0.85,'rgba('+c2+',1)'); g.addColorStop(1,'rgba('+c2+',.25)');
+    wctx.strokeStyle=g; wctx.globalAlpha=lerp(0.014,0.3,wyAmp);
+    for(var n=0;n<N;n++){ var sn=n/(N-1); wctx.beginPath(); for(var q=0;q<=S;q++){ var x=W*q/S, y=yAt(x,sn); if(q)wctx.lineTo(x,y); else wctx.moveTo(x,y); } wctx.stroke(); }
+    // sparks riding the lines
+    wctx.globalAlpha=1; wySp.forEach(function(p){ var u=(p[0]+t*p[2])%1, x=u*W, y=yAt(x,p[1]), a=wyAmp*Math.sin(u*Math.PI); wctx.fillStyle='rgba('+c1+','+(0.9*a).toFixed(3)+')'; wctx.beginPath(); wctx.arc(x,y,1.4,0,6.283); wctx.fill(); });
+    wctx.globalCompositeOperation='source-over'; }
+  (function tick(){ if(!document.hidden){ why(); whyBg(performance.now()); } if(!document.hidden){ var r=story.getBoundingClientRect(); if(r.bottom>0)render(); else HP.i=-1; /* left the story mid-hop: give the scroll back */ } requestAnimationFrame(tick); })();
+  [].slice.call(document.querySelectorAll('.tile')).forEach(function(t){
+    var v=t.querySelector('video');
+    function play(){v.muted=true;var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});}
+    function stop(){v.pause();}
+    t.addEventListener('mouseenter',play);t.addEventListener('focus',play);t.addEventListener('mouseleave',stop);t.addEventListener('blur',stop);
+  });
+})();
+</script>
+
+</body></html>
