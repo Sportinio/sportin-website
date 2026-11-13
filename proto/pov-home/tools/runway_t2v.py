@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate one text-to-video take with the Runway API and save it as an mp4.
 
-Usage: python3 -I runway_t2v.py <model> <seconds> <out.mp4> <prompt-file>
+Usage: python3 -I runway_t2v.py <model> <seconds> <out.mp4> <prompt-file> [noaudio]
 Reads the key from RUNWAYML_API_SECRET. Never prints the key.
 """
 import json, os, sys, time, urllib.request
@@ -27,8 +27,10 @@ def call(method, path, body=None):
 def main():
     model, seconds, out, prompt_file = sys.argv[1], int(sys.argv[2]), sys.argv[3], sys.argv[4]
     prompt = open(prompt_file).read().strip()
-    task = call("POST", "/text_to_video", {"model": model, "promptText": prompt[:1000],
-                                            "ratio": "1280:720", "duration": seconds})
+    body = {"model": model, "promptText": prompt[:1000], "ratio": "1280:720", "duration": seconds}
+    if len(sys.argv) > 5 and sys.argv[5] == "noaudio":  # the page makes its own sound; silent clips cost less
+        body["audio"] = False
+    task = call("POST", "/text_to_video", body)
     tid = task["id"]
     print("task", tid, flush=True)
     for _ in range(180):
